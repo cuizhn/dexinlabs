@@ -149,17 +149,17 @@ const contentSlug = computed(() =>
 /* =========================
  * Nuxt Content 查询
  * ========================= */
+
 const { data: chapterDoc } = await useAsyncData(
-  () => `chapter-${contentSlug.value}`,
+  () => `chapter-${courseSlug.value}-${chapterSlug.value}`,
   () =>
     queryCollection('chapters')
-      .where('slug', '=', contentSlug.value)
+      .path(`/courses/${courseSlug.value}/${chapterSlug.value}`)
       .first(),
   {
-    watch: [contentSlug],
+    watch: [courseSlug, chapterSlug],
   }
 )
-
 /* =========================
  * TOC（来自 MarkdownRenderer）
  * ========================= */
