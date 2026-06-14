@@ -326,5 +326,3 @@ if (!course.value || !chapter.value) {
   text-decoration: none;
 }
 </style>
-
-.chapter-page__not-found-titl
