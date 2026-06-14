@@ -1,0 +1,14 @@
+/* 布局工具类 */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+}
+
+.container-sm {
+  max-width: 720px;
+}
+
+.text-center {
+  text-align: center;
+}

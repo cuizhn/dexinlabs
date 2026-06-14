@@ -1,0 +1,33 @@
+/* KaTeX 公式样式覆盖 */
+.katex-display {
+  margin: var(--spacing-lg) 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--spacing-md);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-light);
+}
+
+.katex {
+  font-size: 1.05em;
+}
+
+/* 行内公式 */
+.katex-inline {
+  display: inline;
+}
+
+/* 块级公式滚动条 */
+.katex-display::-webkit-scrollbar {
+  height: 4px;
+}
+
+.katex-display::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.katex-display::-webkit-scrollbar-thumb {
+  background-color: var(--color-text-muted);
+  border-radius: 2px;
+}

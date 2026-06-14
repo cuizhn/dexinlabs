@@ -1,0 +1,19 @@
+{
+  "name": "edu-platform",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@nuxt/content": "^3.14.0",
+    "better-sqlite3": "^12.10.0",
+    "katex": "^0.17.0",
+    "nuxt": "^4.4.6",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
+  }
+}
