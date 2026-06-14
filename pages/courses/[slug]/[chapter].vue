@@ -307,4 +307,24 @@ if (!course.value || !chapter.value) {
   text-align: center;
 }
 
+.chapter-page__not-found-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.chapter-page__not-found-text {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-lg);
+}
+
+.chapter-page__back-link {
+  display: inline-block;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--border-radius-md);
+  text-decoration: none;
+}
+</style>
+
 .chapter-page__not-found-titl
