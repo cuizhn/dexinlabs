@@ -116,7 +116,7 @@ import { useCourse } from '~/modules/course/useCourse.js'
 import CourseSidebar from '~/components/course/CourseSidebar.vue'
 import TocSidebar from '~/components/course/TocSidebar.vue'
 import ChapterNav from '~/components/course/ChapterNav.vue'
-import MarkdownRenderer from '~/components/MarkdownRenderer.vue'
+import MarkdownRenderer from '~/components/course/MarkdownRenderer.vue'
 
 /* =========================
  * 路由参数
