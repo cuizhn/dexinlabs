@@ -151,17 +151,15 @@ const contentSlug = computed(() =>
  * Nuxt Content 查询（已修复）
  * ========================= */
 const { data: chapterDoc } = await useAsyncData(
-  // 1. 修复 Key：直接使用字符串，而不是函数
-  `chapter-${courseSlug.value}-${chapterSlug.value}`,
-  // 2. 修复 API：直接使用全局注入的 queryCollection
-  () =>
+  `chapter-${courseSlug.value}-${chapterSlug.value}`,() =>
     queryCollection('chapters')
-      // 3. 修复路径：去掉多余的 /courses，匹配真实的文件相对路径
+ 
       .path(`/${courseSlug.value}/${chapterSlug.value}`)
       .first(),
   {
     watch: [courseSlug, chapterSlug],
   }
+)
 /* =========================
  * TOC（来自 MarkdownRenderer）
  * ========================= */
