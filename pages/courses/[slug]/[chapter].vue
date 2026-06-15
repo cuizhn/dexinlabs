@@ -109,7 +109,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute, useAsyncData, useSeoMeta, createError } from '#imports'
-import { queryCollection } from '@nuxt/content/server'
+//import { queryCollection } from '@nuxt/content/server'
 
 import { useCourse } from '~/modules/course/useCourse.js'
 
@@ -146,20 +146,22 @@ const contentSlug = computed(() =>
   `${courseSlug.value}-${chapterSlug.value}`
 )
 
-/* =========================
- * Nuxt Content 查询
- * ========================= */
 
+/* =========================
+ * Nuxt Content 查询（已修复）
+ * ========================= */
 const { data: chapterDoc } = await useAsyncData(
-  () => `chapter-${courseSlug.value}-${chapterSlug.value}`,
+  // 1. 修复 Key：直接使用字符串，而不是函数
+  `chapter-${courseSlug.value}-${chapterSlug.value}`,
+  // 2. 修复 API：直接使用全局注入的 queryCollection
   () =>
     queryCollection('chapters')
-      .path(`/courses/${courseSlug.value}/${chapterSlug.value}`)
+      // 3. 修复路径：去掉多余的 /courses，匹配真实的文件相对路径
+      .path(`/${courseSlug.value}/${chapterSlug.value}`)
       .first(),
   {
     watch: [courseSlug, chapterSlug],
   }
-)
 /* =========================
  * TOC（来自 MarkdownRenderer）
  * ========================= */
