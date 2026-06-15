@@ -61,6 +61,7 @@
 
                 <div v-else class="chapter-page__empty">
                   <p>章节内容加载中...</p>
+                  <p>{{allPath.value}}</p>
                 </div>
 
               </div>
@@ -160,6 +161,11 @@ const { data: chapterDoc } = await useAsyncData(
     watch: [courseSlug, chapterSlug],
   }
 )
+const { data: allPaths } = await useAsyncData('debug-paths', () => 
+  queryCollection('chapters').select('path').all()
+)
+console.log('所有已注册的章节路径:', allPaths.value)
+
 /* =========================
  * TOC（来自 MarkdownRenderer）
  * ========================= */
