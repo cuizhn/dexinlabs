@@ -24,7 +24,7 @@ const courses = defineCollection({
  */
 const chapters = defineCollection({
   type: 'page',
-  source: 'courses/**/*.md',
+  source: 'courses/**/**/*.md',
   schema: z.object({
     title: z.string(),
     order: z.number(),

@@ -1,25 +1,35 @@
+<!-- 页面路径: / -->
+<!-- 首页/落地页：包含 hero（主视觉）、features（核心优势）、courses（课程体系）、how（学习方式）、cta（行动号召）五个区域 -->
 <template>
   <div class="landing">
+    <!-- Hero 主视觉区域：展示品牌标语、操作按钮、统计数据和装饰性卡片 -->
     <section class="landing__hero">
+      <!-- 背景装饰层：网格线、光晕和浮动数学符号 -->
       <div class="landing__hero-bg">
         <div class="landing__hero-grid"></div>
         <div class="landing__hero-glow landing__hero-glow--1"></div>
         <div class="landing__hero-glow landing__hero-glow--2"></div>
+        <!-- 浮动数学符号，通过 v-for 渲染，位置和动画由 CSS 变量控制 -->
         <span v-for="sym in floatingSymbols" :key="sym.id" class="landing__hero-symbol" :style="sym.style">{{ sym.char }}</span>
       </div>
 
+      <!-- Hero 左侧内容：徽章、标题、描述、按钮和统计数据 -->
       <div class="landing__hero-content">
+        <!-- 状态徽章：显示"免费开放 · 持续更新" -->
         <div class="landing__hero-badge">
           <span class="landing__hero-badge-dot"></span>
           免费开放 · 持续更新
         </div>
+        <!-- 主标题：渐变色强调"理解世界" -->
         <h1 class="landing__hero-title">
           用数学<br/>
           <span class="landing__hero-title-accent">理解世界</span>
         </h1>
+        <!-- 平台简介描述 -->
         <p class="landing__hero-desc">
           从算术到微积分，系统化的学习路径与交互式练习，让每一个数学概念都变得清晰可触
         </p>
+        <!-- 操作按钮组：开始学习和浏览课程 -->
         <div class="landing__hero-actions">
           <NuxtLink to="/courses" class="landing__btn landing__btn--primary">
             开始学习
@@ -29,14 +39,15 @@
             浏览课程
           </NuxtLink>
         </div>
+        <!-- 统计数据展示：课程数、章节数、题库量 -->
         <div class="landing__hero-stats">
           <div class="landing__hero-stat">
-            <span class="landing__hero-stat-num">{{ totalCourses }}</span>
+            <span class="landing__hero-stat-num">1</span>
             <span class="landing__hero-stat-label">核心课程</span>
           </div>
           <div class="landing__hero-stat-divider"></div>
           <div class="landing__hero-stat">
-            <span class="landing__hero-stat-num">{{ totalChapters }}</span>
+            <span class="landing__hero-stat-num">2</span>
             <span class="landing__hero-stat-label">章节内容</span>
           </div>
           <div class="landing__hero-stat-divider"></div>
@@ -47,6 +58,7 @@
         </div>
       </div>
 
+      <!-- Hero 右侧视觉装饰：课程进度卡片和数学公式 -->
       <div class="landing__hero-visual">
         <div class="landing__hero-card landing__hero-card--1">
           <div class="landing__hero-card-icon">∫</div>
@@ -82,6 +94,7 @@
       </div>
     </section>
 
+    <!-- Features 核心优势区域：展示平台的五大特色功能 -->
     <section class="landing__features">
       <div class="landing__section-inner">
         <div class="landing__section-header">
@@ -90,6 +103,7 @@
           <p class="landing__section-desc">不只是视频和文字，而是真正可交互的学习体验</p>
         </div>
 
+        <!-- 功能卡片网格：大卡片占3列，中卡片占2列 -->
         <div class="landing__features-grid">
           <div v-for="(feat, i) in features" :key="i" class="landing__feature" :class="`landing__feature--${feat.size}`">
             <div class="landing__feature-icon" :style="{ backgroundColor: feat.bg }">
@@ -102,42 +116,9 @@
       </div>
     </section>
 
-    <section class="landing__courses">
-      <div class="landing__section-inner">
-        <div class="landing__section-header">
-          <span class="landing__section-tag">课程体系</span>
-          <h2 class="landing__section-title">循序渐进<br/>体系化学习</h2>
-          <p class="landing__section-desc">从基础算术到高等数学，每一步都有清晰的学习路径</p>
-        </div>
 
-        <div class="landing__courses-grid">
-          <NuxtLink
-            v-for="course in courses"
-            :key="course.id"
-            :to="`/courses/${course.id}`"
-            class="landing__course"
-          >
-            <div class="landing__course-icon" :class="`landing__course-icon--${course.difficulty}`">
-              {{ course.icon }}
-            </div>
-            <div class="landing__course-body">
-              <h3 class="landing__course-title">{{ course.title }}</h3>
-              <p class="landing__course-desc">{{ course.description }}</p>
-            </div>
-            <div class="landing__course-meta">
-              <span class="landing__course-chapters">{{ course.chapters.length }} 章节</span>
-              <span class="landing__course-difficulty" :class="`landing__course-difficulty--${course.difficulty}`">
-                {{ difficultyLabel(course.difficulty) }}
-              </span>
-            </div>
-            <div class="landing__course-arrow">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-          </NuxtLink>
-        </div>
-      </div>
-    </section>
 
+    <!-- How 学习方式区域：三步引导用户了解学习流程 -->
     <section class="landing__how">
       <div class="landing__section-inner">
         <div class="landing__section-header">
@@ -145,6 +126,7 @@
           <h2 class="landing__section-title">三步开启<br/>数学之旅</h2>
         </div>
 
+        <!-- 三步流程卡片：选择课程 → 阅读与练习 → 持续进阶 -->
         <div class="landing__how-steps">
           <div v-for="(step, i) in steps" :key="i" class="landing__how-step">
             <div class="landing__how-number">{{ String(i + 1).padStart(2, '0') }}</div>
@@ -157,6 +139,7 @@
       </div>
     </section>
 
+    <!-- CTA 行动号召区域：引导用户立即开始学习 -->
     <section class="landing__cta">
       <div class="landing__cta-inner">
         <div class="landing__cta-deco">∑</div>
@@ -173,25 +156,17 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useCourse } from '~/modules/course/useCourse.js'
 
+// 设置页面标题
 useHead({
   title: 'Edu Platform - 用数学理解世界',
 })
 
-const { getAllCourses } = useCourse()
-const courses = getAllCourses()
 
-const totalCourses = computed(() => courses.length)
-const totalChapters = computed(() =>
-  courses.reduce((sum, course) => sum + (course.chapters?.length || 0), 0)
-)
 
-function difficultyLabel(d) {
-  const map = { beginner: '入门', intermediate: '进阶', advanced: '高级' }
-  return map[d] || d
-}
 
+
+// 计算属性：Hero 背景浮动数学符号列表，每个符号带有位置、动画延迟等 CSS 变量
 const floatingSymbols = computed(() => {
   const chars = ['π', '∑', '∫', '√', '∞', 'Δ', 'θ', 'λ', 'φ', 'α', 'β', '∂']
   return chars.map((char, i) => ({
@@ -209,6 +184,7 @@ const floatingSymbols = computed(() => {
   }))
 })
 
+// 平台核心优势功能列表数据
 const features = [
   {
     icon: '📐',
@@ -247,6 +223,7 @@ const features = [
   },
 ]
 
+// 三步学习流程数据
 const steps = [
   {
     title: '选择课程',
@@ -264,21 +241,26 @@ const steps = [
 </script>
 
 <style scoped>
+/* ==================== 全局布局 ==================== */
+/* 落地页根容器：隐藏水平溢出 */
 .landing {
   overflow-x: hidden;
 }
 
+/* 通用内容区域容器：限制最大宽度并居中 */
 .landing__section-inner {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
 }
 
+/* 通用区域标题组：限制宽度并设置底部间距 */
 .landing__section-header {
   max-width: 480px;
   margin-bottom: var(--spacing-2xl);
 }
 
+/* 区域标签（如"核心优势"、"课程体系"）：胶囊形小标签 */
 .landing__section-tag {
   display: inline-block;
   padding: 4px 12px;
@@ -292,6 +274,7 @@ const steps = [
   margin-bottom: var(--spacing-md);
 }
 
+/* 区域大标题 */
 .landing__section-title {
   font-size: 2.5rem;
   font-weight: 800;
@@ -300,13 +283,15 @@ const steps = [
   margin-bottom: var(--spacing-md);
 }
 
+/* 区域描述文字 */
 .landing__section-desc {
   font-size: 1.0625rem;
   color: var(--color-text-secondary);
   line-height: 1.7;
 }
 
-/* Hero */
+/* ==================== Hero 主视觉区域 ==================== */
+/* Hero 区域：全屏高度，弹性布局居中 */
 .landing__hero {
   position: relative;
   min-height: calc(100vh - 64px);
@@ -316,12 +301,14 @@ const steps = [
   overflow: hidden;
 }
 
+/* Hero 背景层：绝对定位覆盖整个区域 */
 .landing__hero-bg {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
+/* 背景网格线：淡紫色细线网格，径向渐变遮罩 */
 .landing__hero-grid {
   position: absolute;
   inset: 0;
@@ -333,12 +320,14 @@ const steps = [
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 30% 50%, black 30%, transparent 80%);
 }
 
+/* 背景光晕效果：模糊圆形渐变 */
 .landing__hero-glow {
   position: absolute;
   border-radius: 50%;
   filter: blur(100px);
 }
 
+/* 光晕1：左上角紫色光晕 */
 .landing__hero-glow--1 {
   width: 600px;
   height: 600px;
@@ -347,6 +336,7 @@ const steps = [
   background: rgba(79, 70, 229, 0.08);
 }
 
+/* 光晕2：右下角青色光晕 */
 .landing__hero-glow--2 {
   width: 400px;
   height: 400px;
@@ -355,6 +345,7 @@ const steps = [
   background: rgba(6, 182, 212, 0.06);
 }
 
+/* 浮动数学符号：通过 CSS 变量控制位置和动画参数 */
 .landing__hero-symbol {
   position: absolute;
   left: var(--x);
@@ -368,11 +359,13 @@ const steps = [
   font-family: var(--font-mono);
 }
 
+/* 浮动符号上下浮动动画 */
 @keyframes symbol-float {
   0% { transform: rotate(var(--rotate)) translateY(0); }
   100% { transform: rotate(var(--rotate)) translateY(-14px); }
 }
 
+/* Hero 左侧内容区：限制宽度并与页面内容区左对齐 */
 .landing__hero-content {
   position: relative;
   z-index: 2;
@@ -380,6 +373,7 @@ const steps = [
   margin-left: max(calc((100vw - 1200px) / 2 + var(--spacing-lg)), var(--spacing-lg));
 }
 
+/* 状态徽章：胶囊形，带脉冲动画小圆点 */
 .landing__hero-badge {
   display: inline-flex;
   align-items: center;
@@ -395,6 +389,7 @@ const steps = [
   box-shadow: var(--shadow-sm);
 }
 
+/* 徽章小圆点：绿色脉冲呼吸灯效果 */
 .landing__hero-badge-dot {
   width: 6px;
   height: 6px;
@@ -403,11 +398,13 @@ const steps = [
   animation: dot-pulse 2s ease-in-out infinite;
 }
 
+/* 小圆点脉冲动画 */
 @keyframes dot-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
 }
 
+/* Hero 主标题：大号粗体 */
 .landing__hero-title {
   font-size: 4rem;
   font-weight: 800;
@@ -417,6 +414,7 @@ const steps = [
   letter-spacing: -0.02em;
 }
 
+/* 标题强调文字：主色到辅色渐变 */
 .landing__hero-title-accent {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   -webkit-background-clip: text;
@@ -424,6 +422,7 @@ const steps = [
   -webkit-text-fill-color: transparent;
 }
 
+/* Hero 描述文字 */
 .landing__hero-desc {
   font-size: 1.125rem;
   color: var(--color-text-secondary);
@@ -431,12 +430,14 @@ const steps = [
   margin-bottom: var(--spacing-xl);
 }
 
+/* 操作按钮组 */
 .landing__hero-actions {
   display: flex;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-2xl);
 }
 
+/* 通用按钮基础样式：圆角、内边距、过渡动画 */
 .landing__btn {
   display: inline-flex;
   align-items: center;
@@ -449,46 +450,54 @@ const steps = [
   transition: all 0.25s ease;
 }
 
+/* 主要按钮：紫色渐变背景，白色文字 */
 .landing__btn--primary {
   background: linear-gradient(135deg, var(--color-primary), #6366F1);
   color: #fff;
   box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
 }
 
+/* 主要按钮悬停：上移并加深阴影 */
 .landing__btn--primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
 }
 
+/* 幽灵按钮：白底带边框 */
 .landing__btn--ghost {
   background-color: var(--color-bg-primary);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
 }
 
+/* 幽灵按钮悬停：边框变主色 */
 .landing__btn--ghost:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
   background-color: var(--color-primary-light);
 }
 
+/* 大号按钮：用于 CTA 区域 */
 .landing__btn--lg {
   padding: 16px 36px;
   font-size: 1rem;
 }
 
+/* 统计数据行：水平排列，带分隔线 */
 .landing__hero-stats {
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
 }
 
+/* 单个统计项：数字+标签垂直排列 */
 .landing__hero-stat {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
+/* 统计数字：大号等宽字体 */
 .landing__hero-stat-num {
   font-size: 1.5rem;
   font-weight: 800;
@@ -496,18 +505,21 @@ const steps = [
   font-family: var(--font-mono);
 }
 
+/* 统计标签：小号浅色文字 */
 .landing__hero-stat-label {
   font-size: 0.8125rem;
   color: var(--color-text-light);
 }
 
+/* 统计项之间的竖线分隔符 */
 .landing__hero-stat-divider {
   width: 1px;
   height: 32px;
   background-color: var(--color-border);
 }
 
-/* Hero visual cards */
+/* ==================== Hero 右侧视觉卡片 ==================== */
+/* 右侧视觉区域：绝对定位在右侧，垂直居中 */
 .landing__hero-visual {
   position: absolute;
   right: max(calc((100vw - 1200px) / 2 + var(--spacing-lg)), var(--spacing-lg));
@@ -517,6 +529,7 @@ const steps = [
   z-index: 1;
 }
 
+/* 课程进度卡片：毛玻璃效果，带滑入动画 */
 .landing__hero-card {
   display: flex;
   align-items: center;
@@ -531,15 +544,18 @@ const steps = [
   animation: card-slide-in 0.6s ease-out both;
 }
 
+/* 三张卡片依次错位排列，动画延迟递增 */
 .landing__hero-card--1 { animation-delay: 0.2s; margin-left: 0; }
 .landing__hero-card--2 { animation-delay: 0.4s; margin-left: 40px; }
 .landing__hero-card--3 { animation-delay: 0.6s; margin-left: 16px; }
 
+/* 卡片从右侧滑入动画 */
 @keyframes card-slide-in {
   from { opacity: 0; transform: translateX(30px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
+/* 卡片图标：圆角方块，白色文字 */
 .landing__hero-card-icon {
   width: 44px;
   height: 44px;
@@ -553,15 +569,18 @@ const steps = [
   flex-shrink: 0;
 }
 
+/* 三张卡片图标的渐变背景色 */
 .landing__hero-card--1 .landing__hero-card-icon { background: linear-gradient(135deg, #8B5CF6, #6366F1); }
 .landing__hero-card--2 .landing__hero-card-icon { background: linear-gradient(135deg, #06B6D4, #0891B2); }
 .landing__hero-card--3 .landing__hero-card-icon { background: linear-gradient(135deg, #10B981, #059669); }
 
+/* 卡片文字区域 */
 .landing__hero-card-body {
   flex: 1;
   min-width: 0;
 }
 
+/* 卡片课程名称标签 */
 .landing__hero-card-label {
   font-size: 0.8125rem;
   font-weight: 600;
@@ -570,6 +589,7 @@ const steps = [
   margin-bottom: 6px;
 }
 
+/* 进度条背景轨道 */
 .landing__hero-card-bar {
   height: 4px;
   background-color: var(--color-bg-secondary);
@@ -577,6 +597,7 @@ const steps = [
   overflow: hidden;
 }
 
+/* 进度条填充：渐变色，带增长动画 */
 .landing__hero-card-fill {
   height: 100%;
   border-radius: 2px;
@@ -584,10 +605,12 @@ const steps = [
   animation: fill-grow 1.2s ease-out 0.8s both;
 }
 
+/* 进度条增长动画：从0宽度到目标宽度 */
 @keyframes fill-grow {
   from { width: 0 !important; }
 }
 
+/* 数学公式展示卡片：毛玻璃效果，展示导数定义公式 */
 .landing__hero-equation {
   display: flex;
   align-items: center;
@@ -605,16 +628,19 @@ const steps = [
   margin-left: 60px;
 }
 
+/* 公式中的函数部分：主色高亮 */
 .landing__hero-eq-part {
   color: var(--color-primary);
   font-weight: 600;
 }
 
+/* 公式中的等号 */
 .landing__hero-eq-op {
   font-weight: 700;
   color: var(--color-text-primary);
 }
 
+/* 公式中的下标（如 h→0） */
 .landing__hero-eq-sub {
   font-size: 0.625rem;
   align-self: flex-end;
@@ -622,6 +648,7 @@ const steps = [
   color: var(--color-text-light);
 }
 
+/* 公式中的分数容器：上下排列分子分母 */
 .landing__hero-eq-frac {
   display: inline-flex;
   flex-direction: column;
@@ -629,29 +656,33 @@ const steps = [
   line-height: 1.2;
 }
 
+/* 分子：带底部边框线 */
 .landing__hero-eq-num {
   border-bottom: 1px solid var(--color-border);
   padding-bottom: 2px;
   font-size: 0.75rem;
 }
 
+/* 分母 */
 .landing__hero-eq-den {
   padding-top: 2px;
   font-size: 0.75rem;
 }
 
-/* Features */
+/* ==================== Features 核心优势区域 ==================== */
 .landing__features {
   padding: 6rem 0;
   background-color: var(--color-bg-secondary);
 }
 
+/* 功能卡片网格：6列布局，大卡片跨3列，中卡片跨2列 */
 .landing__features-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: var(--spacing-lg);
 }
 
+/* 单个功能卡片：白底带边框，悬停上移并高亮边框 */
 .landing__feature {
   background-color: var(--color-bg-white);
   border: 1px solid var(--color-border);
@@ -666,14 +697,17 @@ const steps = [
   border-color: var(--color-primary);
 }
 
+/* 大尺寸卡片：跨3列 */
 .landing__feature--lg {
   grid-column: span 3;
 }
 
+/* 中尺寸卡片：跨2列 */
 .landing__feature--md {
   grid-column: span 2;
 }
 
+/* 功能图标：带背景色的圆角方块 */
 .landing__feature-icon {
   width: 48px;
   height: 48px;
@@ -685,6 +719,7 @@ const steps = [
   margin-bottom: var(--spacing-md);
 }
 
+/* 功能标题 */
 .landing__feature-title {
   font-size: 1.125rem;
   font-weight: 700;
@@ -692,23 +727,26 @@ const steps = [
   margin-bottom: var(--spacing-sm);
 }
 
+/* 功能描述文字 */
 .landing__feature-desc {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
   line-height: 1.7;
 }
 
-/* Courses */
+/* ==================== Courses 课程体系区域 ==================== */
 .landing__courses {
   padding: 6rem 0;
 }
 
+/* 课程卡片网格：两列布局 */
 .landing__courses-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-lg);
 }
 
+/* 课程卡片：横向布局，含图标、标题描述、元信息和箭头 */
 .landing__course {
   display: flex;
   align-items: center;
@@ -724,6 +762,7 @@ const steps = [
   overflow: hidden;
 }
 
+/* 课程卡片悬停遮罩：淡渐变叠加层 */
 .landing__course::after {
   content: '';
   position: absolute;
@@ -743,6 +782,7 @@ const steps = [
   opacity: 1;
 }
 
+/* 课程图标：圆角方块，按难度显示不同渐变色 */
 .landing__course-icon {
   width: 56px;
   height: 56px;
@@ -758,10 +798,14 @@ const steps = [
   z-index: 1;
 }
 
+/* 入门级：绿色渐变 */
 .landing__course-icon--beginner { background: linear-gradient(135deg, #10B981, #059669); }
+/* 进阶级：橙色渐变 */
 .landing__course-icon--intermediate { background: linear-gradient(135deg, #F59E0B, #D97706); }
+/* 高级级：紫色渐变 */
 .landing__course-icon--advanced { background: linear-gradient(135deg, #8B5CF6, #6366F1); }
 
+/* 课程标题和描述区域 */
 .landing__course-body {
   flex: 1;
   min-width: 0;
@@ -786,6 +830,7 @@ const steps = [
   overflow: hidden;
 }
 
+/* 课程元信息：章节数和难度标签，右对齐 */
 .landing__course-meta {
   display: flex;
   flex-direction: column;
@@ -796,11 +841,13 @@ const steps = [
   z-index: 1;
 }
 
+/* 章节数文字 */
 .landing__course-chapters {
   font-size: 0.75rem;
   color: var(--color-text-light);
 }
 
+/* 难度标签：胶囊形 */
 .landing__course-difficulty {
   padding: 2px 10px;
   border-radius: 100px;
@@ -808,21 +855,25 @@ const steps = [
   font-weight: 600;
 }
 
+/* 入门难度标签：绿色 */
 .landing__course-difficulty--beginner {
   background-color: #ECFDF5;
   color: #059669;
 }
 
+/* 进阶难度标签：橙色 */
 .landing__course-difficulty--intermediate {
   background-color: #FFF7ED;
   color: #D97706;
 }
 
+/* 高级难度标签：紫色 */
 .landing__course-difficulty--advanced {
   background-color: #EEF2FF;
   color: #6366F1;
 }
 
+/* 课程卡片右侧箭头图标：悬停时变主色并右移 */
 .landing__course-arrow {
   position: relative;
   z-index: 1;
@@ -830,23 +881,26 @@ const steps = [
   transition: all 0.25s ease;
 }
 
+/* 悬停时箭头变主色并右移 */
 .landing__course:hover .landing__course-arrow {
   color: var(--color-primary);
   transform: translateX(4px);
 }
 
-/* How */
+/* ==================== How 学习方式区域 ==================== */
 .landing__how {
   padding: 6rem 0;
   background-color: var(--color-bg-secondary);
 }
 
+/* 三步流程网格：三列等宽 */
 .landing__how-steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-xl);
 }
 
+/* 单个步骤卡片：白底带边框，悬停上移 */
 .landing__how-step {
   position: relative;
   padding: var(--spacing-xl);
@@ -861,6 +915,7 @@ const steps = [
   box-shadow: var(--shadow-lg);
 }
 
+/* 步骤编号：大号渐变色数字 */
 .landing__how-number {
   font-size: 3rem;
   font-weight: 800;
@@ -873,6 +928,7 @@ const steps = [
   margin-bottom: var(--spacing-md);
 }
 
+/* 步骤标题 */
 .landing__how-title {
   font-size: 1.125rem;
   font-weight: 700;
@@ -880,17 +936,19 @@ const steps = [
   margin-bottom: var(--spacing-sm);
 }
 
+/* 步骤描述文字 */
 .landing__how-desc {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
   line-height: 1.7;
 }
 
-/* CTA */
+/* ==================== CTA 行动号召区域 ==================== */
 .landing__cta {
   padding: 6rem 0;
 }
 
+/* CTA 内部容器：渐变背景，圆角，居中文字 */
 .landing__cta-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -904,6 +962,7 @@ const steps = [
   margin-right: var(--spacing-lg);
 }
 
+/* CTA 装饰符号：右下角大号半透明 ∑ */
 .landing__cta-deco {
   position: absolute;
   right: -20px;
@@ -915,6 +974,7 @@ const steps = [
   pointer-events: none;
 }
 
+/* CTA 标题：白色大字 */
 .landing__cta-title {
   font-size: 2.25rem;
   font-weight: 800;
@@ -923,6 +983,7 @@ const steps = [
   position: relative;
 }
 
+/* CTA 描述：半透明白色 */
 .landing__cta-desc {
   font-size: 1.0625rem;
   color: rgba(255, 255, 255, 0.8);
@@ -930,17 +991,20 @@ const steps = [
   position: relative;
 }
 
+/* CTA 区域的主要按钮：白底紫字，覆盖默认样式 */
 .landing__cta .landing__btn--primary {
   background: #fff;
   color: var(--color-primary);
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 }
 
+/* CTA 按钮悬停：加深阴影 */
 .landing__cta .landing__btn--primary:hover {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
-/* Responsive */
+/* ==================== 响应式适配 ==================== */
+/* 平板端（≤1024px）：隐藏右侧视觉卡片，调整网格列数 */
 @media (max-width: 1024px) {
   .landing__hero-visual {
     display: none;
@@ -972,6 +1036,7 @@ const steps = [
   }
 }
 
+/* 手机端（≤768px）：缩小标题，调整布局为纵向 */
 @media (max-width: 768px) {
   .landing__hero {
     min-height: auto;
@@ -1059,6 +1124,7 @@ const steps = [
   }
 }
 
+/* 小屏手机端（≤480px）：进一步缩小字号和间距 */
 @media (max-width: 480px) {
   .landing__hero-title {
     font-size: 1.875rem;
