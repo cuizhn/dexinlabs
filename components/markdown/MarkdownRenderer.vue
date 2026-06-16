@@ -8,60 +8,33 @@
   - 文档未加载时显示加载中占位文本
 -->
 <template>
-  <!-- Markdown 内容容器 -->
   <div class="markdown-body" ref="contentRef">
-    <!-- 使用 Nuxt Content 渲染 Markdown 文档 -->
-    <ContentRenderer v-if="chapterDoc" :value="chapterDoc" />
+    <!-- 使用 Nuxt Content 渲染传入的 Markdown 文档 -->
+    <ContentRenderer v-if="document" :value="document" />
     <!-- 文档未加载时的占位提示 -->
     <div v-else class="markdown-renderer__empty">内容维修中...</div>
   </div>
 </template>
 
-<script setup>
-/**
- * Markdown 渲染组件：使用 Nuxt Content 的 ContentRenderer 渲染 Markdown 内容
- * remark-math + rehype-katex 在 nuxt.config.js 中配置，自动处理数学公式
- * @component MarkdownRenderer
- */
-import { ref, watch, onMounted } from 'vue'
+<script setup lang="ts">
+import { ref, watch, nextTick } from 'vue'
 
-// 获取当前路由信息
-const route = useRoute()
-
-// 计算属性：从路由参数中获取课程 slug
-const courseSlug = computed(() => route.params.slug)
-// 计算属性：从路由参数中获取章节 slug
-const chapterSlug = computed(() => route.params.chapter)
-
-
-// 使用 Nuxt Content 查询章节文档
-const { data: chapterDoc } = await useAsyncData(
-  `chapter-${courseSlug.value}-${chapterSlug.value}`,
-  () => {
-    return queryCollection('chapters')
-      .path(`/courses/${courseSlug.value}/${chapterSlug.value}`)
-      .first()
-  },
-
-)
+// 1. 定义 Props，只接收外部传入的文档对象
 const props = defineProps({
-  /** Nuxt Content 解析后的文档对象，为 null 时显示加载中 */
   document: {
     type: Object,
     default: null,
   },
 })
 
-/** 渲染完成事件，携带目录数据 { toc } 传递给父组件 */
+// 2. 定义事件，向父组件传递提取到的目录
 const emit = defineEmits(['rendered'])
 
-/** 内容容器的模板引用，用于查询 DOM 提取标题 */
-const contentRef = ref(null)
+// 3. 内容容器的 DOM 引用
+const contentRef = ref<HTMLElement | null>(null)
 
 /**
  * 从渲染后的 DOM 中提取目录数据
- * 查找所有 h2、h3 标题元素，收集其 id、文本内容和层级深度
- * 提取完成后通过 rendered 事件将目录数据发送给父组件
  */
 function extractToc() {
   if (!contentRef.value) return
@@ -69,32 +42,26 @@ function extractToc() {
   const headings = contentRef.value.querySelectorAll('h2, h3')
   const toc = Array.from(headings).map((heading) => ({
     id: heading.id,
-    text: heading.textContent,
+    text: heading.textContent?.trim() || '',
     depth: parseInt(heading.tagName.charAt(1)),
   }))
 
   emit('rendered', { toc })
 }
 
-// 监听 document prop 变化，文档更新后重新提取目录
+// 4. 监听 document prop 变化，使用 nextTick 确保 DOM 更新后再提取
 watch(
   () => props.document,
-  () => {
-    if (props.document) {
-      // 延迟执行，等待 DOM 更新完成后再提取目录
-      setTimeout(extractToc, 100)
+  async (newVal) => {
+    if (newVal) {
+      await nextTick() // 替代 setTimeout，确保 Vue 完成 DOM 更新
+      extractToc()
     }
   },
   { immediate: true }
 )
-
-// 组件挂载时，如果文档已存在则提取目录
-onMounted(() => {
-  if (props.document) {
-    setTimeout(extractToc, 100)
-  }
-})
 </script>
+
 
 <style scoped>
 /* 加载中占位文本：居中、弱化颜色 */
