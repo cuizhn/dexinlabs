@@ -57,6 +57,12 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 
   /* 字体 */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --font-content: "Source Serif 4", "Inter", system-ui, sans-serif;
+
+  --font-math: "STIX Two Math", "Times New Roman", serif;
+
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
 }
