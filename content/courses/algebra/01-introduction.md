@@ -84,9 +84,10 @@ $$
 
 $$
 \begin{aligned}
-\Delta = (-5)^2 - 4 \times 1 \times 6 \\
-= 25 - 24 \\
-= 1 > 0
+\Delta &= b^2 - 4ac \\
+       &= (-5)^2 - 4 \cdot 1 \cdot 6 \\
+       &= 25 - 24 \\
+       &= 1 > 0
 \end{aligned}
 $$
 
