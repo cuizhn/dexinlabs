@@ -93,6 +93,8 @@ export default defineNuxtConfig({
     experimental: {
       sqliteConnector: true,  // 启用 SQLite 连接器（实验性功能），用于本地内容数据库
     },
+  build: {
+
     markdown: {
       // remark 插件：在 Markdown 解析阶段处理语法树
       remarkPlugins: [
@@ -104,7 +106,7 @@ export default defineNuxtConfig({
       ],
     },
   },
-
+},
   /**
    * Vite 构建工具配置
    * 优化开发体验和构建性能
