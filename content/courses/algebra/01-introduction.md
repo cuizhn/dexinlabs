@@ -83,9 +83,11 @@ $$
 解方程 $x^2 - 5x + 6 = 0$：
 
 $$
-\Delta = (-5)^2 - 4 \times 1 \times 6 
-= 25 - 24 
+\begin{aligned}
+\Delta = (-5)^2 - 4 \times 1 \times 6 \\
+= 25 - 24 \\
 = 1 > 0
+\end{aligned}
 $$
 
 $$
