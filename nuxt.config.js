@@ -12,10 +12,6 @@
  * - Vite 构建工具优化配置
  */
 
-// 引入 Markdown 数学公式解析插件
-import remarkMath from 'remark-math'      // remark 插件：解析 Markdown 中的 LaTeX 数学语法（$...$ 和 $$...$$）
-import rehypeKatex from 'rehype-katex'    // rehype 插件：将数学语法节点渲染为 KaTeX HTML
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   /**
@@ -90,23 +86,21 @@ export default defineNuxtConfig({
    * 控制 Markdown 内容的解析和渲染行为
    */
   content: {
-    experimental: {
+experimental: {
       sqliteConnector: true,  // 启用 SQLite 连接器（实验性功能），用于本地内容数据库
     },
   build: {
-
     markdown: {
-      // remark 插件：在 Markdown 解析阶段处理语法树
-      remarkPlugins: [
-        remarkMath,  // 识别 $...$ 和 $$...$$ 数学公式语法，生成数学节点
-      ],
-      // rehype 插件：在 HTML 生成阶段处理渲染
-      rehypePlugins: [
-        [rehypeKatex, { output: 'html' }],  // 将数学节点渲染为 KaTeX HTML，output: 'html' 指定输出为 HTML 而非 MathML
-      ],
-    },
-  },
-},
+      remarkPlugins: {
+        'remark-math': {}
+      },
+
+      rehypePlugins: {
+        'rehype-katex': {}
+      }
+    }
+  }
+}
   /**
    * Vite 构建工具配置
    * 优化开发体验和构建性能
