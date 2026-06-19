@@ -12,8 +12,7 @@ background: transparent;
 
 .katex {
  font-family: var(--font-ui);
-  font-size: 1.02em;
-  vertical-align: -0.06em;
+  font-size: 1.05em;
 }
 
 /* 行内公式 */
