@@ -14,7 +14,7 @@
         </aside>
         <article class="chapter-page__content">
           <!-- 使用 Nuxt Content 渲染 Markdown 章节文档，渲染完成后通过 rendered 事件获取目录 -->
-          <MarkdownRenderer
+          <ContentRenderer
             v-if="chapterDoc"
             :value="chapterDoc"
           />
