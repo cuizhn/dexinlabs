@@ -1,173 +1,77 @@
-<!-- 页面路径: / -->
-<!-- 首页/落地页：包含 hero（主视觉）、features（核心优势）、courses（课程体系）、how（学习方式）、cta（行动号召）五个区域 -->
-<template>
-  <div class="landing">
-    <!-- Hero 主视觉区域：展示品牌标语、操作按钮、统计数据和装饰性卡片 -->
-    <section class="landing__hero">
-      <!-- 背景装饰层：网格线、光晕和浮动数学符号 -->
-      <div class="landing__hero-bg">
-        <div class="landing__hero-grid"></div>
-        <div class="landing__hero-glow landing__hero-glow--1"></div>
-        <div class="landing__hero-glow landing__hero-glow--2"></div>
-        <!-- 浮动数学符号，通过 v-for 渲染，位置和动画由 CSS 变量控制 -->
-        <span v-for="sym in floatingSymbols" :key="sym.id" class="landing__hero-symbol" :style="sym.style">{{ sym.char }}</span>
-      </div>
-
-      <!-- Hero 左侧内容：徽章、标题、描述、按钮和统计数据 -->
-      <div class="landing__hero-content">
-        <!-- 状态徽章：显示"免费开放 · 持续更新" -->
-        <div class="landing__hero-badge">
-          <span class="landing__hero-badge-dot"></span>
-          免费开放 · 持续更新
-        </div>
-        <!-- 主标题：渐变色强调"理解世界" -->
-        <h1 class="landing__hero-title">
-          用数学<br/>
-          <span class="landing__hero-title-accent">理解世界</span>
-        </h1>
-        <!-- 平台简介描述 -->
-        <p class="landing__hero-desc">
-          从算术到微积分，系统化的学习路径与交互式练习，让每一个数学概念都变得清晰可触
-        </p>
-        <!-- 操作按钮组：开始学习和浏览课程 -->
-        <div class="landing__hero-actions">
-          <NuxtLink to="/courses" class="landing__btn landing__btn--primary">
-            开始学习
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </NuxtLink>
-          <NuxtLink to="/courses" class="landing__btn landing__btn--ghost">
-            浏览课程
-          </NuxtLink>
-        </div>
-        <!-- 统计数据展示：课程数、章节数、题库量 -->
-        <div class="landing__hero-stats">
-          <div class="landing__hero-stat">
-            <span class="landing__hero-stat-num">1</span>
-            <span class="landing__hero-stat-label">核心课程</span>
-          </div>
-          <div class="landing__hero-stat-divider"></div>
-          <div class="landing__hero-stat">
-            <span class="landing__hero-stat-num">2</span>
-            <span class="landing__hero-stat-label">章节内容</span>
-          </div>
-          <div class="landing__hero-stat-divider"></div>
-          <div class="landing__hero-stat">
-            <span class="landing__hero-stat-num">∞</span>
-            <span class="landing__hero-stat-label">练习题库</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Hero 右侧视觉装饰：课程进度卡片和数学公式 -->
-      <div class="landing__hero-visual">
-        <div class="landing__hero-card landing__hero-card--1">
-          <div class="landing__hero-card-icon">∫</div>
-          <div class="landing__hero-card-body">
-            <span class="landing__hero-card-label">微积分基础</span>
-            <div class="landing__hero-card-bar"><div class="landing__hero-card-fill" style="width:35%"></div></div>
-          </div>
-        </div>
-        <div class="landing__hero-card landing__hero-card--2">
-          <div class="landing__hero-card-icon">∆</div>
-          <div class="landing__hero-card-body">
-            <span class="landing__hero-card-label">平面几何</span>
-            <div class="landing__hero-card-bar"><div class="landing__hero-card-fill" style="width:60%"></div></div>
-          </div>
-        </div>
-        <div class="landing__hero-card landing__hero-card--3">
-          <div class="landing__hero-card-icon">x²</div>
-          <div class="landing__hero-card-body">
-            <span class="landing__hero-card-label">代数入门</span>
-            <div class="landing__hero-card-bar"><div class="landing__hero-card-fill" style="width:80%"></div></div>
-          </div>
-        </div>
-        <div class="landing__hero-equation">
-          <span class="landing__hero-eq-part">f(x)</span>
-          <span class="landing__hero-eq-op">=</span>
-          <span class="landing__hero-eq-part">lim</span>
-          <span class="landing__hero-eq-sub">h→0</span>
-          <span class="landing__hero-eq-frac">
-            <span class="landing__hero-eq-num">f(x+h) − f(x)</span>
-            <span class="landing__hero-eq-den">h</span>
-          </span>
-        </div>
-      </div>
-    </section>
-
-     <!-- Features 核心优势区域：展示平台的五大特色功能 -->
-    <HomeFeatureGrid />
-
-
-
-    <!-- How 学习方式区域：三步引导用户了解学习流程 -->
-    <section class="landing__how">
+<!-- Features 核心优势区域：展示平台的五大特色功能 -->
+   <template>
+    <section class="landing__features">
       <div class="landing__section-inner">
         <div class="landing__section-header">
-          <span class="landing__section-tag">学习方式</span>
-          <h2 class="landing__section-title">三步开启<br/>数学之旅</h2>
+          <span class="landing__section-tag">核心优势</span>
+          <h2 class="landing__section-title">为数学学习<br/>量身打造</h2>
+          <p class="landing__section-desc">不只是视频和文字，而是真正可交互的学习体验</p>
         </div>
 
-        <!-- 三步流程卡片：选择课程 → 阅读与练习 → 持续进阶 -->
-        <div class="landing__how-steps">
-          <div v-for="(step, i) in steps" :key="i" class="landing__how-step">
-            <div class="landing__how-number">{{ String(i + 1).padStart(2, '0') }}</div>
-            <div class="landing__how-content">
-              <h3 class="landing__how-title">{{ step.title }}</h3>
-              <p class="landing__how-desc">{{ step.desc }}</p>
+        <!-- 功能卡片网格：大卡片占3列，中卡片占2列 -->
+        <div class="landing__features-grid">
+          <div v-for="(feat, i) in features" :key="i" class="landing__feature" :class="`landing__feature--${feat.size}`">
+            <div class="landing__feature-icon" :style="{ backgroundColor: feat.bg }">
+              <span>{{ feat.icon }}</span>
             </div>
+            <h3 class="landing__feature-title">{{ feat.title }}</h3>
+            <p class="landing__feature-desc">{{ feat.desc }}</p>
           </div>
         </div>
       </div>
     </section>
-
-  <HomeCTASection />
-  </div>
 </template>
-
 <script setup>
-import { computed } from 'vue'
+/**
+ * 平台核心优势功能列表组件：展示平台的五大特色功能
+ * @component HomeFeatureGrid
+ */
+import { ref } from 'vue'
 
-// 设置页面标题（titleTemplate 在 app.vue 中定义为 '%s - Edu Platform'，此处只填页面标题部分）
-useHead({
-  title: '用数学理解世界',
+const props = defineProps({
+  /** 功能卡片数据列表 */
+  features: { type: Array, default: () => [] },
 })
-
-// 计算属性：Hero 背景浮动数学符号列表，每个符号带有位置、动画延迟等 CSS 变量
-const floatingSymbols = computed(() => {
-  const chars = ['π', '∑', '∫', '√', '∞', 'Δ', 'θ', 'λ', 'φ', 'α', 'β', '∂']
-  return chars.map((char, i) => ({
-    id: i,
-    char,
-    style: {
-      '--x': `${5 + (i * 8) % 90}%`,
-      '--y': `${10 + (i * 17) % 75}%`,
-      '--delay': `${i * 0.7}s`,
-      '--duration': `${4 + (i % 4)}s`,
-      '--size': `${0.8 + (i % 3) * 0.4}rem`,
-      '--rotate': `${(i * 30) % 360}deg`,
-      opacity: 0.06 + (i % 3) * 0.03,
-    },
-  }))
-})
-
-
-// 三步学习流程数据
-const steps = [
+// 平台核心优势功能列表数据
+const features = [
   {
-    title: '选择课程',
-    desc: '根据你的水平和兴趣，选择合适的数学课程开始学习',
+    icon: '📐',
+    title: '系统化课程',
+    desc: '从代数几何到概率统计，完整覆盖中学数学知识体系，每个阶段都有清晰的学习目标和路径规划',
+    size: 'lg',
+    bg: '#EEF2FF',
   },
   {
-    title: '阅读与练习',
-    desc: '系统化的章节内容配合交互式练习，加深对每个知识点的理解',
+    icon: '✏️',
+    title: '交互式练习',
+    desc: '单选题、填空题等多种题型，即时判题反馈，边学边练巩固知识',
+    size: 'md',
+    bg: '#ECFDF5',
   },
   {
-    title: '持续进阶',
-    desc: '完成课程后自动追踪进度，推荐下一步学习内容，持续提升',
+    icon: '📊',
+    title: '学习追踪',
+    desc: '实时记录学习进度，可视化展示知识掌握程度',
+    size: 'md',
+    bg: '#FFF7ED',
+  },
+  {
+    icon: '🔬',
+    title: '公式渲染',
+    desc: 'KaTeX 驱动的数学公式渲染，让复杂的数学表达式清晰呈现',
+    size: 'md',
+    bg: '#FDF2F8',
+  },
+  {
+    icon: '📱',
+    title: '多端适配',
+    desc: '响应式设计，手机、平板、电脑随时随地学习',
+    size: 'lg',
+    bg: '#F0F9FF',
   },
 ]
-</script>
 
+</script>
 <style scoped>
 /* ==================== 全局布局 ==================== */
 /* 落地页根容器：隐藏水平溢出 */
@@ -627,10 +531,10 @@ const steps = [
 
 /* 大尺寸卡片：跨3列 */
 .landing__feature--lg {
-  grid-column: span 3;
+  grid-column: span 2;
 }
 
-/* 中尺寸卡片：跨2列 */
+/* 中尺寸卡片：跨3列 */
 .landing__feature--md {
   grid-column: span 2;
 }
@@ -871,7 +775,65 @@ const steps = [
   line-height: 1.7;
 }
 
+/* ==================== CTA 行动号召区域 ==================== */
+.landing__cta {
+  padding: 6rem 0;
+}
 
+/* CTA 内部容器：渐变背景，圆角，居中文字 */
+.landing__cta-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4rem var(--spacing-xl);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #6366F1 50%, var(--color-secondary) 100%);
+  border-radius: var(--border-radius-xl);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin-left: var(--spacing-lg);
+  margin-right: var(--spacing-lg);
+}
+
+/* CTA 装饰符号：右下角大号半透明 ∑ */
+.landing__cta-deco {
+  position: absolute;
+  right: -20px;
+  bottom: -30px;
+  font-size: 12rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.06);
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* CTA 标题：白色大字 */
+.landing__cta-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: var(--spacing-md);
+  position: relative;
+}
+
+/* CTA 描述：半透明白色 */
+.landing__cta-desc {
+  font-size: 1.0625rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: var(--spacing-xl);
+  position: relative;
+}
+
+/* CTA 区域的主要按钮：白底紫字，覆盖默认样式 */
+.landing__cta .landing__btn--primary {
+  background: #fff;
+  color: var(--color-primary);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* CTA 按钮悬停：加深阴影 */
+.landing__cta .landing__btn--primary:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
 
 /* ==================== 响应式适配 ==================== */
 /* 平板端（≤1024px）：隐藏右侧视觉卡片，调整网格列数 */

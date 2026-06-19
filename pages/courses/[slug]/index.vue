@@ -84,10 +84,9 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 import { useCourse } from '~/composables/course/useCourse.js'
 
-// 获取当前路由信息
+// 获取当前路由信息（Nuxt 自动提供 useRoute）
 const route = useRoute()
 // 获取课程相关方法
 const { getCourse } = useCourse()

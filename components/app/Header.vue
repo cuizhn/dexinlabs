@@ -71,11 +71,11 @@ const navItems = [
 // 移动端菜单是否展开的响应式状态
 const isMenuOpen = ref(false)
 
+// useRoute 必须在 setup 顶层调用，不能放在 computed 内
+const route = useRoute()
+
 // 当前路由路径的计算属性，用于高亮当前导航项
-const currentPath = computed(() => {
-  const route = useRoute()
-  return route.path
-})
+const currentPath = computed(() => route.path)
 
 /** 切换移动端菜单的展开/收起状态 */
 function toggleMenu() {

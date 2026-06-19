@@ -1,7 +1,7 @@
 <!--
   MarkdownRenderer 组件 - Markdown 渲染器
   功能说明：
-  - 使用 Nuxt Content 的 ContentRenderer 渲染 Markdown 文档内容
+  - 使用 Nuxt Content 的 ContentRenderer 渲染由父组件传入的 Markdown 文档
   - 数学公式通过 remark-math + rehype-katex 自动处理（在 nuxt.config.js 中配置）
   - 渲染完成后自动提取页面中的 h2、h3 标题生成目录数据
   - 通过 rendered 事件将目录数据传递给父组件，供 TocSidebar 使用
@@ -10,43 +10,25 @@
 <template>
   <!-- Markdown 内容容器 -->
   <div class="markdown-body" ref="contentRef">
-    <!-- 使用 Nuxt Content 渲染 Markdown 文档 -->
-    <ContentRenderer v-if="chapterDoc" :value="chapterDoc" />
+    <!-- 使用 Nuxt Content 渲染父组件传入的文档对象 -->
+    <ContentRenderer v-if="value" :value="value" />
     <!-- 文档未加载时的占位提示 -->
-    <div v-else class="markdown-renderer__empty">内容维修中...</div>
+    <div v-else class="markdown-renderer__empty">内容加载中...</div>
   </div>
 </template>
 
 <script setup>
 /**
- * Markdown 渲染组件：使用 Nuxt Content 的 ContentRenderer 渲染 Markdown 内容
+ * Markdown 渲染组件：接收父组件传入的文档对象并渲染
+ * 父组件（[chapter].vue）通过 :value="chapterDoc" 传入已查询好的文档
  * remark-math + rehype-katex 在 nuxt.config.js 中配置，自动处理数学公式
  * @component MarkdownRenderer
  */
 import { ref, watch, onMounted } from 'vue'
 
-// 获取当前路由信息
-const route = useRoute()
-
-// 计算属性：从路由参数中获取课程 slug
-const courseSlug = computed(() => route.params.slug)
-// 计算属性：从路由参数中获取章节 slug
-const chapterSlug = computed(() => route.params.chapter)
-
-
-// 使用 Nuxt Content 查询章节文档
-const { data: chapterDoc } = await useAsyncData(
-  `chapter-${courseSlug.value}-${chapterSlug.value}`,
-  () => {
-    return queryCollection('chapters')
-      .path(`/courses/${courseSlug.value}/${chapterSlug.value}`)
-      .first()
-  },
-
-)
 const props = defineProps({
-  /** Nuxt Content 解析后的文档对象，为 null 时显示加载中 */
-  document: {
+  /** Nuxt Content 解析后的文档对象，由父组件通过 :value 传入 */
+  value: {
     type: Object,
     default: null,
   },
@@ -76,11 +58,11 @@ function extractToc() {
   emit('rendered', { toc })
 }
 
-// 监听 document prop 变化，文档更新后重新提取目录
+// 监听传入文档的变化，文档更新后重新提取目录
 watch(
-  () => props.document,
+  () => props.value,
   () => {
-    if (props.document) {
+    if (props.value) {
       // 延迟执行，等待 DOM 更新完成后再提取目录
       setTimeout(extractToc, 100)
     }
@@ -90,7 +72,7 @@ watch(
 
 // 组件挂载时，如果文档已存在则提取目录
 onMounted(() => {
-  if (props.document) {
+  if (props.value) {
     setTimeout(extractToc, 100)
   }
 })

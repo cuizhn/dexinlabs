@@ -78,7 +78,10 @@ export default defineNuxtConfig({
    */
   components: {
     dirs: [
-      '~/components',
+      {
+        path: '~/components',
+        //pathPrefix: false,  // 忽略子目录前缀，AppHeader.vue 直接注册为 <AppHeader>，而非 <CommonAppHeader>
+      },
     ],
   },
 

@@ -22,9 +22,7 @@
 </template>
 
 <script setup>
-// 引入布局所需的公共组件
-import AppHeader from '~/components/common/AppHeader.vue'  // 顶部导航栏组件
-import AppFooter from '~/components/common/AppFooter.vue'  // 页脚组件
+// Nuxt 会自动导入 ~/components 目录下的所有组件，无需手动 import
 </script>
 
 <style scoped>
