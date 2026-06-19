@@ -8,7 +8,6 @@
   - 文档未加载时显示加载中占位文本
 -->
 <template>
-  <!-- Markdown 内容容器 -->
   <div class="markdown-body" ref="contentRef">
     <!-- 使用 Nuxt Content 渲染父组件传入的文档对象 -->
     <ContentRenderer v-if="value" :value="value" />
@@ -34,16 +33,14 @@ const props = defineProps({
   },
 })
 
-/** 渲染完成事件，携带目录数据 { toc } 传递给父组件 */
+// 2. 定义事件，向父组件传递提取到的目录
 const emit = defineEmits(['rendered'])
 
-/** 内容容器的模板引用，用于查询 DOM 提取标题 */
-const contentRef = ref(null)
+// 3. 内容容器的 DOM 引用
+const contentRef = ref<HTMLElement | null>(null)
 
 /**
  * 从渲染后的 DOM 中提取目录数据
- * 查找所有 h2、h3 标题元素，收集其 id、文本内容和层级深度
- * 提取完成后通过 rendered 事件将目录数据发送给父组件
  */
 function extractToc() {
   if (!contentRef.value) return
@@ -51,7 +48,7 @@ function extractToc() {
   const headings = contentRef.value.querySelectorAll('h2, h3')
   const toc = Array.from(headings).map((heading) => ({
     id: heading.id,
-    text: heading.textContent,
+    text: heading.textContent?.trim() || '',
     depth: parseInt(heading.tagName.charAt(1)),
   }))
 
@@ -77,6 +74,7 @@ onMounted(() => {
   }
 })
 </script>
+
 
 <style scoped>
 /* 加载中占位文本：居中、弱化颜色 */
