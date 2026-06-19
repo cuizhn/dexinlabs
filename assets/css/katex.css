@@ -4,13 +4,14 @@
   overflow-x: auto;
   overflow-y: hidden;
   padding: var(--spacing-md);
+background: transparent;
   background-color: var(--color-bg-secondary);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-border-light);
 }
 
 .katex {
-  font-family: var(--font-ui);
+ 
   font-size: 1.05em;
 }
 
