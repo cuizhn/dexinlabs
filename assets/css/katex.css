@@ -10,7 +10,7 @@
 }
 
 .katex {
-  
+  font-family: var(--font-ui);
   font-size: 1.05em;
 }
 
