@@ -1,3 +1,5 @@
+import { queryCollection } from '@nuxt/content'
+
 export const courseRepository = {
 
   async findAll() {
@@ -12,11 +14,21 @@ export const courseRepository = {
       .first()
   },
 
-  async getChapters(courseSlug) {
-    return await queryCollection('chapters')
-      .where('course', '=', courseSlug)
+  // ⭐关键升级：课程 + 章节聚合
+  async findWithMeta(slug) {
+
+    const course = await this.findBySlug(slug)
+    if (!course) return null
+
+    const chapters = await queryCollection('chapters')
+      .where('course', '=', slug)
       .order('order', 'ASC')
       .all()
-  }
 
+    return {
+      ...course,
+      chapters,
+      chapterCount: chapters.length
+    }
+  }
 }
