@@ -4,6 +4,9 @@ import { courseRepository } from '~/repositories/courseRepository'
 
 export function useCourse() {
 
+  async function getAllCourses() {
+    return await courseRepository.findAll()
+  }
   /**
    * 获取课程详情（_course.yml）
    */
@@ -25,6 +28,7 @@ export function useCourse() {
   }
 
   return {
+getAllCourses,
     getCourse,
     getChapters,
   }
