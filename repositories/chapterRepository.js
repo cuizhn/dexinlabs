@@ -1,65 +1,40 @@
-// repositories/chapterRepository.js
+import { courseRepository } from './courseRepository'
 
 export const chapterRepository = {
 
-  async findBySlug(
-    courseSlug,
-    chapterSlug
-  ) {
-
-    return await queryCollection('courses')
-      .path(
-        `/courses/${courseSlug}/${chapterSlug}`
-      )
-      .first()
-  },
-
-  async findAllByCourse(
-    courseSlug
-  ) {
+  async findBySlug(courseSlug, chapterSlug) {
 
     const docs =
       await queryCollection('courses')
         .all()
 
-    return docs
-      .filter(doc =>
-        doc.path.startsWith(
-          `/courses/${courseSlug}/`
-        )
-      )
-      .sort(
-        (a,b) =>
-          a.order - b.order
-      )
+    return docs.find(doc =>
+      doc.path ===
+        `/courses/${courseSlug}/${chapterSlug}`
+      || doc.slug === chapterSlug
+    ) || null
   },
 
-  async getNavigation(
-    courseSlug,
-    chapterSlug
-  ) {
+  async getNavigation(courseSlug, chapterSlug) {
 
     const chapters =
-      await this.findAllByCourse(
-        courseSlug
-      )
+      await courseRepository.getChapters(courseSlug)
 
     const index =
       chapters.findIndex(
-        chapter =>
-          chapter.slug === chapterSlug
+        c => c.slug === chapterSlug
       )
 
-    return {
-      prev:
-        index > 0
-          ? chapters[index - 1]
-          : null,
+    if (index === -1) {
+      return {
+        prev: null,
+        next: null
+      }
+    }
 
-      next:
-        index < chapters.length - 1
-          ? chapters[index + 1]
-          : null
+    return {
+      prev: chapters[index - 1] ?? null,
+      next: chapters[index + 1] ?? null
     }
   }
-      }
+}
