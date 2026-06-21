@@ -8,6 +8,8 @@
         <h1 class="courses-page__title">数学课程</h1>
         <p class="courses-page__description">
           从基础到高级，系统化的数学学习路径，帮助你建立完整的数学知识体系
+"courses.value"
+
         </p>
       </div>
     </section>
@@ -124,6 +126,9 @@ const filteredCourses = computed(() => {
       course.difficulty ===
       activeFilter.value
   )
+})
+watchEffect(() => {
+  console.log(courses.value)
 })
 </script>
 
