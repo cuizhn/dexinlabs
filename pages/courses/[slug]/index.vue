@@ -83,16 +83,23 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useCourse } from '~/composables/course/useCourse.js'
+import { useCourse } from '~/composables/course/useCourse'
 
-// 获取当前路由信息（Nuxt 自动提供 useRoute）
 const route = useRoute()
-// 获取课程相关方法
-const { getCourse } = useCourse()
-// 根据路由参数 slug 获取当前课程数据
-const course = computed(() => getCourse(route.params.slug))
 
+const { getCourse } = useCourse()
+
+const { data: course } = await useAsyncData(
+  `course-${route.params.slug}`,
+  () => getCourse(route.params.slug)
+)
+
+if (!course.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: '课程不存在'
+  })
+}
 // 动态设置页面标题
 useHead(() => ({
   title: course.value ? course.value.title : '课程未找到',
