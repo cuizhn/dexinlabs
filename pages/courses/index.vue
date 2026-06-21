@@ -61,8 +61,8 @@ import CourseCard from '~/components/course/CourseCard.vue'
 useHead({ title: '课程中心' })
 
 // 获取所有课程数据
-const { getAllCourses } = useCourse()
-const courses = getAllCourses()
+const { getCourse } = useCourse()
+const courses = getCourse()
 
 // 计算属性：筛选按钮列表，包含各难度课程数量
 const filters = computed(() => {
