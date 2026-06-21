@@ -21,7 +21,7 @@
     </div>
     <!-- 课程元信息：章节数和难度标签 -->
     <div class="course-card__meta">
-      <span class="course-card__chapters">{{ course.chapters?.length || 0 }} 章节</span>
+      <span class="course-card__chapters">{{ course.chapterCount }} 章节</span>
       <span class="course-card__difficulty" :class="`course-card__difficulty--${course.difficulty}`">
         {{ difficultyLabel(course.difficulty) }}
       </span>
