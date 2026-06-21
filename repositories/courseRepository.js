@@ -14,7 +14,7 @@ async findAll() {
           (a.order ?? 0) -
           (b.order ?? 0)
       )
-  }
+  },
   async findBySlug(slug) {
     const course =
       await queryCollection('courses')
