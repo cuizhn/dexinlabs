@@ -1,27 +1,31 @@
-// composables/useChapter.js
+// composables/useCourse.js
 
-import { chapterRepository }
-  from '~/repositories/chapterRepository'
+import { courseRepository } from '~/repositories/courseRepository'
 
-export async function useChapter(
-  courseSlug,
-  chapterSlug
-) {
+export function useCourse() {
 
-  const chapter =
-    await chapterRepository.findBySlug(
-      courseSlug,
-      chapterSlug
-    )
+  /**
+   * 获取课程详情（_course.yml）
+   */
+  async function getCourse(courseSlug) {
+    const course =
+      await courseRepository.findBySlug(courseSlug)
 
-  const navigation =
-    await chapterRepository.getNavigation(
-      courseSlug,
-      chapterSlug
-    )
+    return course
+  }
+
+  /**
+   * 获取课程章节列表
+   */
+  async function getChapters(courseSlug) {
+    const chapters =
+      await courseRepository.getChapters(courseSlug)
+
+    return chapters
+  }
 
   return {
-    chapter,
-    navigation
+    getCourse,
+    getChapters,
   }
 }
