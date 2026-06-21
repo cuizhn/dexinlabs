@@ -27,8 +27,8 @@
 <script setup>
 
 import { useChapter }
-  from '~/composables/course/useChapter
-const route = useRoute()'
+  from '~/composables/course/useChapter'
+const route = useRoute()
 
 const { loadChapter } = useChapter()
 
