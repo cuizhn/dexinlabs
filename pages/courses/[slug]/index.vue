@@ -83,16 +83,15 @@
 </template>
 
 <script setup>
-import { useCourse } from '~/composables/course/useChapter'
+import { useCourse } from '~/composables/course/useCourse'
 
 const route = useRoute()
 
-const { getCourse } = useCourse()
+const { getCourse, getChapters } = useCourse()
 
-const { data: course } = await useAsyncData(
-  `course-${route.params.slug}`,
-  () => getCourse(route.params.slug)
-)
+const course = await getCourse(route.params.course)
+
+const chapters = await getChapters(route.params.course)
 
 if (!course.value) {
   throw createError({
