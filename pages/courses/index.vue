@@ -51,42 +51,79 @@
     </section>
   </div>
 </template>
-
 <script setup>
 import { ref, computed } from 'vue'
-import { useCourse } from '~/composables/course/useCourse.js'
+import { useCourse } from '~/composables/useCourse'
 import CourseCard from '~/components/course/CourseCard.vue'
 
-// 设置页面标题
-useHead({ title: '课程中心' })
+useHead({
+  title: '课程中心'
+})
 
-// 获取所有课程数据
-const { getCourse } = useCourse()
-const courses = getCourse()
+const { getAllCourses } = useCourse()
 
-// 计算属性：筛选按钮列表，包含各难度课程数量
+const { data: courses } =
+  await useAsyncData(
+    'courses',
+    () => getAllCourses()
+  )
+
+const activeFilter = ref('all')
+
 const filters = computed(() => {
+
+  const list = courses.value || []
+
   const counts = {
-    all: courses.length,
-    beginner: courses.filter(c => c.difficulty === 'beginner').length,
-    intermediate: courses.filter(c => c.difficulty === 'intermediate').length,
-    advanced: courses.filter(c => c.difficulty === 'advanced').length,
+    all: list.length,
+    beginner: list.filter(
+      c => c.difficulty === 'beginner'
+    ).length,
+    intermediate: list.filter(
+      c => c.difficulty === 'intermediate'
+    ).length,
+    advanced: list.filter(
+      c => c.difficulty === 'advanced'
+    ).length
   }
+
   return [
-    { label: '全部', value: 'all', count: counts.all },
-    { label: '入门', value: 'beginner', count: counts.beginner },
-    { label: '进阶', value: 'intermediate', count: counts.intermediate },
-    { label: '高级', value: 'advanced', count: counts.advanced },
+    {
+      label: '全部',
+      value: 'all',
+      count: counts.all
+    },
+    {
+      label: '入门',
+      value: 'beginner',
+      count: counts.beginner
+    },
+    {
+      label: '进阶',
+      value: 'intermediate',
+      count: counts.intermediate
+    },
+    {
+      label: '高级',
+      value: 'advanced',
+      count: counts.advanced
+    }
   ]
 })
 
-// 当前激活的筛选条件，默认为"全部"
-const activeFilter = ref('all')
-
-// 计算属性：根据当前筛选条件过滤课程列表
 const filteredCourses = computed(() => {
-  if (activeFilter.value === 'all') return courses
-  return courses.filter(course => course.difficulty === activeFilter.value)
+
+  const list = courses.value || []
+
+  if (activeFilter.value === 'all') {
+    return list
+  }
+
+  return list.filter(
+    course =>
+      course.difficulty ===
+      activeFilter.value
+  )
 })
 </script>
 
