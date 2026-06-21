@@ -30,13 +30,13 @@ import { useChapter }
   from '~/composables/course/useChapter
 const route = useRoute()
 
-const {
-  chapter,
-  navigation
-} = await useChapter(
-  route.params.course,
-  route.params.chapter
-)
+const { loadChapter } = useChapter()
+
+const { chapter, navigation } =
+  await loadChapter(
+    route.params.course,
+    route.params.chapter
+  )
 </script>
 
 <style scoped>
