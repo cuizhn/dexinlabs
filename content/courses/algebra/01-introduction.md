@@ -2,6 +2,7 @@
 title: 代数基础与方程
 order: 1
 course: algebra
+slug: introduction
 chapterType: lesson
 duration: 30
 ---
