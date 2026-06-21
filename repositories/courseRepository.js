@@ -1,19 +1,9 @@
 export const courseRepository = {
 async findAll() {
 
-    const docs =
-      await queryCollection('courses')
-        .all()
-
-    return docs
-      .filter(doc =>
-        doc.path.endsWith('_course')
-      )
-      .sort(
-        (a,b) =>
-          (a.order ?? 0) -
-          (b.order ?? 0)
-      )
+        return await queryCollection('courses')
+      .order('order', 'ASC')
+      .all()
   },
   async findBySlug(slug) {
     const course =
