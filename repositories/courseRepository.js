@@ -2,7 +2,7 @@ export const courseRepository = {
 async findAll() {
 
         return await queryCollection('courses')
-      .order('order', 'ASC')
+      
       .all()
   },
   async findBySlug(slug) {
