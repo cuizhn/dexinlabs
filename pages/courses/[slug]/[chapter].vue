@@ -29,44 +29,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
-import { useCourse } from "~/composables/course/useCourse.js";
-import CourseSidebar from "~/components/course/CourseSidebar.vue";
+const route = useRoute()
 
-// 获取当前路由信息（Nuxt 自动提供 useRoute）
-const route = useRoute();
-// 获取课程相关方法
-const { getCourse, getChapter, getChapterNavigation } = useCourse();
-
-
-// 计算属性：从路由参数中获取课程 slug
-const courseSlug = computed(() => route.params.slug);
-// 计算属性：从路由参数中获取章节 slug
-const chapterSlug = computed(() => route.params.chapter);
-
-// 计算属性：当前课程数据
-const course = computed(() => getCourse(courseSlug.value));
-// 计算属性：当前章节数据
-const chapter = computed(() => getChapter(courseSlug.value, chapterSlug.value));
-
-// 使用 Nuxt Content 查询章节文档
-const { data: chapterDoc } = await useAsyncData(
-  `chapter-${courseSlug.value}-${chapterSlug.value}`,
-  () => {
-    return queryCollection("chapters")
-      .path(`/courses/${courseSlug.value}/${chapterSlug.value}`)
-      .first();
-  },
-  { watch: [courseSlug, chapterSlug] },
-);
-
-// 设置 SEO 元信息
-useSeoMeta(() => ({
-  title: chapter.value
-    ? `${chapter.value.title} - ${course.value?.title}`
-    : "章节未找到",
-}));
-
+const {
+  chapter,
+  navigation
+} = await useChapter(
+  route.params.course,
+  route.params.chapter
+)
 </script>
 
 <style scoped>
