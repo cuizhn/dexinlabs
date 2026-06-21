@@ -7,7 +7,7 @@ import { defineContentConfig, defineCollection, z } from '@nuxt/content'
  */
 const courses = defineCollection({
   type: 'data',
-  source: 'courses/**/_course.yml',
+  source: 'courses/**/_index.yml',
   schema: z.object({
     id: z.string(),
     title: z.string(),
