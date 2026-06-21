@@ -6,17 +6,13 @@
       <div class="chapter-page__layout">
         <!-- 左侧：章节导航侧边栏 -->
         <aside class="chapter-page__sidebar">
-          <CourseSidebar
-            :course-id="course.id"
-            :chapters="course.chapters"
-            :current-slug="chapterSlug"
-          />
+          
         </aside>
         <article class="chapter-page__content">
           <!-- 使用 Nuxt Content 渲染 Markdown 章节文档，渲染完成后通过 rendered 事件获取目录 -->
           <ContentRenderer
-            v-if="chapterDoc"
-            :value="chapterDoc"
+            v-if="chapter"
+            :doc="chapter"
           />
           <!-- 文档加载中提示 -->
           <div v-else class="chapter-page__empty">
