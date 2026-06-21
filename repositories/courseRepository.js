@@ -1,5 +1,20 @@
 export const courseRepository = {
+async findAll() {
 
+    const docs =
+      await queryCollection('courses')
+        .all()
+
+    return docs
+      .filter(doc =>
+        doc.path.endsWith('_course')
+      )
+      .sort(
+        (a,b) =>
+          (a.order ?? 0) -
+          (b.order ?? 0)
+      )
+  }
   async findBySlug(slug) {
     const course =
       await queryCollection('courses')
