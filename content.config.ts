@@ -29,6 +29,7 @@ const chapters = defineCollection({
     title: z.string(),
     order: z.number(),
     course: z.string(),
+slug: z.string(),
     chapterType: z.enum(['lesson', 'exercise']).optional(),
     duration: z.number().optional(),
   }),
