@@ -83,7 +83,7 @@
 </template>
 
 <script setup>
-import { useCourse } from '~/composables/course/useCourse'
+import { useCourse } from '~/composables/course/useChapter'
 
 const route = useRoute()
 
