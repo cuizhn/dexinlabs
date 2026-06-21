@@ -89,9 +89,9 @@ const route = useRoute()
 
 const { getCourse, getChapters } = useCourse()
 
-const course = await getCourse(route.params.course)
+const course = await getCourse(route.params.slug)
 
-const chapters = await getChapters(route.params.course)
+const chapters = await getChapters(route.params.slug)
 
 if (!course.value) {
   throw createError({
