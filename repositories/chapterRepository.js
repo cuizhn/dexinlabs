@@ -4,15 +4,10 @@ export const chapterRepository = {
 
   async findBySlug(courseSlug, chapterSlug) {
 
-    const docs =
-      await queryCollection('courses')
-        .all()
-
-    return docs.find(doc =>
-      doc.path ===
-        `/courses/${courseSlug}/${chapterSlug}`
-      || doc.slug === chapterSlug
-    ) || null
+    return await queryCollection('chapters')
+      .where('course', '=', courseSlug)
+      .where('slug', '=', chapterSlug)
+      .first()
   },
 
   async getNavigation(courseSlug, chapterSlug) {
@@ -25,16 +20,9 @@ export const chapterRepository = {
         c => c.slug === chapterSlug
       )
 
-    if (index === -1) {
-      return {
-        prev: null,
-        next: null
-      }
-    }
-
     return {
       prev: chapters[index - 1] ?? null,
-      next: chapters[index + 1] ?? null
+      next: chapters[index + 1] ?? null,
     }
   }
 }
