@@ -28,7 +28,7 @@
 
 import { useChapter }
   from '~/composables/course/useChapter
-const route = useRoute()
+const route = useRoute()'
 
 const { loadChapter } = useChapter()
 
