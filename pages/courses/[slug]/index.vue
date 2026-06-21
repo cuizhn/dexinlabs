@@ -87,9 +87,12 @@ import { useCourse } from '~/composables/course/useCourse'
 
 const route = useRoute()
 
-const { getCourse, getChapters } = useCourse()
+const { getCourse } = useCourse()
 
-const course = await getCourse(route.params.slug)
+const { data: course } =
+  await useAsyncData(() =>
+    getCourse(route.params.slug)
+  )
 
 const chapters = await getChapters(route.params.slug)
 
