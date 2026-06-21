@@ -25,6 +25,9 @@
 </template>
 
 <script setup>
+
+import { useChapter }
+  from '~/composables/course/useChapter
 const route = useRoute()
 
 const {
