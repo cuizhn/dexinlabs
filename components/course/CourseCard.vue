@@ -9,22 +9,18 @@
 -->
 <template>
   <!-- 课程卡片：整体可点击，跳转到课程详情页 -->
-  <NuxtLink :to="`/courses/${course.id}`" class="course-card">
+  <NuxtLink :to="`/courses`" class="course-card">
     <!-- 课程图标：根据难度等级显示不同渐变背景色 -->
-    <div class="course-card__icon" :class="`course-card__icon--${course.difficulty}`">
-      {{ course.icon }}
-    </div>
+
     <!-- 课程主体信息：标题和描述 -->
     <div class="course-card__body">
-      <h3 class="course-card__title">{{ course.title }}</h3>
-      <p class="course-card__desc">{{ course.description }}</p>
+      <h3 class="course-card__title">Title</h3>
+      <p class="course-card__desc">Description</p>
     </div>
     <!-- 课程元信息：章节数和难度标签 -->
     <div class="course-card__meta">
-      <span class="course-card__chapters">{{ course.chapterCount }} 章节</span>
-      <span class="course-card__difficulty" :class="`course-card__difficulty--${course.difficulty}`">
-        {{ difficultyLabel(course.difficulty) }}
-      </span>
+      <span class="course-card__chapters">2 章节</span>
+      
     </div>
     <!-- 右侧箭头图标：悬停时向右平移 -->
     <div class="course-card__arrow">
@@ -47,15 +43,7 @@ const props = defineProps({
   },
 })
 
-/**
- * 将难度英文标识转换为中文标签
- * @param {string} d - 难度英文标识（beginner / intermediate / advanced）
- * @returns {string} 对应的中文标签
- */
-function difficultyLabel(d) {
-  const map = { beginner: '入门', intermediate: '进阶', advanced: '高级' }
-  return map[d] || d
-}
+
 </script>
 
 <style scoped>
