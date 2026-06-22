@@ -19,14 +19,10 @@
       <div class="container">
         <div class="courses-page__filter-list">
           <button
-            v-for="filter in filters"
-            :key="filter.value"
-            class="courses-page__filter-btn"
-            :class="{ 'courses-page__filter-btn--active': activeFilter === filter.value }"
-            @click="activeFilter = filter.value"
+           
           >
             {{ filter.label }}
-            <span class="courses-page__filter-count">{{ filter.count }}</span>
+            
           </button>
         </div>
       </div>
@@ -37,8 +33,8 @@
       <div class="container">
         <div class="courses-page__grid">
           <CourseCard
-            v-for="course in filteredCourses"
-            :key="course.id"
+            
+            :key="algebra"
             :course="course"
           />
         </div>
@@ -126,9 +122,6 @@ const filteredCourses = computed(() => {
       course.difficulty ===
       activeFilter.value
   )
-})
-watchEffect(() => {
-  console.log(courses.value)
 })
 </script>
 
