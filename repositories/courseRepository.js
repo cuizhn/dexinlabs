@@ -1,38 +1,43 @@
 /**
- * 课程仓库 - 负责查询 Nuxt Content 课程数据
- * 注意：此文件仅供服务端使用（API端点），客户端通过 API 获取数据
+ * 课程 Repository
+ * 职责：仅负责查询 Content 数据源
  */
-
 import { queryCollection } from '@nuxt/content/server'
 
 export const courseRepository = {
   /**
    * 获取所有课程
-   * @param {H3Event} event - 请求事件
    */
-  async findAll(event) {
-    return await queryCollection(event, 'courses').all()
+  async findAll() {
+    const docs = await queryCollection('courses').all()
+    return docs.map(doc => ({
+      id: doc.id,
+      slug: doc.slug || doc.path?.split('/').pop() || '',
+      title: doc.title || '',
+      description: doc.description || '',
+      icon: doc.icon || '📚',
+      difficulty: doc.difficulty || 'beginner',
+      order: doc.order ?? 0,
+      chapters: [],
+    })).sort((a, b) => a.order - b.order)
   },
 
   /**
-   * 根据 slug 获取课程
-   * @param {H3Event} event - 请求事件
-   * @param {string} slug - 课程标识
+   * 根据 slug 获取单个课程
    */
-  async findBySlug(event, slug) {
-    const courses = await queryCollection(event, 'courses').all()
-    return courses.find(c => c.id === slug) || null
+  async findBySlug(slug) {
+    const doc = await queryCollection('courses')
+      .where('slug', '=', slug)
+      .first()
+    if (!doc) return null
+    return {
+      id: doc.id,
+      slug: doc.slug || slug,
+      title: doc.title || '',
+      description: doc.description || '',
+      icon: doc.icon || '📚',
+      difficulty: doc.difficulty || 'beginner',
+      order: doc.order ?? 0,
+    }
   },
-
-  /**
-   * 获取课程的所有章节
-   * @param {H3Event} event - 请求事件
-   * @param {string} courseSlug - 课程标识
-   */
-  async getChapters(event, courseSlug) {
-    return await queryCollection(event, 'chapters')
-      .where('course', '=', courseSlug)
-      .sort({ order: 1 })
-      .all()
-  }
 }

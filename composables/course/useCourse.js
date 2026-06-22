@@ -1,28 +1,26 @@
 /**
- * 课程 Composable - 封装课程相关的业务逻辑
- * 页面组件通过此 Composable 获取数据，不直接调用 API
+ * 课程 Composable
+ * 职责：业务逻辑层，调用 Repository
  */
+import { courseRepository } from '~/repositories/courseRepository'
+import { chapterRepository } from '~/repositories/chapterRepository'
 
-export function useCourse() {
-  /**
-   * 获取所有课程列表
-   */
-  async function getAllCourses() {
-    const { data } = await useFetch('/api/courses')
-    return data.value || []
-  }
+/**
+ * 获取所有课程
+ * 课程列表页使用
+ */
+export async function useCourses() {
+  return await courseRepository.findAll()
+}
 
-  /**
-   * 获取单个课程详情（含章节列表）
-   * @param {string} slug - 课程标识
-   */
-  async function getCourse(slug) {
-    const { data } = await useFetch(`/api/courses/${slug}`)
-    return data.value || null
-  }
+/**
+ * 获取单个课程（含章节列表）
+ * 课程详情页使用
+ */
+export async function useCourseDetail(slug) {
+  const course = await courseRepository.findBySlug(slug)
+  if (!course) return null
 
-  return {
-    getAllCourses,
-    getCourse
-  }
+  const chapters = await chapterRepository.findByCourse(slug)
+  return { ...course, chapters }
 }

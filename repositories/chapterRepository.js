@@ -1,33 +1,53 @@
 /**
- * 章节仓库 - 负责查询 Nuxt Content 章节数据
- * 注意：此文件仅供服务端使用（API端点），客户端通过 API 获取数据
+ * 章节 Repository
+ * 职责：仅负责查询 Content 数据源
  */
-
 import { queryCollection } from '@nuxt/content/server'
 
 export const chapterRepository = {
   /**
-   * 获取课程的所有章节
-   * @param {H3Event} event - 请求事件
-   * @param {string} courseSlug - 课程标识
+   * 获取课程的所有章节（不含 _course.yml）
    */
-  async findAllByCourse(event, courseSlug) {
-    return await queryCollection(event, 'chapters')
-      .where('course', '=', courseSlug)
-      .sort({ order: 1 })
-      .all()
+  async findByCourse(courseSlug) {
+    const docs = await queryCollection('chapters').all()
+    return docs
+      .filter(doc => doc.path?.startsWith(`/courses/${courseSlug}/`))
+      .map(doc => ({
+        slug: doc.slug || doc.path?.split('/').pop() || '',
+        title: doc.title || '',
+        order: doc.order ?? 0,
+        path: doc.path,
+      }))
+      .sort((a, b) => a.order - b.order)
   },
 
   /**
-   * 根据课程和章节 slug 获取章节详情
-   * @param {H3Event} event - 请求事件
-   * @param {string} courseSlug - 课程标识
-   * @param {string} chapterSlug - 章节标识
+   * 获取单个章节内容
    */
-  async findBySlug(event, courseSlug, chapterSlug) {
-    return await queryCollection(event, 'chapters')
-      .where('course', '=', courseSlug)
-      .where({ _partial: { slug: chapterSlug } })
+  async findBySlug(courseSlug, chapterSlug) {
+    const doc = await queryCollection('chapters')
+      .path(`/courses/${courseSlug}/${chapterSlug}`)
       .first()
-  }
+    if (!doc) return null
+    return {
+      slug: doc.slug || chapterSlug,
+      title: doc.title || '',
+      description: doc.description || '',
+      content: doc.body,
+      meta: doc.meta ?? {},
+      path: doc.path,
+    }
+  },
+
+  /**
+   * 获取章节导航（上一章/下一章）
+   */
+  async findNavigation(courseSlug, chapterSlug) {
+    const chapters = await this.findByCourse(courseSlug)
+    const index = chapters.findIndex(ch => ch.slug === chapterSlug)
+    return {
+      prev: index > 0 ? chapters[index - 1] : null,
+      next: index < chapters.length - 1 ? chapters[index + 1] : null,
+    }
+  },
 }

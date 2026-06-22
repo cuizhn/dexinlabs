@@ -1,6 +1,6 @@
 import { computed, createVNode, resolveDynamicComponent, unref, mergeProps, useSSRContext } from 'vue';
 import { ssrRenderVNode } from 'vue/server-renderer';
-import { H as withLeadingSlash, I as withTrailingSlash, w as joinURL } from '../_/nitro.mjs';
+import { C as withLeadingSlash, D as withTrailingSlash, q as joinURL } from '../_/nitro.mjs';
 import { a as useRuntimeConfig } from './server.mjs';
 import 'node:http';
 import 'node:https';
