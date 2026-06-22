@@ -1,4 +1,4 @@
-import { queryCollection } from '@nuxt/content'
+
 
 export const chapterRepository = {
 
