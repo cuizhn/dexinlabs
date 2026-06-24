@@ -1,10 +1,8 @@
 ---
+id: functions
+slug:functions
 title: 函数与图像
 order: 2
-course: algebra
-slug: functions
-chapterType: lesson
-duration: 40
 ---
 
 # 函数与图像
