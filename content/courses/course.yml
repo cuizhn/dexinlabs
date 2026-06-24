@@ -1,19 +1,8 @@
 courses:
 
   - id: algebra
+    slug:algebra
 
     title: 代数与函数
 
     order: 1
-
-  - id: geometry
-
-    title: 图形与几何
-
-    order: 2
-
-  - id: statistics
-
-    title: 概率与统计
-
-    order: 3
