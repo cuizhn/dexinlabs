@@ -1,8 +1,9 @@
-import { queryCollection } from '@nuxt/content'
+
 
 export default defineEventHandler(async (event) => {
 
   const courses = await queryCollection(event, 'courses')
+    .where('slug', '!=', 'slug')
     .order('order', 'ASC')
     .all()
 

@@ -1,4 +1,4 @@
-import { CourseRepository } from '@/repositories/courseRepository'
+import { CourseRepository } from '~/repositories/courseRepository'
 
 export function useCourse() {
 

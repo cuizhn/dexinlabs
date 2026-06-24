@@ -1,6 +1,6 @@
 ---
 id: functions
-slug:functions
+slug: functions
 title: 函数与图像
 order: 2
 ---

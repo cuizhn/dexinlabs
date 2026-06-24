@@ -1,6 +1,6 @@
 ---
 id: introduction
-slug:introduction
+slug: introduction
 title: 代数基础与方程
 order: 1
 ---

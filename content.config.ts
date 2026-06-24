@@ -12,6 +12,8 @@ const courses = defineCollection({
     id: z.string(),
     slug: z.string(),
     title: z.string(),
+    description: z.string(),
+    icon: z.string(),
     order: z.number().default(0),
   }),
 })

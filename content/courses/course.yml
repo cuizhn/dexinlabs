@@ -2,7 +2,7 @@ courses:
 
   - id: algebra
     slug:algebra
-
     title: 代数与函数
-
+    description: 学习代数的核心结构与表达方式
+    icon: ∑
     order: 1
