@@ -1,15 +1,7 @@
-import { queryCollection } from '@nuxt/content/server'
+export class CourseRepository {
 
-export const courseRepository = {
-
-  async findAll(event) {
-
-    return await queryCollection(
-      event,
-      'courses'
-    )
-      .order('order', 'ASC')
-      .all()
+  async getCourses() {
+    return await $fetch('/api/courses')
   }
 
 }
