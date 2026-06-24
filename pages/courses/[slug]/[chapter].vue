@@ -2,18 +2,18 @@
 <!-- 章节阅读页 -->
 <template>
   <div class="chapter-page">
-    <template v-if="chapter">
+    <template v-if="data?.chapter">
       <!-- 头部 -->
       <section class="chapter-page__header">
         <div class="container">
           <nav class="chapter-page__breadcrumb">
             <NuxtLink to="/courses" class="chapter-page__breadcrumb-link">课程</NuxtLink>
             <span class="chapter-page__breadcrumb-sep">/</span>
-            <NuxtLink :to="`/courses/${courseSlug}`" class="chapter-page__breadcrumb-link">{{ chapter.title }}</NuxtLink>
+            <NuxtLink :to="`/courses/${courseSlug}`" class="chapter-page__breadcrumb-link">{{ courseSlug }}</NuxtLink>
             <span class="chapter-page__breadcrumb-sep">/</span>
-            <span class="chapter-page__breadcrumb-current">{{ chapter.title }}</span>
+            <span class="chapter-page__breadcrumb-current">{{ data.chapter.title }}</span>
           </nav>
-          <h1 class="chapter-page__title">{{ chapter.title }}</h1>
+          <h1 class="chapter-page__title">{{ data.chapter.title }}</h1>
         </div>
       </section>
 
@@ -24,9 +24,9 @@
             <!-- 左侧：章节列表 -->
             <aside class="chapter-page__sidebar">
               <CourseSidebar
-                v-if="chapters.length"
+                v-if="data.chapters?.length"
                 :course-slug="courseSlug"
-                :chapters="chapters"
+                :chapters="data.chapters"
                 :current-slug="chapterSlug"
               />
             </aside>
@@ -34,15 +34,15 @@
             <!-- 中间：正文 -->
             <div class="chapter-page__main">
               <div class="chapter-page__content">
-                <ContentRenderer v-if="chapter.content" :value="chapter.content" />
+                <ContentRenderer v-if="data.chapter.content" :value="data.chapter.content" />
                 <div v-else class="chapter-page__empty">章节内容加载中...</div>
               </div>
 
               <!-- 上下章导航 -->
               <ChapterNav
                 :course-slug="courseSlug"
-                :prev="prevChapter"
-                :next="nextChapter"
+                :prev="data.prev"
+                :next="data.next"
               />
             </div>
           </div>
@@ -51,7 +51,7 @@
     </template>
 
     <!-- 404 -->
-    <section v-if="!chapter" class="chapter-page__not-found">
+    <section v-if="data && !data.chapter" class="chapter-page__not-found">
       <div class="container container-sm text-center">
         <h2 class="chapter-page__not-found-title">章节未找到</h2>
         <p class="chapter-page__not-found-text">请检查链接是否正确</p>
@@ -62,18 +62,17 @@
 </template>
 
 <script setup>
-// 页面职责：加载数据和显示数据
 const route = useRoute()
 const courseSlug = route.params.slug
 const chapterSlug = route.params.chapter
 
 // 数据加载
-const { chapter, chapters, prevChapter, nextChapter } = await useChapterDetail(courseSlug, chapterSlug)
+const { data } = await useFetch(`/api/courses/${courseSlug}/${chapterSlug}`)
 
 // SEO
 useSeoMeta({
-  title: chapter?.title || '章节',
-  description: chapter?.description,
+  title: data.value?.chapter?.title || '章节',
+  description: data.value?.chapter?.description,
 })
 </script>
 
@@ -87,7 +86,7 @@ useSeoMeta({
 .chapter-page__breadcrumb-current { color: var(--color-text-primary); font-weight: 500; }
 .chapter-page__title { font-size: 1.75rem; font-weight: 700; color: var(--color-text-primary); margin: 0; }
 .chapter-page__body { padding: var(--spacing-xl) 0; }
-.chapter-page__layout { display: grid; grid-template-columns: 240px 1fr 220px; gap: var(--spacing-xl); align-items: start; }
+.chapter-page__layout { display: grid; grid-template-columns: 240px 1fr; gap: var(--spacing-xl); align-items: start; }
 .chapter-page__sidebar { position: sticky; top: 80px; }
 .chapter-page__main { min-width: 0; }
 .chapter-page__content { background-color: var(--color-bg-white); padding: var(--spacing-2xl); border-radius: var(--border-radius-lg); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm); }
