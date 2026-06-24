@@ -1,10 +1,21 @@
+import { CourseRepository } from '@/repositories/courseRepository'
+
 export function useCourse() {
 
-  async function getAllCourses() {
-    return await $fetch('/api/courses')
+  const repo = new CourseRepository()
+
+  const courses = ref([])
+  const loading = ref(false)
+
+  const loadCourses = async () => {
+    loading.value = true
+    courses.value = await repo.getCourses()
+    loading.value = false
   }
 
   return {
-    getAllCourses
+    courses,
+    loading,
+    loadCourses
   }
 }
