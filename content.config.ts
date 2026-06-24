@@ -7,13 +7,11 @@ import { defineContentConfig, defineCollection, z } from '@nuxt/content'
  */
 const courses = defineCollection({
   type: 'data',
-  source: 'courses/**/_course.yml',
+  source: 'courses/course.yml',
   schema: z.object({
     id: z.string(),
+    slug: z.string(),
     title: z.string(),
-    description: z.string().optional(),
-    icon: z.string().optional(),
-    difficulty: z.enum(['beginner', 'intermediate', 'advanced']),
     order: z.number().default(0),
   }),
 })
@@ -26,12 +24,10 @@ const chapters = defineCollection({
   type: 'page',
  source: 'courses/**/[^_]*.md',
   schema: z.object({
+    id: z.string(),
+    slug: z.string(),
     title: z.string(),
     order: z.number(),
-    course: z.string(),
-slug: z.string(),
-    chapterType: z.enum(['lesson', 'exercise']).optional(),
-    duration: z.number().optional(),
   }),
 })
 
