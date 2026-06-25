@@ -1,0 +1,10 @@
+id: quadratic-equation-in-one-unknown
+slug: quadratic-equation-in-one-unknown
+order: 21
+
+lessons:
+- quadratic-equation-in-one-unknown-intro
+- quadratic-equation-in-one-unknown-formula
+- quadratic-equation-in-one-unknown-solve
+- quadratic-equation-in-one-unknown-apply
+- quadratic-equation-in-one-unknown-exercise

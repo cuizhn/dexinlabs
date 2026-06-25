@@ -7,29 +7,43 @@ import { defineContentConfig, defineCollection, z } from '@nuxt/content'
  */
 const courses = defineCollection({
   type: 'data',
-  source: 'courses/course.yml',
+  source: 'courses/**/*.yml',
   schema: z.object({
     id: z.string(),
     slug: z.string(),
-    title: z.string(),
-    description: z.string(),
-    icon: z.string(),
     order: z.number().default(0),
   }),
 })
 
+
+
 /**
- * 章节集合（Chapter Pages）
- * type: page — 章节内容页面，生成路由
+ * 课程内容集合（Lesson Content）
+ * type: page — 课程内容文件，包含 slug、title、description
+ */
+const lesson = defineCollection({
+  type: 'page',
+  source: 'lesson/**/*.md',
+  schema: z.object({
+    slug: z.string(),
+    title: z.string(),
+    description: z.string(),
+    order: z.number(),
+  }),
+})
+
+/**
+ * 章节配置集合（Chapter Config）
+ * type: data — 章节配置文件，包含 id、slug、order 和 lessons 列表
  */
 const chapters = defineCollection({
-  type: 'page',
- source: 'courses/**/[^_]*.md',
+  type: 'data',
+  source: 'chapter/**/*.yml',
   schema: z.object({
     id: z.string(),
     slug: z.string(),
-    title: z.string(),
     order: z.number(),
+    lessons: z.array(z.string()),
   }),
 })
 
@@ -37,5 +51,6 @@ export default defineContentConfig({
   collections: {
     courses,
     chapters,
+    lesson,
   },
 })
