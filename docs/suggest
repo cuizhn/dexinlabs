@@ -1,0 +1,572 @@
+# 得心实验室（math.dexinlabs.com）课程系统最终建议
+
+## 一、整体推进顺序
+
+```text
+课程系统
+↓
+练习系统
+↓
+注册登录
+↓
+学习进度与学习分析
+↓
+家长端反馈
+```
+
+当前阶段重点：
+
+```text
+课程系统跑通完整数据流
+Markdown正确渲染
+数学公式正确渲染
+基础前端页面完成
+```
+
+---
+
+# 二、课程内容模型
+
+采用：
+
+```text
+Course
+↓
+Lesson
+```
+
+用户认知层面：
+
+```text
+课程：函数
+课程：方程
+课程：圆
+课程：概率
+```
+
+每个课程内部由多个课时组成：
+
+```text
+函数
+├── introduction
+├── set
+├── function-representation
+├── function-properties
+```
+
+---
+
+# 三、推荐内容目录结构
+
+```bash
+content/
+
+courses/
+
+  function/
+
+    introduction.md
+
+    set.md
+
+    function-representation.md
+
+    function-properties.md
+
+  equation/
+
+    introduction.md
+
+    linear-equation.md
+
+  circle/
+
+  probability/
+```
+
+---
+
+# 四、推荐网址结构
+
+课程页：
+
+```text
+/course/function
+```
+
+课时页：
+
+```text
+/ course/function/introduction
+
+/ course/function/set
+
+/ course/function/function-representation
+```
+
+采用：
+
+```text
+course
+```
+
+作为 URL 语义。
+
+---
+
+# 五、知识领域分类
+
+不进入 URL。
+
+在 Frontmatter 中定义：
+
+```yaml
+domain: algebra
+```
+
+例如：
+
+```yaml
+---
+id: course_function
+
+slug: function
+
+title: 函数
+
+domain: algebra
+
+order: 1
+---
+```
+
+首页按领域分组：
+
+```text
+代数与函数
+图形与几何
+概率与统计
+```
+
+---
+
+# 六、教材版本设计
+
+单独维护教材映射。
+
+例如：
+
+```bash
+content/
+
+meta/
+
+  textbooks.yml
+```
+
+```yaml
+textbooks:
+
+  - id: pep-high-math
+
+    chapters:
+      - function
+      - exponential-function
+      - logarithm
+
+  - id: bsd-high-math
+
+    chapters:
+      - function
+      - function-properties
+      - exponential-function
+```
+
+教材负责：
+
+```text
+学习顺序
+上下章关系
+推荐路径
+```
+
+课程内容只保留一份。
+
+---
+
+# 七、Frontmatter 最终字段
+
+## Course
+
+```yaml
+---
+id: course_function
+
+slug: function
+
+title: 函数
+
+domain: algebra
+
+order: 1
+---
+```
+
+---
+
+## Lesson
+
+```yaml
+---
+id: lesson_introduction
+
+slug: introduction
+
+title: 函数入门
+
+order: 1
+---
+```
+
+---
+
+# 八、字段职责
+
+## 保留字段
+
+```yaml
+id
+slug
+title
+order
+```
+
+---
+
+## id
+
+用于：
+
+```text
+数据库主键
+学习进度
+练习关联
+知识图谱
+AI分析
+家长报告
+```
+
+---
+
+## slug
+
+用于：
+
+```text
+URL
+SEO
+路由参数
+页面查询入口
+```
+
+---
+
+## title
+
+用于：
+
+```text
+页面展示
+导航显示
+```
+
+---
+
+## order
+
+用于：
+
+```text
+课程排序
+课时排序
+上一课
+下一课
+学习路径
+解锁机制
+```
+
+建议设为必填字段。
+
+---
+
+# 九、路径驱动原则
+
+课程归属由目录结构自动推导。
+
+例如：
+
+```bash
+content/
+
+courses/
+
+function/
+
+  introduction.md
+```
+
+自动得到：
+
+```js
+{
+  course: "function",
+  lesson: "introduction"
+}
+```
+
+无需在 Frontmatter 中重复维护：
+
+```yaml
+course:
+chapter:
+```
+
+---
+
+# 十、数据流架构
+
+```text
+Content
+↓
+queryCollection
+↓
+Server API
+↓
+Repository
+↓
+Composable
+↓
+Page
+```
+
+---
+
+# 十一、各层职责
+
+## Content
+
+负责：
+
+```text
+课程内容
+Frontmatter
+Markdown正文
+```
+
+---
+
+## queryCollection
+
+负责：
+
+```text
+查询内容
+过滤内容
+排序内容
+```
+
+---
+
+## Server API
+
+负责：
+
+```text
+组织课程结构
+统一返回格式
+处理导航逻辑
+处理上一课下一课
+```
+
+---
+
+## Repository
+
+负责：
+
+```text
+统一访问 API
+统一数据入口
+```
+
+例如：
+
+```js
+getCourse()
+
+getLesson()
+
+getCourseNavigation()
+
+getLessonNavigation()
+```
+
+---
+
+## Composable
+
+负责：
+
+```text
+业务逻辑
+loading
+error
+学习状态
+进度管理
+```
+
+例如：
+
+```js
+useCourse()
+
+useLesson()
+```
+
+---
+
+## Page
+
+负责：
+
+```text
+页面展示
+交互逻辑
+UI渲染
+```
+
+---
+
+# 十二、Repository 位置
+
+推荐：
+
+```bash
+modules/
+
+  course/
+
+    repositories/
+      CourseRepository.js
+
+    composables/
+      useCourse.js
+
+    components/
+```
+
+按照业务模块组织。
+
+---
+
+# 十三、queryCollection 验证步骤
+
+先验证 Content 是否可以作为课程数据库。
+
+验证内容：
+
+```text
+读取 Markdown
+解析 Frontmatter
+按路径查询
+按 order 排序
+按条件过滤
+```
+
+---
+
+调试接口示例：
+
+```bash
+server/api/dev/content-tree.get.js
+```
+
+返回：
+
+```json
+[
+  {
+    "title": "函数入门",
+    "slug": "introduction",
+    "order": 1,
+    "path": "/courses/function/introduction"
+  }
+]
+```
+
+---
+
+# 十四、推荐开发顺序
+
+先设计数据模型：
+
+```text
+Course
+Lesson
+```
+
+然后：
+
+```text
+Content
+↓
+queryCollection
+↓
+API
+↓
+Repository
+↓
+Composable
+↓
+Page
+```
+
+实际编码顺序：
+
+```text
+1. 定义 Frontmatter Schema
+2. 编写 Markdown 内容
+3. 验证 queryCollection 查询
+4. 编写 Server API
+5. 编写 Repository
+6. 编写 Composable
+7. 编写页面 UI
+```
+
+---
+
+# 十五、数据库迁移原则
+
+未来迁移：
+
+```text
+Nuxt Content
+↓
+PostgreSQL / Supabase
+```
+
+保持：
+
+```text
+URL 使用 slug
+数据库关联使用 id
+```
+
+最终形成：
+
+```text
+对外：slug
+对内：id
+```
+
+的稳定架构。
