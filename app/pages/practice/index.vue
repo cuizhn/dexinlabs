@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { useExercise } from '~/modules/exercise/useExercise.js'
+import { useExercise } from '~/features/exercise/composables/useExercise.js'
 import QuizChoice from '~/components/exercise/QuizChoice.vue'
 import QuizInput from '~/components/exercise/QuizInput.vue'
 
