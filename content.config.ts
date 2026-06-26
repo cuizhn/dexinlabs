@@ -11,6 +11,8 @@ const courses = defineCollection({
   schema: z.object({
     id: z.string(),
     slug: z.string(),
+    title: z.string(),
+    description: z.string(),
     order: z.number().default(0),
   }),
 })
@@ -42,7 +44,9 @@ const chapters = defineCollection({
   schema: z.object({
     id: z.string(),
     slug: z.string(),
-    order: z.number(),
+    title: z.string(),
+    description: z.string(),
+    order: z.number().default(0),
     lessons: z.array(z.string()),
   }),
 })

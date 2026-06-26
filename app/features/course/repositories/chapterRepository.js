@@ -1,20 +1,15 @@
-import { queryCollection } from '@nuxt/content'
 
 export const chapterRepository = {
 
-  async findAllByCourse(courseSlug) {
-    return await queryCollection('chapters')
-      .where('course', '=', courseSlug)
-      .order('order', 'ASC')
-      .all()
+  async getChapters() {
+
+    return await $fetch('/api/chapters')
   },
+  async getChapter(id) {
 
-  async findBySlug(courseSlug, chapterSlug) {
-    const chapters =
-      await this.findAllByCourse(courseSlug)
-
-    return chapters.find(
-      chapter => chapter.slug === chapterSlug
-    ) || null
+    return await $fetch(
+      `/api/chapters/${id}`
+    )
   }
+
 }

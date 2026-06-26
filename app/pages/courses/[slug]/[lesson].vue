@@ -2,78 +2,45 @@
 <!-- 章节阅读页 -->
 <template>
   <div class="chapter-page">
-    <template v-if="data?.chapter">
-      <!-- 头部 -->
-      <section class="chapter-page__header">
-        <div class="container">
-          <nav class="chapter-page__breadcrumb">
-            <NuxtLink to="/courses" class="chapter-page__breadcrumb-link">课程</NuxtLink>
-            <span class="chapter-page__breadcrumb-sep">/</span>
-            <NuxtLink :to="`/courses/${courseSlug}`" class="chapter-page__breadcrumb-link">{{ courseSlug }}</NuxtLink>
-            <span class="chapter-page__breadcrumb-sep">/</span>
-            <span class="chapter-page__breadcrumb-current">{{ data.chapter.title }}</span>
-          </nav>
-          <h1 class="chapter-page__title">{{ data.chapter.title }}</h1>
-        </div>
-      </section>
+
 
       <!-- 内容 -->
       <section class="chapter-page__body">
         <div class="container">
           <div class="chapter-page__layout">
-            <!-- 左侧：章节列表 -->
-            <aside class="chapter-page__sidebar">
-              <CourseSidebar
-                v-if="data.chapters?.length"
-                :course-slug="courseSlug"
-                :chapters="data.chapters"
-                :current-slug="chapterSlug"
-              />
-            </aside>
+    
 
             <!-- 中间：正文 -->
             <div class="chapter-page__main">
               <div class="chapter-page__content">
-                <ContentRenderer v-if="data.chapter.content" :value="data.chapter.content" />
+                <ContentRenderer v-if="lesson" :value="lesson" />
                 <div v-else class="chapter-page__empty">章节内容加载中...</div>
               </div>
 
-              <!-- 上下章导航 -->
-              <ChapterNav
-                :course-slug="courseSlug"
-                :prev="data.prev"
-                :next="data.next"
-              />
             </div>
           </div>
         </div>
       </section>
-    </template>
 
-    <!-- 404 -->
-    <section v-if="data && !data.chapter" class="chapter-page__not-found">
-      <div class="container container-sm text-center">
-        <h2 class="chapter-page__not-found-title">章节未找到</h2>
-        <p class="chapter-page__not-found-text">请检查链接是否正确</p>
-        <NuxtLink to="/courses" class="chapter-page__back-link">返回课程列表</NuxtLink>
-      </div>
-    </section>
+
   </div>
 </template>
 
 <script setup>
 const route = useRoute()
-const courseSlug = route.params.slug
-const chapterSlug = route.params.chapter
+import { useLesson } from '~/features/course/composables/useLesson.js'
 
-// 数据加载
-const { data } = await useFetch(`/api/courses/${courseSlug}/${chapterSlug}`)
 
-// SEO
-useSeoMeta({
-  title: data.value?.chapter?.title || '章节',
-  description: data.value?.chapter?.description,
-})
+const {
+  lesson,
+  loading,
+  loadLesson
+} = useLesson()
+
+await loadLesson(route.params.lesson)
+console.log(route.params.lesson)
+console.log(lesson)
+// 加载章节内容
 </script>
 
 <style scoped>
