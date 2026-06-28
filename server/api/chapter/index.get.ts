@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
   if (course) {
     // .where('course', '=', course): 条件过滤，仅返回 course 字段等于指定值的记录
     // 三个参数含义：字段名、比较运算符（= 表示相等）、比较值
-    //q.where('course', '=', course)
+    q.where('course', '=', course)
   }
 
    //.all(): 执行查询并返回所有匹配的记录数组
