@@ -15,5 +15,9 @@
     "nuxt": "^4.4.6",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
   }
 }

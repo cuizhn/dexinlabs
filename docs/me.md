@@ -1,6 +1,4 @@
-重要结论与决策
-[2026-05-26] 确定数学教育项目域名和 Slogan 方案：核心思想为"数字流动"；域名选择 flownum（优于 flowmath，原因：num 更短更利落、不限于数学可扩展到物理化学等、造词品牌辨识度高），Slogan 为"数字流动处，思维生长时"；域名可用性排查结果：flownum.com 已被占用（停放在 Afternic 出售），flownum.io 和 flownum.dev 未注册，建议优先注册 flownum.io。
-[2026-05-16] 确定采用 VitePress 软链接方案（方案2）来管理文档博客：在 D:\projects\ 下分别维护 my-docs（纯 Markdown 仓库，推送到 GitHub https://github.com/myuser/my-docs.git）和 my-blog（VitePress 项目），通过 mklink /J docs D:\projects\my-docs 创建 Junction 链接使 VitePress 读取 docs 目录。日常只需在 my-docs 操作并推送，VitePress 配置（.vitepress\config.js）导航和侧边栏路径需带 /docs/ 前缀。若 my-blog 也需推送 GitHub，需在 .gitignore 中排除 docs/ 和 node_modules/。
+
 [2026-06-11] 确定架构分层职责（Nuxt Content v3 教学平台最清晰最易维护的结构）：Page 只负责展示，Composable 负责状态管理，Repository 负责接口调用，API 负责查询 Content。各层职责单一，不可越界。
 [2026-06-11] 数学教育平台项目三份核心章程全部就绪：技术章程（Nuxt 4 + Vue 3 + TS + Nuxt Content v3 + KaTeX，不使用 UI/CSS 框架除非明确指定，当前阶段仅允许 MarkdownContent、ExampleBlock、HintBlock、CalloutBlock、KnowledgeLink 五个教学组件，优先级：内容平台稳定性 > Markdown 内容架构 > 课程与章节系统 > 教学组件扩展能力 > 练习系统 > 数据库与后台管理 > 高级交互与 AI 功能）、品牌章程（Dexin Labs 得心实验室，核心理念"得心应手"，品牌宣言"理解为先，应用为本。让学习真正得心应手。Learn Deeply. Apply Naturally."）、内容章程（采用双轨制模型：知识体系 Domain→Topic 与教学体系 Course→Chapter→Lesson 独立，通过 Lesson.topics 字段连接；知识体系与教材版本解耦，Topic 可跨版本复用）
 时效性区（随时间变化，定期更新或淘汰，超限时优先删除）

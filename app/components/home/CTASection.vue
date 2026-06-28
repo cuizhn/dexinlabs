@@ -5,7 +5,7 @@
         <div class="landing__cta-deco">∑</div>
         <h2 class="landing__cta-title">准备好开始了吗？</h2>
         <p class="landing__cta-desc">数学的世界等你探索，从第一步开始</p>
-        <NuxtLink to="/courses" class="landing__btn landing__btn--primary landing__btn--lg">
+        <NuxtLink to="/course" class="landing__btn landing__btn--primary landing__btn--lg">
           立即开始学习
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </NuxtLink>

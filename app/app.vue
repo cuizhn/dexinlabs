@@ -18,16 +18,16 @@
   </div>
 </template>
 
-<script setup>
-// 根组件：设置全局 head 信息
-// useHead 是 Nuxt 提供的组合式函数，用于动态管理 HTML <head> 内容
+<script setup lang="ts">
 useHead({
-  // 标题模板：%s 会被页面级 useHead 设置的 title 替换
-  // 例如：页面设置 title 为 '代数入门'，最终显示为 '代数入门 - Edu Platform'
-  titleTemplate: '%s - Edu Platform',
+  titleTemplate: (title?: string) =>
+    title ? `${title} · Dexin Labs` : 'Dexin Labs · 得心实验室',
   meta: [
-    // 全局 SEO 描述，所有页面共享（页面级可覆盖）
-    { name: 'description', content: '数学学习平台，从基础到高级，让数学变得简单' },
+    {
+      name: 'description',
+      content:
+        '理解为先，应用为本。Dexin Labs（得心实验室）— 让数学学习真正得心应手。K12 数学思维学习平台。',
+    },
   ],
 })
 </script>

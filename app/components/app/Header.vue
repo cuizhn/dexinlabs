@@ -13,7 +13,7 @@
       <!-- Logo 区域：点击返回首页 -->
       <NuxtLink to="/" class="app-header__logo">
         <span class="app-header__logo-icon">∑</span>
-        <span class="app-header__logo-text">Edu Platform</span>
+        <span class="app-header__logo-text">Dexin Labs</span>
       </NuxtLink>
 
       <!-- 桌面端导航菜单：水平排列的导航链接 -->
@@ -23,7 +23,7 @@
           :key="item.path"
           :to="item.path"
           class="app-header__nav-item"
-          :class="{ 'app-header__nav-item--active': currentPath === item.path }"
+          :class="{ 'app-header__nav-item--active': isActive(item) }"
         >
           {{ item.label }}
         </NuxtLink>
@@ -57,15 +57,22 @@
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { useRoute } from 'nuxt/app'
 import { ref, computed } from 'vue'
 
-// 导航菜单项配置：定义顶部导航的路径和显示标签
-const navItems = [
-  { path: '/', label: '首页' },
-  { path: '/courses', label: '课程' },
-  { path: '/practice', label: '练习' },
-  { path: '/knowledge', label: '知识图谱' },
+interface NavItem {
+  path: string
+  label: string
+  exact?: boolean
+}
+
+const navItems: NavItem[] = [
+  { path: '/', label: '首页', exact: true },
+  { path: '/study', label: '同步学习' },
+  { path: '/course', label: '课程中心' },
+  { path: '/methods', label: '学习方法' },
+  { path: '/about', label: '关于我们' },
 ]
 
 // 移动端菜单是否展开的响应式状态
@@ -74,8 +81,12 @@ const isMenuOpen = ref(false)
 // useRoute 必须在 setup 顶层调用，不能放在 computed 内
 const route = useRoute()
 
-// 当前路由路径的计算属性，用于高亮当前导航项
+// 当前路由路径的计算属性，用于高亮当前导航项（startsWith 匹配子路由，exact 匹配首页）
 const currentPath = computed(() => route.path)
+function isActive(item: NavItem): boolean {
+  if (item.exact) return currentPath.value === item.path
+  return currentPath.value === item.path || currentPath.value.startsWith(`${item.path}/`)
+}
 
 /** 切换移动端菜单的展开/收起状态 */
 function toggleMenu() {

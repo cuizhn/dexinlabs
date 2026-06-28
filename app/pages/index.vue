@@ -31,11 +31,11 @@
         </p>
         <!-- 操作按钮组：开始学习和浏览课程 -->
         <div class="landing__hero-actions">
-          <NuxtLink to="/courses" class="landing__btn landing__btn--primary">
+          <NuxtLink to="/course" class="landing__btn landing__btn--primary">
             开始学习
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </NuxtLink>
-          <NuxtLink to="/courses" class="landing__btn landing__btn--ghost">
+          <NuxtLink to="/course" class="landing__btn landing__btn--ghost">
             浏览课程
           </NuxtLink>
         </div>
@@ -124,12 +124,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { useHead } from 'nuxt/app'
 import { computed } from 'vue'
 
-// 设置页面标题（titleTemplate 在 app.vue 中定义为 '%s - Edu Platform'，此处只填页面标题部分）
 useHead({
-  title: '用数学理解世界',
+  title: 'Dexin Labs · 用数学理解世界',
 })
 
 // 计算属性：Hero 背景浮动数学符号列表，每个符号带有位置、动画延迟等 CSS 变量

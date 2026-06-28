@@ -13,24 +13,24 @@
       <!-- 品牌信息区域：Logo、平台名称、简介 -->
       <div class="app-footer__brand">
         <span class="app-footer__logo">∑</span>
-        <span class="app-footer__name">Edu Platform</span>
-        <p class="app-footer__desc">让数学变得简单</p>
+        <span class="app-footer__name">Dexin Labs</span>
+        <p class="app-footer__desc">理解为先，应用为本。让学习真正得心应手。</p>
       </div>
 
       <!-- 链接分组区域：按类别组织的导航链接 -->
       <div class="app-footer__links">
-        <!-- 课程链接分组 -->
+        <!-- 学习分组 -->
         <div class="app-footer__group">
-          <h4 class="app-footer__group-title">课程</h4>
-          <NuxtLink to="/courses" class="app-footer__link">全部课程</NuxtLink>
-          <NuxtLink to="/courses" class="app-footer__link">代数入门</NuxtLink>
-          <NuxtLink to="/courses" class="app-footer__link">平面几何</NuxtLink>
+          <h4 class="app-footer__group-title">开始学习</h4>
+          <NuxtLink to="/study" class="app-footer__link">同步学习</NuxtLink>
+          <NuxtLink to="/course" class="app-footer__link">课程中心</NuxtLink>
+          <NuxtLink to="/methods" class="app-footer__link">学习方法</NuxtLink>
         </div>
-        <!-- 学习链接分组 -->
+        <!-- 关于分组 -->
         <div class="app-footer__group">
-          <h4 class="app-footer__group-title">学习</h4>
-          <NuxtLink to="/practice" class="app-footer__link">练习中心</NuxtLink>
-          <NuxtLink to="/knowledge" class="app-footer__link">知识图谱</NuxtLink>
+          <h4 class="app-footer__group-title">关于</h4>
+          <NuxtLink to="/about" class="app-footer__link">品牌故事</NuxtLink>
+          <NuxtLink to="/course" class="app-footer__link">联系与反馈</NuxtLink>
         </div>
       </div>
     </div>
@@ -38,7 +38,7 @@
     <!-- 底部版权信息区域 -->
     <div class="app-footer__bottom">
       <div class="app-footer__bottom-container">
-        <p class="app-footer__copyright">Edu Platform - 数学学习平台</p>
+        <p class="app-footer__copyright">Dexin Labs · 得心实验室 — 理解为先，应用为本</p>
       </div>
     </div>
   </footer>
