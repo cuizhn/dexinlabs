@@ -19,12 +19,16 @@ export default defineEventHandler(async (event) => {
   // 返回链式查询构建器 q，后续可继续追加 where 等条件
   const q = queryCollection(event, 'chapter').order('order', 'ASC')
 
+<<<<<<< HEAD
   // 如果 URL 查询参数中提供了 course，则追加筛选条件
   if (course) {
     // .where('course', '=', course): 条件过滤，仅返回 course 字段等于指定值的记录
     // 三个参数含义：字段名、比较运算符（= 表示相等）、比较值
     //q.where('course', '=', course)
   }
+=======
+  
+>>>>>>> fb9a6b338cb4db473803a2bf5c4a15d8a53e4f41
 
    //.all(): 执行查询并返回所有匹配的记录数组
   // 每个元素为 chapter 文档对象，包含字段如: id, slug, title, order, course, lessons 等
