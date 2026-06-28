@@ -52,7 +52,7 @@ export const ChapterRepository = {
   // API 地址：GET /api/chapter
   // query params 结构：{ course?: string }，course 为课程 slug，用于筛选该课程下的章节
   // 返回 Promise<ChapterListItem[]>：成功返回章节列表数组，失败返回空数组
-  async findAll(courseSlug?: string): Promise<ChapterListItem[]> {
+  async findAll(): Promise<ChapterListItem[]> {
     // 开始 try 块，用于捕获网络请求可能抛出的异常
     try {
       // 声明并初始化空的查询参数对象，类型为键值均为 string 的记录
