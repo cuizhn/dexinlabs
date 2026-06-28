@@ -26,9 +26,6 @@ export default defineEventHandler(async (event) => {
     // 三个参数含义：字段名、比较运算符（= 表示相等）、比较值
     //q.where('course', '=', course)
   }
-=======
-  
->>>>>>> fb9a6b338cb4db473803a2bf5c4a15d8a53e4f41
 
    //.all(): 执行查询并返回所有匹配的记录数组
   // 每个元素为 chapter 文档对象，包含字段如: id, slug, title, order, course, lessons 等
