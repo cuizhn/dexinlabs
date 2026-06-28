@@ -2,7 +2,7 @@
 // defineEventHandler: 定义事件处理器的核心函数
 // getRouterParam: 从动态路由路径中提取命名参数（如 [slug] 部分）
 // createError: 创建标准化的 HTTP 错误对象并抛出
-import { defineEventHandler, getRouterParam, createError} from 'h3'
+import { defineEventHandler, getRouterParam, createError } from 'h3'
 // 默认导出事件处理器，处理 GET /api/chapter/:slug 动态路由请求
 // 根据章节 slug 获取单个章节详情，包含关联的课时列表和练习数据
 export default defineEventHandler(async (event) => {

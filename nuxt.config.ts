@@ -180,13 +180,18 @@ export default defineNuxtConfig({
     // content.experimental：实验性特性（Beta/Preview，可能后续版本变更 API）
     experimental: {
       // experimental.sqliteConnector：SQLite 内容连接器开关
-      //  true 的作用：
+      //  仅在开发环境开启：process.env.NODE_ENV !== 'production'
+      //  true 的作用（开发阶段）：
       //    构建阶段，@nuxt/content 将所有内容集合（chapter/lesson/exercise）写入本地 SQLite 数据库
       //    查询性能：queryCollection() 走 SQLite 索引查询，比默认的内存/JSON 文件扫描更快
       //               大数据量（>1000 条内容）时差异明显
       //    适用场景：集合数据量大、复杂 where/order/join 查询
+      //  false 的原因（生产部署，尤其是 Vercel Serverless）：
+      //    Vercel/Netlify 等 Serverless Functions 的文件系统是只读的（仅 /tmp 可写）
+      //    构建期生成的 SQLite db 在运行时函数冷启动时路径不稳定，易 queryCollection 失败
+      //    生产环境使用默认的内存查询索引即可（当前 chapter/lesson/exercise 仅几十条，性能无忧）
       //  注意：实验性特性，未来版本可能调整配置名或行为
-      sqliteConnector: true,
+      sqliteConnector: process.env.NODE_ENV !== 'production',
     },
     // content.build：构建阶段内容处理配置
     build: {
@@ -215,6 +220,27 @@ export default defineNuxtConfig({
         },
       },
     },
+  },
+
+  // ============================================================
+  // 【顶层 key: nitro】Nitro 服务端引擎配置（Nuxt 4 底层运行时 = Nitro）
+  //  作用：控制服务端渲染、API 路由、部署目标平台的打包格式
+  // ----------
+  //  nitro.preset：部署目标预设（Preset），决定 Nitro 构建产物的格式
+  //  可选值参考：'node-server'（默认）、'vercel'、'netlify'、'cloudflare'、'static' 等
+  //  当前值：'vercel'
+  //  为什么必须是 vercel：
+  //    Vercel 部署时，Nitro 需要将：
+  //      ① 页面 SSR → 打包为 Vercel Serverless Functions（.vercel/output/functions/*.func）
+  //      ② Server API（/api/chapter 等）→ 打包为同名 Vercel Functions
+  //      ③ 静态资源 → 输出到 .vercel/output/static/
+  //    如果 preset 保持默认 node-server，Vercel 会启动失败、无 Functions、500 错误或白屏
+  //  注意：Vercel 检测到 Nuxt 4 项目时会自动在 CI 中设置 NITRO_PRESET=vercel 环境变量，
+  //        此处显式配置可兜底（防止 auto-detect 失效或本地 build 部署产物上传场景）
+  //  nitro.esbuild.options：为了兼容 Vercel Node 20 runtime，设置 target 为 node20（可按需追加）
+  // ============================================================
+  nitro: {
+    preset: 'vercel',
   },
 
   // ============================================================

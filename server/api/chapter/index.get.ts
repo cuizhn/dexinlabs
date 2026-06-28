@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
     q.where('course', '=', course)
   }
 
-   //.all(): 执行查询并返回所有匹配的记录数组
+  // .all(): 执行查询并返回所有匹配的记录数组
   // 每个元素为 chapter 文档对象，包含字段如: id, slug, title, order, course, lessons 等
   // 无匹配时返回空数组 []
   return await q.all()
