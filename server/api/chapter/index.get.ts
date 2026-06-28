@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   // 返回链式查询构建器 q，后续可继续追加 where 等条件
   const q = queryCollection(event, 'chapter').order('order', 'ASC')
 
-<<<<<<< HEAD
+
   // 如果 URL 查询参数中提供了 course，则追加筛选条件
   if (course) {
     // .where('course', '=', course): 条件过滤，仅返回 course 字段等于指定值的记录
