@@ -1,0 +1,18 @@
+重要结论与决策
+[2026-05-26] 确定数学教育项目域名和 Slogan 方案：核心思想为"数字流动"；域名选择 flownum（优于 flowmath，原因：num 更短更利落、不限于数学可扩展到物理化学等、造词品牌辨识度高），Slogan 为"数字流动处，思维生长时"；域名可用性排查结果：flownum.com 已被占用（停放在 Afternic 出售），flownum.io 和 flownum.dev 未注册，建议优先注册 flownum.io。
+[2026-05-16] 确定采用 VitePress 软链接方案（方案2）来管理文档博客：在 D:\projects\ 下分别维护 my-docs（纯 Markdown 仓库，推送到 GitHub https://github.com/myuser/my-docs.git）和 my-blog（VitePress 项目），通过 mklink /J docs D:\projects\my-docs 创建 Junction 链接使 VitePress 读取 docs 目录。日常只需在 my-docs 操作并推送，VitePress 配置（.vitepress\config.js）导航和侧边栏路径需带 /docs/ 前缀。若 my-blog 也需推送 GitHub，需在 .gitignore 中排除 docs/ 和 node_modules/。
+[2026-06-11] 确定架构分层职责（Nuxt Content v3 教学平台最清晰最易维护的结构）：Page 只负责展示，Composable 负责状态管理，Repository 负责接口调用，API 负责查询 Content。各层职责单一，不可越界。
+[2026-06-11] 数学教育平台项目三份核心章程全部就绪：技术章程（Nuxt 4 + Vue 3 + TS + Nuxt Content v3 + KaTeX，不使用 UI/CSS 框架除非明确指定，当前阶段仅允许 MarkdownContent、ExampleBlock、HintBlock、CalloutBlock、KnowledgeLink 五个教学组件，优先级：内容平台稳定性 > Markdown 内容架构 > 课程与章节系统 > 教学组件扩展能力 > 练习系统 > 数据库与后台管理 > 高级交互与 AI 功能）、品牌章程（Dexin Labs 得心实验室，核心理念"得心应手"，品牌宣言"理解为先，应用为本。让学习真正得心应手。Learn Deeply. Apply Naturally."）、内容章程（采用双轨制模型：知识体系 Domain→Topic 与教学体系 Course→Chapter→Lesson 独立，通过 Lesson.topics 字段连接；知识体系与教材版本解耦，Topic 可跨版本复用）
+时效性区（随时间变化，定期更新或淘汰，超限时优先删除）
+进行中的项目
+Dexin Labs（2026-06-11）
+目标：基于 Nuxt Content 构建 K12 数学学习平台（参考 Khan Academy，个人开发者可持续开发），未来可能扩展教材版本（人教版/北师大版/苏教版等）和高中内容。品牌名 Dexin Labs（得心实验室），域名 cuizhn.cn，代码托管在 GitHub，部署到 Vercel。内容由用户自己编写或AI辅助，用户负责最终修改。Slogan 为"数字流动处，思维生长时"。用户登录系统暂时不碰
+页面架构：网站五大页面：首页（品牌理念+学习入口）、同步学习（按学校进度）、课程中心（核心，数学课程+章节）、学习方法（学会学习）、关于我们（品牌故事）
+路由结构：路由仅表示网站功能区，不代表数据模型。/course/:chapter/:lesson 用于学习内容区，/exercise/:chapter 用于练习区。"course" 只是 Learning Area 标识，不代表 Content 中存在 course 集合
+Content 目录结构：content/chapter/.yml（Chapter 定义）、content/lesson/.md（Lesson 内容）、content/exercises/（按知识领域组织的练习内容）
+API 结构：server/api/chapter/index.get.ts（章节列表）、chapter/[slug].get.ts（单章节完整数据含 lessons 和 exercise）、lesson/[slug].get.ts（单课时内容）、exercise/[slug].get.ts（章节练习）
+Repository 层：独立目录 repositories/，含 ChapterRepository.ts、LessonRepository.ts、ExerciseRepository.ts，职责为统一数据访问、封装 queryCollection、预留未来切换数据源
+调用链路：Page → Composable(useExercise) → Repository(ExerciseRepository) → Content
+Chapter 与 Lesson 关系：单向组织，Chapter 维护 lessons 数组，Lesson 不维护归属关系
+练习系统定位为"数学思维交互系统"（非简单答题页面），核心理念"思考→尝试→提示→修正→理解→总结→迁移"。包含完整交互规范：题目生命周期（10种状态）、5种反馈类型（正确/接近正确/计算错误/思路错误/格式错误）、多层提示系统（Hint1→Hint2→Hint3→完整解析）、13种答案输入方式（数字/公式/多选/单选/拖拽排序/连线/点击图形/坐标点击/绘图/滑块/填空/配对/分类/拼图）、交互动画规范（100ms hover/150ms submit）、错误超3次自动推荐提示、解析统一结构（答案→步骤→为什么→易错点→知识总结→相关课程）、学习数据记录（开始/结束/用时/错误次数/提示次数/正确与否/是否查看解析/收藏/再次练习）、章节渐进式练习流程（Lesson→练习1→练习2→练习3→小结→章节挑战→完成）
+进展：项目正式迁移至新目录 /sandbox/workspace/dexin-labs/，已完成完整初始化（共 51 个文件），含：4 个核心配置文件（package.json/nuxt.config.ts/tsconfig.json/content.config.ts 全部使用 Nuxt Content v3 API）、7 个 CSS 文件（Design System 18 模块落地为 tokens/typography/layout/motion/themes）、4 个 UI 组件（Button/Card/Badge/Input）、4 个教育组件（CourseCard/ChapterCard/FormulaBlock/ExampleBlock）、4 个 API 路由（queryCollection 仅在 server/api/ 层）、3 个 Repository、1 个 Composable（useCourse）、5 个页面（首页/课程中心/课时页/练习页/关于）、4 个 Chapter yml + 15 个 Lesson md + 1 个 Exercise yml。Git 已初始化并完成首次提交。npm install 因沙箱网络超时未完成，需在本地执行。当前阶段业务模型确定为三实体（Chapter→Lesson→Exercise）：Chapter 是核心组织单元（定义章节、课时顺序、入口、练习），Lesson 只负责内容（slug 全局唯一、不维护归属），每个 Chapter 对应一个 Exercise。知识体系 Domain→Topic 模型保留为未来能力（知识图谱、跨版本复用），当前先落地教学体系。未来扩展物理、化学等学科时再引入 Subject 层（Subject→Chapter→Lesson），当前不需要 course.yml/subject.yml。MVP范围最终确定为人教版七年级上册全部4章（有理数、整式的加减、一元一次方程、几何图形初步），共15个课时。视觉设计采用完整 Design System，品牌定位"科学+教育+实验室"（参考 Mathigon/Khan Academy/Linear/Notion），涵盖品牌/颜色/字体/图标/间距/圆角/阴影/边框/栅格/布局/动画/组件/深色模式/响应式/无障碍共18个模块。主色 #2563EB，字体 Inter + Noto Sans SC + KaTeX，8pt 间距系统，12列栅格，Container 1280px/内容区 760px/数学正文 720px
