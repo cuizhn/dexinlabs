@@ -1,4 +1,21 @@
 <!--
+  组件文件名：Footer.vue
+  Nuxt自动注册组件名：AppFooter
+  被引用页面/布局：app/layouts/default.vue（全局布局，所有页面共用）
+  Props：无（无 script setup，未使用 defineProps）
+  Emits：无（无 script setup，未使用 defineEmits）
+  CSS 变量引用：
+    --color-bg-white: 页脚背景色（纯白背景）
+    --color-border: 页脚顶部边框色
+    --color-border-light: 版权区域顶部分隔线（浅色边框）
+    --spacing-2xl / --spacing-lg / --spacing-xl / --spacing-md / --spacing-sm / --spacing-xs: 间距变量
+    --color-primary: 品牌 Logo 主题色、链接悬停色
+    --color-text-primary: 品牌名称、分组标题文字颜色
+    --color-text-secondary: 简介、链接文字颜色
+    --color-text-muted: 版权文字颜色（最弱化）
+    --text-sm / --text-xs: 字号变量
+-->
+<!--
   AppFooter 组件 - 页脚
   功能说明：
   - 页面底部页脚区域，包含品牌信息、链接分组和版权信息

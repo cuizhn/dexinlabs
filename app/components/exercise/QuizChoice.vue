@@ -1,4 +1,29 @@
 <!--
+  组件文件名：QuizChoice.vue
+  Nuxt自动注册组件名：ExerciseQuizChoice
+  被引用页面：暂无（项目中未找到页面引用此组件，仅在 docs/README.md 文档中提及）
+  Props 字段列表：
+    - question: { type: String, required: true }
+      题目文本内容
+    - options: { type: Array, required: true }
+      选项数组，每个元素为一个选项的文本（string[]）
+    - correctIndex: { type: Number, required: true }
+      正确答案的索引（从 0 开始）
+  Emits：无（未使用 defineEmits）
+  CSS 变量引用：
+    --spacing-lg / --spacing-md / --spacing-sm: 间距变量
+    --color-bg-white: 卡片背景色（白色）
+    --color-border: 选项边框色
+    --color-primary: 选中状态边框色、悬停背景色、标签背景色
+    --color-primary-light: 选中/悬停背景色（淡紫）
+    --color-success: 正确选项边框色、正确反馈文字色
+    --color-error: 错误选项边框色、错误反馈文字色
+    --color-text-primary: 题目、选项文字颜色
+    --color-bg-secondary: 选项标签背景色
+    --text-base / --text-sm: 字号变量
+    --border-radius-lg / --border-radius-md: 圆角大小
+-->
+<!--
   QuizChoice 组件 - 选择题
   功能说明：
   - 展示选择题题目和选项列表，支持单选
@@ -50,8 +75,12 @@
  * 选择题组件：支持单选、提交判题、反馈
  * @component QuizChoice
  */
+// import: ref 来自 'vue'，Vue 3 组合式 API，用于创建基本类型的响应式变量；
+//         computed 来自 'vue'，用于创建派生状态的计算属性
 import { ref, computed } from 'vue'
 
+// defineProps: 定义组件接收的 props，数据类型为 Readonly<{ question: string; options: string[]; correctIndex: number }>
+//   返回值 props 是一个只读的响应式对象
 const props = defineProps({
   /** 题目文本内容 */
   question: { type: String, required: true },
@@ -61,22 +90,24 @@ const props = defineProps({
   correctIndex: { type: Number, required: true },
 })
 
-/** 当前选中的选项索引，未选择时为 null */
+// selected: 响应式变量，当前选中的选项索引，数据类型 Ref<number | null>，默认值 null（未选择）
 const selected = ref(null)
 
-/** 是否已提交答案，提交后禁用选项和显示反馈 */
+// answered: 响应式变量，是否已提交答案，数据类型 Ref<boolean>，默认值 false（未提交）
 const answered = ref(false)
 
-/** 选项标签映射（A/B/C/D） */
+// optionLabels: 选项标签映射数组，数据类型 string[]，用于显示 A/B/C/D 选项标签
 const optionLabels = ['A', 'B', 'C', 'D']
 
-/** 计算属性：判断当前选择是否正确 */
+// isCorrect: 计算属性，判断当前选择是否正确，数据类型 ComputedRef<boolean>
+//   逻辑：比较选中的索引与 props.correctIndex 是否相等
 const isCorrect = computed(() => selected.value === props.correctIndex)
 
 /**
- * 选择某个选项
- * @param {number} index - 选项索引
- * 仅在未提交时允许选择
+ * selectOption: 函数，选择某个选项
+ * @param {number} index - 选项索引（从 0 开始）
+ * 仅在未提交答案（answered.value 为 false）时允许修改选择
+ * 无返回值
  */
 function selectOption(index) {
   if (!answered.value) {
@@ -84,7 +115,8 @@ function selectOption(index) {
   }
 }
 
-/** 提交答案，将 answered 置为 true 以触发判题反馈 */
+// submitAnswer: 函数，提交答案，将 answered 置为 true 以触发判题样式和反馈显示
+// 无参数，无返回值
 function submitAnswer() {
   answered.value = true
 }

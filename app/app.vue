@@ -19,9 +19,14 @@
 </template>
 
 <script setup lang="ts">
+import { useHead } from 'nuxt/app';
+
+// useHead：Nuxt 组合式 API，用于全局注入 <head> 标签内的元信息（标题、meta 等），所有页面共享
 useHead({
+  // titleTemplate：页面标题拼接模板 —— 子页面传入 title 时追加站点后缀，未传入时使用默认首页标题
   titleTemplate: (title?: string) =>
     title ? `${title} · Dexin Labs` : 'Dexin Labs · 得心实验室',
+  // meta：全局 meta 标签数组 —— 此处配置全站 SEO 描述，供搜索引擎抓取页面摘要
   meta: [
     {
       name: 'description',

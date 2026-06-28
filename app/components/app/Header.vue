@@ -1,4 +1,20 @@
 <!--
+  组件文件名：Header.vue
+  Nuxt自动注册组件名：AppHeader
+  被引用页面/布局：app/layouts/default.vue（全局布局，所有页面共用）
+  Props：无（未使用 defineProps）
+  Emits：无（未使用 defineEmits）
+  CSS 变量引用：
+    --color-bg-primary: 导航栏背景色（主背景色）
+    --color-border: 导航栏底部边框色
+    --shadow-sm: 导航栏底部阴影
+    --spacing-lg / --spacing-md / --spacing-sm / --spacing-xl: 间距变量
+    --color-primary: 主题色（品牌色、激活项背景）
+    --color-text-primary: 主要文字颜色
+    --color-bg-secondary: 次级背景色（悬停背景）
+    --border-radius-md: 圆角大小
+-->
+<!--
   AppHeader 组件 - 顶部导航栏
   功能说明：
   - 固定在页面顶部的导航栏，包含品牌 Logo、桌面端导航菜单、移动端汉堡菜单
@@ -58,15 +74,22 @@
 </template>
 
 <script setup lang="ts">
+// import: useRoute 来自 'nuxt/app'，Nuxt 官方组合式 API，用于获取当前路由对象（包含 path、query、params 等信息），数据类型为 RouteLocationNormalizedLoaded
 import { useRoute } from 'nuxt/app'
+// import: ref 来自 'vue'，Vue 3 组合式 API，用于创建基本类型的响应式变量；computed 来自 'vue'，用于创建派生状态的计算属性
 import { ref, computed } from 'vue'
 
+// interface: 导航项的类型定义，描述每个导航菜单项的数据结构
 interface NavItem {
+  // path: 导航跳转的路由路径，数据类型 string
   path: string
+  // label: 导航项显示的文字标签，数据类型 string
   label: string
+  // exact: 可选字段，是否精确匹配路由（首页需要精确匹配，避免子路由也高亮），数据类型 boolean | undefined
   exact?: boolean
 }
 
+// navItems: 导航菜单配置数组，数据类型 NavItem[]，包含5个导航项（首页/同步学习/课程中心/学习方法/关于我们）
 const navItems: NavItem[] = [
   { path: '/', label: '首页', exact: true },
   { path: '/study', label: '同步学习' },
@@ -75,25 +98,27 @@ const navItems: NavItem[] = [
   { path: '/about', label: '关于我们' },
 ]
 
-// 移动端菜单是否展开的响应式状态
+// isMenuOpen: 响应式变量，移动端菜单是否展开的状态，数据类型 Ref<boolean>，默认值 false（收起）
 const isMenuOpen = ref(false)
 
-// useRoute 必须在 setup 顶层调用，不能放在 computed 内
+// route: 当前路由对象，必须在 setup 顶层调用 useRoute() 获取，数据类型 RouteLocationNormalizedLoaded
 const route = useRoute()
 
-// 当前路由路径的计算属性，用于高亮当前导航项（startsWith 匹配子路由，exact 匹配首页）
+// currentPath: 计算属性，返回当前路由的路径字符串，数据类型 ComputedRef<string>，用于导航项高亮判断
 const currentPath = computed(() => route.path)
+// isActive: 函数，判断某个导航项是否处于激活状态（当前路由匹配），参数 item: NavItem，返回值 boolean
+//   逻辑：exact 为 true 时精确匹配路径，否则匹配路径前缀（支持子路由高亮）
 function isActive(item: NavItem): boolean {
   if (item.exact) return currentPath.value === item.path
   return currentPath.value === item.path || currentPath.value.startsWith(`${item.path}/`)
 }
 
-/** 切换移动端菜单的展开/收起状态 */
+// toggleMenu: 函数，切换移动端菜单的展开/收起状态，无参数，无返回值
 function toggleMenu() {
   isMenuOpen.value = !isMenuOpen.value
 }
 
-/** 关闭移动端菜单（点击导航链接后调用） */
+// closeMenu: 函数，关闭移动端菜单（点击导航链接后调用），无参数，无返回值
 function closeMenu() {
   isMenuOpen.value = false
 }

@@ -1,4 +1,28 @@
 <!--
+  组件文件名：QuizInput.vue
+  Nuxt自动注册组件名：ExerciseQuizInput
+  被引用页面：暂无（项目中未找到页面引用此组件，仅在 docs/README.md 文档中提及）
+  Props 字段列表：
+    - question: { type: String, required: true }
+      题目文本内容
+    - correctAnswer: { type: String, required: true }
+      正确答案文本
+    - placeholder: { type: String, required: false, default: '请输入答案' }
+      输入框占位提示文字
+  Emits：无（未使用 defineEmits）
+  CSS 变量引用：
+    --spacing-lg / --spacing-md / --spacing-sm: 间距变量
+    --color-bg-white: 卡片背景色（白色）
+    --color-border: 输入框边框色
+    --color-primary: 输入框聚焦边框色、光晕颜色
+    --color-success: 正确反馈文字色
+    --color-error: 错误反馈文字色
+    --color-text-primary: 题目文字颜色
+    --color-bg-secondary: 输入框禁用背景色
+    --text-base / --text-sm: 字号变量
+    --border-radius-lg / --border-radius-md: 圆角大小
+-->
+<!--
   QuizInput 组件 - 填空题
   功能说明：
   - 展示填空题题目和输入框，支持用户输入答案
@@ -44,8 +68,12 @@
  * 填空题组件：支持输入答案、提交判题、反馈
  * @component QuizInput
  */
+// import: ref 来自 'vue'，Vue 3 组合式 API，用于创建基本类型的响应式变量；
+//         computed 来自 'vue'，用于创建派生状态的计算属性
 import { ref, computed } from 'vue'
 
+// defineProps: 定义组件接收的 props，数据类型为 Readonly<{ question: string; correctAnswer: string; placeholder: string }>
+//   返回值 props 是一个只读的响应式对象
 const props = defineProps({
   /** 题目文本内容 */
   question: { type: String, required: true },
@@ -55,21 +83,24 @@ const props = defineProps({
   placeholder: { type: String, default: '请输入答案' },
 })
 
-/** 用户输入的答案 */
+// userAnswer: 响应式变量，用户输入的答案字符串，数据类型 Ref<string>，默认值 ''（空字符串）
 const userAnswer = ref('')
 
-/** 是否已提交答案，提交后禁用输入和显示反馈 */
+// answered: 响应式变量，是否已提交答案，数据类型 Ref<boolean>，默认值 false（未提交）
 const answered = ref(false)
 
 /**
- * 计算属性：判断用户答案是否正确
- * 比较时忽略首尾空格和大小写
+ * isCorrect: 计算属性，判断用户答案是否正确，数据类型 ComputedRef<boolean>
+ * 比较逻辑：忽略首尾空格（.trim()）和大小写（.toLowerCase()）后比较字符串是否相等
  */
 const isCorrect = computed(() =>
   userAnswer.value.trim().toLowerCase() === props.correctAnswer.trim().toLowerCase()
 )
 
-/** 提交答案：输入不为空时将 answered 置为 true 以触发判题反馈 */
+// submitAnswer: 函数，提交答案
+// 前置条件：用户输入答案去除首尾空格后不为空
+// 行为：将 answered 置为 true 以触发判题样式和反馈显示
+// 无参数，无返回值
 function submitAnswer() {
   if (userAnswer.value.trim()) {
     answered.value = true

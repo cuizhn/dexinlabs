@@ -1,3 +1,23 @@
+<!--
+  组件文件名：FeatureGrid.vue
+  Nuxt自动注册组件名：HomeFeatureGrid
+  被引用页面：app/pages/index.vue（首页，第103行 <HomeFeatureGrid />）
+  Props 字段列表：
+    - features: { type: Array, required: false, default: () => [] }
+      功能卡片数据列表（注意：组件内部已硬编码 features 数据，props 未实际使用）
+  Emits：无（未使用 defineEmits）
+  CSS 变量引用：
+    --spacing-lg / --spacing-2xl / --spacing-xl / --spacing-md / --spacing-sm: 间距变量
+    --color-bg-secondary: Features 区域背景色
+    --color-bg-white: 功能卡片背景色（白色）
+    --color-border: 卡片边框色
+    --color-primary: 卡片悬停边框色、图标主色
+    --color-primary-light: 区域标签背景色（淡紫色）
+    --color-text-primary: 区域标题、功能标题文字颜色
+    --color-text-secondary: 区域描述、功能描述文字颜色
+    --border-radius-xl / --border-radius-md: 圆角大小
+    --shadow-lg: 卡片悬停阴影
+-->
 <!-- Features 核心优势区域：展示平台的五大特色功能 -->
    <template>
     <section class="landing__features">
@@ -26,13 +46,22 @@
  * 平台核心优势功能列表组件：展示平台的五大特色功能
  * @component HomeFeatureGrid
  */
+// import: ref 来自 'vue'，Vue 3 组合式 API，用于创建响应式变量（此组件导入后未实际使用）
 import { ref } from 'vue'
 
+// defineProps: 定义组件接收的 props，数据类型为 Object（返回值类型为 Readonly<{ features: Array }>）
+//   注意：此处声明的 props.features 未在 template 中使用，组件实际使用下方硬编码的 features 数组
 const props = defineProps({
   /** 功能卡片数据列表 */
   features: { type: Array, default: () => [] },
 })
-// 平台核心优势功能列表数据
+// features: 硬编码的功能卡片数据数组，数据类型 Array<Object>，包含5个功能项对象
+//   每个对象结构：
+//     - icon: string, emoji 图标字符
+//     - title: string, 功能标题
+//     - desc: string, 功能详细描述
+//     - size: string, 卡片尺寸 'lg'（大）或 'md'（中）
+//     - bg: string, 图标背景色（十六进制颜色值）
 const features = [
   {
     icon: '📐',

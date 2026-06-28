@@ -1,6 +1,8 @@
+<!-- 路由 URL: / -->
 <!-- 页面路径: / -->
 <!-- 首页/落地页：包含 hero（主视觉）、features（核心优势）、courses（课程体系）、how（学习方式）、cta（行动号召）五个区域 -->
 <template>
+  <!-- 落地页根容器 -->
   <div class="landing">
     <!-- Hero 主视觉区域：展示品牌标语、操作按钮、统计数据和装饰性卡片 -->
     <section class="landing__hero">
@@ -31,10 +33,12 @@
         </p>
         <!-- 操作按钮组：开始学习和浏览课程 -->
         <div class="landing__hero-actions">
+          <!-- NuxtLink：Nuxt 自动导入的路由导航组件，to="/course" 跳转到课程列表页 -->
           <NuxtLink to="/course" class="landing__btn landing__btn--primary">
             开始学习
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </NuxtLink>
+          <!-- NuxtLink：Nuxt 自动导入的路由导航组件，to="/course" 跳转到课程列表页 -->
           <NuxtLink to="/course" class="landing__btn landing__btn--ghost">
             浏览课程
           </NuxtLink>
@@ -95,6 +99,7 @@
     </section>
 
      <!-- Features 核心优势区域：展示平台的五大特色功能 -->
+    <!-- HomeFeatureGrid：Nuxt 自动导入的组件（来自 components/home/），渲染核心优势功能卡片网格 -->
     <HomeFeatureGrid />
 
 
@@ -120,18 +125,23 @@
       </div>
     </section>
 
+  <!-- HomeCTASection：Nuxt 自动导入的组件（来自 components/home/），渲染行动号召（Call To Action）区域 -->
   <HomeCTASection />
   </div>
 </template>
 
 <script setup lang="ts">
+// import: useHead 来自 'nuxt/app'，Nuxt 官方提供的组合式 API，用于设置页面 <head> 元信息（title、meta、link 等）
 import { useHead } from 'nuxt/app'
+// import: computed 来自 'vue'，Vue 3 组合式 API 的计算属性函数，用于声明响应式派生状态
 import { computed } from 'vue'
 
+// useHead：Nuxt 自动注册可用的 API，此处设置页面浏览器标签栏标题
 useHead({
   title: 'Dexin Labs · 用数学理解世界',
 })
 
+// computed：Vue composable，创建响应式计算属性。当依赖变化时自动重新求值
 // 计算属性：Hero 背景浮动数学符号列表，每个符号带有位置、动画延迟等 CSS 变量
 const floatingSymbols = computed(() => {
   const chars = ['π', '∑', '∫', '√', '∞', 'Δ', 'θ', 'λ', 'φ', 'α', 'β', '∂']
