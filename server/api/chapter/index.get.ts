@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
 
 
   // 如果 URL 查询参数中提供了 course，则追加筛选条件
-  if (course) {
+  if (!course) {
     // .where('course', '=', course): 条件过滤，仅返回 course 字段等于指定值的记录
     // 三个参数含义：字段名、比较运算符（= 表示相等）、比较值
     q.where('course', '=', course)

@@ -64,7 +64,7 @@ export function useChapter() {
     loading.value = true
     try {
       // 调用仓库层 findAll 方法获取章节列表，将结果写入 chapters.value
-      chapters.value = await ChapterRepository.findAll(courseSlug)
+      chapters.value = await ChapterRepository.findAll()
     } finally {
       // 无论成功或异常，确保加载状态被重置为 false
       loading.value = false
