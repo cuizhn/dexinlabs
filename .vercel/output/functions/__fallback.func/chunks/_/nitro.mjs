@@ -4096,7 +4096,7 @@ function _expandFromEnv(value) {
 const _inlineRuntimeConfig = {
   "app": {
     "baseURL": "/",
-    "buildId": "aebfa1a7-b85f-444b-8125-b8c8f3f41a61",
+    "buildId": "61e517d3-9b7f-4173-a518-425f8b51a49b",
     "buildAssetsDir": "/_nuxt/",
     "cdnURL": ""
   },
@@ -4663,12 +4663,12 @@ async function decompressSQLDump(base64Str, compressionType = "gzip") {
 }
 
 const checksums = {
-  "chapter": "v3.5.0--flsXUxFtI6qqyPZ2p3gBvKZTwe9-OIdZ96T6FLYY91A",
+  "chapter": "v3.5.0--keBzedTPLw7xxCam_tEib53wZI-PNoRZa04W8DvX8Kc",
   "lesson": "v3.5.0--AyO5Y-toe4saM7Q_r_KmiPUP6HiI8ESev1TCmIXYtjA",
   "exercise": "v3.5.0--Mm_7g8TV42IIEkswITHDH-zRKjpvnxXXiKHFcfmN99M"
 };
 const checksumsStructure = {
-  "chapter": "f6IprMuxeg5funaRki3JE5EjBUvNuO9CDOMYBbsAt8g",
+  "chapter": "4TKwnAhSKnDzO6rEMu9B2BGdRBzcclX8trZ_JbEWHZo",
   "lesson": "TVHDCLvI1BdlPCf-notUtVrTW6OO0DPUH8vkcUCYDXg",
   "exercise": "Mm_7g8TV42IIEkswITHDH-zRKjpvnxXXiKHFcfmN99M"
 };
@@ -4686,6 +4686,7 @@ const contentManifest = {
     "fields": {
       "id": "string",
       "title": "string",
+      "course": "string",
       "description": "string",
       "extension": "string",
       "lessons": "json",

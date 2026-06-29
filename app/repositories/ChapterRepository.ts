@@ -13,6 +13,10 @@ export interface Chapter {
   title: string
   // 章节描述简介，可选字段，用于说明章节内容概要
   description?: string
+  // 所属课程的 slug 标识，可选字段
+  // 用于按课程筛选章节（GET /api/chapter?course=xxx 的 where 过滤条件）
+  // 多个 Chapter 可具有相同的 course 值，表示属于同一课程
+  course?: string
   // 章节排序序号，用于控制同一课程下章节的显示顺序
   order: number
   // 章节包含的课时数组，类型为 unknown（后续可细化为 Lesson[]）
@@ -34,6 +38,9 @@ export interface ChapterListItem {
   title: string
   // 章节描述简介，可选字段
   description?: string
+  // 所属课程的 slug 标识，可选字段
+  // 用于按课程筛选章节（GET /api/chapter?course=xxx 的 where 过滤条件）
+  course?: string
   // 章节排序序号
   order: number
   // 索引签名，允许扩展字段

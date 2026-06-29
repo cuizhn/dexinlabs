@@ -35,6 +35,7 @@ import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 //    slug: z.string()             — 章节 URL 友好标识，用于路由路径 /course/:chapter（必填）
 //    title: z.string()            — 章节展示标题（必填）
 //    description: z.string().optional() — 章节描述简介，.optional() 允许缺省（选填，默认 undefined）
+//    course: z.string().optional() — 所属课程的 slug 标识，用于按课程筛选章节（选填，默认 undefined）
 //    order: z.number().default(0) — 章节排序序号，数字类型，缺省时默认值为 0（靠前排）
 //    lessons: z.array(z.string()).default([]) — 关联课时 slug 字符串数组，组织顺序（从先到后）
 //                                   .default([]) 缺省时默认空数组，避免遍历时 undefined 报错
@@ -42,10 +43,11 @@ import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 //  数据组织关系：
 //    Chapter（章节）→ 通过 lessons 字段（字符串数组）按顺序引用 Lesson（课时）的 slug
 //    单向关系：只有 Chapter → Lesson，Lesson 文件中不维护所属章节（解耦，可复用课时到多章节）
+//    Course（课程）→ 通过 Chapter.course 字段组织归属关系（多个 Chapter 可归属同一 Course）
 // ============================================================
 /**
  * 章节配置集合（Chapter Config）
- * type: data — 章节是核心组织单元，包含 id、slug、title、order、lessons 列表
+ * type: data — 章节是核心组织单元，包含 id、slug、title、course、order、lessons 列表
  * 每个 Chapter 维护课时顺序、入口、练习入口；与 Lesson 是单向组织关系
  */
 const chapter = defineCollection({
@@ -63,6 +65,9 @@ const chapter = defineCollection({
     title: z.string(),
     // description: 字符串选填（optional() = 允许 undefined）
     description: z.string().optional(),
+    // course: 字符串选填 — 所属课程的 slug 标识（如 'math-junior-high'）
+    //   用于 GET /api/chapter?course=xxx 查询参数按课程筛选章节
+    course: z.string().optional(),
     // order: 数字，默认值 0（缺省时 0）
     order: z.number().default(0),
     // lessons: 字符串数组（元素为课时 slug），默认值空数组 []

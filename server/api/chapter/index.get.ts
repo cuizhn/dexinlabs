@@ -28,7 +28,14 @@ export default defineEventHandler(async (event) => {
   }
 
   // .all(): 执行查询并返回所有匹配的记录数组
-  // 每个元素为 chapter 文档对象，包含字段如: id, slug, title, order, course, lessons 等
+  // 每个元素为 chapter 文档对象，包含字段如:
+  //   id: string        — 章节唯一主键
+  //   slug: string      — 章节 URL 标识（路由路径用）
+  //   title: string     — 章节标题
+  //   description?: string — 章节描述（可选）
+  //   course?: string   — 所属课程 slug（可选，如 'junior-high-math'，用于 ?course=xxx 筛选）
+  //   order: number     — 同课程内排序序号
+  //   lessons: string[] — 关联课时 slug 数组（组织顺序）
   // 无匹配时返回空数组 []
   return await q.all()
 })
