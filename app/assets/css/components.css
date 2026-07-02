@@ -1,6 +1,6 @@
-/* 公共组件样式 */
 
-/* 通用按钮 */
+
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -41,7 +41,7 @@
   font-size: var(--text-base);
 }
 
-/* 通用卡片 */
+
 .card {
   background-color: var(--color-bg-white);
   border: 1px solid var(--color-border);
@@ -56,7 +56,7 @@
   border-color: var(--color-primary);
 }
 
-/* 标签 */
+
 .tag {
   display: inline-block;
   padding: 2px 10px;
@@ -80,7 +80,7 @@
   color: #6366F1;
 }
 
-/* 难度标签 */
+
 .difficulty {
   display: inline-block;
   padding: 2px 10px;

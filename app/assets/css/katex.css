@@ -1,4 +1,4 @@
-/* KaTeX 公式样式覆盖 */
+
 .katex-display {
   margin: var(--spacing-lg) 0;
   overflow-x: auto;
@@ -14,12 +14,12 @@ background: transparent;
   font-size: 1.05em;
 }
 
-/* 行内公式 */
+
 .katex-inline {
   display: inline;
 }
 
-/* 块级公式滚动条 */
+
 .katex-display::-webkit-scrollbar {
   height: 4px;
 }

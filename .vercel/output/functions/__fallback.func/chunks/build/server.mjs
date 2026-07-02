@@ -1,7 +1,7 @@
-import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { hasInjectionContext, inject, getCurrentInstance, defineAsyncComponent, defineComponent, h, computed, unref, shallowRef, provide, shallowReactive, ref, Suspense, Fragment, createElementBlock, cloneVNode, useSSRContext, createApp, mergeProps, withCtx, createVNode, onErrorCaptured, onServerPrefetch, resolveDynamicComponent, reactive, effectScope, nextTick, getCurrentScope, toRef, isReadonly, isRef, toValue, isShallow, isReactive, toRaw } from 'vue';
+import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { hasInjectionContext, inject, getCurrentInstance, defineAsyncComponent, defineComponent, h, computed, unref, shallowRef, provide, shallowReactive, ref, Suspense, Fragment, createElementBlock, cloneVNode, createApp, onErrorCaptured, onServerPrefetch, createVNode, resolveDynamicComponent, reactive, effectScope, mergeProps, withCtx, getCurrentScope, toRef, nextTick, isReadonly, isRef, toValue, useSSRContext, isShallow, isReactive, toRaw } from 'vue';
 import { o as parseURL, i as encodePath, r as decodePath, s as hasProtocol, v as isScriptProtocol, x as joinURL, w as withQuery, y as sanitizeStatusCode, z as getContext, $ as $fetch, A as baseURL, B as defu, c as createError$1, C as executeAsync, D as hash } from '../_/nitro.mjs';
 import { useRoute as useRoute$1, RouterView, createMemoryHistory, createRouter, START_LOCATION } from 'vue-router';
-import { ssrRenderAttrs, ssrRenderComponent, ssrRenderSuspense, ssrRenderVNode } from 'vue/server-renderer';
+import { ssrRenderSuspense, ssrRenderComponent, ssrRenderVNode, ssrRenderAttrs } from 'vue/server-renderer';
 import { isPlainObject } from '@vue/shared';
 import { u as useHead$1, h as headSymbol } from '../routes/renderer.mjs';
 import 'node:http';
@@ -712,44 +712,46 @@ function getRouteRules(arg) {
 }
 const _routes = [
   {
-    name: "course-chapter-lesson",
-    path: "/course/:chapter()/:lesson()",
-    component: () => import('./_lesson_-D7NEknAl.mjs')
-  },
-  {
     name: "course-chapter",
     path: "/course/:chapter()",
-    component: () => import('./index-axANhMSu.mjs')
+    component: () => import('./_chapter_-G_jd6C_Y.mjs'),
+    children: [
+      {
+        name: "course-chapter-lesson",
+        path: ":lesson()",
+        component: () => import('./_lesson_-DH53f3Md.mjs')
+      }
+    ]
   },
   {
     name: "exercise-chapter",
     path: "/exercise/:chapter()",
-    component: () => import('./_chapter_-B9IRUWrB.mjs')
+    component: () => import('./_chapter_-Dp38AqhW.mjs')
   },
   {
     name: "about",
     path: "/about",
-    component: () => import('./about-DkD7r3wb.mjs')
+    component: () => import('./about-CZPMgrJh.mjs')
   },
   {
     name: "course",
     path: "/course",
-    component: () => import('./index-BG-MxE2H.mjs')
+    component: () => import('./index-BkhbECGF.mjs')
   },
   {
     name: "methods",
     path: "/methods",
-    component: () => import('./methods-eB0w2-IJ.mjs')
+    component: () => import('./methods-jjLErnqu.mjs')
   },
   {
     name: "study",
     path: "/study",
-    component: () => import('./study-DGmoKt7h.mjs')
+    component: () => import('./study-92xea_PY.mjs')
   },
   {
     name: "index",
     path: "/",
-    component: () => import('./index-CUXfXuyZ.mjs')
+    component: () => import('./index-ljCGUOdG.mjs')
   }
 ];
 const _wrapInTransition = (props, children) => {
@@ -1233,7 +1235,7 @@ const plugins = [
   prerender_server_sqIxOBipVr4FbVMA9kqWL0wT8FPop6sKAXLVfifsJzk
 ];
 const layouts = {
-  default: defineAsyncComponent(() => import('./default-D2_ne2iF.mjs').then((m) => m.default || m))
+  default: defineAsyncComponent(() => import('./default-BIZjodiy.mjs').then((m) => m.default || m))
 };
 const routeRulesMatcher = _routeRulesMatcher;
 const LayoutLoader = defineComponent({
@@ -1957,14 +1959,12 @@ createUseFetch.__nuxt_factory({
   // @ts-expect-error private property
   _functionName: "useLazyFetch"
 });
-const _sfc_main$2 = /* @__PURE__ */ defineComponent({
+const _sfc_main$2 = {
   __name: "app",
   __ssrInlineRender: true,
   setup(__props) {
     useHead({
-      // titleTemplate：页面标题拼接模板 —— 子页面传入 title 时追加站点后缀，未传入时使用默认首页标题
       titleTemplate: (title) => title ? `${title} · Dexin Labs` : "Dexin Labs · 得心实验室",
-      // meta：全局 meta 标签数组 —— 此处配置全站 SEO 描述，供搜索引擎抓取页面摘要
       meta: [
         {
           name: "description",
@@ -1991,7 +1991,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       _push(`</div>`);
     };
   }
-});
+};
 const _sfc_setup$2 = _sfc_main$2.setup;
 _sfc_main$2.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
