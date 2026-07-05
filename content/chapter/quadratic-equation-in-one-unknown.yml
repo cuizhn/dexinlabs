@@ -1,13 +1,6 @@
 id: quadratic-equation-in-one-unknown
 title: 一元二次方程
-description: 一元二次方程的求解方法
 slug: quadratic-equation-in-one-unknown
-# course: junior-high-math
-order: 21
-
-lessons:
-- quadratic-equation-in-one-unknown-intro
-- quadratic-equation-in-one-unknown-formula
-- quadratic-equation-in-one-unknown-solve
-- quadratic-equation-in-one-unknown-apply
-- quadratic-equation-in-one-unknown-exercise
+description: 一元二次方程的定义、求解、判别式、应用
+course: pep-9a
+order: 1

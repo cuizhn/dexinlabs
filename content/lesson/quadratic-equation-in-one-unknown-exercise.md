@@ -1,7 +1,9 @@
 ---
+id: quadratic-equation-in-one-unknown-exercise
 slug: quadratic-equation-in-one-unknown-exercise
-title: 一元二次方程练习题
-description: 通过综合练习巩固一元二次方程的定义、解法和应用
+title: 一元二次方程练习
+description: 一元二次方程的练习题。
+chapter: quadratic-equation-in-one-unknown
 order: 5
 ---
 

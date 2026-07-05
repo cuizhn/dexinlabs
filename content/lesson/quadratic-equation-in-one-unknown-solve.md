@@ -1,7 +1,9 @@
 ---
+id: quadratic-equation-in-one-unknown-solve
 slug: quadratic-equation-in-one-unknown-solve
 title: 一元二次方程的解法
-description: 掌握一元二次方程的多种解法：直接开平方法、配方法、公式法和因式分解法
+description: 一元二次方程的解法有  种。
+chapter: quadratic-equation-in-one-unknown
 order: 2
 ---
 

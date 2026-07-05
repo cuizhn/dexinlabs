@@ -4096,7 +4096,7 @@ function _expandFromEnv(value) {
 const _inlineRuntimeConfig = {
   "app": {
     "baseURL": "/",
-    "buildId": "2aa53918-c422-491e-8228-d54c7ee8cbdd",
+    "buildId": "b1c7cbb7-82f3-461f-b862-995574b89151",
     "buildAssetsDir": "/_nuxt/",
     "cdnURL": ""
   },
@@ -4112,13 +4112,13 @@ const _inlineRuntimeConfig = {
         "cache": false,
         "isr": false
       },
+      "/__nuxt_content/course/sql_dump.txt": {
+        "prerender": true
+      },
       "/__nuxt_content/chapter/sql_dump.txt": {
         "prerender": true
       },
       "/__nuxt_content/lesson/sql_dump.txt": {
-        "prerender": true
-      },
-      "/__nuxt_content/exercise/sql_dump.txt": {
         "prerender": true
       },
       "/_nuxt/builds/meta/**": {
@@ -4663,32 +4663,44 @@ async function decompressSQLDump(base64Str, compressionType = "gzip") {
 }
 
 const checksums = {
-  "chapter": "v3.5.0--flsXUxFtI6qqyPZ2p3gBvKZTwe9-OIdZ96T6FLYY91A",
-  "lesson": "v3.5.0--AyO5Y-toe4saM7Q_r_KmiPUP6HiI8ESev1TCmIXYtjA",
-  "exercise": "v3.5.0--Mm_7g8TV42IIEkswITHDH-zRKjpvnxXXiKHFcfmN99M"
+  "course": "v3.5.0--MYu-3DrUzM6w7KcKUAinul7UgWAIfPJ37OmFIW_LyGw",
+  "chapter": "v3.5.0--p_qv06rddaF9VeB_Eol4OyxT94fM-mtywcksQ-kYhe4",
+  "lesson": "v3.5.0--6S9NGOloEGcbvBrSw_oCYoGaRtM7CORT_BuqxeD-1UY"
 };
 const checksumsStructure = {
-  "chapter": "f6IprMuxeg5funaRki3JE5EjBUvNuO9CDOMYBbsAt8g",
-  "lesson": "TVHDCLvI1BdlPCf-notUtVrTW6OO0DPUH8vkcUCYDXg",
-  "exercise": "Mm_7g8TV42IIEkswITHDH-zRKjpvnxXXiKHFcfmN99M"
+  "course": "yTqUE2sTXd6WWKlmV0fw2cNIUiGUd_yRnHwLKKmPc44",
+  "chapter": "YvT3R38Bj9KzQmiMylRbJtUcDnaucN8F5qZ70Ps2CYM",
+  "lesson": "OEO95KExBVbawc5G0IYhAGkUJMhNSYje6pSxwjlK0LI"
 };
 
 const tables = {
+  "course": "_content_course",
   "chapter": "_content_chapter",
   "lesson": "_content_lesson",
-  "exercise": "_content_exercise",
   "info": "_content_info"
 };
 
 const contentManifest = {
-  "chapter": {
+  "course": {
     "type": "data",
     "fields": {
       "id": "string",
       "title": "string",
       "description": "string",
       "extension": "string",
-      "lessons": "json",
+      "meta": "json",
+      "slug": "string",
+      "stem": "string"
+    }
+  },
+  "chapter": {
+    "type": "data",
+    "fields": {
+      "id": "string",
+      "title": "string",
+      "course": "string",
+      "description": "string",
+      "extension": "string",
       "meta": "json",
       "order": "number",
       "slug": "string",
@@ -4701,6 +4713,7 @@ const contentManifest = {
       "id": "string",
       "title": "string",
       "body": "json",
+      "chapter": "string",
       "description": "string",
       "extension": "string",
       "meta": "json",
@@ -4708,19 +4721,6 @@ const contentManifest = {
       "order": "number",
       "path": "string",
       "seo": "json",
-      "slug": "string",
-      "stem": "string"
-    }
-  },
-  "exercise": {
-    "type": "data",
-    "fields": {
-      "id": "string",
-      "title": "string",
-      "description": "string",
-      "extension": "string",
-      "meta": "json",
-      "questions": "json",
       "slug": "string",
       "stem": "string"
     }
@@ -5341,6 +5341,7 @@ const _2ke0kp = eventHandler(async (event) => {
 
 const _lazy_oBxIxR = () => import('../routes/api/chapter/_slug_.get.mjs');
 const _lazy_NsQU9d = () => import('../routes/api/index.get.mjs');
+const _lazy_QxVFhE = () => import('../routes/api/index.get2.mjs');
 const _lazy_5cpKwT = () => import('../routes/api/exercise/_slug_.get.mjs');
 const _lazy_opXtF7 = () => import('../routes/api/lesson/_slug_.get.mjs');
 const _lazy_rj6EQu = () => import('../routes/renderer.mjs').then(function (n) { return n.r; });
@@ -5348,17 +5349,18 @@ const _lazy_rj6EQu = () => import('../routes/renderer.mjs').then(function (n) { 
 const handlers = [
   { route: '/api/chapter/:slug', handler: _lazy_oBxIxR, lazy: true, middleware: false, method: "get" },
   { route: '/api/chapter', handler: _lazy_NsQU9d, lazy: true, middleware: false, method: "get" },
+  { route: '/api/course', handler: _lazy_QxVFhE, lazy: true, middleware: false, method: "get" },
   { route: '/api/exercise/:slug', handler: _lazy_5cpKwT, lazy: true, middleware: false, method: "get" },
   { route: '/api/lesson/:slug', handler: _lazy_opXtF7, lazy: true, middleware: false, method: "get" },
   { route: '/__nuxt_error', handler: _lazy_rj6EQu, lazy: true, middleware: false, method: undefined },
+  { route: '/__nuxt_content/course/sql_dump.txt', handler: _O7ydrm, lazy: false, middleware: false, method: undefined },
   { route: '/__nuxt_content/chapter/sql_dump.txt', handler: _O7ydrm, lazy: false, middleware: false, method: undefined },
   { route: '/__nuxt_content/lesson/sql_dump.txt', handler: _O7ydrm, lazy: false, middleware: false, method: undefined },
-  { route: '/__nuxt_content/exercise/sql_dump.txt', handler: _O7ydrm, lazy: false, middleware: false, method: undefined },
   { route: '/__nuxt_content/info/sql_dump.txt', handler: _O7ydrm, lazy: false, middleware: false, method: undefined },
   { route: '/__nuxt_island/**', handler: _SxA8c9, lazy: false, middleware: false, method: undefined },
+  { route: '/__nuxt_content/course/query', handler: _2ke0kp, lazy: false, middleware: false, method: undefined },
   { route: '/__nuxt_content/chapter/query', handler: _2ke0kp, lazy: false, middleware: false, method: undefined },
   { route: '/__nuxt_content/lesson/query', handler: _2ke0kp, lazy: false, middleware: false, method: undefined },
-  { route: '/__nuxt_content/exercise/query', handler: _2ke0kp, lazy: false, middleware: false, method: undefined },
   { route: '/__nuxt_content/info/query', handler: _2ke0kp, lazy: false, middleware: false, method: undefined },
   { route: '/**', handler: _lazy_rj6EQu, lazy: true, middleware: false, method: undefined }
 ];

@@ -19,13 +19,6 @@ export default defineEventHandler(async event => {
     })
   }
 
-  const lessonSlugs = Array.isArray(chapter.lessons) ? chapter.lessons : []
-
-  const lessons = lessonSlugs.length
-    ? await queryCollection(event, 'lesson').where('slug', 'in', lessonSlugs).all()
-    : []
-
-  const sortedLessons = lessonSlugs.map(s => lessons.find(l => l.slug === s)).filter(Boolean)
 
   let exercise = null
   try {
@@ -35,8 +28,7 @@ export default defineEventHandler(async event => {
   }
 
   return {
-    ...chapter,
-    lessons: sortedLessons,
+    chapter,
     exercise
   }
 })

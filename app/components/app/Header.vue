@@ -44,10 +44,7 @@ import { ref, computed } from 'vue'
 
 const navItems = [
   { path: '/', label: '首页', exact: true },
-  { path: '/study', label: '同步学习' },
-  { path: '/course', label: '课程中心' },
-  { path: '/methods', label: '学习方法' },
-  { path: '/about', label: '关于我们' }
+  { path: '/course', label: '课程中心' }
 ]
 
 const isMenuOpen = ref(false)

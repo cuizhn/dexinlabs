@@ -1,8 +1,10 @@
 ---
+id: quadratic-equation-in-one-unknown-intro
 slug: quadratic-equation-in-one-unknown-intro
 title: 一元二次方程的定义
-description: 理解一元二次方程的基本概念、一般形式和基本概念
-order:1
+description: 一元二次方程的定义。
+chapter: quadratic-equation-in-one-unknown
+order:1 
 ---
 
 # 一元二次方程的定义

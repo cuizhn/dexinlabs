@@ -683,11 +683,11 @@ const matcher = /* @__PURE__ */ (() => {
   return (m, p) => {
     let r = [];
     if (p.charCodeAt(p.length - 1) === 47) p = p.slice(0, -1) || "/";
-    if (p === "/__nuxt_content/chapter/sql_dump.txt") {
+    if (p === "/__nuxt_content/course/sql_dump.txt") {
+      r.unshift({ data: $0 });
+    } else if (p === "/__nuxt_content/chapter/sql_dump.txt") {
       r.unshift({ data: $0 });
     } else if (p === "/__nuxt_content/lesson/sql_dump.txt") {
-      r.unshift({ data: $0 });
-    } else if (p === "/__nuxt_content/exercise/sql_dump.txt") {
       r.unshift({ data: $0 });
     }
     let s = p.split("/"), l = s.length;
@@ -712,16 +712,14 @@ function getRouteRules(arg) {
 }
 const _routes = [
   {
+    name: "course-chapter-lesson",
+    path: "/course/:chapter()/:lesson()",
+    component: () => import('./_lesson_-C8A3tFh_.mjs')
+  },
+  {
     name: "course-chapter",
     path: "/course/:chapter()",
-    component: () => import('./_chapter_-G_jd6C_Y.mjs'),
-    children: [
-      {
-        name: "course-chapter-lesson",
-        path: ":lesson()",
-        component: () => import('./_lesson_-DH53f3Md.mjs')
-      }
-    ]
+    component: () => import('./index-IVk2zAS6.mjs')
   },
   {
     name: "exercise-chapter",
@@ -736,7 +734,7 @@ const _routes = [
   {
     name: "course",
     path: "/course",
-    component: () => import('./index-BkhbECGF.mjs')
+    component: () => import('./index-CALv9N3h.mjs')
   },
   {
     name: "methods",
@@ -746,7 +744,7 @@ const _routes = [
   {
     name: "study",
     path: "/study",
-    component: () => import('./study-92xea_PY.mjs')
+    component: () => import('./study-CdRaIp4t.mjs')
   },
   {
     name: "index",
@@ -1235,7 +1233,7 @@ const plugins = [
   prerender_server_sqIxOBipVr4FbVMA9kqWL0wT8FPop6sKAXLVfifsJzk
 ];
 const layouts = {
-  default: defineAsyncComponent(() => import('./default-BIZjodiy.mjs').then((m) => m.default || m))
+  default: defineAsyncComponent(() => import('./default-D8S7df8D.mjs').then((m) => m.default || m))
 };
 const routeRulesMatcher = _routeRulesMatcher;
 const LayoutLoader = defineComponent({

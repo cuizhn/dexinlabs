@@ -12,7 +12,6 @@ export default defineEventHandler(async event => {
 
   const lesson = await queryCollection(event, 'lesson')
     .where('slug', '=', slug)
-
     .first()
 
   if (!lesson) {
@@ -22,5 +21,19 @@ export default defineEventHandler(async event => {
     })
   }
 
-  return lesson
+  let chapter = null
+  if (lesson.chapter) {
+    try {
+      chapter = await queryCollection(event, 'chapter')
+        .where('slug', '=', lesson.chapter)
+        .first()
+    } catch {
+      chapter = null
+    }
+  }
+
+  return {
+    ...lesson,
+    chapter
+  }
 })

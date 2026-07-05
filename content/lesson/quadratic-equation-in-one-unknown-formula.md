@@ -1,7 +1,9 @@
 ---
+id: quadratic-equation-in-one-unknown-formula
 slug: quadratic-equation-in-one-unknown-formula
 title: 求根公式与判别式
-description: 学习一元二次方程的求根公式，理解判别式的意义和作用
+description: 求根公式与判别式的定义。
+chapter: quadratic-equation-in-one-unknown
 order: 3
 ---
 

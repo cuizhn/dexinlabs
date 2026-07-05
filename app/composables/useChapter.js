@@ -20,14 +20,12 @@ export function useChapter() {
     } finally {
     }
   }
-
+  
   return {
     chapters,
-
     currentChapter,
-
     loadChapters,
-
-    loadChapter
+    loadChapter,
+    
   }
 }

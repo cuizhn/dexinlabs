@@ -6,25 +6,11 @@
 
         <h1 class="info-page__title">跟着节奏，稳步前行</h1>
 
-        <p class="info-page__desc">
-          与学校课程进度同步，课上学、课后练，让课堂内容真正吸收内化。 当前功能建设中，敬请期待。
-        </p>
+         <MarkdownRenderer :content="md"  class="info-page__desc" />
       </div>
     </section>
 
-    <section class="info-page__body">
-      <div class="container info-page__container">
-        <div class="info-card">
-          <div class="info-card__icon">📚</div>
 
-          <h2 class="info-card__title">七年级 · 上学期</h2>
-
-          <p class="info-card__desc">人教版 · 初中一年级同步课程</p>
-
-          <NuxtLink to="/course" class="info-card__link">前往课程中心 →</NuxtLink>
-        </div>
-      </div>
-    </section>
   </div>
 </template>
 
@@ -32,6 +18,43 @@
 import { useHead } from 'nuxt/app'
 
 useHead({ title: '同步学习' })
+const md  = `# 📖 基础排版示例
+
+这是一段介绍 Morph-MD 组件库的 **基础段落**。我们支持 *斜体*、**粗体**、以及 \`行内代码\`。
+
+> 💡 **引用块：** Morph-MD 遵循 *高内聚低耦合* 设计原则，使用 markdown-it 作为 Parser，不引入自定义 AST。
+
+## 无序列表
+
+- Vue 3 组件化封装
+- Nuxt 3 开箱即用
+- 插件式扩展（highlight / katex / mermaid）
+- SSR 友好，客户端 hydrate
+
+## 有序列表
+
+1. 解析 Markdown String
+2. 输出 HTML String
+3. 通过 Plugin Pipeline
+4. 最终 v-html 渲染
+
+## 链接与图片
+
+访问 [Morph-MD Repository](https://example.com/morph-md) 获取更多信息。
+
+## 表格
+
+| 特性 | 支持状态 | 备注 |
+|------|----------|------|
+| 标题 H1-H6 | ✅ | 完整支持 |
+| 列表 (ul/ol) | ✅ | 嵌套支持 |
+| 代码高亮 | ✅ | Prism.js |
+| 数学公式 | ✅ | KaTeX |
+| Mermaid 图表 | ✅ | SSR fallback + client hydrate |
+
+---
+`
+
 </script>
 
 <style scoped>

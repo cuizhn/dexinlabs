@@ -5,6 +5,7 @@
         <span class="course-index__tag">课程中心</span>
         <h1 class="course-index__title">探索数学的旅程</h1>
         <p class="course-index__subtitle"> 每一个章节都是精心设计的学习单元，从理解到应用，让你真正得心应手 </p>
+        
       </div>
     </section>
 
@@ -12,7 +13,7 @@
       <div class="container">
         <template v-if="chapters.length">
           <div class="course-index__grid">
-            <NuxtLink v-for="c in chapters" :key="c.id" :to="`/course/${c.slug}`" class="chapter-card">
+            <NuxtLink v-for="c in chapters" :key="c.id" :to="`/course/${c.slug}/${c.slug}-intro`" class="chapter-card">
               <div class="chapter-card__order">
                 {{ String(c.order).padStart(2, '0') }}
               </div>
@@ -31,12 +32,12 @@
         </template>
       </div>
     </section>
+    
   </div>
 </template>
 
 <script setup>
 import { useHead } from 'nuxt/app'
-
 import { useChapter } from '~/composables/useChapter'
 
 useHead({ title: '课程中心' })
@@ -44,7 +45,7 @@ useHead({ title: '课程中心' })
 const { chapters, loadChapters } = useChapter()
 
 await loadChapters()
-console.log(chapters.value)
+
 </script>
 
 <style scoped>

@@ -1,7 +1,9 @@
 ---
+id: quadratic-equation-in-one-unknown-apply
 slug: quadratic-equation-in-one-unknown-apply
 title: 一元二次方程的应用
-description: 探索一元二次方程在实际问题中的应用，包括物理、几何、优化等领域
+description: 一元二次方程的应用。
+chapter: quadratic-equation-in-one-unknown
 order: 4
 ---
 

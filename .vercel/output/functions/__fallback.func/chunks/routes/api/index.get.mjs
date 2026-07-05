@@ -11,11 +11,11 @@ import 'node:crypto';
 const index_get = defineEventHandler(async (event) => {
   const query = getQuery(event);
   const course = query.course;
-  const q = queryCollection(event, "chapter").order("order", "ASC");
+  const q = await queryCollection(event, "chapter").order("order", "ASC");
   if (course) {
     q.where("course", "=", course);
   }
-  return await q.all();
+  return q.all();
 });
 
 export { index_get as default };

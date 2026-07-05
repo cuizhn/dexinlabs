@@ -23,9 +23,6 @@ const _slug__get = defineEventHandler(async (event) => {
       statusMessage: `Chapter not found: ${slug}`
     });
   }
-  const lessonSlugs = Array.isArray(chapter.lessons) ? chapter.lessons : [];
-  const lessons = lessonSlugs.length ? await queryCollection(event, "lesson").where("slug", "in", lessonSlugs).all() : [];
-  const sortedLessons = lessonSlugs.map((s) => lessons.find((l) => l.slug === s)).filter(Boolean);
   let exercise = null;
   try {
     exercise = await queryCollection(event, "exercise").where("slug", "=", slug).first();
@@ -33,8 +30,7 @@ const _slug__get = defineEventHandler(async (event) => {
     exercise = null;
   }
   return {
-    ...chapter,
-    lessons: sortedLessons,
+    chapter,
     exercise
   };
 });
