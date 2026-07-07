@@ -1,10 +1,13 @@
 import { eq, and, desc, asc, or, sql } from 'drizzle-orm';
-import { g as getDb, e as exercises, a as chapters } from './db.mjs';
+import { e as exercises, g as getDb, a as chapters } from './db.mjs';
 
 class ExerciseRepository {
   constructor(db2) {
-    this.db = db2 || getDb();
+    this._explicitDb = db2 || null;
     this.table = exercises;
+  }
+  _getDb() {
+    return this._explicitDb || getDb();
   }
   _buildWhere({ chapter, chapterId, slug } = {}) {
     const clauses = [];
@@ -17,13 +20,13 @@ class ExerciseRepository {
     const sortDir = order.toLowerCase() === "desc" ? desc : asc;
     const sortCol = orderBy === "id" ? this.table.id : this.table.order;
     const where = this._buildWhere({ chapter, chapterId });
-    let query = this.db.select().from(this.table);
+    let query = this._getDb().select().from(this.table);
     if (where) query = query.where(where);
     return query.orderBy(sortDir(sortCol));
   }
   async listByChapter(chapterSlug) {
     if (!chapterSlug) return [];
-    const rows = await this.db.select({
+    const rows = await this._getDb().select({
       id: this.table.id,
       slug: this.table.slug,
       title: this.table.title,
@@ -48,12 +51,12 @@ class ExerciseRepository {
   }
   async getBySlug(slug) {
     if (!slug) return null;
-    const rows = await this.db.select().from(this.table).where(eq(this.table.slug, slug)).limit(1);
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.slug, slug)).limit(1);
     return rows[0] || null;
   }
   async getById(id) {
     if (!id) return null;
-    const rows = await this.db.select().from(this.table).where(eq(this.table.id, Number(id))).limit(1);
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.id, Number(id))).limit(1);
     return rows[0] || null;
   }
   async getOneByChapter(chapterSlug) {
@@ -64,13 +67,13 @@ class ExerciseRepository {
   async count(filters = {}) {
     var _a, _b;
     const where = this._buildWhere(filters);
-    let query = this.db.select({ count: sql`count(*)`.mapWith(Number) }).from(this.table);
+    let query = this._getDb().select({ count: sql`count(*)`.mapWith(Number) }).from(this.table);
     if (where) query = query.where(where);
     const rows = await query;
     return Number((_b = (_a = rows[0]) == null ? void 0 : _a.count) != null ? _b : 0);
   }
   async create(data) {
-    const rows = await this.db.insert(this.table).values(data).returning();
+    const rows = await this._getDb().insert(this.table).values(data).returning();
     return rows[0] || null;
   }
   async updateBySlug(slug, data) {
@@ -78,7 +81,7 @@ class ExerciseRepository {
     delete patch.id;
     delete patch.slug;
     delete patch.createdAt;
-    const rows = await this.db.update(this.table).set(patch).where(eq(this.table.slug, slug)).returning();
+    const rows = await this._getDb().update(this.table).set(patch).where(eq(this.table.slug, slug)).returning();
     return rows[0] || null;
   }
   async upsert(data) {
@@ -87,14 +90,14 @@ class ExerciseRepository {
     const onConflictSet = { ...rest };
     delete onConflictSet.slug;
     onConflictSet.updatedAt = /* @__PURE__ */ new Date();
-    const rows = await this.db.insert(this.table).values(payload).onConflictDoUpdate({
+    const rows = await this._getDb().insert(this.table).values(payload).onConflictDoUpdate({
       target: this.table.slug,
       set: onConflictSet
     }).returning();
     return rows[0] || null;
   }
   async deleteBySlug(slug) {
-    return this.db.delete(this.table).where(eq(this.table.slug, slug));
+    return this._getDb().delete(this.table).where(eq(this.table.slug, slug));
   }
 }
 const exerciseRepository = new ExerciseRepository();

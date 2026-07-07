@@ -1,6 +1,6 @@
 import { d as defineEventHandler } from '../../_/nitro.mjs';
 import { desc, asc, eq, sql } from 'drizzle-orm';
-import { g as getDb, c as courses } from '../../_/db.mjs';
+import { c as courses, g as getDb } from '../../_/db.mjs';
 import { c as chapterRepository, l as lessonRepository } from '../../_/LessonRepository.mjs';
 import 'node:http';
 import 'node:https';
@@ -16,41 +16,44 @@ import 'drizzle-orm/pg-core';
 
 class CourseRepository {
   constructor(db2) {
-    this.db = db2 || getDb();
+    this._explicitDb = db2 || null;
     this.table = courses;
+  }
+  _getDb() {
+    return this._explicitDb || getDb();
   }
   async list({ orderBy = "order", order = "asc" } = {}) {
     const sortDir = order.toLowerCase() === "desc" ? desc : asc;
     const sortCol = orderBy === "id" ? this.table.id : this.table.order;
-    return this.db.select().from(this.table).orderBy(sortDir(sortCol));
+    return this._getDb().select().from(this.table).orderBy(sortDir(sortCol));
   }
   async getBySlug(slug) {
     if (!slug) return null;
-    const rows = await this.db.select().from(this.table).where(eq(this.table.slug, slug)).limit(1);
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.slug, slug)).limit(1);
     return rows[0] || null;
   }
   async getById(id) {
     if (!id) return null;
-    const rows = await this.db.select().from(this.table).where(eq(this.table.id, Number(id))).limit(1);
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.id, Number(id))).limit(1);
     return rows[0] || null;
   }
   async getDefault() {
     let row = await this.getBySlug("pep-7a");
     if (!row) {
-      const rows = await this.db.select().from(this.table).orderBy(asc(this.table.order), asc(this.table.id)).limit(1);
+      const rows = await this._getDb().select().from(this.table).orderBy(asc(this.table.order), asc(this.table.id)).limit(1);
       row = rows[0] || null;
     }
     return row;
   }
   async count() {
     var _a, _b;
-    const rows = await this.db.select({
+    const rows = await this._getDb().select({
       count: sql`count(*)`.mapWith(Number)
     }).from(this.table);
     return Number((_b = (_a = rows[0]) == null ? void 0 : _a.count) != null ? _b : 0);
   }
   async create(data) {
-    const rows = await this.db.insert(this.table).values(data).returning();
+    const rows = await this._getDb().insert(this.table).values(data).returning();
     return rows[0] || null;
   }
   async updateBySlug(slug, data) {
@@ -58,7 +61,7 @@ class CourseRepository {
     delete patch.id;
     delete patch.slug;
     delete patch.createdAt;
-    const rows = await this.db.update(this.table).set(patch).where(eq(this.table.slug, slug)).returning();
+    const rows = await this._getDb().update(this.table).set(patch).where(eq(this.table.slug, slug)).returning();
     return rows[0] || null;
   }
   async upsert(data) {
@@ -67,14 +70,14 @@ class CourseRepository {
     const onConflictSet = { ...rest };
     delete onConflictSet.slug;
     onConflictSet.updatedAt = /* @__PURE__ */ new Date();
-    const rows = await this.db.insert(this.table).values(payload).onConflictDoUpdate({
+    const rows = await this._getDb().insert(this.table).values(payload).onConflictDoUpdate({
       target: this.table.slug,
       set: onConflictSet
     }).returning();
     return rows[0] || null;
   }
   async deleteBySlug(slug) {
-    return this.db.delete(this.table).where(eq(this.table.slug, slug));
+    return this._getDb().delete(this.table).where(eq(this.table.slug, slug));
   }
 }
 const courseRepository = new CourseRepository();

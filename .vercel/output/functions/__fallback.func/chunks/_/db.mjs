@@ -134,16 +134,39 @@ const schema = {
 
 let _poolInstance = null;
 let _dbInstance = null;
-function getDb() {
+function ensureDbInitialized() {
   if (!_dbInstance) {
-    _poolInstance = new Pool({ connectionString: process.env.DATABASE_URL });
+    const connectionString = process.env.DATABASE_URL;
+    if (!connectionString) {
+      throw new Error("[drizzle/db] process.env.DATABASE_URL is empty. Ensure env var is set.");
+    }
+    _poolInstance = new Pool({ connectionString });
     _dbInstance = drizzle(_poolInstance, { schema });
   }
   return _dbInstance;
 }
+function getDb() {
+  return ensureDbInitialized();
+}
+const dbOperations = ["select", "insert", "update", "delete", "execute", "query", "run"];
 new Proxy({}, {
   get(_target, prop, _receiver) {
-    return Reflect.get(getDb(), prop);
+    if (typeof prop === "symbol") {
+      return void 0;
+    }
+    if (dbOperations.includes(prop) || prop === "transaction") {
+      return (...args) => ensureDbInitialized()[prop](...args);
+    }
+    return Reflect.get(ensureDbInitialized(), prop);
+  },
+  has(_target, prop) {
+    return prop in ensureDbInitialized();
+  },
+  ownKeys() {
+    return Object.keys(ensureDbInitialized());
+  },
+  getOwnPropertyDescriptor(_target, prop) {
+    return Object.getOwnPropertyDescriptor(ensureDbInitialized(), prop);
   }
 });
 
