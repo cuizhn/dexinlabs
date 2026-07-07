@@ -8,19 +8,19 @@ export class CourseRepository {
     this.table = courses
   }
 
-  get db() {
+  _getDb() {
     return this._explicitDb || getDb()
   }
 
   async list({ orderBy = 'order', order = 'asc' } = {}) {
     const sortDir = order.toLowerCase() === 'desc' ? desc : asc
     const sortCol = orderBy === 'id' ? this.table.id : this.table.order
-    return this.db.select().from(this.table).orderBy(sortDir(sortCol))
+    return this._getDb().select().from(this.table).orderBy(sortDir(sortCol))
   }
 
   async getBySlug(slug) {
     if (!slug) return null
-    const rows = await this.db
+    const rows = await this._getDb()
       .select()
       .from(this.table)
       .where(eq(this.table.slug, slug))
@@ -30,7 +30,7 @@ export class CourseRepository {
 
   async getById(id) {
     if (!id) return null
-    const rows = await this.db
+    const rows = await this._getDb()
       .select()
       .from(this.table)
       .where(eq(this.table.id, Number(id)))
@@ -41,7 +41,7 @@ export class CourseRepository {
   async getDefault() {
     let row = await this.getBySlug('pep-7a')
     if (!row) {
-      const rows = await this.db
+      const rows = await this._getDb()
         .select()
         .from(this.table)
         .orderBy(asc(this.table.order), asc(this.table.id))
@@ -52,14 +52,14 @@ export class CourseRepository {
   }
 
   async count() {
-    const rows = await this.db.select({
+    const rows = await this._getDb().select({
       count: sql`count(*)`.mapWith(Number)
     }).from(this.table)
     return Number(rows[0]?.count ?? 0)
   }
 
   async create(data) {
-    const rows = await this.db.insert(this.table).values(data).returning()
+    const rows = await this._getDb().insert(this.table).values(data).returning()
     return rows[0] || null
   }
 
@@ -68,7 +68,7 @@ export class CourseRepository {
     delete patch.id
     delete patch.slug
     delete patch.createdAt
-    const rows = await this.db
+    const rows = await this._getDb()
       .update(this.table)
       .set(patch)
       .where(eq(this.table.slug, slug))
@@ -82,7 +82,7 @@ export class CourseRepository {
     const onConflictSet = { ...rest }
     delete onConflictSet.slug
     onConflictSet.updatedAt = new Date()
-    const rows = await this.db
+    const rows = await this._getDb()
       .insert(this.table)
       .values(payload)
       .onConflictDoUpdate({
@@ -94,7 +94,7 @@ export class CourseRepository {
   }
 
   async deleteBySlug(slug) {
-    return this.db.delete(this.table).where(eq(this.table.slug, slug))
+    return this._getDb().delete(this.table).where(eq(this.table.slug, slug))
   }
 }
 

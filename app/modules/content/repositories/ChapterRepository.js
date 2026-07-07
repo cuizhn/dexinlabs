@@ -59,7 +59,7 @@ export class ChapterRepository {
 
   async getBySlug(slug) {
     if (!slug) return null
-    const rows = await this.db
+    const rows = await this._getDb()
       .select()
       .from(this.table)
       .where(eq(this.table.slug, slug))
@@ -69,7 +69,7 @@ export class ChapterRepository {
 
   async getById(id) {
     if (!id) return null
-    const rows = await this.db
+    const rows = await this._getDb()
       .select()
       .from(this.table)
       .where(eq(this.table.id, Number(id)))
@@ -79,14 +79,14 @@ export class ChapterRepository {
 
   async count(filters = {}) {
     const where = this._buildWhere(filters)
-    let query = this.db.select({ count: sql`count(*)`.mapWith(Number) }).from(this.table)
+    let query = this._getDb().select({ count: sql`count(*)`.mapWith(Number) }).from(this.table)
     if (where) query = query.where(where)
     const rows = await query
     return Number(rows[0]?.count ?? 0)
   }
 
   async create(data) {
-    const rows = await this.db.insert(this.table).values(data).returning()
+    const rows = await this._getDb().insert(this.table).values(data).returning()
     return rows[0] || null
   }
 
@@ -95,7 +95,7 @@ export class ChapterRepository {
     delete patch.id
     delete patch.slug
     delete patch.createdAt
-    const rows = await this.db
+    const rows = await this._getDb()
       .update(this.table)
       .set(patch)
       .where(eq(this.table.slug, slug))
@@ -109,7 +109,7 @@ export class ChapterRepository {
     const onConflictSet = { ...rest }
     delete onConflictSet.slug
     onConflictSet.updatedAt = new Date()
-    const rows = await this.db
+    const rows = await this._getDb()
       .insert(this.table)
       .values(payload)
       .onConflictDoUpdate({
@@ -121,7 +121,7 @@ export class ChapterRepository {
   }
 
   async deleteBySlug(slug) {
-    return this.db.delete(this.table).where(eq(this.table.slug, slug))
+    return this._getDb().delete(this.table).where(eq(this.table.slug, slug))
   }
 }
 
