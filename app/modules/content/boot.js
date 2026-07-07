@@ -1,77 +1,34 @@
-import {
-  registerSource,
-  registerParser,
-  registerTransformer,
-  registerRenderer,
-  registerQuery
-} from '../core/registry'
+import { registerQuery } from '../core/registry'
+import { bootstrapParser } from './bootstraps/parser'
+import { bootstrapRenderer, bootstrapTransformers } from './bootstraps/renderer'
+import { bootstrapDatabase } from './bootstraps/database'
+import { buildLazyQueryFacade } from './queries/lazyQuery'
 
-import { createSource } from '../source'
-import MarkdownParser from '../parser/markdown'
-import HeadingTransformer from '../transformer/heading'
-import TocTransformer from '../transformer/toc'
-import LinksTransformer from '../transformer/links'
-import ExcerptTransformer from '../transformer/excerpt'
-import ReadingTimeTransformer from '../transformer/readingTime'
-import ReferenceTransformer from '../transformer/reference'
-import VueRenderer from '../renderer/vueRenderer'
-
+/**
+ * 启动内容引擎，初始化所有子模块
+ */
 export async function bootContentEngine() {
-  registerParser('markdown', MarkdownParser, true)
+  // 初始化 Markdown 解析
+  const parserConfig = bootstrapParser()
 
-  registerTransformer('heading', HeadingTransformer, 10)
-  registerTransformer('toc', TocTransformer, 20)
-  registerTransformer('links', LinksTransformer, 30)
-  registerTransformer('excerpt', ExcerptTransformer, 40)
-  registerTransformer('readingTime', ReadingTimeTransformer, 50)
-  registerTransformer('reference', ReferenceTransformer, 100)
+  // 初始化渲染和转换
+  const rendererConfig = bootstrapRenderer()
+  const transformerConfig = bootstrapTransformers()
 
-  registerRenderer('vue', VueRenderer, true)
+  // 初始化数据库
+  const databaseConfig = bootstrapDatabase()
 
-  const defaultSource = createSource('database', {}, { name: 'neon-drizzle' })
-  registerSource('database', defaultSource, true)
-
+  // 注册查询层
   const lazyQuery = buildLazyQueryFacade()
   registerQuery('default', lazyQuery, true)
 
   return {
     ok: true,
     registered: {
-      parser: 'markdown',
-      renderers: ['vue'],
-      transformers: ['heading', 'toc', 'links', 'excerpt', 'readingTime', 'reference'],
-      source: 'database'
-    }
-  }
-}
-
-function buildLazyQueryFacade() {
-  return {
-    async getCourse(slug, opts = {}) {
-      const { loadCourse } = await import('../loader/course')
-      return loadCourse(slug, opts)
-    },
-
-    async getChapter(slug, opts = {}) {
-      const { loadChapter } = await import('../loader/chapter')
-      return loadChapter(slug, opts)
-    },
-
-    async getLesson(slug, opts = {}) {
-      const { loadLesson } = await import('../loader/lesson')
-      return loadLesson(slug, opts)
-    },
-
-    async getExercise(slug, opts = {}) {
-      const source = opts.source || (await import('../source')).then(m => {
-        return m.createSource('database', {}, { name: 'lazy-db' })
-      })
-      return source.findOne('exercise', { slug })
-    },
-
-    async listChapters(opts = {}) {
-      const { listChapters } = await import('../loader/chapter')
-      return listChapters(opts)
+      ...parserConfig,
+      ...rendererConfig,
+      ...transformerConfig,
+      ...databaseConfig
     }
   }
 }
