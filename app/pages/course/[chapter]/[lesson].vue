@@ -21,7 +21,7 @@
     <section class="lesson-detail__body">
       <div class="container lesson-detail__container">
         <div v-if="loading" class="lesson-detail__empty">课时内容加载中...</div>
-        <ContentRenderer v-else-if="lesson" :value="lesson" />
+        <MarkdownRenderer v-else-if="lesson" :value="lesson" />
         <div v-else class="lesson-detail__empty">课时内容未找到</div>
       </div>
     </section>
@@ -31,7 +31,7 @@
 <script setup>
 import { useHead, useRoute } from 'nuxt/app'
 import { computed } from 'vue'
-import { useLesson } from '~/composables/useLesson'
+import MarkdownRenderer from '@modules/content/renderer/theme/MarkdownRenderer.vue'
 
 const route = useRoute()
 
@@ -39,7 +39,9 @@ const lessonSlug = Array.isArray(route.params.lesson)
   ? route.params.lesson[0]
   : route.params.lesson
 
-const { lesson, loading, loadLesson } = useLesson()
+const { lesson, loading } = await useLesson(lessonSlug)
+
+const chapterSlug = computed(() => lesson.value?.chapter?.slug || route.params.chapter)
 
 useHead({
   title: computed(() => {
@@ -50,8 +52,6 @@ useHead({
     return parts.join(' · ')
   })
 })
-
-if (lessonSlug) await loadLesson(lessonSlug)
 </script>
 
 <style scoped>

@@ -49,10 +49,6 @@
       "dest": "/__fallback"
     },
     {
-      "src": "(?<__isr_route>/__nuxt_content/(?:.*))",
-      "dest": "/__fallback"
-    },
-    {
       "src": "/(.*)",
       "dest": "/__fallback"
     }

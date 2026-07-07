@@ -1,4 +1,5 @@
 import { defineEventHandler, getRouterParam, createError } from 'h3'
+import { chapterService } from '@modules/content/services/index.js'
 
 export default defineEventHandler(async event => {
   const slug = getRouterParam(event, 'slug')
@@ -10,25 +11,14 @@ export default defineEventHandler(async event => {
     })
   }
 
-  const chapter = await queryCollection(event, 'chapter').where('slug', '=', slug).first()
+  const result = await chapterService.getBySlug(slug)
 
-  if (!chapter) {
+  if (!result || !result.chapter) {
     throw createError({
       statusCode: 404,
       statusMessage: `Chapter not found: ${slug}`
     })
   }
 
-
-  let exercise = null
-  try {
-    exercise = await queryCollection(event, 'exercise').where('slug', '=', slug).first()
-  } catch {
-    exercise = null
-  }
-
-  return {
-    chapter,
-    exercise
-  }
+  return result
 })

@@ -1,8 +1,0 @@
-const study_vue_vue_type_style_index_0_scoped_e7aee5e2_lang = ".info-page__header[data-v-e7aee5e2]{padding:var(--spacing-2xl) 0 var(--spacing-xl);text-align:center;background:linear-gradient(180deg,var(--color-bg-secondary),transparent)}.info-page__tag[data-v-e7aee5e2]{display:inline-block;padding:4px 14px;font-size:.75rem;font-weight:600;letter-spacing:.1em;color:var(--color-primary);background:var(--color-primary-light);border-radius:100px;margin-bottom:var(--spacing-md)}.info-page__title[data-v-e7aee5e2]{font-size:2.25rem;font-weight:700;color:var(--color-text-primary);margin:0 0 var(--spacing-sm)}.info-page__desc[data-v-e7aee5e2]{font-size:1rem;color:var(--color-text-secondary);max-width:560px;margin:0 auto;line-height:1.6}.info-page__body[data-v-e7aee5e2]{padding:var(--spacing-xl) 0 var(--spacing-3xl)}.info-page__container[data-v-e7aee5e2]{max-width:800px}.info-card[data-v-e7aee5e2]{padding:var(--spacing-2xl);background:var(--color-bg-white);border:1px solid var(--color-border);border-radius:var(--border-radius-lg);text-align:center}.info-card__icon[data-v-e7aee5e2]{font-size:2.5rem;margin-bottom:var(--spacing-md)}.info-card__title[data-v-e7aee5e2]{font-size:1.25rem;font-weight:600;color:var(--color-text-primary);margin:0 0 var(--spacing-xs)}.info-card__desc[data-v-e7aee5e2]{font-size:.95rem;color:var(--color-text-secondary);margin:0 0 var(--spacing-lg)}.info-card__link[data-v-e7aee5e2]{font-weight:500;color:var(--color-primary);text-decoration:none}.info-card__link[data-v-e7aee5e2]:hover{text-decoration:underline}";
-
-const studyStyles_BBA7X0cg = [
-  study_vue_vue_type_style_index_0_scoped_e7aee5e2_lang
-];
-
-export { studyStyles_BBA7X0cg as default };
-//# sourceMappingURL=study-styles.BBA7X0cg.mjs.map

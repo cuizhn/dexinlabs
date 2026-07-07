@@ -1,4 +1,5 @@
 import { defineEventHandler, getRouterParam, createError } from 'h3'
+import { lessonService } from '@modules/content/services/index.js'
 
 export default defineEventHandler(async event => {
   const slug = getRouterParam(event, 'slug')
@@ -10,30 +11,14 @@ export default defineEventHandler(async event => {
     })
   }
 
-  const lesson = await queryCollection(event, 'lesson')
-    .where('slug', '=', slug)
-    .first()
+  const result = await lessonService.getBySlug(slug)
 
-  if (!lesson) {
+  if (!result) {
     throw createError({
       statusCode: 404,
       statusMessage: `Lesson not found: ${slug}`
     })
   }
 
-  let chapter = null
-  if (lesson.chapter) {
-    try {
-      chapter = await queryCollection(event, 'chapter')
-        .where('slug', '=', lesson.chapter)
-        .first()
-    } catch {
-      chapter = null
-    }
-  }
-
-  return {
-    ...lesson,
-    chapter
-  }
+  return result
 })

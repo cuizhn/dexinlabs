@@ -1,15 +1,10 @@
 import { defineEventHandler, getQuery } from 'h3'
+import { chapterService } from '@modules/content/services/index.js'
 
 export default defineEventHandler(async event => {
   const query = getQuery(event)
-
-  const course = query.course
-
-  const q = await queryCollection(event, 'chapter').order('order', 'ASC')
-
-  if (course) {
-    q.where('course', '=', course)
-  }
-
-  return q.all()
+  const courseSlug = query.course && typeof query.course === 'string'
+    ? query.course
+    : null
+  return chapterService.list(courseSlug)
 })

@@ -1,12 +1,20 @@
-import { d as defineEventHandler, a as getRouterParam, c as createError, q as queryCollection } from '../../../_/nitro.mjs';
+import { d as defineEventHandler, a as getRouterParam, c as createError } from '../../../_/nitro.mjs';
+import { c as chapterService } from '../../../_/ChapterService.mjs';
 import 'node:http';
 import 'node:https';
 import 'node:events';
 import 'node:buffer';
 import 'node:fs';
 import 'node:path';
-import 'better-sqlite3';
 import 'node:crypto';
+import '../../../_/LessonRepository.mjs';
+import 'drizzle-orm';
+import '../../../_/db.mjs';
+import 'node:process';
+import 'drizzle-orm/neon-serverless';
+import '@neondatabase/serverless';
+import 'drizzle-orm/pg-core';
+import '../../../_/ExerciseRepository.mjs';
 
 const _slug__get = defineEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug");
@@ -16,23 +24,14 @@ const _slug__get = defineEventHandler(async (event) => {
       statusMessage: "Slug is required"
     });
   }
-  const chapter = await queryCollection(event, "chapter").where("slug", "=", slug).first();
-  if (!chapter) {
+  const result = await chapterService.getBySlug(slug);
+  if (!result || !result.chapter) {
     throw createError({
       statusCode: 404,
       statusMessage: `Chapter not found: ${slug}`
     });
   }
-  let exercise = null;
-  try {
-    exercise = await queryCollection(event, "exercise").where("slug", "=", slug).first();
-  } catch {
-    exercise = null;
-  }
-  return {
-    chapter,
-    exercise
-  };
+  return result;
 });
 
 export { _slug__get as default };

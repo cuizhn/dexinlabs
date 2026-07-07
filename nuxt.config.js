@@ -1,8 +1,12 @@
 import { defineNuxtConfig } from 'nuxt/config'
+import { fileURLToPath } from 'node:url'
+import path from 'node:path'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const rootDir = __dirname
 
 export default defineNuxtConfig({
-  modules: ['@nuxt/content'],
-
   srcDir: 'app/',
 
   devtools: { enabled: true },
@@ -38,25 +42,29 @@ export default defineNuxtConfig({
   },
 
   components: {
-    dirs: [{ path: '~/components' }]
+    dirs: [
+      { path: '~/components', pathPrefix: false },
+      { path: '~/shared/components', pathPrefix: false },
+      { path: '~/modules/course/components', pathPrefix: false },
+      { path: '~/modules/practice/components', pathPrefix: false }
+    ]
   },
 
-  content: {
-    experimental: {
-      sqliteConnector: process.env.NODE_ENV !== 'production'
-    },
+  imports: {
+    dirs: [
+      '~/composables',
+      '~/shared/composables',
+      '~/modules/course/composables',
+      '~/modules/practice/composables',
+      '~/modules/content/query'
+    ]
+  },
 
-    build: {
-      markdown: {
-        remarkPlugins: {
-          'remark-math': {}
-        },
-
-        rehypePlugins: {
-          'rehype-katex': {}
-        }
-      }
-    }
+  alias: {
+    '@modules': path.resolve(rootDir, 'app/modules'),
+    '@shared': path.resolve(rootDir, 'app/shared'),
+    '@standards': path.resolve(rootDir, 'standards'),
+    '@server': path.resolve(rootDir, 'server')
   },
 
   nitro: {
@@ -66,6 +74,15 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       include: ['katex']
+    },
+
+    resolve: {
+      alias: {
+        '@modules': path.resolve(rootDir, 'app/modules'),
+        '@shared': path.resolve(rootDir, 'app/shared'),
+        '@standards': path.resolve(rootDir, 'standards'),
+        '@server': path.resolve(rootDir, 'server')
+      }
     }
   }
 })

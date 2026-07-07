@@ -6,19 +6,27 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview"
+    "preview": "nuxt preview",
+    "sync": "node content/sync.js",
+    "drizzle:generate": "drizzle-kit generate",
+    "drizzle:migrate": "drizzle-kit migrate",
+    "drizzle:push": "drizzle-kit push",
+    "drizzle:studio": "drizzle-kit studio",
+    "drizzle:check": "drizzle-kit check"
   },
   "engines": {
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@nuxt/content": "^3.14.0",
+    "@neondatabase/serverless": "^1.1.0",
+    "drizzle-orm": "^0.45.2",
+    "fast-glob": "^3.3.3",
+    "js-yaml": "^5.2.1",
     "katex": "^0.17.0",
-    "nuxt": "^4.4.6",
-    "rehype-katex": "^7.0.1",
-    "remark-math": "^6.0.0"
+    "marked": "^18.0.5",
+    "nuxt": "^4.4.6"
   },
   "devDependencies": {
-    "better-sqlite3": "^12.10.0"
+    "drizzle-kit": "^0.31.10"
   }
 }

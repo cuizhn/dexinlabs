@@ -62,17 +62,15 @@
 <script setup>
 import { useHead, useRoute } from 'nuxt/app'
 import { computed } from 'vue'
-import { useChapter } from '~/composables/useChapter'
 
 const route = useRoute()
-const { currentChapter, loadChapter } = useChapter()
 const chapterSlug = route.params.chapter
+
+const { currentChapter } = await useChapter(chapterSlug)
 
 useHead({
   title: computed(() => (currentChapter.value ? `${currentChapter.value.title} · 章节` : '章节'))
 })
-
-await loadChapter(chapterSlug)
 </script>
 
 <style scoped>

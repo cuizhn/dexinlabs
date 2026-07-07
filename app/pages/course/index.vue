@@ -38,14 +38,10 @@
 
 <script setup>
 import { useHead } from 'nuxt/app'
-import { useChapter } from '~/composables/useChapter'
 
 useHead({ title: '课程中心' })
 
-const { chapters, loadChapters } = useChapter()
-
-await loadChapters()
-
+const { chapters } = await useChapter()
 </script>
 
 <style scoped>

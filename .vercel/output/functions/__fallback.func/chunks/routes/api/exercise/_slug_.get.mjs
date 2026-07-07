@@ -1,12 +1,31 @@
-import { d as defineEventHandler, a as getRouterParam, c as createError, q as queryCollection } from '../../../_/nitro.mjs';
+import { d as defineEventHandler, a as getRouterParam, c as createError } from '../../../_/nitro.mjs';
+import { e as exerciseRepository } from '../../../_/ExerciseRepository.mjs';
 import 'node:http';
 import 'node:https';
 import 'node:events';
 import 'node:buffer';
 import 'node:fs';
 import 'node:path';
-import 'better-sqlite3';
 import 'node:crypto';
+import 'drizzle-orm';
+import '../../../_/db.mjs';
+import 'node:process';
+import 'drizzle-orm/neon-serverless';
+import '@neondatabase/serverless';
+import 'drizzle-orm/pg-core';
+
+class ExerciseService {
+  constructor({ exercises = exerciseRepository } = {}) {
+    this.exercises = exercises;
+  }
+  async listByChapter(chapterSlug) {
+    return this.exercises.listByChapter(chapterSlug);
+  }
+  async getBySlug(slug) {
+    return this.exercises.getBySlug(slug);
+  }
+}
+const exerciseService = new ExerciseService();
 
 const _slug__get = defineEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug");
@@ -16,7 +35,7 @@ const _slug__get = defineEventHandler(async (event) => {
       statusMessage: "Slug is required"
     });
   }
-  const exercise = await queryCollection(event, "exercise").where("slug", "=", slug).first();
+  const exercise = await exerciseService.getBySlug(slug);
   if (!exercise) {
     throw createError({
       statusCode: 404,

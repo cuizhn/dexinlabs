@@ -37,7 +37,7 @@
             {{ exercise.description }}
           </div>
 
-          <ContentRenderer v-if="exercise" :value="exercise" />
+          <MarkdownRenderer v-if="exercise" :value="exercise" />
         </template>
 
         <div v-else class="exercise-page__placeholder">
@@ -59,27 +59,21 @@
 import { useHead, useRoute } from 'nuxt/app'
 
 import { computed } from 'vue'
-
-import { useExercise } from '../../composables/useExercise'
-
-import { useChapter } from '../../composables/useChapter'
+import MarkdownRenderer from '@modules/content/renderer/theme/MarkdownRenderer.vue'
 
 const route = useRoute()
 
 const chapterSlug = Array.isArray(route.params.chapter) ? route.params.chapter[0] : route.params.chapter
 
+const { exercise, loading: exerciseLoading } = await useExercise(chapterSlug)
+
+const { currentChapter, loading: chapterLoading } = await useChapter(chapterSlug)
+
+const loading = computed(() => (exerciseLoading.value || chapterLoading.value))
+
 useHead({
   title: computed(() => (chapterTitle.value ? `${chapterTitle.value} · 练习` : '章节练习'))
 })
-
-const { exercise, loading, loadExercise } = useExercise()
-
-const { currentChapter, loadChapter } = useChapter()
-
-if (chapterSlug) {
-  await loadChapter(chapterSlug)
-  await loadExercise(chapterSlug)
-}
 
 const chapterTitle = computed(() => currentChapter.value && currentChapter.value.title)
 </script>

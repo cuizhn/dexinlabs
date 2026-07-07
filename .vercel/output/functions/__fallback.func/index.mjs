@@ -5,7 +5,6 @@ import 'node:events';
 import 'node:buffer';
 import 'node:fs';
 import 'node:path';
-import 'better-sqlite3';
 import 'node:crypto';
 
 const ISR_URL_PARAM = "__isr_route";

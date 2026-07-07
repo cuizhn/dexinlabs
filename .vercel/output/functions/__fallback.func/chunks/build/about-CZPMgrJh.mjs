@@ -9,15 +9,14 @@ import 'node:events';
 import 'node:buffer';
 import 'node:fs';
 import 'node:path';
-import 'better-sqlite3';
 import 'node:crypto';
-import 'vue-router';
-import '@vue/shared';
 import '../routes/renderer.mjs';
 import 'vue-bundle-renderer/runtime';
 import 'unhead/server';
 import 'devalue';
 import 'unhead/utils';
+import 'vue-router';
+import '@vue/shared';
 
 const _sfc_main = {
   __name: "about",
