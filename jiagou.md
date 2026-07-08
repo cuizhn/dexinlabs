@@ -230,3 +230,12 @@ standards/
 > **整个项目按“模块（Module）”组织；每个模块内部再按职责组织；项目级规范统一放在 `standards/` 中。**
 
 我认为，这种结构既适合你当前借助 AI 开发的方式，又能支持未来逐步替换 Content、数据库乃至整个渲染引擎，而不需要推翻整体架构。
+app/modules/content/
+├── boot.js                    # 统一入口
+├── bootstraps/
+│   ├── parser.js             # Markdown 解析初始化
+│   ├── renderer.js           # 渲染器初始化
+│   ├── transformers.js       # 转换器初始化
+│   └── database.js           # 数据库初始化
+└── queries/
+    └── lazyQuery.js          # 查询外观层
