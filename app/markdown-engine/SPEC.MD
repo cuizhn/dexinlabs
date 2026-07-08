@@ -1,7 +1,6 @@
 
 # markdown-engine/SPEC.md
 
-```md
 # Markdown Engine Specification
 
 
