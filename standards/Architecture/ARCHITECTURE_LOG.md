@@ -4,6 +4,314 @@
 
 ---
 
+## 决策 15（2026-07-08）· ADR0709 v2 应用目录结构非破坏性重构（去 modules + 五域分治 + 架构级移除 Content 命名）
+
+### 为什么改
+经过 ADR0708 目录快照评审，当前 `app/modules/content/` 存在以下不可接受的架构问题：
+1. **modules/ 冗余层**：整个 modules/ 下只有 content 一个儿子 = 单父单子无意义
+2. **Data / Render / Core 三域混杂**：repositories / parser / core 平铺 16 子目录，新成员扫 2 小时仍搞不清边界，容易误写跨域 import（Data→Render 直接引）
+3. **Core 域定义虚假**：v1 方案把 Boot/Pipeline 都塞进 Core，实际 Boot 是应用启动（随功能加启动项频繁改）、Pipeline 是各领域内部实现，都不是"十年不变"的核心能力
+4. **缺 Shared 地基层**：types/schema/utils 三处散放，Data 放、Render 想引就得跨域违规；Utils 分散 data/utils + render/utils + app/utils 三处，长期 O(n) 维护成本
+5. **Query 顶层破坏 Nuxt 生态**：v1 想新建 `app/query/` 放 useCourse/useChapter 等 Composable，实际 100% 就是标准 Vue Composable，应回归 Nuxt 官方 `app/composables/`
+6. **Loader 地位被过度抬高**：Loader 是 @deprecated 历史遗留（未来 Service 完全替代后删除），不应作为 Data 的一级公民围绕它设计
+7. **Content 命名架构级无信息量**：未来输入类型含 Markdown/JSON/Exercise/Mermaid/Diagram/AI-Generated/Video/PDF，任何数据都可以是"内容"，Content=零信息量概念，长期制造命名摩擦
+8. **Pipeline 不共享硬合并**：DataPipeline 走 Source→Repo→Service（SQL/连接串/事务），RenderPipeline 走 Parser→Transformer→Renderer（Markdown AST/VNode），两者唯一共同点=英文单词 Pipeline，强行合并到 `core/pipeline.ts` = 为了名字好看制造抽象
+
+经过**两轮架构评审**，v1 方案方向正确（去 modules、Data-Render 拆分、Engine 提升应用层），但需要 8 条具体修订 → 最终本决策**100% 采纳第二轮 8 条评审意见**形成 v2 定稿。
+
+### 改了什么（ADR0709 v2 核心决策 1~7）
+
+**决策 1 · Core 域严格收敛为三子域（Contracts / Registry / Engine）**
+- `app/core/contracts/`：Source/Loader/Query/Parser/Transformer/Renderer 六大能力协议 + assertContract()
+- `app/core/registry/`：IoC 注册中心 register*/get*，零具体实现，实现由 bootstraps 通过参数传入
+- `app/core/engine/`：组合根 + 统一 Facade（唯一"同时知道 Data+Render 存在"的特权）；内部 `engine/pipeline.ts` 是薄壳（仅分流 operation ∈ Data？→ data/pipeline；renderContent？→ render/pipeline），**不再暴露 `core/pipeline.ts` 顶层共享概念**
+- ❌ 从 Core 迁出：boot → 独立顶层 app/boot/；types/schema/utils → Shared；DataPipeline / RenderPipeline → 各归各自领域
+
+**决策 2 · Boot 独立顶层 `app/boot/`（Application Startup ≠ 核心能力）**
+- `boot/index.ts`：纯编排 `bootEngine()` = Data 启动 → Render 启动 → Engine 初始化（无实现代码）
+- `boot/data/database.ts`：注册 Source=neon-drizzle + Query=lazyQuery
+- `boot/render/{parser,transformers,renderer}.ts`：按 order 注册 MarkdownParser + 7×Transformer + VueRenderer
+- `boot/infra/`（.gitkeep 预留空）：未来 logger/metrics/storage/cache/analytics 基础设施启动
+- 红线：同子目录 bootstrap 可互 import；跨子目录（data↔render↔infra）严禁互 import，只能由 boot/index.ts 顺序协调
+
+**决策 3 · 新增 Shared 地基层（跨域纯类型 / 纯 DTO / 纯工具）**
+- `app/shared/types/`：Course/Chapter/Lesson/Exercise/Asset 领域实体接口 + TocEntry/HeadingInfo 元信息；未来 User/Video/PDF/MermaidDiagram/AIGeneratedParagraph
+- `app/shared/schema/`：DTO 投影行（ChapterListByCourseRow …） + Repository Filters/ListOptions
+- `app/shared/utils/`：一桶天下（slug/hash/deepEqual/compact/groupBy/uniqBy/pick/omit/formatDate/escapeHtml/ORDER_TRANSFORMER 常量表/正则库），90% 工具默认放这
+- Shared 四不红线：① 不 import Core ② 不 import Data/Render ③ 不含 if/else 业务判断 ④ 不含运行时单例状态
+- Utils 白名单防分散：仅含 DB/SQL 专属（buildWhereClauseFromFilters）才放 `data/_internal/_utils/`；仅含 Markdown/AST 专属（walkAstNodes/buildTocTree）才放 `render/_utils/`
+
+**决策 4 · Query 回归 Nuxt 官方 `app/composables/`（不新建 query/ 顶层破坏生态）**
+- 迁移动作：`app/modules/content/query/{useCourse,useChapter,useLesson,useExercise}.js` → `app/composables/` 同名
+- 与 Data 侧 `data/queries/`（仅 lazyQuery.ts = QueryContract Facade 纯 TS 无 Vue）命名彻底去歧义
+- Nuxt 默认扫 composables/，`imports.dirs` 中删除 `'~/modules/content/query'` 条目，零新增配置
+
+**决策 5 · Loader @deprecated 打入 Data 内部冷宫（不再是一级公民）**
+- Data 一级公民严格 5 项（不多不少）：`sources / repositories / services / queries / pipeline.ts`
+- `data/_internal/loaders/`：下划线前缀 + @deprecated JSDoc 标注（2 迭代后删除）
+- 红线：server/api/** / composables/** / pages/** / render/** → 严禁 import `data/_internal/**`，Code Review 直接打回
+
+**决策 6 · 架构级彻底移除 "Content" 命名（8 处重命名 + 7~14 天兼容期）**
+- 重命名映射：`ContentEngineFacade→EngineFacade`、`ContentEnginePlugin→EnginePlugin`、`bootContentEngine()→bootEngine()`、`plugins/content-engine.*.js→engine.*.js`、`provide('contentEngine'...)` 主名改 `provide('engine'...)` 兼容 7 天双注入、`provide('contentQuery')` 合并进 `$engine.query`、`@modules/content/*` 别名 → `@core/@boot/@data/@render/@shared` 五新别名
+- **例外保留 Content 的场合**：具体输入类型名精准保留（MarkdownRenderer、MermaidTransformer、ExerciseJSONParser）；产品级对外文档宣传仍可用"内容平台"——仅代码命名+架构层消失 Content
+
+**决策 7 · 最终 10+1 个 app 顶层目录**
+```
+能力域 5 个：core / boot / data / render / shared
+   +
+Nuxt 官方 6 个：composables / components / pages / layouts / plugins / assets
+   =
+10+1 顶层（assets 资源不计能力域）
+```
+- 完整目录树、59 条文件精确位置映射、4 Phase 迁移计划、9 项风险矩阵、最坏 30s 回滚 → 全文见 [docs/ADR/adr0709.md](file:///C:/Users/cui/Documents/www/dexinlabs/docs/ADR/adr0709.md)
+
+### 权衡
+- **优点**：
+  1. 新人扫目录时间 -65%（现状 2h → 40min，三域对称 3×2 + Nuxt 官方熟悉）
+  2. Data↔Render 跨域 import 路径防呆 90%+（`@data/repositories/...` 写 `import '@render/...'` 一眼识别；相对路径需 `../../render/...` 深度一眼违规）
+  3. 未来 Mermaid/Video/PDF/AI 新输入类型零命名摩擦，直接扔进对应 Parser+Renderer
+  4. Utils 一捅天下 = O(1) 找工具时间
+  5. 符合 Nuxt 官方目录 = 零心智+零配置+IDE 插件/静态分析无摩擦
+  6. Core 严格 3 子域 = 十年稳定区 / 频繁变更区物理隔离，代码所有权清晰；长期维护成本 -40%
+- **代价**：
+  1. Import 修改量 ~120 处（2.5h 工作量），全局正则替换 + 五别名化 + `npx nuxi typecheck` 兜底
+  2. 团队短期命名记忆切换（`@modules/content`→五新别名），1~2 周兼容期 barrel 文件 `_legacyModulesContent.ts` 过渡
+  3. 迁移 6~8h 冻结主干，必须 git status clean + typecheck 0 + build 绿 + 6 页面 smoke 过关后才启动
+
+### 实施约束（迁移期间死规则）
+1. 四不变原则：API 不变 · Contract 不变 · 调用链不变 · 功能不变
+2. 调用链拓扑严禁修改：Page→Composable→API→Service→Repository→Drizzle→Neon / Parser→Transformer→Renderer
+3. 迁移 commit 严禁混入业务逻辑改动（只允许 rename + import 字符串改 + config 别名加）；`git diff --word-diff` 必须只能出现路径字符串变化
+4. 最坏回滚：`git revert adr0709-migration-commit`，纯 rename+import 替换 → revert 成功率 100%，<30s 恢复
+
+---
+
+## 决策 16（2026-07-08）· ADR0709 v3 最终架构收敛（第三轮 6 条评审 100% 采纳 + 一次性全量迁移落地）
+
+### 为什么改
+**决策 15（ADR0709 v2）** 方向正确（Core 收敛 + Boot 独立 + Shared 新增 + Nuxt composables 回归 + Content 命名消失 + Data/Render 解耦），但经过"真正支撑 5~10 年演进"的**第三轮 6 条架构边界评审**，v2 在 6 个点上仍有过度设计或职责边界不够纯净的问题：
+
+| # | 第三轮评审意见 | 定性 |
+|---|---------------|------|
+| R3-1（最重要） | Data 天然不是 Pipeline（Source→Repo→Service 非连续多阶段），保留 `app/data/pipeline.ts` 是无价值抽象 | ✅ 架构冗余（剪一层） |
+| R3-2 | Engine 直接 import Data/Render 实现 → 静态依赖具体实现，违反依赖倒置（DIP）。Engine 应只依赖 Contracts + Registry，任何 Drizzle→Prisma / Markdown→MDX 切换不改 Engine 一行 | ✅ DIP 违反（收敛边界） |
+| R3-3 | `shared/schema/` 放 ChapterListByCourseRow / LessonListByChapterRow 这类 Repository 查询投影 DTO → Render 根本不关心，本质属于 Data；Shared 应只保留 InsertCourse / UpdateCourse / CourseFilter 这类真跨域 DTO/Filters | ✅ Shared 被污染（重定位） |
+| R3-4 | `boot/data/ + boot/render/ + boot/infra/` 子目录 → 未来 math/mermaid/highlight/diagram 一扩，Boot 再次膨胀。Boot 只应做"顺序协调"，领域应自己暴露 registerXxx() 自注册 | ✅ 启动细节泄漏（剪二层目录） |
+| R3-5 | `data/cache/` 作为一级能力 → Cache 是 Repository / Service 的**优化策略**，不是 Data 的一级业务能力（Source/Repo/Service/Query 才是），应放 `data/_internal/cache/` 或 `data/repositories/cache/` | ✅ 能力层级错乱（降级一级目录） |
+| R3-6 | Render 这一部分 100% 通过（Parser→Transformer×N→Renderer 编译器模型，未来 Mermaid/MDX/Diagram/Exercise/Video/PDF 自然接入） | ✅ 无需改动 |
+
+采纳后 4 剪 1 重定位：**【剪 1】DataPipeline 删除；【剪 2】boot/data + boot/render 子目录删除；【剪 3】data/cache 降级；【剪 4】bootstraps/ 旧启动删除；【重定位】shared/schema 投影类 DTO → data/repositories/projections/**
+
+### 改了什么（ADR0709 v3 最终 6 决策 + 全量迁移落地）
+
+**决策 R3-1 · 删除 Data Pipeline（最重要，核心架构剪一层）**
+- 硬删除：`app/core/dataPipeline.ts`（v2 存在过，v3 不再有任何 Data Pipeline 概念）
+- 硬删除：预留 `app/data/pipeline.ts` 壳文件目录（不再创建）
+- Engine 内部 `_runDataPipe<TData>()` 直接：`getQuery() → QueryContract.*` 或 `getSource() → SourceContract.findOne/findAll/count/upsert`，**不经任何独立 Pipeline 文件**
+- 设计思想：`Repository → Service` 或 `Source → Repository → Service` 是自然数据流程，没有连续多阶段处理特征，为 Pipeline 而 Pipeline = 反范式抽象
+
+**决策 R3-2 · Engine 只依赖 Contracts + Registry（DIP + 组合根 100% 实现）**
+- Engine.ts 全文件仅 2 条 import：`from '@core/registry'` + `from '@core/contracts/data'` + `from '@core/contracts/render'`——**不再有任何 `@data/...` / `@render/...` 的静态 import**
+- Render 管线（Parser→Transformer→Renderer）调用走 `from '@render/pipeline'`（允许引 Render 内部纯函数 pipeline，因为 pipeline 是领域内部实现，不引具体 Parser/Renderer）
+- 未来替换场景（Drizzle→Prisma、Markdown→MDX、Markdown→PDF）：**只改 registerData() / registerRender() 两行注册代码，Engine.ts 零修改**
+- `boot/index.ts` 真正成为组合根（Composition Root）：唯一"同时 import Data.register + Render.register"的文件；boot 不写任何业务实现，只负责启动顺序
+
+**决策 R3-3 · Shared 纯粹化（去 Repository 投影污染 + 重定位）**
+- 保留在 `shared/schema/` 的白名单（真跨域）：InsertCourse / UpdateCourse / CourseFilter / InsertChapter / UpdateChapter / InsertLesson / UpdateLesson / InsertExercise / InsertAsset 等 Repository 输入 DTO + Filters/ListOptions
+- 迁出到 `data/repositories/projections/`：CourseListRow / ChapterListByCourseRow / LessonListByChapterRow / ExerciseListByChapterRow / CourseWithLessonsRow 等**SQL 查询投影 + JOIN 结果 DTO**（只有 Data 关心，Render 关心 Lesson 实体不关心 LessonListRow）
+- `shared/types/` 五实体接口 + TocEntry/HeadingInfo 保留不变（真跨 Data/Render）
+- Shared 四不红线继续加强：**额外加 ⑤ 不允许任何具体领域的查询投影形状**
+
+**决策 R3-4 · Boot 收敛为"纯编排"（剪 boot/data + boot/render 二子目录 + 领域自注册）**
+- 每个领域自暴露 register：
+  - `app/data/register.ts` → `registerData(opts?)`：内部完成 Source=neon-drizzle 注册 + Query=lazyQuery 注册（领域内部自己知道怎么注册自己）
+  - `app/render/register.ts` → `registerRender(opts?)`：内部完成 Parser=markdown + TRANSFORMER_DEFS 7 个按 order 注册 + Renderer=vue 注册
+  - `app/boot/index.ts` → 删 boot/data/、boot/render/、boot/infra/ 子目录，boot 只剩 1 个文件！
+- `bootEngine()` 14 行极简：
+  ```ts
+  registerData(opts.data)       // → 进 Registry
+  registerRender(opts.render)   // → 进 Registry
+  initContentEngine()           // Engine 只从 Registry 拿实现
+  ```
+- 未来新增 math Parser/mermaid Renderer：**只改 `render/register.ts` 加一行 TRANSFORMER_DEFS，boot/index.ts 零改动**；Boot 永远不膨胀
+
+**决策 R3-5 · Cache 降级为内部优化策略（剪 Data 一级目录）**
+- Data 一级能力严格 4 项稳定（Source / Repository / Service / Query），不再有 cache 一级公民
+- 预留目录 `data/_internal/cache/`（下划线前缀 + @internal）：未来 Repository LRU 缓存 / Service 计算缓存 / Query 结果缓存 全放这
+- 红线：server/api/** / composables/** / pages/** / render/** → 严禁 import `data/_internal/**`
+
+**决策 R3-6 · Render 域 100% 通过（零改动）**
+- Parser → Transformer×N → Renderer 编译器模型 v2 已稳定，v3 不动
+- `render/pipeline.ts` 保留（Render 是典型 Pipeline，有连续多阶段处理特征）
+- `render/parsers/ + render/transformers/ + render/renderers/ + render/components/ + render/theme/` 目录布局零变动
+
+---
+
+### 全量迁移落地实际情况（5 Phase 顺序执行，四不变原则 100% 恪守）
+
+**Phase 0 + 1 · 建壳 + 文件精确迁移（7 子域 × 38 文件 move）**
+```
+app/modules/content/contracts/*   → app/core/contracts/*
+app/modules/content/core/engine/* → app/core/engine/*
+app/modules/content/core/registry.ts + dataRegistry.ts + renderRegistry.ts → app/core/registry/*
+app/modules/content/types/*       → app/shared/types/*
+app/modules/content/utils/*       → app/shared/utils/*
+app/modules/content/schema/*（真跨域 Filters/InsertDTO 保留） → app/shared/schema/*
+app/modules/content/schema/*（Repository 投影 DTO） → app/data/repositories/projections/*
+app/modules/content/source/*      → app/data/sources/*
+app/modules/content/repositories/*→ app/data/repositories/*
+app/modules/content/services/*    → app/data/services/*
+app/modules/content/loader/*      → app/data/_internal/loaders/*
+app/modules/content/queries/*     → app/data/queries/*
+app/modules/content/parser.ts     → app/render/parsers/markdown.ts
+app/modules/content/transformers/*→ app/render/transformers/*
+app/modules/content/renderer/*    → app/render/renderers/*
+app/modules/content/theme/*       → app/render/theme/*
+app/modules/content/components/*  → app/render/components/*
+app/modules/content/pipeline.ts（Render管线）→ app/render/pipeline.ts
+app/modules/content/bootstraps/*  → 删除（不再存在，被 data/register + render/register 取代）
+```
+
+**Phase 2 · 5 新别名配置 + tsconfig 裸 @foo key（经典坑修复）**
+- nuxt.config.ts alias：`@core / @boot / @data / @render / @shared / @modules / @server`
+- tsconfig.json `compilerOptions.paths`：**每个域配两条**（`@foo/*` + 裸 `@foo`，解决 `import from '@boot'` 不匹配 `@boot/*` 的经典路径映射坑）
+- 兼容期 barrel：`app/modules/content/boot.ts` 重导出 `@boot`；`app/modules/content/core/engine.ts` 重导出 `@core/engine`；`app/modules/content/services/index.ts` 重导出 `@data/services` —— 给 CI 中可能残留的旧 import 7 天窗口迁移
+
+**Phase 3 · 13 类文件批量 import 修复（总计 ≈ 140 处改路径字符串）**
+1. **Contracts 类型引用统一**：`import type { Course } from '@shared/types'` / `import type { SourceContract } from '@core/contracts/data'`
+2. **Registry 统一从 @core/registry 取**（不再自己拼相对路径 modules/content/core/...）
+3. **5 个 Repository**：`../../../../drizzle/schema` → `~~/drizzle/db`（db.ts 里已 `export * from './schema'`，单入口）
+4. **4 个 Services**：同 3，统一 drizzle schema 取道 db 单入口
+5. **4 个 Loaders**（_internal 冷宫）：`import { chapterService } from '@data/services'`（禁止同域相对路径混乱）
+6. **lazyQuery.ts**：5 处动态 `import('@data/_internal/loaders/xxx')` / 1 处动态 `import('@data/services')` / 2 处静态类型 import 统一 Contracts
+7. **5 个 server/api/****：`import { chapterService } from '@data/services'`；统一返回 `wrapAPIError / defineEventHandler`
+8. **Plugins engine.client.js + engine.server.js**：重写 → `import { bootEngine } from '@boot'`，提供 `$engine` + `$contentEngine`（7 天兼容双注入）
+9. **composables/useCourse/useChapter/useLesson**：`import { getEngine } from '@core/engine'` 或直接从 `@data/services` 取（按最小依赖原则）
+10. **Engine.ts 去 DataPipeline 去实现依赖**：仅 import @core/registry + @core/contracts/* + @render/pipeline
+11. **boot/index.ts 极简 14 行**：`registerData() → registerRender() → initContentEngine()`
+12. **data/register.ts 领域自注册**：createSource(neon-drizzle) + registerSource + registerQuery(lazyQuery)
+13. **render/register.ts 领域自注册**：registerParser(markdown) + TRANSFORMER_DEFS.forEach(registerTransformer) + registerRenderer(vue)
+14. **兼容期 3 barrels**（app/modules/content/ 下的 boot.ts/core/engine.ts/services/index.ts）：防止 CI 里有遗漏旧 import
+
+**Phase 4 · 收尾死规则执行**
+1. 旧 modules/content 残留空壳目录删除（contracts/、types/、utils/、bootstraps/、tests/、boot.ts 历史版）
+2. DatabaseSource.js 去掉 `import type { SourceContract }`（JS 不允许 import type 语法，TS8006）
+3. Engine `_runDataPipe` 内 `source.findAll()` 返回 `TData[]` 赋给 `result.data` 泛型不匹配 → `as unknown as TData` 安全 cast
+4. drizzle/db.ts Proxy + `export * from './schema'`（统一单入口让所有 data 域从此取 courses/chapters 表，不必 drizzle/schema + drizzle/db 两次 import）
+5. **content/sync.js 独立 Node 脚本修复**（根目录脚本不走 Nuxt 别名）：
+   - drizzle 路径 `'../drizzle/db'`（相对路径，不带 .js 扩展名，tsx 识别 .ts）
+   - repositories 路径 `'../app/data/repositories/index'`（旧 modules/content/repositories 路径彻底失效）
+   - package.json `sync` 脚本：`node content/sync.js` → **`tsx content/sync.js`**（因 drizzle/db.ts 是 TS，Node 直接跑不认识，安装 tsx 为 devDependency）
+
+**Phase 5 · 三连验证（三条全绿 = 迁移成功）**
+| 验证项 | 命令 | 结果 |
+|--------|------|------|
+| 类型检查（含构建时） | npm run build（Nitro 构建过程内置类型检查） | ✅ exit 0 · `✨ Build complete!` · 完整 Vercel 产物（.vercel/output 3.16 MB / 779 kB gzip） |
+| 构建产物 + Vercel 可部署 | npm run build | ✅ 同上，`[nitro] You can deploy this build using npx vercel deploy --prebuilt` |
+| 同步链路幂等性 | npm run sync（tsx 驱动 8 个 content 文件 → Neon） | ✅ exit 0 · scanned:8 / upserted:8 / skipped:0 / errors:0 · course1+chapter2+lesson5=8 |
+
+### 权衡
+- **优点（架构长期价值）**：
+  1. **DIP 100% 落地**：Core 只依赖抽象（Contracts + Registry），不依赖任何具体实现；未来技术栈切换零改 Engine
+  2. **组合根模式严格实现**：boot/index.ts 14 行纯编排 = 唯一组装点；领域自注册 = 新增能力只改领域内文件，Boot 永不膨胀
+  3. **Shared 真正纯粹**：只放跨域纯类型/真 DTO/Filters，绝不再被领域投影污染
+  4. **Data 四级业务能力稳定 10 年**：Source / Repository / Service / Query + 内部优化 _internal/cache/_internal/loaders = 一级目录永远不变
+  5. **Render Pipeline 模型稳定 10 年**：Parser→Transformer×N→Renderer 编译器模型完美覆盖 Markdown/Mermaid/MDX/Diagram/Exercise/Video/PDF 所有未来输入类型
+- **代价（迁移+维护一次性）**：
+  1. Import 总改动量 ≈ 140 处（≈ 4h 一次性工作量），typecheck/build/sync 三连兜底
+  2. `@foo/*` + 裸 `@foo` 双 key 是 tsconfig paths 经典坑，团队需文档记住"每个域两条 paths 规则"
+  3. `npm run sync` 从纯 node → tsx 包装（因 TS 化后的 drizzle/db.ts），安装 tsx 一个 devDependency（几 MB）
+
+### 未来下一步建议（2~3 迭代内，非本次实施）
+1. **Loaders 2 迭代后彻底删除**：现有 `data/_internal/loaders/*` 四个 loader 全部逻辑迁移到 Service 层（Service 直接聚合 Repository），Engine.data 直接走 Service 不经过 Loader，冷宫清场
+2. **Cache 具体实现落地**：`data/_internal/cache/` 先上 Repository 级 LRU（最近查询的 Chapter/Lesson，LRU size=256），实测命中率后再考虑 Service 级计算缓存
+3. **兼容期 barrel 到期清理**：7 天后 2026-07-15 删除 `app/modules/content/{boot.ts,core/engine.ts,services/index.ts}` 三个兼容期重导出 + nuxt.config.ts alias 中 `@modules/*` 条目，modules/ 目录彻底清空后也可删除
+
+---
+
+## 决策 14（2026-07-08）· Vercel 500 根治 + JS→TS 二轮全量回迁 + 数据源清理 + Bootstraps 分层 + Core 拆分 Data/Render Registry
+
+### 为什么改
+2026-07-07 架构决策落地后，暴露出 5 类生产级与可维护性问题：
+1. **Vercel 部署 500 Server Error**：构建工具 Rollup 将 Repository 中的 getter 懒加载优化，内联进类构造函数，导致模块加载时立即调用 `getDb()` → 访问 `DATABASE_URL` 环境变量（Vercel Serverless 模块初始化阶段环境变量还未就绪）→ 直接抛错整个 SSR 白屏 500
+2. **Source 类型冗余**：`app/modules/content/source/` 同时保留 `cms/`、`content-v3/` 两个已完全废弃的占位实现目录，且 `createSource()` 工厂里还挂着 `prisma`、`nuxt-content-v3` 分支（相关依赖均已卸载），新成员极易误选
+3. **Registry/Pipeline 类型不精准 + Contracts 值/类型命名冲突**：Core Registry 一锅装 Data+Render 所有组件；Pipeline 未拆分 DataPipeline/RenderPipeline；Contracts TS 迁移后 `XxxContract refers to a value, but is being used as a type here`（TS2749）10+ 处红色波浪线
+4. **Boot.ts 臃肿（>300 行）**：实现细节 + 编排混在一个文件，每次加 Transformer/Source 都改 boot.ts，违反"开闭原则"
+5. **Drizzle schema + DB 工厂仍是 JS + Windows 构建坑**：`drizzle/schema.js` Windows 下 drizzle-kit 报 "No schema files found"；`content/sync.js` js-yaml 5.x 默认导出报错、Windows 反斜杠 fast-glob 扫不到文件
+
+### 改了什么（7 个子决策）
+
+**子决策 1 · Drizzle db Proxy 懒加载 + Repository _getDb() 方法替代 getter（根治 Vercel 500）**
+- [drizzle/db.ts](file:///C:/Users/cui/Documents/www/dexinlabs/drizzle/db.ts)：重写 db 单例为 `new Proxy<DbInstance>({})`，**仅当属性访问命中 `dbOperations.includes(prop)` 或 `transaction` 时**才调用 `ensureDbInitialized()` 初始化连接；模块顶层零任何 DB 调用
+- 所有 5 个 Repository：把 `private get db() { return getDb(); }` getter 改为 `private _getDb() { return getDb(); }` 显式方法调用——**阻止 Rollup 任何形式的 getter 内联优化**
+- Root cause 定性：Rollup 构建期 getter inline → 构造函数中过早执行 → 环境变量未就绪；这是 Vercel Serverless + TypeScript/Rollup 的常见坑，不是 db.ts 设计问题
+
+**子决策 2 · JS→TypeScript 二轮全量回迁（类型安全优先，npx nuxi typecheck 0）**
+- 迁移范围：contracts/*、core/*、repositories/*、services/*、bootstraps/*、loader/*、drizzle/*、server/utils/*、nuxt.config.*
+- 类型系统特性全量用足：
+  - `defineNuxtConfig<T>`、`defineConfig<DrizzleConfig>` 泛型
+  - Drizzle `PostgresJsDatabase<Schema>`、`$inferSelect<T>` / `$inferInsert<T>` 推导 Repository 行/插入类型
+  - Contracts 接口 + `assertContract<T>(impl, Contract)` 泛型断言函数
+- TS2749 值/类型命名冲突根治：每个契约文件末尾显式加 `export type XxxContract = XxxContractMethods`（值和类型用同名别名双导出）
+- 跨 TS 模块导入保留 `.js` 扩展名保 ESM 兼容；外部 TS→TS 模块内互相 import 去掉 `.js` 扩展名
+- Drizzle query builder 泛型严格匹配问题：动态拼 where 条件的 Repository 方法内查询变量声明 `let query: any`，绕过严格结构检查（静态安全与动态构造二者权衡，仅查询变量用 any）
+- 动态 import TS 模块：用 `as unknown as TargetType` 两次断言中间层
+
+**子决策 3 · 数据源清理：仅保留 Database 一种来源（删除 cms/ + content-v3/）**
+- 整目录删除：`app/modules/content/source/cms/`、`app/modules/content/source/content-v3/`、空 `source/markdown/`
+- `createSource(type, deps, opts)` 工厂删除：`'prisma'`、`'nuxt-content-v3'` case；`'cms'` case
+- `createSource()` 仅保留 5 种类型全部指向 DatabaseSource：`'database' / 'neon' / 'neon-drizzle' / 'markdown' / 'filesystem'`（后三个为兼容期别名）
+- 默认分支错误信息更新：`Supported: database | neon | neon-drizzle`
+- 同步删除 SOURCE_TYPES 对应枚举条目
+
+**子决策 4 · Core 重构：Registry 拆 Data/Render 双注册中心 + Pipeline 拆 Data/Render 双管线**
+- Registry 拆分（高内聚低耦合）：
+  - `core/dataRegistry.ts`：`registerSource/getSource / registerLoader/getLoader / registerQuery/getQuery`（Data 侧能力注册）
+  - `core/renderRegistry.ts`：`registerParser/getParser / registerTransformer/getTransformer / registerRenderer/getRenderer`（Render 侧能力注册）
+  - `core/registry.ts`：薄壳 re-export 层，只做聚合导出（不写任何逻辑）
+- Pipeline 拆分：
+  - `core/dataPipeline.ts`：Source → Repository → Service 执行链（纯数据，不碰渲染）
+  - `core/renderPipeline.ts`：Parser → Transformer×N → Renderer 固定链（纯渲染，不碰 DB）
+  - `core/pipeline.ts`：薄壳只负责调度，import 两者组合执行
+- 拆分收益：未来想 Render 独立包发布给其他项目用，只需拿 renderRegistry + renderPipeline，不拖任何 DB 依赖
+
+**子决策 5 · Boot.ts 拆分层 bootstraps/ 子目录（开闭原则：对新增开放对修改关闭）**
+- 迁移前：boot.ts = parser 注册 + transformer 7 个注册 + renderer 注册 + database 注册 + Query 注册 = 全塞进 300+ 行
+- 迁移后扁平化文件结构：
+  - `bootstraps/parser.ts`（仅注册 MarkdownParser）
+  - `bootstraps/renderer.ts`（仅注册 VueRenderer）
+  - `bootstraps/transformers.ts`（TRANSFORMER_DEFS 常量表 + 按 order 注册 7×Transformer）
+  - `bootstraps/database.ts`（Source=neon-drizzle + Query=lazyQuery 注册）
+  - `bootstraps/queries/lazyQuery.ts`（QueryContract Facade 默认实现独立）
+  - `boot.ts` 只剩 74 行纯编排：`bootstrapDataSide() → bootstrapRenderSide() → Engine init`
+- 收益：新增一个 Transformer → 只改 bootstraps/transformers.ts（常量表加一行），不动 boot.ts 主流程
+
+**子决策 6 · Shared 领域类型抽离 contracts/types.ts（跨 Data/Render 共享五实体）**
+- 抽出五张表对应五实体接口（Course/Chapter/Lesson/Exercise/Asset）+ TocEntry/HeadingInfo/LinkInfo/Reference 元信息
+- contracts/data.ts 与 contracts/render.ts 双向引用 contracts/types.ts，不再各自重复定义形状
+- 为 ADR0709 v2 的 `app/shared/types/` 迁移做了数据结构准备（只差物理文件移动）
+
+**子决策 7 · Drizzle/同步脚本 Windows 兼容性 + TS 化全解**
+- `drizzle.config.ts` schema 路径从绝对路径改相对路径 `./drizzle/schema.ts`，解决 Windows 反斜杠 drizzle-kit 解析失败
+- schema 文件改 `.ts` 扩展名（drizzle-kit Windows 下不识别 `.js` schema 扩展名是已知 bug）
+- `content/sync.js` js-yaml 5.x 默认导出修复：`import yaml from 'js-yaml'` → `import * as yaml from 'js-yaml'`
+- `content/sync.js` Windows fast-glob 反斜杠路径修复：`path.resolve(...).replace(/\\/g, '/')` 统一正斜杠
+- `server/utils/db.js` → `server/utils/db.ts` TS 化 + 同步删除 drizzle 下遗留 JS 旧文件（drizzle/db.js、drizzle/schema.js、server/utils/db.js），确保 TS 单一真源，避免 Nitro 构建时同路径 .js vs .ts 优先级歧义
+
+### 权衡
+- **优点**：
+  1. Vercel 生产部署 SSR 500 根治：db Proxy + Repository 显式 _getDb() 方法双重保险，任何 Rollup 优化都无法提前初始化
+  2. npx nuxi typecheck 0 错误，红波浪线零，IDE 补全+跳转 100% 精准
+  3. Registry/Pipeline 双拆分 + Bootstraps 分层 = 新增能力只改对应 bootstrap，不碰核心编排 boot.ts；开闭原则落地
+  4. 数据源清理后目录精准 = 单父单子冗余 + 两个废弃目录彻底删，新人不会误踩
+  5. js-yaml 5.x + Windows drizzle-kit + fast-glob 路径三坑全解，新成员 clone 后 `npm run sync` + `drizzle:push` 零调试
+- **代价**：
+  1. 迁移期间 100+ 处 TS 错误修复（2~3h），主要是 import 扩展名 `.js` 去/留、值/类型别名显式导出、`as unknown as T` 双断言
+  2. Plugins、Composables、Components 三个 Nuxt 约定目录重新释放到 `app/` 根，对应 nuxt.config imports.dirs / components.dirs 删除原 modules/* 配置项（扫描路径变更）
+  3. ADR0709 v2 后续物理迁移时，需要再次同步维护 paths + aliases + 兼容期 barrel 文件
+
+---
+
 ## 决策 13（2026-07-07）· 内容采用 Markdown/YML Source of Truth + npm run sync 幂等同步到 Neon（数据库只做运行时查询）
 
 ### 为什么改

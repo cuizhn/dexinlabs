@@ -31,7 +31,7 @@
 <script setup>
 import { useHead, useRoute } from 'nuxt/app'
 import { computed } from 'vue'
-import MarkdownRenderer from '@modules/content/renderer/theme/MarkdownRenderer.vue'
+import MarkdownRenderer from '@render/theme/MarkdownRenderer.vue'
 
 const route = useRoute()
 

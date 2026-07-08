@@ -1,0 +1,50 @@
+{
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": false,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": false,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@core": ["app/core"],
+      "@core/*": ["app/core/*"],
+      "@boot": ["app/boot"],
+      "@boot/*": ["app/boot/*"],
+      "@data": ["app/data"],
+      "@data/*": ["app/data/*"],
+      "@render": ["app/render"],
+      "@render/*": ["app/render/*"],
+      "@shared": ["app/shared"],
+      "@shared/*": ["app/shared/*"],
+      "@modules": ["app/modules"],
+      "@modules/*": ["app/modules/*"],
+      "@server": ["server"],
+      "@server/*": ["server/*"],
+      "~/*": ["app/*"],
+      "~~/*": ["./*"]
+    }
+  },
+  "include": [
+    "app/**/*.ts",
+    "app/**/*.js",
+    "app/**/*.vue",
+    "app/**/*.d.ts",
+    "drizzle/**/*.ts",
+    "server/**/*.ts",
+    "server/**/*.js",
+    "content/**/*.ts",
+    "content/**/*.js"
+  ],
+  "exclude": [
+    "node_modules",
+    ".nuxt",
+    ".output",
+    ".vercel",
+    "dist"
+  ]
+}

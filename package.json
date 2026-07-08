@@ -7,7 +7,7 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "sync": "node content/sync.js",
+    "sync": "tsx content/sync.js",
     "drizzle:generate": "drizzle-kit generate",
     "drizzle:migrate": "drizzle-kit migrate",
     "drizzle:push": "drizzle-kit push",
@@ -18,7 +18,6 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "vue-bundle-renderer": "^2.0.0",
     "@neondatabase/serverless": "^1.1.0",
     "drizzle-orm": "^0.45.2",
     "fast-glob": "^3.3.3",
@@ -28,6 +27,10 @@
     "nuxt": "^4.4.6"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.31.10"
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^26.1.0",
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.23.0",
+    "typescript": "^6.0.3"
   }
 }

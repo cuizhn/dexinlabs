@@ -5,12 +5,12 @@ import { fileURLToPath } from 'node:url'
 import fg from 'fast-glob'
 import * as yaml from 'js-yaml'
 
-import { closeDb } from '../drizzle/db.js'
+import { closeDb } from '../drizzle/db'
 import {
   courseRepository,
   chapterRepository,
   lessonRepository
-} from '../app/modules/content/repositories/index.js'
+} from '../app/data/repositories/index'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)

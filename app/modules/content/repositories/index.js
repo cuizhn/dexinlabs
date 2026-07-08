@@ -1,5 +1,0 @@
-export { CourseRepository, courseRepository } from './CourseRepository.js'
-export { ChapterRepository, chapterRepository } from './ChapterRepository.js'
-export { LessonRepository, lessonRepository } from './LessonRepository.js'
-export { ExerciseRepository, exerciseRepository } from './ExerciseRepository.js'
-export { AssetRepository, assetRepository } from './AssetRepository.js'

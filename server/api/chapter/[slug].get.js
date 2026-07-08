@@ -1,5 +1,5 @@
 import { defineEventHandler, getRouterParam, createError } from 'h3'
-import { chapterService } from '@modules/content/services/index.js'
+import { chapterService } from '@data/services/index'
 
 export default defineEventHandler(async event => {
   const slug = getRouterParam(event, 'slug')
