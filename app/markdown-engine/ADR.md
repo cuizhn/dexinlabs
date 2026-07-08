@@ -99,6 +99,17 @@ Markdown Engine 必须通过稳定 API 对外提供能力。
 * plugin 内部函数
 * AST transform 内部函数
 
+// ✅ 允许的公共 API
+export interface IMarkdownEngine {
+  createEngine(options: EngineConfig): Engine;
+  render(markdown: string): RenderedOutput;
+  parse(markdown: string): AST;
+  registerPlugin(plugin: Plugin): void;
+}
+
+// ❌ 禁止暴露的内部 API
+// 不要导出 _parseInternalAST(), _transformAST() 等
+
 ## 演进要求
 
 Markdown Engine 需要支持长期演进。
