@@ -1,0 +1,1 @@
+Decision：废弃原有 Markdown 渲染实现，采用独立维护的 Markdown Engine 作为唯一 Markdown 处理基础设施
