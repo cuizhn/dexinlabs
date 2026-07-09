@@ -248,6 +248,7 @@ AST 是 Engine 内部契约。
 ```
 
 所有转换必须围绕 AST。
+ AST 基础节点类型（如 root, paragraph, heading, code）遵循 MDAST (Markdown Abstract Syntax Tree) 规范。自定义教育节点（如 exercise, concept）在此规范上扩展。
 
 ---
 
