@@ -701,7 +701,7 @@ const _routes = [
   {
     name: "course-chapter-lesson",
     path: "/course/:chapter()/:lesson()",
-    component: () => import('./_lesson_-Ca0wDE-O.mjs')
+    component: () => import('./_lesson_-BRijA9hz.mjs')
   },
   {
     name: "course-chapter",
@@ -711,7 +711,7 @@ const _routes = [
   {
     name: "exercise-chapter",
     path: "/exercise/:chapter()",
-    component: () => import('./_chapter_-BafCTrlp.mjs')
+    component: () => import('./_chapter_-BXg-5Xh5.mjs')
   },
   {
     name: "about",
@@ -731,7 +731,7 @@ const _routes = [
   {
     name: "study",
     path: "/study",
-    component: () => import('./study-CZX6Mzn6.mjs')
+    component: () => import('./study-DjzBYMlw.mjs')
   },
   {
     name: "index",
@@ -1142,31 +1142,17 @@ const revive_payload_server_MVtmlZaQpj6ApFmshWfUWl5PehCebzaBf2NuRMiIbms = /* @__
 const components_plugin_4kY4pyzJIYX99vmMAAIorFf3CnAaptHitJgf7JxiED8 = /* @__PURE__ */ defineNuxtPlugin({
   name: "nuxt:global-components"
 });
-function assertContract$3(obj) {
-  if (obj === null || obj === void 0) {
-    throw new Error("[assertContract] Object is null or undefined");
-  }
-}
-function assertSourceContract(source) {
-  assertContract$3(source);
-  const required = ["findOne", "findAll", "count"];
-  for (const method of required) {
-    if (typeof source[method] !== "function") {
-      throw new Error(`[SourceContract] Missing method: ${method}`);
-    }
-  }
-}
 function assertContract$2(obj) {
   if (obj === null || obj === void 0) {
     throw new Error("[assertContract] Object is null or undefined");
   }
 }
-function assertQueryContract(query) {
-  assertContract$2(query);
-  const required = ["getCourse", "getChapter", "getLesson", "getExercise", "listChapters"];
+function assertSourceContract(source) {
+  assertContract$2(source);
+  const required = ["findOne", "findAll", "count"];
   for (const method of required) {
-    if (typeof query[method] !== "function") {
-      throw new Error(`[QueryContract] Missing method: ${method}`);
+    if (typeof source[method] !== "function") {
+      throw new Error(`[SourceContract] Missing method: ${method}`);
     }
   }
 }
@@ -1175,10 +1161,13 @@ function assertContract$1(obj) {
     throw new Error("[assertContract] Object is null or undefined");
   }
 }
-function assertParserContract(parser) {
-  assertContract$1(parser);
-  if (typeof parser.parse !== "function") {
-    throw new Error("[ParserContract] Missing required method: parse(raw, opts)");
+function assertQueryContract(query) {
+  assertContract$1(query);
+  const required = ["getCourse", "getChapter", "getLesson", "getExercise", "listChapters"];
+  for (const method of required) {
+    if (typeof query[method] !== "function") {
+      throw new Error(`[QueryContract] Missing method: ${method}`);
+    }
   }
 }
 function assertContract(obj) {
@@ -1186,11 +1175,10 @@ function assertContract(obj) {
     throw new Error("[assertContract] Object is null or undefined");
   }
 }
-function assertRendererContract(renderer) {
-  assertContract(renderer);
-  const rendererObj = renderer;
-  if (typeof rendererObj.renderToVNode !== "function" && typeof rendererObj.renderToHTML !== "function") {
-    throw new Error("[RendererContract] At least one of renderToVNode / renderToHTML must be implemented.");
+function assertParserContract(parser) {
+  assertContract(parser);
+  if (typeof parser.parse !== "function") {
+    throw new Error("[ParserContract] Missing required method: parse(raw, opts)");
   }
 }
 function assertSourceContractGeneric(x) {
@@ -1198,9 +1186,6 @@ function assertSourceContractGeneric(x) {
 }
 function assertParserContractGeneric(x) {
   assertParserContract(x);
-}
-function assertRendererContractGeneric(x) {
-  assertRendererContract(x);
 }
 function assertQueryContractGeneric(x) {
   assertQueryContract(x);
@@ -1231,14 +1216,6 @@ function registerParser(name, parser, setAsDefault = false) {
     __registry.defaultParser = parser;
   }
   return parser;
-}
-function registerRenderer(name, renderer, setAsDefault = false) {
-  assertRendererContractGeneric(renderer);
-  __registry.renderers.set(name, renderer);
-  if (setAsDefault || !__registry.defaultRenderer) {
-    __registry.defaultRenderer = renderer;
-  }
-  return renderer;
 }
 function registerQuery(name, query, setAsDefault = false) {
   assertQueryContractGeneric(query);
@@ -1630,45 +1607,7 @@ function parseFrontmatter(raw = "") {
   });
   return { data, content };
 }
-marked.setOptions({ gfm: true, breaks: true });
-async function parseMarkdown(raw, opts = {}) {
-  if (typeof raw !== "string") {
-    return {
-      type: "root",
-      children: [],
-      frontmatter: raw?.frontmatter || {},
-      content: raw?.body || raw?.content || "",
-      __passthrough: true
-    };
-  }
-  const parseFm = opts.parseFrontmatter !== false;
-  const { data: frontmatter, content } = parseFm ? parseFrontmatter(raw) : { data: {}, content: raw };
-  try {
-    const tokens = marked.lexer(content);
-    const children = convertBlockTokens(tokens);
-    if (opts.math) {
-      injectMathNodes(children);
-    }
-    return {
-      type: "root",
-      children,
-      frontmatter,
-      content,
-      __parseSource: "marked-lexer",
-      __parsedAt: Date.now()
-    };
-  } catch (e) {
-    return {
-      type: "root",
-      children: [{ type: "text", value: content }],
-      frontmatter,
-      content,
-      __parseError: e instanceof Error ? e.message : String(e),
-      __passthrough: true
-    };
-  }
-}
-function convertBlockTokens(tokens) {
+function adapterConvertBlockTokens(tokens) {
   const nodes = [];
   for (const token of tokens) {
     const node = convertBlockToken(token);
@@ -1682,12 +1621,12 @@ function convertBlockToken(token) {
       return {
         type: "heading",
         depth: token.depth || 1,
-        children: convertInlineTokens(token.tokens || [{ type: "text", text: token.text || "" }])
+        children: adapterConvertInlineTokens(token.tokens || [{ type: "text", text: token.text || "" }])
       };
     case "paragraph":
       return {
         type: "paragraph",
-        children: convertInlineTokens(token.tokens || [{ type: "text", text: token.text || "" }])
+        children: adapterConvertInlineTokens(token.tokens || [{ type: "text", text: token.text || "" }])
       };
     case "code":
       return {
@@ -1698,7 +1637,7 @@ function convertBlockToken(token) {
     case "blockquote":
       return {
         type: "blockquote",
-        children: convertBlockTokens(token.tokens || [])
+        children: adapterConvertBlockTokens(token.tokens || [])
       };
     case "list":
       return {
@@ -1716,14 +1655,14 @@ function convertBlockToken(token) {
       return null;
     default:
       if (token.text) {
-        return { type: "paragraph", children: convertInlineTokens(token.tokens || [{ type: "text", text: token.text }]) };
+        return { type: "paragraph", children: adapterConvertInlineTokens(token.tokens || [{ type: "text", text: token.text }]) };
       }
       return null;
   }
 }
 function convertListItem(item) {
   if (!item) return null;
-  const children = convertBlockTokens(item.tokens || []);
+  const children = adapterConvertBlockTokens(item.tokens || []);
   if (item.task) {
     return {
       type: "listItem",
@@ -1737,14 +1676,14 @@ function convertTable(token) {
   const headerCells = (token.header || []).map((cell, i) => ({
     type: "tableCell",
     align: token.align?.[i] || null,
-    children: convertInlineTokens(cell.tokens || [{ type: "text", text: cell.text || "" }])
+    children: adapterConvertInlineTokens(cell.tokens || [{ type: "text", text: cell.text || "" }])
   }));
   const rows = (token.rows || []).map((row) => ({
     type: "tableRow",
     children: row.map((cell, i) => ({
       type: "tableCell",
       align: token.align?.[i] || null,
-      children: convertInlineTokens(cell.tokens || [{ type: "text", text: cell.text || "" }])
+      children: adapterConvertInlineTokens(cell.tokens || [{ type: "text", text: cell.text || "" }])
     }))
   }));
   return {
@@ -1752,7 +1691,7 @@ function convertTable(token) {
     children: [{ type: "tableRow", children: headerCells }, ...rows]
   };
 }
-function convertInlineTokens(tokens) {
+function adapterConvertInlineTokens(tokens) {
   const nodes = [];
   for (const token of tokens) {
     const node = convertInlineToken(token);
@@ -1764,21 +1703,21 @@ function convertInlineToken(token) {
   switch (token.type) {
     case "text":
       if (token.tokens && token.tokens.length > 0) {
-        return { type: "text", value: token.text || "", children: convertInlineTokens(token.tokens) };
+        return { type: "text", value: token.text || "", children: adapterConvertInlineTokens(token.tokens) };
       }
       return { type: "text", value: token.text || "" };
     case "strong":
-      return { type: "strong", children: convertInlineTokens(token.tokens || []) };
+      return { type: "strong", children: adapterConvertInlineTokens(token.tokens || []) };
     case "em":
-      return { type: "emphasis", children: convertInlineTokens(token.tokens || []) };
+      return { type: "emphasis", children: adapterConvertInlineTokens(token.tokens || []) };
     case "del":
-      return { type: "delete", children: convertInlineTokens(token.tokens || []) };
+      return { type: "delete", children: adapterConvertInlineTokens(token.tokens || []) };
     case "link":
       return {
         type: "link",
         href: token.href || "",
         title: token.title || void 0,
-        children: convertInlineTokens(token.tokens || [{ type: "text", text: token.text || "" }])
+        children: adapterConvertInlineTokens(token.tokens || [{ type: "text", text: token.text || "" }])
       };
     case "image":
       return {
@@ -1799,13 +1738,13 @@ function convertInlineToken(token) {
       return token.text ? { type: "text", value: token.text } : null;
   }
 }
-function injectMathNodes(children) {
+function adapterInjectMathNodes(children) {
   for (const node of children) {
     if (node.children && Array.isArray(node.children)) {
-      injectMathNodes(node.children);
+      adapterInjectMathNodes(node.children);
     }
     if (typeof node.value === "string") {
-      const mathNodes = extractMathFromText(node.value);
+      const mathNodes = adapterExtractMathFromText(node.value);
       if (mathNodes) {
         const idx = children.indexOf(node);
         if (idx !== -1) {
@@ -1815,7 +1754,7 @@ function injectMathNodes(children) {
     }
   }
 }
-function extractMathFromText(text2) {
+function adapterExtractMathFromText(text2) {
   if (!text2.includes("$")) return null;
   const nodes = [];
   let remaining = text2;
@@ -1840,7 +1779,7 @@ function extractMathFromText(text2) {
     }
     nodes.push({
       type: display ? "math" : "inlineMath",
-      value: match[1].trim(),
+      value: (match[1] ?? "").trim(),
       display
     });
     hasMath = true;
@@ -1851,6 +1790,60 @@ function extractMathFromText(text2) {
     nodes.push({ type: "text", value: remaining });
   }
   return nodes;
+}
+function buildInternalRoot(tokens, content, frontmatter, meta) {
+  const children = meta.passthrough ? [{ type: "text", value: content }] : adapterConvertBlockTokens(tokens);
+  const root = {
+    type: "root",
+    children,
+    frontmatter,
+    content
+  };
+  if (meta.source === "marked-lexer") {
+    root.__parseSource = "marked-lexer";
+    root.__parsedAt = meta.parsedAt || Date.now();
+  }
+  if (meta.parseError) {
+    root.__parseError = meta.parseError;
+    root.__passthrough = true;
+  }
+  if (meta.passthrough) {
+    root.__passthrough = true;
+  }
+  return root;
+}
+marked.setOptions({ gfm: true, breaks: true });
+async function parseMarkdown(raw, opts = {}) {
+  if (typeof raw !== "string") {
+    return buildInternalRoot(
+      [],
+      raw?.body || raw?.content || "",
+      raw?.frontmatter || {},
+      { source: "passthrough", passthrough: true }
+    );
+  }
+  const parseFm = opts.parseFrontmatter !== false;
+  const { data: frontmatter, content } = parseFm ? parseFrontmatter(raw) : { data: {}, content: raw };
+  try {
+    const tokens = marked.lexer(content);
+    if (opts.math) {
+      const temp = buildInternalRoot(tokens, content, frontmatter, { source: "marked-lexer" });
+      adapterInjectMathNodes(temp.children);
+      temp.__parseSource = "marked-lexer";
+      temp.__parsedAt = Date.now();
+      return temp;
+    }
+    return buildInternalRoot(tokens, content, frontmatter, {
+      source: "marked-lexer",
+      parsedAt: Date.now()
+    });
+  } catch (e) {
+    return buildInternalRoot([], content, frontmatter, {
+      source: "passthrough",
+      parseError: e instanceof Error ? e.message : String(e),
+      passthrough: true
+    });
+  }
 }
 const registry = /* @__PURE__ */ new Map();
 function registerPlugin(plugin2, order = 100) {
@@ -1880,6 +1873,148 @@ async function runPlugins(ast, context = {}) {
   }
   return current;
 }
+function compileToRenderTree(root, context = {}) {
+  const children = (root.children || []).map((child) => compileNode(child)).filter(Boolean);
+  return {
+    type: "Root",
+    props: {
+      theme: context.theme || "default",
+      class: ["ce-markdown", `ce-theme-${context.theme || "default"}`],
+      "data-md-root": true
+    },
+    children
+  };
+}
+function compileNode(node) {
+  if (!node || typeof node !== "object") return null;
+  switch (node.type) {
+    case "heading": {
+      const raw = node;
+      return {
+        type: "Heading",
+        props: {
+          level: Number(raw.depth || 1),
+          id: typeof raw.id === "string" ? raw.id : void 0
+        },
+        children: compileChildren(node.children)
+      };
+    }
+    case "paragraph":
+      return {
+        type: "Paragraph",
+        children: compileChildren(node.children)
+      };
+    case "text": {
+      const value = typeof node.value === "string" ? node.value : "";
+      return {
+        type: "Text",
+        props: { value }
+      };
+    }
+    case "strong":
+      return { type: "Strong", children: compileChildren(node.children) };
+    case "emphasis":
+      return { type: "Emphasis", children: compileChildren(node.children) };
+    case "delete":
+      return { type: "Delete", children: compileChildren(node.children) };
+    case "link": {
+      const raw = node;
+      return {
+        type: "Link",
+        props: {
+          href: String(raw.href || ""),
+          target: typeof raw.target === "string" ? raw.target : void 0,
+          rel: typeof raw.rel === "string" ? raw.rel : void 0,
+          title: typeof raw.title === "string" ? raw.title : void 0
+        },
+        children: compileChildren(node.children)
+      };
+    }
+    case "image": {
+      const raw = node;
+      return {
+        type: "Image",
+        props: {
+          src: String(raw.url || raw.href || ""),
+          alt: String(raw.value || raw.alt || "")
+        }
+      };
+    }
+    case "code": {
+      const raw = node;
+      const lang = String(raw.lang || "");
+      const value = typeof raw.value === "string" ? raw.value : "";
+      return {
+        type: "Code",
+        props: { lang, value }
+      };
+    }
+    case "inlineCode": {
+      const value = typeof node.value === "string" ? node.value : "";
+      return {
+        type: "InlineCode",
+        props: { value }
+      };
+    }
+    case "list": {
+      const raw = node;
+      return {
+        type: "List",
+        props: { ordered: !!raw.ordered },
+        children: compileChildren(node.children)
+      };
+    }
+    case "listItem":
+      return { type: "ListItem", children: compileChildren(node.children) };
+    case "blockquote":
+      return { type: "Blockquote", children: compileChildren(node.children) };
+    case "thematicBreak":
+      return { type: "ThematicBreak" };
+    case "html": {
+      const value = typeof node.value === "string" ? node.value : "";
+      return {
+        type: "Html",
+        props: { value }
+      };
+    }
+    case "math": {
+      const display = node.display !== false;
+      return {
+        type: "Math",
+        props: {
+          formula: typeof node.value === "string" ? node.value : "",
+          display
+        }
+      };
+    }
+    case "inlineMath":
+      return {
+        type: "InlineMath",
+        props: {
+          formula: typeof node.value === "string" ? node.value : "",
+          display: false
+        }
+      };
+    case "table":
+      return { type: "Table", children: compileChildren(node.children) };
+    case "tableRow":
+      return { type: "TableRow", children: compileChildren(node.children) };
+    case "tableCell": {
+      const raw = node;
+      return {
+        type: "TableCell",
+        props: { align: raw.align },
+        children: compileChildren(node.children)
+      };
+    }
+    default:
+      return node.value != null ? { type: "Text", props: { value: String(node.value) } } : null;
+  }
+}
+function compileChildren(children) {
+  if (!children || children.length === 0) return "";
+  return children.map((child) => compileNode(child)).filter(Boolean);
+}
 function extractTextFromNode(node) {
   if (!node) return "";
   if (typeof node.value === "string") return node.value;
@@ -1895,36 +2030,154 @@ const HeadingTransformer = {
   async transform(ast, context = {}) {
     if (!ast || ast.__headingInjected) return ast;
     let idCounter = 0;
+    const headings = [];
     const inject2 = (node) => {
       if (!node || typeof node !== "object") return;
       if (node.type === "heading" && !node.id) {
         const text2 = extractTextFromNode(node);
         node.id = slugifyHeading(text2) || `h-${idCounter++}`;
+        headings.push({
+          id: String(node.id),
+          text: text2,
+          level: Number(node.depth || 1)
+        });
       }
       if (Array.isArray(node.children)) node.children.forEach(inject2);
     };
     if (Array.isArray(ast.children)) ast.children.forEach(inject2);
     ast.__headingInjected = true;
+    ast.headings = headings;
     return ast;
   }
 };
-marked.use({
-  renderer: {
-    heading({ tokens, depth }) {
-      const text2 = this.parser.parseInline(tokens);
-      const plainText = String(text2).replace(/<[^>]+>/g, "");
-      const id = slugifyHeading(plainText);
-      return `<h${depth} id="${id}">${text2}</h${depth}>
+function renderTreeToHTML(tree, _context = {}) {
+  const root = Array.isArray(tree) ? tree : tree.children;
+  return root.map((n) => renderNode(n)).join("\n");
+}
+function renderNode(node) {
+  if (typeof node === "string") return escapeHtml$1(node);
+  if (!node || !node.type) return "";
+  switch (node.type) {
+    case "Root": {
+      const children = node.children;
+      const cls = Array.isArray(node.props?.class) ? ` class="${node.props?.class?.join(" ")}"` : "";
+      return `<div${cls} data-md-root="true">${children.map((c) => renderNode(c)).join("")}</div>`;
+    }
+    case "Heading": {
+      const level = Number(node.props?.level || 1);
+      const id = typeof node.props?.id === "string" ? node.props.id : (() => {
+        const text2 = getTextFromChildren(node.children);
+        return text2 ? slugifyHeading(text2) : void 0;
+      })();
+      const idAttr = id ? ` id="${id}"` : "";
+      return `<h${level}${idAttr}>${renderChildren(node.children)}</h${level}>
 `;
     }
+    case "Paragraph":
+      return `<p>${renderChildren(node.children)}</p>
+`;
+    case "Text": {
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
+      return escapeHtml$1(value);
+    }
+    case "Strong":
+      return `<strong>${renderChildren(node.children)}</strong>`;
+    case "Emphasis":
+      return `<em>${renderChildren(node.children)}</em>`;
+    case "Delete":
+      return `<del>${renderChildren(node.children)}</del>`;
+    case "Link": {
+      const href = escapeAttr(String(node.props?.href || ""));
+      const target = typeof node.props?.target === "string" ? ` target="${escapeAttr(node.props.target)}"` : "";
+      const rel = typeof node.props?.rel === "string" ? ` rel="${escapeAttr(node.props.rel)}"` : "";
+      const title = typeof node.props?.title === "string" ? ` title="${escapeAttr(node.props.title)}"` : "";
+      return `<a href="${href}"${target}${rel}${title}>${renderChildren(node.children)}</a>`;
+    }
+    case "Image": {
+      const src = escapeAttr(String(node.props?.src || ""));
+      const alt = escapeAttr(String(node.props?.alt || ""));
+      return `<img src="${src}" alt="${alt}"/>`;
+    }
+    case "Code": {
+      const lang = typeof node.props?.lang === "string" ? node.props.lang : "";
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
+      const langAttr = lang ? ` data-lang="${escapeAttr(lang)}"` : "";
+      return `<pre${langAttr}><code${langAttr}>${escapeHtml$1(value)}</code></pre>
+`;
+    }
+    case "InlineCode": {
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
+      return `<code>${escapeHtml$1(value)}</code>`;
+    }
+    case "List": {
+      const tag = node.props?.ordered ? "ol" : "ul";
+      return `<${tag}>
+${renderChildren(node.children)}
+</${tag}>
+`;
+    }
+    case "ListItem":
+      return `<li>${renderChildren(node.children)}</li>`;
+    case "Blockquote":
+      return `<blockquote>
+${renderChildren(node.children)}
+</blockquote>
+`;
+    case "ThematicBreak":
+      return `<hr/>
+`;
+    case "Html": {
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
+      return value;
+    }
+    case "Math":
+    case "InlineMath": {
+      const formula = typeof node.props?.formula === "string" ? node.props.formula : "";
+      const display = node.type === "Math" && node.props?.display !== false;
+      const delim = display ? "$$" : "$";
+      return `<span class="math math-${display ? "display" : "inline"}" data-display="${display ? "true" : "false"}">${delim}${escapeHtml$1(formula)}${delim}</span>`;
+    }
+    case "Table":
+      return `<table>${renderChildren(node.children)}</table>
+`;
+    case "TableRow":
+      return `<tr>${renderChildren(node.children)}</tr>`;
+    case "TableCell": {
+      const align = typeof node.props?.align === "string" ? node.props.align : null;
+      const style = align ? ` style="text-align:${escapeAttr(align)}"` : "";
+      return `<td${style}>${renderChildren(node.children)}</td>`;
+    }
+    default:
+      return "";
   }
-});
+}
+function renderChildren(children) {
+  if (typeof children === "string") return escapeHtml$1(children);
+  if (!children || children.length === 0) return "";
+  return children.map((c) => renderNode(c)).join("");
+}
+function getTextFromChildren(children) {
+  if (typeof children === "string") return children;
+  if (!children || children.length === 0) return "";
+  return children.map((c) => {
+    if (typeof c === "string") return c;
+    if (c.type === "Text") return String(c.props?.value || "");
+    return getTextFromChildren(c.children);
+  }).join("");
+}
+function escapeHtml$1(s = "") {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function escapeAttr(s = "") {
+  return escapeHtml$1(s);
+}
 async function renderToHTML$2(ast, context = {}) {
   if (!ast) return "";
   const content = typeof ast.content === "string" ? ast.content : "";
   if (!content) return "";
   try {
-    return marked.parse(content);
+    const tree = compileToRenderTree(ast, { theme: context.theme });
+    return renderTreeToHTML(tree, context);
   } catch {
     return escapeHtml(content);
   }
@@ -1932,116 +2185,153 @@ async function renderToHTML$2(ast, context = {}) {
 function escapeHtml(s = "") {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
-async function renderToVNode$2(ast, context = {}) {
-  if (!ast) return null;
-  const children = (ast.children || []).map((child) => convertNode(child)).filter(Boolean);
+function renderTreeToVNode(tree, context = {}) {
+  const root = Array.isArray(tree) ? { props: { theme: context.theme || "default" }, children: tree } : tree;
+  return adaptRoot(root, context);
+}
+function adaptRoot(root, context) {
+  const children = (root.children || []).map((c) => adaptNode(c)).filter(Boolean);
   return {
     type: "root",
     is: "div",
     props: {
-      class: ["ce-markdown", `ce-theme-${context.theme || "default"}`],
+      class: Array.isArray(root.props?.class) ? root.props.class : ["ce-markdown", `ce-theme-${context.theme || "default"}`],
       "data-md-root": true
     },
     children
   };
 }
-function convertNode(node) {
-  if (!node || typeof node !== "object") return null;
+function adaptNode(node) {
+  if (typeof node === "string") {
+    return { type: "text", is: "#text", props: { nodeValue: node } };
+  }
+  if (!node || !node.type) return null;
   switch (node.type) {
-    case "heading":
+    case "Heading": {
+      const level = Number(node.props?.level || 1);
       return {
         type: "heading",
-        is: `h${node.depth || 1}`,
-        props: { id: node.id || void 0 },
-        children: convertChildren(node.children)
+        is: `h${level}`,
+        props: { id: typeof node.props?.id === "string" ? node.props.id : void 0 },
+        children: adaptChildren(node.children)
       };
-    case "paragraph":
+    }
+    case "Paragraph":
       return {
         type: "paragraph",
         is: "p",
-        children: convertChildren(node.children)
+        children: adaptChildren(node.children)
       };
-    case "text":
-      return {
-        type: "text",
-        is: "#text",
-        props: { nodeValue: node.value || "" }
-      };
-    case "strong":
-      return { type: "strong", is: "strong", children: convertChildren(node.children) };
-    case "emphasis":
-      return { type: "emphasis", is: "em", children: convertChildren(node.children) };
-    case "delete":
-      return { type: "delete", is: "del", children: convertChildren(node.children) };
-    case "link":
+    case "Text": {
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
+      return { type: "text", is: "#text", props: { nodeValue: value } };
+    }
+    case "Strong":
+      return { type: "strong", is: "strong", children: adaptChildren(node.children) };
+    case "Emphasis":
+      return { type: "emphasis", is: "em", children: adaptChildren(node.children) };
+    case "Delete":
+      return { type: "delete", is: "del", children: adaptChildren(node.children) };
+    case "Link": {
       return {
         type: "link",
         is: "a",
         props: {
-          href: node.href || "",
-          target: node.target || void 0,
-          rel: node.rel || void 0,
-          title: node.title || void 0
+          href: String(node.props?.href || ""),
+          target: typeof node.props?.target === "string" ? node.props.target : void 0,
+          rel: typeof node.props?.rel === "string" ? node.props.rel : void 0,
+          title: typeof node.props?.title === "string" ? node.props.title : void 0
         },
-        children: convertChildren(node.children)
+        children: adaptChildren(node.children)
       };
-    case "image":
+    }
+    case "Image": {
       return {
         type: "image",
         is: "img",
         props: {
-          src: node.url || node.href || "",
-          alt: node.value || node.alt || ""
+          src: String(node.props?.src || ""),
+          alt: String(node.props?.alt || "")
         }
       };
-    case "code":
+    }
+    case "Code": {
+      const lang = typeof node.props?.lang === "string" ? node.props.lang : "";
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
       return {
         type: "code",
         is: "pre",
-        props: { "data-lang": node.lang || "" },
-        children: [{ type: "code", is: "code", props: { "data-lang": node.lang || "" }, children: [{ type: "text", is: "#text", props: { nodeValue: node.value || "" } }] }]
+        props: { "data-lang": lang },
+        children: [
+          {
+            type: "code",
+            is: "code",
+            props: { "data-lang": lang },
+            children: [{ type: "text", is: "#text", props: { nodeValue: value } }]
+          }
+        ]
       };
-    case "inlineCode":
-      return { type: "inlineCode", is: "code", props: { nodeValue: node.value || "" } };
-    case "list":
+    }
+    case "InlineCode": {
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
+      return { type: "inlineCode", is: "code", props: { nodeValue: value } };
+    }
+    case "List": {
+      const ordered = !!node.props?.ordered;
       return {
         type: "list",
-        is: node.ordered ? "ol" : "ul",
-        children: convertChildren(node.children)
+        is: ordered ? "ol" : "ul",
+        children: adaptChildren(node.children)
       };
-    case "listItem":
-      return { type: "listItem", is: "li", children: convertChildren(node.children) };
-    case "blockquote":
-      return { type: "blockquote", is: "blockquote", children: convertChildren(node.children) };
-    case "thematicBreak":
+    }
+    case "ListItem":
+      return { type: "listItem", is: "li", children: adaptChildren(node.children) };
+    case "Blockquote":
+      return { type: "blockquote", is: "blockquote", children: adaptChildren(node.children) };
+    case "ThematicBreak":
       return { type: "thematicBreak", is: "hr" };
-    case "html":
-      return { type: "html", is: "div", props: { innerHTML: node.value || "" } };
-    case "math":
+    case "Html": {
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
+      return { type: "html", is: "div", props: { innerHTML: value } };
+    }
+    case "Math": {
+      const formula = typeof node.props?.formula === "string" ? node.props.formula : "";
+      node.props?.display !== false;
       return {
         type: "math",
         is: "KatexElement",
-        props: { formula: node.value || "", display: true }
+        props: { formula, display: true }
       };
-    case "inlineMath":
+    }
+    case "InlineMath": {
+      const formula = typeof node.props?.formula === "string" ? node.props.formula : "";
       return {
         type: "inlineMath",
         is: "KatexElement",
-        props: { formula: node.value || "", display: false }
+        props: { formula, display: false }
       };
-    case "table":
-      return { type: "table", is: "table", children: convertChildren(node.children) };
-    case "tableRow":
-      return { type: "tableRow", is: "tr", children: convertChildren(node.children) };
-    case "tableCell":
-      return { type: "tableCell", is: "td", children: convertChildren(node.children) };
-    default:
-      return node.value != null ? { type: String(node.type || "text"), is: "#text", props: { nodeValue: String(node.value) } } : null;
+    }
+    case "Table":
+      return { type: "table", is: "table", children: adaptChildren(node.children) };
+    case "TableRow":
+      return { type: "tableRow", is: "tr", children: adaptChildren(node.children) };
+    case "TableCell":
+      return { type: "tableCell", is: "td", children: adaptChildren(node.children) };
+    default: {
+      const v = node.props?.value;
+      return v != null ? { type: String(node.type || "text"), is: "#text", props: { nodeValue: String(v) } } : null;
+    }
   }
 }
-function convertChildren(children) {
+function adaptChildren(children) {
+  if (typeof children === "string") return "";
   if (!children || children.length === 0) return "";
-  return children.map((child) => convertNode(child)).filter(Boolean);
+  return children.map((child) => adaptNode(child)).filter(Boolean);
+}
+async function renderToVNode$2(ast, context = {}) {
+  if (!ast) return null;
+  const tree = compileToRenderTree(ast, { theme: context.theme });
+  return renderTreeToVNode(tree, context);
 }
 async function runRenderPipeline$1(rawContent, opts = {}) {
   const result = {
@@ -2071,23 +2361,14 @@ async function runRenderPipeline$1(rawContent, opts = {}) {
     let enhanced = ast;
     result.enhancedAST = enhanced;
     if (enhanced) {
-      enhanced = await runPlugins(
-        enhanced,
-        opts.transformerContext || {}
-      );
+      enhanced = await runPlugins(enhanced, opts.transformerContext || {});
       result.enhancedAST = enhanced;
     }
     if (enhanced) {
       if (opts.renderTarget === "html") {
-        result.rendered = await renderToHTML$2(
-          enhanced,
-          opts.rendererContext || {}
-        );
+        result.rendered = await renderToHTML$2(enhanced, opts.rendererContext || {});
       } else {
-        result.rendered = await renderToVNode$2(
-          enhanced,
-          opts.rendererContext || {}
-        );
+        result.rendered = await renderToVNode$2(enhanced, opts.rendererContext || {});
       }
     }
   } catch (e) {
@@ -2296,25 +2577,6 @@ function getEngine$1() {
   }
   return defaultEngine;
 }
-const VueRenderer = {
-  name: "vue-renderer",
-  async renderToVNode(ast, context = {}) {
-    const engine2 = getEngine$1();
-    const result = await engine2.run(ast, {
-      renderTarget: "vnode",
-      rendererContext: context
-    });
-    return result.rendered || null;
-  },
-  async renderToHTML(ast, context = {}) {
-    const engine2 = getEngine$1();
-    const result = await engine2.run(ast, {
-      renderTarget: "html",
-      rendererContext: context
-    });
-    return result.rendered || "";
-  }
-};
 function registerRender(opts = {}) {
   createEngine({ plugins: opts.transformers?.enabled });
   const engine2 = getEngine$1();
@@ -2326,9 +2588,7 @@ function registerRender(opts = {}) {
     }
   };
   registerParser(parserName, parserAdapter, true);
-  const rendererName = opts.renderer && opts.renderer.name || "vue";
-  registerRenderer(rendererName, VueRenderer, true);
-  return { parser: parserName, transformers: pluginNames, renderer: rendererName };
+  return { parser: parserName, transformers: pluginNames };
 }
 const engine = getEngine$1();
 async function runRenderPipeline(rawContent, opts = {}) {
@@ -2591,8 +2851,6 @@ const engine_server_K3Wbu2ehhZMqR7q2Nzx9XLvm_AjcGgkg1BFyo3H_LLU = /* @__PURE__ *
   let __temp, __restore;
   [__temp, __restore] = executeAsync(() => bootContentEngine()), await __temp, __restore();
   const engine2 = getEngine();
-  nuxtApp.provide("engine", engine2);
-  nuxtApp.provide("contentEngine", engine2);
   return {
     provide: {
       engine: engine2,

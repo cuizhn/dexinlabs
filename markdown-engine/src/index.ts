@@ -26,6 +26,7 @@ import {
 import type { Plugin } from './plugins/types'
 import { registerBuiltinPlugins } from './plugins/builtin'
 import type { RootAstNode, VNode, TransformedRootAstNode } from './ast/types'
+import { compileToRenderTree } from './compiler/index'
 
 export interface EngineConfig {
   plugins?: string[]
@@ -140,6 +141,11 @@ export function setEngine(engine: MarkdownEngine): void {
 export { parseMarkdown, runRenderPipeline, renderToHTML, renderToVNode }
 export { registerPlugin, unregisterPlugin, getPlugins, clearPlugins }
 export { registerBuiltinPlugins }
+export { compileToRenderTree } from './compiler/index'
+export { renderTreeToHTML } from './adapters/htmlAdapter'
+export { renderTreeToVNode } from './adapters/vnodeAdapter'
+export { renderTreeToJSON, parseJSONToRenderTree } from './adapters/jsonAdapter'
+export { adapterConvertBlockTokens, adapterConvertInlineTokens, adapterInjectMathNodes, buildInternalRoot } from './adapter/ast-adapter'
 export type { Plugin } from './plugins/types'
 export type {
   AstNode,
@@ -155,10 +161,29 @@ export type {
   ReadingTimeInfo
 } from './ast/types'
 export type {
+  InternalAstNode,
+  InternalRootAstNode,
+  TransformedInternalAstNode,
+  TransformedInternalRootAstNode,
+  InternalHeadingNode,
+  InternalCodeNode,
+  InternalMathNode,
+  InternalLinkNode,
+  InternalListNode
+} from './types/internal-ast'
+export type { MarkedToken, ParserTokenTree, ParserOutput } from './types/parser-ast'
+export type {
+  RenderNode,
+  RenderRoot,
+  RenderTree,
+  RenderNodeType,
+  RendererAdapterContext
+} from './types/render-tree'
+export type {
   RenderPipelineInput,
   RenderPipelineOptions,
   RenderPipelineResult,
   RenderTarget
 } from './pipeline/pipeline'
 
-export default { createEngine, getEngine, parseMarkdown, renderToHTML, renderToVNode }
+export default { createEngine, getEngine, parseMarkdown, renderToHTML, renderToVNode, compileToRenderTree }

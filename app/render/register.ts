@@ -1,19 +1,16 @@
-import { registerParser, registerRenderer } from '@core/registry'
+import { registerParser } from '@core/registry'
 import { createEngine, getEngine } from '@me'
-import VueRenderer from './renderers/vueRenderer.js'
-import type { ParserContract, RendererContract } from '@core/contracts/render.js'
+import type { ParserContract } from '@core/contracts/render.js'
 
 interface RegisterRenderOptions {
   parser?: { name?: string }
   transformers?: { enabled?: string[] }
-  renderer?: { name?: string }
   [key: string]: unknown
 }
 
 interface RegisterRenderResult {
   parser: string
   transformers: string[]
-  renderer: string
 }
 
 export function registerRender(opts: RegisterRenderOptions = {}): RegisterRenderResult {
@@ -29,10 +26,7 @@ export function registerRender(opts: RegisterRenderOptions = {}): RegisterRender
   } as unknown as ParserContract
   registerParser(parserName, parserAdapter, true)
 
-  const rendererName = (opts.renderer && opts.renderer.name) || 'vue'
-  registerRenderer(rendererName, VueRenderer as unknown as RendererContract, true)
-
-  return { parser: parserName, transformers: pluginNames, renderer: rendererName }
+  return { parser: parserName, transformers: pluginNames }
 }
 
 export default registerRender

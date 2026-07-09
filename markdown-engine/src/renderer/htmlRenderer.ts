@@ -1,40 +1,33 @@
 /**
- * HTML Renderer — AST → HTML string.
+ * HTML Renderer — Backward-Compatibility Thin Facade (IMPLEMENTATION Decision 1).
  *
- * v1 strategy: delegates to marked.parse(ast.content) to guarantee GFM/table/code
- * quality. The engine owns the rendering responsibility (Vue no longer calls marked
- * directly). A future v2 can replace this with a full AST→HTML walker.
+ * Decision 1 强制：禁止 Renderer 直接遍历 Internal AST。
+ * 本模块是旧 htmlRenderer 的兼容层（pipeline.ts 仍然调用 renderToHTML(ast, ctx)）。
  *
- * Heading IDs are injected via marked v18's renderer API (heading receives a
- * token object { tokens, depth }), using the same slugifyHeading as the heading
- * transformer to keep HTML IDs consistent with AST IDs.
+ * 新流程（本模块内部）：
+ *   TransformedRootAstNode
+ *       ↓ 调 Compiler（Decision 1）
+ *   Render Tree（平台无关）
+ *       ↓ 调 htmlAdapter（Decision 4）
+ *   HTML string
+ *
+ * 对外签名与返回值 100% 不变，Pipeline 与业务层（Markdown.vue）零感知。
  */
-import { marked } from 'marked'
-import { slugifyHeading } from '../transformer/heading'
 import type { TransformedRootAstNode, RendererContext } from '../ast/types'
-
-marked.use({
-  renderer: {
-    heading(this: any, { tokens, depth }: { tokens: any[]; depth: number }): string {
-      const text = this.parser.parseInline(tokens)
-      const plainText = String(text).replace(/<[^>]+>/g, '')
-      const id = slugifyHeading(plainText)
-      return `<h${depth} id="${id}">${text}</h${depth}>\n`
-    }
-  }
-})
+import { compileToRenderTree } from '../compiler/index'
+import { renderTreeToHTML } from '../adapters/htmlAdapter'
 
 export async function renderToHTML(
   ast: TransformedRootAstNode,
   context: RendererContext = {}
 ): Promise<string> {
   if (!ast) return ''
-
   const content = typeof ast.content === 'string' ? ast.content : ''
   if (!content) return ''
 
   try {
-    return marked.parse(content) as string
+    const tree = compileToRenderTree(ast, { theme: context.theme })
+    return renderTreeToHTML(tree, context)
   } catch {
     return escapeHtml(content)
   }

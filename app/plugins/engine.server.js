@@ -6,9 +6,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   await bootContentEngine()
   const engine = getEngine()
 
-  nuxtApp.provide('engine', engine)
-  nuxtApp.provide('contentEngine', engine)
-
   return {
     provide: {
       engine,

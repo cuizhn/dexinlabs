@@ -28,3 +28,4 @@ export async function bootContentEngine(opts: BootEngineOptions = {}): Promise<B
 }
 
 export { initContentEngine, getEngine }
+export const initEngine = initContentEngine

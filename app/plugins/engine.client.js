@@ -6,9 +6,6 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   await bootContentEngine()
   const engine = getEngine()
 
-  nuxtApp.provide('engine', engine)
-  nuxtApp.provide('contentEngine', engine)
-
   nuxtApp.hook('app:created', () => {
     if (!engine.isInitialized()) {
       console.warn('[engine] Engine hooks not fully initialized yet.')

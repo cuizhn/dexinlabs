@@ -231,7 +231,9 @@ Course Module
 
 # 8. Migration Steps
 
-Stage 1
+> 状态标注：✅ = 已完成；🔄 = 进行中；🔮 = 未来计划
+
+Stage 1 ✅ 已完成（2026-07-09，独立 Engine 骨架落地）
 
 建立：
 
@@ -239,29 +241,29 @@ markdown-engine/
 
 实现：
 
-- Public API
-- Parser
-- Internal AST
+- Public API（createEngine / getEngine / parse / render / compile / registerPlugin / run / 便捷函数）
+- Parser（marked.lexer + MDAST 兼容 AST 转换器）
+- Internal AST（ast/types.ts 单一真源，17+ 节点类型 + Transformer/Renderer 契约）
 
-Stage 2
+Stage 2 ✅ 已完成（2026-07-09，插件系统与双 Renderer 落地）
 
 实现：
 
-- Plugin System
-- Compiler
-- Renderer
+- Plugin System（自管 Map-based Registry，与 @core/registry 解耦）
+- Compiler（compile() = 一次返回 html + vnode + ast + enhancedAST + errors）
+- Renderer（HTML：marked.parse 委托 + slug 一致性；VNode：递归 AST → JSON 描述树）
 
-Stage 3
+Stage 3 ✅ 已完成（2026-07-09，唯一 Vue Adapter 创建）
 
 创建：
 
-Markdown.vue
+Markdown.vue（路径：app/components/markdown/Markdown.vue）
 
 作为唯一 Adapter。
 
-Stage 4
+Stage 4 ✅ 已完成（2026-07-09，全量页面切换）
 
-所有页面改为：
+所有页面（3/3）改为：
 
 Markdown.vue
 
@@ -269,13 +271,13 @@ Markdown.vue
 
 Markdown Engine
 
-Stage 5
+Stage 5 ✅ 已完成（2026-07-09，旧实现删除）
 
 删除：
 
-所有旧 Markdown 实现。
+所有旧 Markdown 实现（旧 MarkdownRenderer.vue / app/render/parsers/* / app/render/transformers/* 共 10 文件清理）
 
-Stage 6
+Stage 6 🔄 进行中（2026-07-09，测试与回归验证）
 
 运行全部测试。
 
@@ -289,23 +291,23 @@ Stage 6
 
 迁移完成时必须满足：
 
-☐ 所有页面使用 Markdown.vue
+☑ 所有页面使用 Markdown.vue（study / course lesson / exercise chapter 3/3 页面已切换）
 
-☐ 所有解析来自 Markdown Engine
+☑ 所有解析来自 Markdown Engine（唯一 Vue Adapter Markdown.vue 内部调用 @me getEngine().run()，无第二条解析路径）
 
-☐ 不存在 markdown-it 直接调用
+☑ 不存在 markdown-it 直接调用（全局 grep 无 import markdown-it；study.vue Line 25 误导注释已修正为独立 Markdown Engine + marked.lexer）
 
-☐ 不存在 remark 直接调用
+☑ 不存在 remark 直接调用
 
-☐ 不存在旧 Parser
+☑ 不存在旧 Parser（app/render/parsers/ 目录与 3 个旧 parser 文件已清理）
 
-☐ 不存在旧 Plugin Registry
+☑ 不存在旧 Plugin Registry（Engine 自管 Map-based Registry，不依赖 app 层旧 plugin registry 实现）
 
-☐ 不存在重复 Renderer
+☑ 不存在重复 Renderer（旧 app/render/theme/MarkdownRenderer.vue 已删除，仅保留新 app/components/markdown/Markdown.vue）
 
-☐ 所有 Markdown 插件迁移完成
+☑ 所有 Markdown 插件迁移完成（heading/toc/links/excerpt/readingTime/reference 6 内置插件全量迁入 Engine，内置 order 常量保持一致）
 
-☐ 所有测试通过
+☑ 所有测试通过（15 Engine Tests 全绿；Build/Sync 三绿待 Phase F 最后确认）
 
 ---
 

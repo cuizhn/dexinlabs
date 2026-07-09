@@ -37,7 +37,7 @@
             {{ exercise.description }}
           </div>
 
-          <MarkdownRenderer v-if="exercise" :value="exercise" />
+          <Markdown v-if="exercise" :value="exercise" />
         </template>
 
         <div v-else class="exercise-page__placeholder">
@@ -59,7 +59,7 @@
 import { useHead, useRoute } from 'nuxt/app'
 
 import { computed } from 'vue'
-import MarkdownRenderer from '@render/theme/MarkdownRenderer.vue'
+import Markdown from '../../components/markdown/Markdown.vue'
 
 const route = useRoute()
 

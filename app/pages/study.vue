@@ -6,7 +6,7 @@
 
         <h1 class="info-page__title">跟着节奏，稳步前行</h1>
 
-         <MarkdownRenderer :content="md"  class="info-page__desc" />
+         <Markdown :content="md"  class="info-page__desc" />
       </div>
     </section>
 
@@ -16,13 +16,14 @@
 
 <script setup>
 import { useHead } from 'nuxt/app'
+import Markdown from '../components/markdown/Markdown.vue'
 
 useHead({ title: '同步学习' })
 const md  = `# 📖 基础排版示例
 
 这是一段介绍 Morph-MD 组件库的 **基础段落**。我们支持 *斜体*、**粗体**、以及 \`行内代码\`。
 
-> 💡 **引用块：** Morph-MD 遵循 *高内聚低耦合* 设计原则，使用 markdown-it 作为 Parser，不引入自定义 AST。
+> 💡 **引用块：** Morph-MD 遵循 *高内聚低耦合* 设计原则，使用独立维护的 Markdown Engine 作为唯一解析管道（Parser 技术为 marked.lexer + MDAST 兼容 AST），通过 Transformer Plugin 体系统一产出 TOC、Excerpt、ReadingTime 等结构化增强数据。
 
 ## 无序列表
 
