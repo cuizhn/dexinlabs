@@ -111,7 +111,7 @@ Infrastructure
 
 ```
 
-
+Content Engine 定义内容获取的领域接口（如 findLessonById），但具体的数据库访问通过 Infrastructure 层的 Drizzle ORM 实现。Content Engine 依赖于 Infrastructure 的抽象接口，而非直接耦合 Drizzle。
 ---
 
 # 3. 核心架构原则
