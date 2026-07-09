@@ -25,6 +25,8 @@
       "@modules/*": ["app/modules/*"],
       "@server": ["server"],
       "@server/*": ["server/*"],
+      "@me": ["markdown-engine/src"],
+      "@me/*": ["markdown-engine/src/*"],
       "~/*": ["app/*"],
       "~~/*": ["./*"]
     }
@@ -38,7 +40,8 @@
     "server/**/*.ts",
     "server/**/*.js",
     "content/**/*.ts",
-    "content/**/*.js"
+    "content/**/*.js",
+    "markdown-engine/**/*.ts"
   ],
   "exclude": [
     "node_modules",

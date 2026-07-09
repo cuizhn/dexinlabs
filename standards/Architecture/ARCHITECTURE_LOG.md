@@ -4,6 +4,122 @@
 
 ---
 
+## 决策 17（2026-07-09）· Markdown Engine V1 独立化（根目录 markdown-engine/ + SPEC/DESIGN/ADR 三文档契约落地 + Vue 适配层薄封装）
+
+### 为什么改
+ADR0709 v3 Content Engine 目录重构完成后，`app/render/` 域的 Parser/Transformer/Renderer 仍存在三项**长期不可接受**的架构缺陷，若不修正 2~3 个迭代内会演变成无法回迁的技术债：
+1. **与 Vue 强耦合**：`vueRenderer.js` 直接返回 Vue VNode/组件引用、`MarkdownRenderer.vue` 直接 `marked.parse()` 内嵌解析逻辑——引擎变成"Vue 的渲染组件"，丧失「独立发 npm 包 / 未来接入 React/纯静态站点生成器 / 非 Vue 服务端渲染管道」的可能性；同时违反 ARCHITECTURE.md 最高层规则「公共 API 输出应为 JSON 而非组件引用」
+2. **AST 无单一真源 + 类型漂移风险**：`app/core/contracts/{Parser,Transformer,Renderer}.ts` 各自定义了松散的接口（只有 method 签名，没有节点 shape 约束），而 render 实际的 AST 节点类型完全没写类型——长期下来 Contract 和实现一定漂移，出现类型错误要回溯 3 层才找得到根因
+3. **缺少引擎级公共 API 门面**：业务代码（或未来的 React 调用方）要拿 Parser→调 getParser→Transformer→自己遍历 order→Renderer→自己拼，没有稳定的 `createEngine().run(content)` 管道抽象；每次新增 Transformer 需要改 N 个调用方代码
+
+同时，`standards/Architecture/ARCHITECTURE.md §6 "Markdown Engine 架构要求"` 已明确写死「Markdown Engine 必须独立维护在 `markdown-engine/` 根目录，禁止放在 modules/course 或 components 下作核心实现」——但之前代码实际放在 `app/render/` 内部，属于**架构契约违反**，必须落地修正。
+
+本决策 100% 采纳「引擎根目录独立 + 应用层薄适配」方案，并与引擎内部 SPEC.MD / DESIGN.MD / ADR.md 三文档一一对应（所有实现细节均在 SPEC/DESIGN/ADR 有章节锚点，避免 ARCHITECTURE_LOG 与引擎内部文档重复）。
+
+### 改了什么（10 个核心子决策，7 Phase 顺序落地）
+
+**子决策 1 · Markdown Engine 物理位置 = 仓库根目录 `markdown-engine/`（强制执行，不在 app/ 下）**
+- ✅ 新建 `markdown-engine/` 根级目录，保持 ARCHITECTURE.md §6 规范目录结构：`RFC/ / src/ / tests/ / fixtures/ / SPEC.MD / DESIGN.MD / ADR.md / VERSION.md（预留）`
+- ❌ 永久删除「把 Markdown Engine 放 app/markdown-engine 或 app/render/modules/markdown 之类 app 内路径」的方案——未来想独立发 npm 包，必须一开始就保持零 Nuxt/Vue/DB 依赖
+- 对应文档锚点：ARCHITECTURE.md §4 Markdown Engine「位置强制执行」+ ADR.md 001
+
+**子决策 2 · 平台公共路径别名 `@me` → `markdown-engine/src`（经典坑：双 paths 入口）**
+- nuxt.config.ts alias + vite.resolve.alias 同时配置：`'@me': path.resolve(rootDir, 'markdown-engine/src')`
+- tsconfig.json compilerOptions.paths 配置**两条**（tsconfig paths 经典坑：`@me/*` 不匹配裸 `@me`）：`"@me": ["markdown-engine/src"], "@me/*": ["markdown-engine/src/*"]`；同时 include 数组补 `"markdown-engine/**/*.ts"`
+- 业务代码**统一** `import { createEngine, renderToHTML } from '@me'` 或 `import type { AstNode, VNode } from '@me/ast/types'`；禁止直接写相对路径或内部子路径 import
+- 对应踩坑：PROJECT_STATUS.md §七 踩坑 1
+
+**子决策 3 · Parser 技术选型 = marked.lexer() + 手动 MDAST 转换器**
+- 选型对比（详见 DESIGN.MD §11.1 / ADR.md 002）：marked.lexer（①项目已装无新依赖；②API 稳定；③tokens 扁平易转 AST；④GFM 默认支持） vs remark（要引 6+ 依赖；体积大） vs markdown-it（非标准 AST）→ 选 marked.lexer
+- 实现：`parser/markdown.ts: parseMarkdown(raw, opts?)` = `extractFrontmatter(raw)` → `marked.lexer(body, {gfm:true})` → `convertBlockTokens(tokens)`（递归 `convertInlineTokens`）→ 组装 `RootAstNode {type:'root', children, frontmatter, content}`
+- Parser 可替换承诺：Parser 不是公共接口（公共接口是 AST Schema + Public API），未来换 remark/MDX 只要输出 MDAST 兼容 AST 即可，对 Module/Page 零影响（ARCHITECTURE.md §7 对齐）
+- 对应文档：DESIGN.MD §11.1-11.2 / ADR.md 002
+
+**子决策 4 · AST Schema 单一真源 = Engine `src/ast/types.ts`，应用层 Contracts 只做 re-export**
+- `markdown-engine/src/ast/types.ts` 定义全部类型：`AstNode / RootAstNode / TransformedRootAstNode / VNode / AstNodeType / TocEntry / HeadingInfo / ReadingTimeInfo / Plugin / RenderPipelineInput / RenderPipelineOptions / RenderPipelineResult`
+- 应用层**彻底禁止自行复制 AST 类型**：`app/core/contracts/Parser.ts` / `Transformer.ts` / `Renderer.ts` 三个文件只写 `export type { AstNode, RootAstNode, TransformerContext, RendererContext, VNode } from '@me/ast/types'`——保证类型永远只有一份
+- 关键对齐：根节点 `type:'root'`（MDAST 标准，**不是 `document`**，旧别名已废弃）；VNode 形状严格是 `{type, is, props, children}`（框架无关 JSON，可 JSON.stringify）
+- 对应文档：SPEC.MD §7 / DESIGN.MD §5
+
+**子决策 5 · 6 内置 Transformer 全部重写为 AST 原生操作 Plugin（TS 化）+ 共享 utility 文本提取**
+- 6 个 Plugin 清单 + order 常量表（写死顺序，不可随意改）：**heading(10) → toc(20) → links(30) → excerpt(40) → readingTime(50) → reference(100)**（小先执行）
+- 新增 `transformer/utils.ts: extractTextFromNode(node)`：统一处理「heading/paragraph 的纯文本提取」（value 存在→返回 value；children 存在→递归 map join；否则空串）——heading slug / TOC 标题 / excerpt 摘要 / readingTime 字数统计**四处全用它**，避免各自写各自取字段逻辑导致 heading id 全是 h-1/h-2 兜底值
+- 关键产出：heading 节点挂 id；ast.headings[] = HeadingInfo[]；ast.toc[] = TocEntry[]（从 headings[] 取，不再自己扫一遍 children，顺序保证一致）；ast.excerpt；ast.readingTime + ast.readingTimeMinutes；ast.references = []
+- 对应踩坑：PROJECT_STATUS.md §七 踩坑 5 / 7；对应文档：DESIGN.MD §12 / ADR.md 007
+
+**子决策 6 · Plugin Registry 由 Engine 自管（Map-based 40 行极简 IoC），不依赖 @core/registry**
+- 架构约束：Engine 必须独立可发布 npm 包 → 不能 import 任何 app/ 路径（包括 @core/registry），否则发布时要把 @core/registry 也打进去，耦合爆炸
+- 实现：`plugins/registry.ts` = `new Map<string, PluginDefinition>()`，4 个核心 API：`registerPlugin(plugin, order?)`（名字唯一，同名覆盖）/ `getPlugins()`（sort by order ASC 返回）/ `runPlugins(ast, ctx?)`（串式 await transform）/ `clearPlugins()`（测试用）；配套 `plugins/types.ts: Plugin interface`、`plugins/builtin.ts: registerBuiltinPlugins(enabled?)` 注册 6 个内置插件
+- 与 @core/registry 的兼容：应用层 `app/render/register.ts` 作为**薄适配层**，把 Engine 的 Parser/Renderer 用兼容格式注册进 app 的 @core/registry，保持旧业务代码 `getParser('markdown') / getRenderer('vue')` 调用方式**零变动**——Engine 本身不知道 @core/registry 存在
+- 对应文档：DESIGN.MD §13 / ADR.md 003
+
+**子决策 7 · 双 Renderer 实现：HTML（marked.parse 委托 v1 策略）+ JSON VNode 描述树（手写递归）**
+- **HTML Renderer v1**：**不写递归 AST→HTML**（表格/任务列表/嵌套 emphasis edge case 处理量太大），而是**委托 marked.parse(ast.content) + marked.use(Renderer) 注入同一份 slugifyHeading()**——复杂度/完备度/一致性三项权衡最优（marked 十几年生态兜底 GFM 细节；heading id 和 heading transformer 因为 import 同一个纯函数，100% 完全一致）；v2 需要自定义节点 HTML 时新增纯手写 AST→HTML，通过 `createEngine({htmlRenderer: 'ast-native'})` 切换
+- **VNode Renderer**：手写递归 AST→VNode，每个 AstNode.type 对应一个 VNode shape（如 heading→`{type:'heading', is:'h2', props:{id}, children}`；math→`{type:'math', is:'KatexElement', props:{formula,display}}`）。**关键红线**：VNode 的 `is` 是**字符串**（HTML tag 或组件名），**绝不**出现 Vue component 引用——由 UI 层 `<component :is="node.is" v-bind="node.props">` 动态渲染
+- 对应踩坑：PROJECT_STATUS.md §七 踩坑 4（marked v18 Renderer API 签名对象化）；对应文档：DESIGN.MD §11.3 / §8 / ADR.md 005 / 006 / 008
+
+**子决策 8 · 公共 API 门面 Pipeline + index.ts 完整导出清单**
+- `pipeline/pipeline.ts`：四格式输入归一化（string / AST / {body} / {ast}）→ parse → runPlugins → renderer 选择（html/vnode）→ errors 收集；导出 `runRenderPipeline() / renderToHTML() / renderToVNode()` + `compile()` = 一次性返回 html+vnode+ast+enhancedAST+errors
+- `src/index.ts`（公共 API 唯一出口）：
+  - 实例模式：`createEngine(config?)` / `getEngine()`（延迟单例，95% 场景用）/ `setEngine(e)`（测试 mock）
+  - 便捷函数：`parseMarkdown / runRenderPipeline / renderToHTML / renderToVNode`（内部走 getEngine()）
+  - Plugin 低阶 API：`registerPlugin / unregisterPlugin / getPlugins / clearPlugins / registerBuiltinPlugins`
+  - 类型全量 re-export：从 `./ast/types.ts` + `./plugins/types.ts` + `./pipeline/pipeline.ts` 汇总导出，业务代码不需要 import 内部子路径
+- 对应文档：SPEC.MD §4
+
+**子决策 9 · 应用层适配：app/render/ 全量降级为 Vue 薄适配层，删除 9 个旧 JS Parser/Transformer 文件**
+- `app/render/pipeline.ts`：重写为 20 行左右的薄壳（直接 delegate 给 `@me/runRenderPipeline`），不再自己做 parse/transform/render
+- `app/render/register.ts`：薄适配层，把 Engine 的 Parser/Renderer 以兼容格式注册进 @core/registry，Transformer 虽然实际跑在 Engine 插件系统里，但保持 @core/registry 的 Transformer 查询仍可用（向后兼容）
+- `app/render/renderers/vueRenderer.js`：调用 Engine 的 runRenderPipeline / renderToHTML，返回 engine 产物（不是 Vue 组件引用）；修复 TS cast 语法删除（`result.rendered as string` → `result.rendered || ''`，JS 不允许 TS8006）
+- `app/render/theme/MarkdownRenderer.vue`：调用 Engine 的 run 方法拿结果渲染；同样修复 `as string` cast 语法
+- 删除冗余文件：`app/render/parsers/markdown.js / frontmatter.js / math.js`（3 Parser 旧实现）、`app/render/transformers/heading.js / toc.js / links.js / excerpt.js / readingTime.js / reference.js`（6 Transformer 旧实现）→ 共 9 个旧 JS 文件彻底删除，避免「两套实现并存」长期混乱
+- 对应踩坑：PROJECT_STATUS.md §七 踩坑 2 / 3
+
+**子决策 10 · 独立测试：4 Fixtures + 15 单元测试，全部不依赖 Nuxt/Nitro，纯 node+tsx 可运行**
+- 4 Fixtures：`tests/fixtures/basic.md`（frontmatter + 标题/粗体/列表/引用/外链/代码/表格）、`math.md`（行内/块级公式）、`table.md`（GFM 表格对齐）、`code.md`（多 fenced code block）
+- 7 Parser 单测：basic 解析 / code block / table / list / frontmatter 提取与剥离 / 空字符串安全 / opts.math 注入 math&inlineMath 节点——全部 parseMarkdown() 直接跑（npx tsx 即可，不需要 nuxt dev server）
+- 8 Pipeline 全链路：内置插件数量 + 插件名包含 heading/toc / HTML 输出非空 + 含 h1 / VNode 输出 type='root' / compile() 返回全字段 / heading 插件产出 ast.headings[] / toc 插件条目数正确 / readingTime.minutes 存在 / 合法输入 errors=[]——覆盖完整公共 API 行为
+- 三连验证（Build + Sync + 15 Tests）：三条全绿 = Engine 独立化成功，见 PROJECT_STATUS.md §七「验证四连」表
+- 对应踩坑：PROJECT_STATUS.md §七 踩坑 6（frontmatter 断言太宽）
+
+### 7 项关键踩坑汇总（每一项都让构建/测试炸过一次，完整根因 + 解见 PROJECT_STATUS.md §七）
+| # | 踩坑一句话 | 核心修法 |
+|---|-----------|---------|
+| 1 | `@me` 别名指向 `markdown-engine/`（根）→ `@me/ast/types` 解析不到文件 | 改成 `@me`→`markdown-engine/src`（双 paths 入口） |
+| 2 | index.ts Plugin 类型从 registry.ts import（实际定义在 types.ts）→ 找不到类型 | Plugin type 改从 `./plugins/types` import；registry.ts 只 export 内部 PluginDefinition |
+| 3 | vueRenderer.js / MarkdownRenderer.vue 写 `(x as string)` → Nitro build TS8006（JS 不允许 TS cast） | 统一改 `result.rendered || ''` 运行时兜底 |
+| 4 | marked v18 改了 Renderer.heading 签名为对象 `{tokens, depth}`，旧四参数直接运行抛错 | 改 `marked.use({renderer: { heading({ tokens, depth }) { ... } } })`；heading id 共用 slugifyHeading() 纯函数 |
+| 5 | heading/toc 用 `node.value || node.content` 拿文本 → 得 undefined → id 全为 h-1/h-2 兜底、TOC 条目空 | 新增 extractTextFromNode(node) 递归 utility，四处统一用它 |
+| 6 | parser 断言 `!ast.content.includes('---')` 太宽 → GFM 表格正文本来就含 `| --- | --- |` 导致断言失败 | 改成 `!ast.content.trimStart().startsWith('---')`（仅剥离开头 frontmatter 块） |
+| 7 | heading transformer 只 set 节点 id，忘了收集 ast.headings[] → pipeline 断言 ast.headings = undefined | 遍历到 heading 节点时 push `{id, text, level}` 进 ast.headings；toc 从该数组取（不再自己扫一遍 children） |
+
+### 权衡
+- **优点（架构长期价值）**：
+  1. **Engine 独立性 100%**：零 Nuxt/Vue/DB 依赖，2 个人周内可独立发布 npm 包；未来 React 端、后台脚本、纯 Node 服务端都能用同一份引擎
+  2. **AST 类型单一真源**：再也不会出现「Contract 和实现类型漂移互相找不到」的问题；所有 AST 改动能被 TypeScript 全局检查出来
+  3. **公共 API 稳定**：`createEngine().run()` / `compile()` 统一门面，业务代码再也不用自己管理 Parser→Transformer×N→Renderer 顺序；新增 Transformer 只改 Engine 内 registerBuiltinPlugins，调用方零改动
+  4. **渲染层零框架绑定**：VNode 是纯 JSON → 同一份内容 Vue 能渲染、React 能渲染、Web Components 能渲染、未来 AI 结构化读取也能直接解析；完全符合 ARCHITECTURE.md 最高层契约
+  5. **独立可测 = CI 友好**：15 单测不依赖 Nuxt/Nitro，npx tsx 直接跑；未来加 100 个测试也不需要启动 Nuxt Dev Server，CI 时间 +2s 级别
+- **代价（一次性迁移成本 + 长期小幅维护）**：
+  1. 迁移文件/改 import/删旧实现工作量 ≈ 4~6h（已完成）；加上写 4 份对齐文档 ≈ 2h
+  2. marked v18 API 对象化后，升级 marked 大版本时要再检查一次 Renderer 签名（但 marked 有 LTS，大版本升级频率低）
+  3. 所有旧的「直接从 app/render/transformers/xxx 手写 import」代码（如果存在）要改成用 Engine Plugin 系统；目前没发现调用方，兼容期风险极低
+
+### 实施约束（Engine 独立化期间 & 未来的死规则）
+1. **四不变原则**（沿用 Content Engine v3 迁移约束）：公共 API 形状不变 · Contract 不变 · 调用链不变 · 功能不变——**调用 `@core/registry.getParser('markdown')` 的业务代码，本次迁移后一行都不需要改**
+2. **Engine src/** 绝对禁止 5 类 import：违反任意一条 Code Review 直接打回：① Nuxt（`#imports` / `nuxt` / useHead/useRoute 等 auto-import）② Vue（`vue` 包 / `<script setup>` / ref/computed）③ 数据库（`#database/*` / drizzle / `@data/*`）④ 业务服务（`@core/*` 除了 types 契约的公共 import；**特别是不能引 @core/registry，Engine 自管自己的 registry**）⑤ 业务组件 / app/ 下任何路径
+3. **新增能力优先 Plugin 化**：新增「概念节点高亮 / 引用收集 / 练习题解析」等功能时：先写新 Plugin → 注册进 registerBuiltinPlugins 或调用方用 registerPlugin 追加；**不要直接改 parser/markdown.ts / pipeline/pipeline.ts 核心代码**，除非是修 Parser 的 token 转换 BUG
+4. **AST Schema / 公共 API 的 Breaking Change 必须走 RFC**：加东西兼容导出没事；改东西（删除 API、改 AST 根节点 type、改默认插件 order、改 VNode 形状）必须先在 `markdown-engine/RFC/RFC-XXX-*.md` 写清楚兼容方案 + 14 天双导出期，再动代码
+
+### 未来下一步建议（2~3 迭代内，V2 Educational Markdown）
+1. **先写 2~4 份 RFC**：RFC-001 Concept 语法解析；RFC-002 Exercise 语法解析；RFC-003 Anchor 注入 + Links 汇总；RFC-004 代码高亮 + Mermaid
+2. **Concept/Exercise Parser 接入**：按 DESIGN.MD §9 策略，**用 marked.use 扩展 custom tokenizer** 识别 `:::concept name=一次函数 description=... :::` / `:::exercise ... :::` 的 custom fence，然后 convertBlockToken 加 case，不用改 parser 主干 200 行代码
+3. **htmlRenderer v2 手写 AST→HTML**：当 Concept/Exercise 有自定义 HTML 需求时新增 `renderer/htmlRenderer.native.ts`（递归 AST），保留 v1 marked 委托做 fallback；通过 createEngine({htmlRenderer}) 参数切换
+4. **AST Snapshots 测试落地**：`tests/snapshots/basic.ast.json` 等 4 个快照文件，每次跑 parser.test.ts 对比 JSON diff——防止有人改了 token→AST 转换器导致下游 BUG（比如 heading id 算法变了但没人发现）
+5. **Vercel Preview 页面级回归**：目前只有 15 单测；下一迭代加一个 `/tests/sandbox/markdown` 页面展示 4 fixtures 渲染结果，每次 PR 用 Preview URL 肉眼点一遍（避免 Engine 改动后 lesson 页面白屏但单测没覆盖到的 Vue 适配层 BUG）
+
+---
+
 ## 决策 15（2026-07-08）· ADR0709 v2 应用目录结构非破坏性重构（去 modules + 五域分治 + 架构级移除 Content 命名）
 
 ### 为什么改

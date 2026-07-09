@@ -1,22 +1,16 @@
 
-import type { TransformedAstNode, TransformedRootAstNode } from '@core/contracts/Transformer.js'
+export type {
+  RendererContext,
+  VNode,
+  RenderedOutput
+} from '@me/ast/types'
 
-export interface RendererContext {
-  slug?: string
-  type?: string
-  components?: Record<string, unknown>
-  theme?: string
-  basePath?: string
-  [key: string]: unknown
-}
-
-export type VNode = unknown
-
-export interface RenderedOutput {
-  vnode?: VNode
-  html?: string
-  [key: string]: unknown
-}
+import type {
+  TransformedAstNode,
+  TransformedRootAstNode,
+  RendererContext,
+  VNode
+} from '@me/ast/types'
 
 export interface RendererContractMethods {
   renderToVNode<

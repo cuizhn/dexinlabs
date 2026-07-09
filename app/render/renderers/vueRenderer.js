@@ -1,54 +1,32 @@
-import MarkdownRenderer from '../theme/MarkdownRenderer.vue'
+import { getEngine } from '@me'
 
+/**
+ * Vue Renderer adapter — bridges the engine's framework-agnostic output
+ * to the app's @core/registry contract.
+ *
+ * The engine owns the actual rendering (HTML/VNode). This adapter exists
+ * so engine.renderer('vue') from the Engine facade remains functional.
+ */
 export const VueRenderer = {
   name: 'vue-renderer',
 
   async renderToVNode(ast, context = {}) {
-    return {
-      __vnodeReady: true,
-      ast,
-      context,
-      component: MarkdownRenderer,
-      props: buildRendererProps(ast, context)
-    }
+    const engine = getEngine()
+    const result = await engine.run(ast, {
+      renderTarget: 'vnode',
+      rendererContext: context
+    })
+    return result.rendered || null
   },
 
   async renderToHTML(ast, context = {}) {
-    const content = typeof ast?.content === 'string' ? ast.content : ast?.raw || ''
-    return escapeHtml(content)
+    const engine = getEngine()
+    const result = await engine.run(ast, {
+      renderTarget: 'html',
+      rendererContext: context
+    })
+    return result.rendered || ''
   }
-}
-
-function buildRendererProps(ast, context) {
-  const frontmatter = ast?.frontmatter || {}
-  const body = typeof ast?.content === 'string' ? ast.content : ''
-  const documentLike = {
-    body,
-    ...frontmatter,
-    _toc: ast?.toc || [],
-    _excerpt: ast?.excerpt || '',
-    _readingTime: ast?.readingTime || null,
-    _md: {
-      ast,
-      theme: context.theme || 'default',
-      highlight: context.highlight !== false
-    }
-  }
-  return {
-    value: documentLike,
-    document: documentLike,
-    theme: context.theme || 'default',
-    ast
-  }
-}
-
-function escapeHtml(s = '') {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
 }
 
 export default VueRenderer

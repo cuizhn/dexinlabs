@@ -1,0 +1,1 @@
+import{lessonService as o}from"./Da7ve5eW.js";import"./CJl7L5qq.js";async function s(e,t={}){if(!e)return null;const n=await o.getBySlug(e);return n?{...n,__loadedBy:"content-loader/lesson"}:null}export{s as loadLesson};

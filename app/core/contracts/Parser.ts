@@ -1,51 +1,16 @@
-export type AstNodeType =
-  | 'root'
-  | 'heading'
-  | 'paragraph'
-  | 'text'
-  | 'link'
-  | 'image'
-  | 'list'
-  | 'listItem'
-  | 'code'
-  | 'blockquote'
-  | 'math'
-  | 'table'
-  | 'tableRow'
-  | 'tableCell'
-  | 'emphasis'
-  | 'strong'
-  | 'inlineCode'
-  | 'thematicBreak'
-  | 'html'
-  | string
+export type {
+  AstNodeType,
+  AstNode,
+  RootAstNode,
+  ParserOptions,
+  ParserOutputShape
+} from '@me/ast/types'
 
-export interface AstNode {
-  type: AstNodeType
-  children?: AstNode[]
-  value?: string
-  [key: string]: unknown
-}
-
-export interface RootAstNode extends AstNode {
-  type: 'root'
-  children: AstNode[]
-  frontmatter: Record<string, unknown>
-  content: string
-}
-
-export interface ParserOptions {
-  parseFrontmatter?: boolean
-  allowDangerousHtml?: boolean
-  [key: string]: unknown
-}
-
-export interface ParserOutputShape {
-  type: 'root'
-  children: AstNode[]
-  frontmatter: Record<string, unknown>
-  content: string
-}
+import type {
+  ParserOptions,
+  RootAstNode,
+  ParserOutputShape
+} from '@me/ast/types'
 
 export interface ParserContractMethods {
   parse<TOptions extends ParserOptions = ParserOptions>(

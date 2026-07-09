@@ -1,61 +1,20 @@
-import type { AstNode, RootAstNode } from '@core/contracts/Parser.js'
+export type {
+  TransformerContext,
+  TocEntry,
+  HeadingInfo,
+  LinkInfo,
+  ReferenceInfo,
+  ReadingTimeInfo,
+  TransformerExtraData,
+  TransformedAstNode,
+  TransformedRootAstNode
+} from '@me/ast/types'
 
-export interface TransformerContext {
-  slug?: string
-  type?: string
-  basePath?: string
-  [key: string]: unknown
-}
-
-export interface TocEntry {
-  id: string
-  text: string
-  level: number
-  children?: TocEntry[]
-}
-
-export interface HeadingInfo {
-  id: string
-  text: string
-  level: number
-}
-
-export interface LinkInfo {
-  original: string
-  resolved: string
-  type: 'internal' | 'external' | 'asset'
-}
-
-export interface ReferenceInfo {
-  id: string
-  type: string
-  label?: string
-}
-
-export interface TransformerExtraData {
-  toc?: TocEntry[]
-  headings?: HeadingInfo[]
-  links?: LinkInfo[]
-  excerpt?: string
-  readingTimeMinutes?: number
-  references?: ReferenceInfo[]
-  [key: string]: unknown
-}
-
-export interface TransformedAstNode extends AstNode {
-  id?: string
-  [key: string]: unknown
-}
-
-export interface TransformedRootAstNode extends RootAstNode {
-  toc?: TocEntry[]
-  excerpt?: string
-  readingTimeMinutes?: number
-  headings?: HeadingInfo[]
-  links?: LinkInfo[]
-  references?: ReferenceInfo[]
-  children: TransformedAstNode[]
-}
+import type {
+  AstNode,
+  TransformerContext,
+  TransformedRootAstNode
+} from '@me/ast/types'
 
 export interface TransformerContractMethods {
   transform<

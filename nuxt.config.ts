@@ -61,7 +61,8 @@ export default defineNuxtConfig({
     '@render': path.resolve(rootDir, 'app/render'),
     '@shared': path.resolve(rootDir, 'app/shared'),
     '@modules': path.resolve(rootDir, 'app/modules'),
-    '@server': path.resolve(rootDir, 'server')
+    '@server': path.resolve(rootDir, 'server'),
+    '@me': path.resolve(rootDir, 'markdown-engine/src')
   },
 
   nitro: {
@@ -81,7 +82,8 @@ export default defineNuxtConfig({
         '@render': path.resolve(rootDir, 'app/render'),
         '@shared': path.resolve(rootDir, 'app/shared'),
         '@modules': path.resolve(rootDir, 'app/modules'),
-        '@server': path.resolve(rootDir, 'server')
+        '@server': path.resolve(rootDir, 'server'),
+        '@me': path.resolve(rootDir, 'markdown-engine/src')
       }
     }
   }

@@ -1,0 +1,10 @@
+---
+title: Table Test
+---
+
+# Table
+
+| Name | Age | City |
+|------|-----|------|
+| Alice | 30 | Beijing |
+| Bob | 25 | Shanghai |

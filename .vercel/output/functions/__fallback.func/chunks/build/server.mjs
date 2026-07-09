@@ -1,4 +1,4 @@
-import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { hasInjectionContext, inject, getCurrentInstance, useSSRContext, defineAsyncComponent, defineComponent, h, computed, unref, shallowRef, provide, shallowReactive, ref, Suspense, Fragment, createElementBlock, cloneVNode, isRef, toValue, onServerPrefetch, reactive, createApp, mergeProps, onErrorCaptured, createVNode, resolveDynamicComponent, effectScope, nextTick, toRef, withCtx, getCurrentScope, isReadonly, isShallow, isReactive, toRaw } from 'vue';
+import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { hasInjectionContext, inject, getCurrentInstance, defineAsyncComponent, defineComponent, h, computed, unref, shallowRef, provide, shallowReactive, ref, Suspense, Fragment, createElementBlock, cloneVNode, isRef, toValue, onServerPrefetch, reactive, createApp, onErrorCaptured, createVNode, resolveDynamicComponent, effectScope, nextTick, toRef, mergeProps, withCtx, getCurrentScope, isReadonly, useSSRContext, isShallow, isReactive, toRaw } from 'vue';
 import { k as parseURL, l as encodePath, m as decodePath, h as hasProtocol, i as isScriptProtocol, j as joinURL, f as withQuery, s as sanitizeStatusCode, n as getContext, $ as $fetch, o as hash, q as defu, c as createError$1, r as executeAsync } from '../_/nitro.mjs';
 import { u as useHead$1, h as headSymbol, b as baseURL } from '../routes/renderer.mjs';
 import { useRoute as useRoute$1, RouterView, createMemoryHistory, createRouter, START_LOCATION } from 'vue-router';
@@ -7,8 +7,8 @@ import process from 'node:process';
 import { drizzle } from 'drizzle-orm/neon-serverless';
 import { Pool } from '@neondatabase/serverless';
 import { pgTable, timestamp, text, integer, varchar, serial, index, uniqueIndex } from 'drizzle-orm/pg-core';
-import { ssrRenderAttrs, ssrRenderSlot, ssrRenderClass, ssrRenderSuspense, ssrRenderComponent, ssrRenderVNode } from 'vue/server-renderer';
 import { marked } from 'marked';
+import { ssrRenderSuspense, ssrRenderComponent, ssrRenderVNode, ssrRenderAttrs } from 'vue/server-renderer';
 import { isPlainObject } from '@vue/shared';
 import 'node:http';
 import 'node:https';
@@ -701,42 +701,42 @@ const _routes = [
   {
     name: "course-chapter-lesson",
     path: "/course/:chapter()/:lesson()",
-    component: () => import('./_lesson_-rNOqWGdC.mjs')
+    component: () => import('./_lesson_-Ca0wDE-O.mjs')
   },
   {
     name: "course-chapter",
     path: "/course/:chapter()",
-    component: () => import('./index-DDtOwY1J.mjs')
+    component: () => import('./index-BSdBW1mw.mjs')
   },
   {
     name: "exercise-chapter",
     path: "/exercise/:chapter()",
-    component: () => import('./_chapter_-De5XD1-u.mjs')
+    component: () => import('./_chapter_-BafCTrlp.mjs')
   },
   {
     name: "about",
     path: "/about",
-    component: () => import('./about-DI1HCrgB.mjs')
+    component: () => import('./about-CUtOQMTl.mjs')
   },
   {
     name: "course",
     path: "/course",
-    component: () => import('./index-BkHxkDE-.mjs')
+    component: () => import('./index-BBkukLkQ.mjs')
   },
   {
     name: "methods",
     path: "/methods",
-    component: () => import('./methods-DLiq1UVA.mjs')
+    component: () => import('./methods-C1b_bL4g.mjs')
   },
   {
     name: "study",
     path: "/study",
-    component: () => import('./study-DWBBvUI6.mjs')
+    component: () => import('./study-CZX6Mzn6.mjs')
   },
   {
     name: "index",
     path: "/",
-    component: () => import('./index-CzamImTj.mjs')
+    component: () => import('./index-D4nD9jPf.mjs')
   }
 ];
 const _wrapInTransition = (props, children) => {
@@ -1142,31 +1142,17 @@ const revive_payload_server_MVtmlZaQpj6ApFmshWfUWl5PehCebzaBf2NuRMiIbms = /* @__
 const components_plugin_4kY4pyzJIYX99vmMAAIorFf3CnAaptHitJgf7JxiED8 = /* @__PURE__ */ defineNuxtPlugin({
   name: "nuxt:global-components"
 });
-function assertContract$4(obj) {
-  if (obj === null || obj === void 0) {
-    throw new Error("[assertContract] Object is null or undefined");
-  }
-}
-function assertSourceContract(source) {
-  assertContract$4(source);
-  const required = ["findOne", "findAll", "count"];
-  for (const method of required) {
-    if (typeof source[method] !== "function") {
-      throw new Error(`[SourceContract] Missing method: ${method}`);
-    }
-  }
-}
 function assertContract$3(obj) {
   if (obj === null || obj === void 0) {
     throw new Error("[assertContract] Object is null or undefined");
   }
 }
-function assertQueryContract(query) {
-  assertContract$3(query);
-  const required = ["getCourse", "getChapter", "getLesson", "getExercise", "listChapters"];
+function assertSourceContract(source) {
+  assertContract$3(source);
+  const required = ["findOne", "findAll", "count"];
   for (const method of required) {
-    if (typeof query[method] !== "function") {
-      throw new Error(`[QueryContract] Missing method: ${method}`);
+    if (typeof source[method] !== "function") {
+      throw new Error(`[SourceContract] Missing method: ${method}`);
     }
   }
 }
@@ -1175,10 +1161,13 @@ function assertContract$2(obj) {
     throw new Error("[assertContract] Object is null or undefined");
   }
 }
-function assertParserContract(parser) {
-  assertContract$2(parser);
-  if (typeof parser.parse !== "function") {
-    throw new Error("[ParserContract] Missing required method: parse(raw, opts)");
+function assertQueryContract(query) {
+  assertContract$2(query);
+  const required = ["getCourse", "getChapter", "getLesson", "getExercise", "listChapters"];
+  for (const method of required) {
+    if (typeof query[method] !== "function") {
+      throw new Error(`[QueryContract] Missing method: ${method}`);
+    }
   }
 }
 function assertContract$1(obj) {
@@ -1186,10 +1175,10 @@ function assertContract$1(obj) {
     throw new Error("[assertContract] Object is null or undefined");
   }
 }
-function assertTransformerContract(transformer) {
-  assertContract$1(transformer);
-  if (typeof transformer.transform !== "function") {
-    throw new Error("[TransformerContract] Missing required method: transform(ast, context)");
+function assertParserContract(parser) {
+  assertContract$1(parser);
+  if (typeof parser.parse !== "function") {
+    throw new Error("[ParserContract] Missing required method: parse(raw, opts)");
   }
 }
 function assertContract(obj) {
@@ -1209,9 +1198,6 @@ function assertSourceContractGeneric(x) {
 }
 function assertParserContractGeneric(x) {
   assertParserContract(x);
-}
-function assertTransformerContractGeneric(x) {
-  assertTransformerContract(x);
 }
 function assertRendererContractGeneric(x) {
   assertRendererContract(x);
@@ -1245,12 +1231,6 @@ function registerParser(name, parser, setAsDefault = false) {
     __registry.defaultParser = parser;
   }
   return parser;
-}
-function registerTransformer(name, transformer, order = 100) {
-  assertTransformerContractGeneric(transformer);
-  __registry.transformers.push({ name, order, transformer });
-  __registry.transformers.sort((a, b) => a.order - b.order);
-  return transformer;
 }
 function registerRenderer(name, renderer, setAsDefault = false) {
   assertRendererContractGeneric(renderer);
@@ -1590,15 +1570,15 @@ function createSource(type, deps = {}, opts = {}) {
 function buildLazyQueryFacade() {
   return {
     async getCourse(slug, opts = {}) {
-      const { loadCourse } = await import('./course-C8kblM_0.mjs');
+      const { loadCourse } = await import('./course-BkLNpvGw.mjs');
       return loadCourse(slug, opts);
     },
     async getChapter(slug, opts = {}) {
-      const { loadChapter } = await import('./chapter-COk16EBJ.mjs');
+      const { loadChapter } = await import('./chapter-B4T1dsyd.mjs');
       return loadChapter(slug, opts);
     },
     async getLesson(slug, opts = {}) {
-      const { loadLesson } = await import('./lesson-daQ-ySSn.mjs');
+      const { loadLesson } = await import('./lesson-BuuKqqmp.mjs');
       return loadLesson(slug, opts);
     },
     async getExercise(slug, opts = {}) {
@@ -1606,12 +1586,12 @@ function buildLazyQueryFacade() {
       if (exerciseOpts && exerciseOpts.source) {
         return exerciseOpts.source.findOne("exercise", { slug });
       }
-      const { default: services } = await import('./index-6i3vDWZz.mjs');
+      const { default: services } = await import('./index-D14U1YfW.mjs');
       const { courseService } = services;
       return courseService.exercises?.getBySlug?.(slug) || null;
     },
     async listChapters(opts = {}) {
-      const { listChapters } = await import('./chapter-COk16EBJ.mjs');
+      const { listChapters } = await import('./chapter-B4T1dsyd.mjs');
       return listChapters(opts);
     }
   };
@@ -1650,6 +1630,7 @@ function parseFrontmatter(raw = "") {
   });
   return { data, content };
 }
+marked.setOptions({ gfm: true, breaks: true });
 async function parseMarkdown(raw, opts = {}) {
   if (typeof raw !== "string") {
     return {
@@ -1660,32 +1641,253 @@ async function parseMarkdown(raw, opts = {}) {
       __passthrough: true
     };
   }
+  const parseFm = opts.parseFrontmatter !== false;
+  const { data: frontmatter, content } = parseFm ? parseFrontmatter(raw) : { data: {}, content: raw };
   try {
-    const { data, content } = parseFrontmatter(raw);
+    const tokens = marked.lexer(content);
+    const children = convertBlockTokens(tokens);
+    if (opts.math) {
+      injectMathNodes(children);
+    }
     return {
       type: "root",
-      children: [{ type: "text", value: content }],
-      frontmatter: data,
+      children,
+      frontmatter,
       content,
-      __parseSource: "markdown-passthrough",
+      __parseSource: "marked-lexer",
       __parsedAt: Date.now()
     };
   } catch (e) {
     return {
       type: "root",
-      children: [],
-      frontmatter: {},
-      content: raw,
-      __parseError: e.message,
+      children: [{ type: "text", value: content }],
+      frontmatter,
+      content,
+      __parseError: e instanceof Error ? e.message : String(e),
       __passthrough: true
     };
   }
 }
-const MarkdownParser = {
-  async parse(raw, opts = {}) {
-    return parseMarkdown(raw, opts);
+function convertBlockTokens(tokens) {
+  const nodes = [];
+  for (const token of tokens) {
+    const node = convertBlockToken(token);
+    if (node) nodes.push(node);
   }
-};
+  return nodes;
+}
+function convertBlockToken(token) {
+  switch (token.type) {
+    case "heading":
+      return {
+        type: "heading",
+        depth: token.depth || 1,
+        children: convertInlineTokens(token.tokens || [{ type: "text", text: token.text || "" }])
+      };
+    case "paragraph":
+      return {
+        type: "paragraph",
+        children: convertInlineTokens(token.tokens || [{ type: "text", text: token.text || "" }])
+      };
+    case "code":
+      return {
+        type: "code",
+        lang: token.lang || "",
+        value: token.text || ""
+      };
+    case "blockquote":
+      return {
+        type: "blockquote",
+        children: convertBlockTokens(token.tokens || [])
+      };
+    case "list":
+      return {
+        type: "list",
+        ordered: !!token.ordered,
+        children: (token.items || []).map((item) => convertListItem(item)).filter(Boolean)
+      };
+    case "hr":
+      return { type: "thematicBreak" };
+    case "table":
+      return convertTable(token);
+    case "html":
+      return { type: "html", value: token.text || token.raw || "" };
+    case "space":
+      return null;
+    default:
+      if (token.text) {
+        return { type: "paragraph", children: convertInlineTokens(token.tokens || [{ type: "text", text: token.text }]) };
+      }
+      return null;
+  }
+}
+function convertListItem(item) {
+  if (!item) return null;
+  const children = convertBlockTokens(item.tokens || []);
+  if (item.task) {
+    return {
+      type: "listItem",
+      checked: !!item.checked,
+      children
+    };
+  }
+  return { type: "listItem", children };
+}
+function convertTable(token) {
+  const headerCells = (token.header || []).map((cell, i) => ({
+    type: "tableCell",
+    align: token.align?.[i] || null,
+    children: convertInlineTokens(cell.tokens || [{ type: "text", text: cell.text || "" }])
+  }));
+  const rows = (token.rows || []).map((row) => ({
+    type: "tableRow",
+    children: row.map((cell, i) => ({
+      type: "tableCell",
+      align: token.align?.[i] || null,
+      children: convertInlineTokens(cell.tokens || [{ type: "text", text: cell.text || "" }])
+    }))
+  }));
+  return {
+    type: "table",
+    children: [{ type: "tableRow", children: headerCells }, ...rows]
+  };
+}
+function convertInlineTokens(tokens) {
+  const nodes = [];
+  for (const token of tokens) {
+    const node = convertInlineToken(token);
+    if (node) nodes.push(node);
+  }
+  return nodes.length > 0 ? nodes : [{ type: "text", value: "" }];
+}
+function convertInlineToken(token) {
+  switch (token.type) {
+    case "text":
+      if (token.tokens && token.tokens.length > 0) {
+        return { type: "text", value: token.text || "", children: convertInlineTokens(token.tokens) };
+      }
+      return { type: "text", value: token.text || "" };
+    case "strong":
+      return { type: "strong", children: convertInlineTokens(token.tokens || []) };
+    case "em":
+      return { type: "emphasis", children: convertInlineTokens(token.tokens || []) };
+    case "del":
+      return { type: "delete", children: convertInlineTokens(token.tokens || []) };
+    case "link":
+      return {
+        type: "link",
+        href: token.href || "",
+        title: token.title || void 0,
+        children: convertInlineTokens(token.tokens || [{ type: "text", text: token.text || "" }])
+      };
+    case "image":
+      return {
+        type: "image",
+        url: token.href || "",
+        alt: token.text || "",
+        title: token.title || void 0
+      };
+    case "codespan":
+      return { type: "inlineCode", value: token.text || "" };
+    case "br":
+      return { type: "html", value: "<br/>" };
+    case "escape":
+      return { type: "text", value: token.text || "" };
+    case "html":
+      return { type: "html", value: token.text || token.raw || "" };
+    default:
+      return token.text ? { type: "text", value: token.text } : null;
+  }
+}
+function injectMathNodes(children) {
+  for (const node of children) {
+    if (node.children && Array.isArray(node.children)) {
+      injectMathNodes(node.children);
+    }
+    if (typeof node.value === "string") {
+      const mathNodes = extractMathFromText(node.value);
+      if (mathNodes) {
+        const idx = children.indexOf(node);
+        if (idx !== -1) {
+          children.splice(idx, 1, ...mathNodes);
+        }
+      }
+    }
+  }
+}
+function extractMathFromText(text2) {
+  if (!text2.includes("$")) return null;
+  const nodes = [];
+  let remaining = text2;
+  let hasMath = false;
+  const displayRe = /\$\$([\s\S]+?)\$\$/;
+  const inlineRe = /\$([^\$\n]+?)\$/;
+  while (remaining.length > 0) {
+    const displayMatch = remaining.match(displayRe);
+    const inlineMatch = remaining.match(inlineRe);
+    let match = null;
+    let display = false;
+    if (displayMatch && (!inlineMatch || (displayMatch.index ?? 0) <= (inlineMatch.index ?? 0))) {
+      match = displayMatch;
+      display = true;
+    } else if (inlineMatch) {
+      match = inlineMatch;
+      display = false;
+    }
+    if (!match || match.index === void 0) break;
+    if (match.index > 0) {
+      nodes.push({ type: "text", value: remaining.slice(0, match.index) });
+    }
+    nodes.push({
+      type: display ? "math" : "inlineMath",
+      value: match[1].trim(),
+      display
+    });
+    hasMath = true;
+    remaining = remaining.slice(match.index + match[0].length);
+  }
+  if (!hasMath) return null;
+  if (remaining.length > 0) {
+    nodes.push({ type: "text", value: remaining });
+  }
+  return nodes;
+}
+const registry = /* @__PURE__ */ new Map();
+function registerPlugin(plugin2, order = 100) {
+  if (!plugin2 || typeof plugin2.name !== "string" || typeof plugin2.transform !== "function") {
+    throw new Error("[PluginRegistry] Invalid plugin: must have { name, transform }");
+  }
+  registry.set(plugin2.name, { name: plugin2.name, order, plugin: plugin2 });
+}
+function unregisterPlugin(name) {
+  registry.delete(name);
+}
+function getPlugins() {
+  return Array.from(registry.values()).sort((a, b) => a.order - b.order);
+}
+function clearPlugins() {
+  registry.clear();
+}
+async function runPlugins(ast, context = {}) {
+  let current = ast;
+  for (const def of getPlugins()) {
+    try {
+      current = await def.plugin.transform(current, context);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.warn(`[PluginRegistry] Plugin "${def.name}" failed: ${msg}`);
+    }
+  }
+  return current;
+}
+function extractTextFromNode(node) {
+  if (!node) return "";
+  if (typeof node.value === "string") return node.value;
+  if (Array.isArray(node.children)) {
+    return node.children.map((child) => extractTextFromNode(child)).join("");
+  }
+  return "";
+}
 function slugifyHeading(text2 = "") {
   return String(text2).trim().toLowerCase().replace(/[\s]+/g, "-").replace(/[^a-z0-9_\-\u4e00-\u9fa5]/g, "").replace(/-+/g, "-").replace(/^-|-$/g, "");
 }
@@ -1696,7 +1898,8 @@ const HeadingTransformer = {
     const inject2 = (node) => {
       if (!node || typeof node !== "object") return;
       if (node.type === "heading" && !node.id) {
-        node.id = slugifyHeading(node.value || node.content || `h-${idCounter++}`);
+        const text2 = extractTextFromNode(node);
+        node.id = slugifyHeading(text2) || `h-${idCounter++}`;
       }
       if (Array.isArray(node.children)) node.children.forEach(inject2);
     };
@@ -1705,6 +1908,201 @@ const HeadingTransformer = {
     return ast;
   }
 };
+marked.use({
+  renderer: {
+    heading({ tokens, depth }) {
+      const text2 = this.parser.parseInline(tokens);
+      const plainText = String(text2).replace(/<[^>]+>/g, "");
+      const id = slugifyHeading(plainText);
+      return `<h${depth} id="${id}">${text2}</h${depth}>
+`;
+    }
+  }
+});
+async function renderToHTML$2(ast, context = {}) {
+  if (!ast) return "";
+  const content = typeof ast.content === "string" ? ast.content : "";
+  if (!content) return "";
+  try {
+    return marked.parse(content);
+  } catch {
+    return escapeHtml(content);
+  }
+}
+function escapeHtml(s = "") {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+async function renderToVNode$2(ast, context = {}) {
+  if (!ast) return null;
+  const children = (ast.children || []).map((child) => convertNode(child)).filter(Boolean);
+  return {
+    type: "root",
+    is: "div",
+    props: {
+      class: ["ce-markdown", `ce-theme-${context.theme || "default"}`],
+      "data-md-root": true
+    },
+    children
+  };
+}
+function convertNode(node) {
+  if (!node || typeof node !== "object") return null;
+  switch (node.type) {
+    case "heading":
+      return {
+        type: "heading",
+        is: `h${node.depth || 1}`,
+        props: { id: node.id || void 0 },
+        children: convertChildren(node.children)
+      };
+    case "paragraph":
+      return {
+        type: "paragraph",
+        is: "p",
+        children: convertChildren(node.children)
+      };
+    case "text":
+      return {
+        type: "text",
+        is: "#text",
+        props: { nodeValue: node.value || "" }
+      };
+    case "strong":
+      return { type: "strong", is: "strong", children: convertChildren(node.children) };
+    case "emphasis":
+      return { type: "emphasis", is: "em", children: convertChildren(node.children) };
+    case "delete":
+      return { type: "delete", is: "del", children: convertChildren(node.children) };
+    case "link":
+      return {
+        type: "link",
+        is: "a",
+        props: {
+          href: node.href || "",
+          target: node.target || void 0,
+          rel: node.rel || void 0,
+          title: node.title || void 0
+        },
+        children: convertChildren(node.children)
+      };
+    case "image":
+      return {
+        type: "image",
+        is: "img",
+        props: {
+          src: node.url || node.href || "",
+          alt: node.value || node.alt || ""
+        }
+      };
+    case "code":
+      return {
+        type: "code",
+        is: "pre",
+        props: { "data-lang": node.lang || "" },
+        children: [{ type: "code", is: "code", props: { "data-lang": node.lang || "" }, children: [{ type: "text", is: "#text", props: { nodeValue: node.value || "" } }] }]
+      };
+    case "inlineCode":
+      return { type: "inlineCode", is: "code", props: { nodeValue: node.value || "" } };
+    case "list":
+      return {
+        type: "list",
+        is: node.ordered ? "ol" : "ul",
+        children: convertChildren(node.children)
+      };
+    case "listItem":
+      return { type: "listItem", is: "li", children: convertChildren(node.children) };
+    case "blockquote":
+      return { type: "blockquote", is: "blockquote", children: convertChildren(node.children) };
+    case "thematicBreak":
+      return { type: "thematicBreak", is: "hr" };
+    case "html":
+      return { type: "html", is: "div", props: { innerHTML: node.value || "" } };
+    case "math":
+      return {
+        type: "math",
+        is: "KatexElement",
+        props: { formula: node.value || "", display: true }
+      };
+    case "inlineMath":
+      return {
+        type: "inlineMath",
+        is: "KatexElement",
+        props: { formula: node.value || "", display: false }
+      };
+    case "table":
+      return { type: "table", is: "table", children: convertChildren(node.children) };
+    case "tableRow":
+      return { type: "tableRow", is: "tr", children: convertChildren(node.children) };
+    case "tableCell":
+      return { type: "tableCell", is: "td", children: convertChildren(node.children) };
+    default:
+      return node.value != null ? { type: String(node.type || "text"), is: "#text", props: { nodeValue: String(node.value) } } : null;
+  }
+}
+function convertChildren(children) {
+  if (!children || children.length === 0) return "";
+  return children.map((child) => convertNode(child)).filter(Boolean);
+}
+async function runRenderPipeline$1(rawContent, opts = {}) {
+  const result = {
+    raw: rawContent,
+    ast: null,
+    enhancedAST: null,
+    rendered: null,
+    errors: []
+  };
+  try {
+    let ast = null;
+    if (typeof rawContent === "string") {
+      ast = await parseMarkdown(rawContent, opts.parserOptions || {});
+    } else if (rawContent && typeof rawContent === "object") {
+      const obj = rawContent;
+      if (obj.type === "root" || obj.ast) {
+        ast = obj.ast || obj;
+      } else if (typeof obj.body === "string") {
+        ast = await parseMarkdown(obj.body, opts.parserOptions || {});
+      } else {
+        ast = rawContent;
+      }
+    } else {
+      ast = rawContent;
+    }
+    result.ast = ast;
+    let enhanced = ast;
+    result.enhancedAST = enhanced;
+    if (enhanced) {
+      enhanced = await runPlugins(
+        enhanced,
+        opts.transformerContext || {}
+      );
+      result.enhancedAST = enhanced;
+    }
+    if (enhanced) {
+      if (opts.renderTarget === "html") {
+        result.rendered = await renderToHTML$2(
+          enhanced,
+          opts.rendererContext || {}
+        );
+      } else {
+        result.rendered = await renderToVNode$2(
+          enhanced,
+          opts.rendererContext || {}
+        );
+      }
+    }
+  } catch (e) {
+    result.errors.push(e instanceof Error ? e : new Error(String(e)));
+  }
+  return result;
+}
+async function renderToHTML$1(rawContent, opts = {}) {
+  const r = await runRenderPipeline$1(rawContent, { ...opts, renderTarget: "html" });
+  return r.rendered || "";
+}
+async function renderToVNode$1(rawContent, opts = {}) {
+  const r = await runRenderPipeline$1(rawContent, { ...opts, renderTarget: "vnode" });
+  return r.rendered || null;
+}
 const TocTransformer = {
   async transform(ast, context = {}) {
     const toc = [];
@@ -1712,19 +2110,17 @@ const TocTransformer = {
       if (!node || typeof node !== "object") return;
       if (node.type === "heading") {
         toc.push({
-          id: node.id,
-          depth: node.depth || depth,
-          text: node.value || node.content || ""
+          id: String(node.id || ""),
+          level: Number(node.depth || depth),
+          text: extractTextFromNode(node)
         });
       }
-      if (Array.isArray(node.children)) {
-        node.children.forEach((child) => walk(child, depth + 1));
-      }
+      if (Array.isArray(node.children)) node.children.forEach((child) => walk(child, depth + 1));
     };
-    if (Array.isArray(ast?.children)) {
+    if (ast && Array.isArray(ast.children)) {
       ast.children.forEach((n) => walk(n, 0));
     }
-    ast.toc = toc;
+    if (ast) ast.toc = toc;
     return ast;
   }
 };
@@ -1743,17 +2139,21 @@ const LinksTransformer = {
       }
       if (Array.isArray(node.children)) node.children.forEach(rewrite);
     };
-    if (Array.isArray(ast?.children)) ast.children.forEach(rewrite);
-    ast.__linksProcessed = true;
+    if (ast && Array.isArray(ast.children)) {
+      ast.children.forEach((n) => rewrite(n));
+    }
+    if (ast) ast.__linksProcessed = true;
     return ast;
   }
 };
 const ExcerptTransformer = {
   async transform(ast, context = {}) {
-    const content = typeof ast?.content === "string" ? ast.content : "";
+    const content = ast && typeof ast.content === "string" ? ast.content : "";
     const plain = content.replace(/[#*`>\[\]\n]+/g, " ").replace(/\s+/g, " ").trim();
     const excerptLimit = context.excerptLimit || 140;
-    ast.excerpt = plain.length > excerptLimit ? plain.slice(0, excerptLimit) + "…" : plain;
+    if (ast) {
+      ast.excerpt = plain.length > excerptLimit ? plain.slice(0, excerptLimit) + "…" : plain;
+    }
     return ast;
   }
 };
@@ -1762,15 +2162,12 @@ const WPM_CN = 300;
 const WPM_EN = 200;
 const ReadingTimeTransformer = {
   async transform(ast, context = {}) {
-    const content = typeof ast?.content === "string" ? ast.content : "";
+    const content = ast && typeof ast.content === "string" ? ast.content : "";
     const cjkChars = (content.match(/[\u4e00-\u9fa5]/g) || []).length;
     const enWords = content.replace(/[\u4e00-\u9fa5]/g, " ").split(/\s+/).filter(Boolean).length;
-    const minutes = Math.max(
-      1,
-      Math.round(cjkChars / WPM_CN + enWords / WPM_EN)
-    );
+    const minutes = Math.max(1, Math.round(cjkChars / WPM_CN + enWords / WPM_EN));
     const cjkRate = cjkChars * CJK_CHAR_RATE / Math.max(1, content.length);
-    ast.readingTime = {
+    const info = {
       minutes,
       seconds: minutes * 60,
       words: Math.round(enWords + cjkChars * CJK_CHAR_RATE),
@@ -1778,269 +2175,171 @@ const ReadingTimeTransformer = {
       enWords,
       cjkRate: Number(cjkRate.toFixed(2))
     };
+    if (ast) {
+      ast.readingTime = info;
+      ast.readingTimeMinutes = minutes;
+    }
     return ast;
   }
 };
 const ReferenceTransformer = {
   async transform(ast, context = {}) {
-    ast.references = ast.references || [];
-    ast.__referencesProcessed = true;
+    if (ast) {
+      ast.references = ast.references || [];
+      ast.__referencesProcessed = true;
+    }
     return ast;
   }
 };
-const _export_sfc = (sfc, props) => {
-  const target = sfc.__vccOpts || sfc;
-  for (const [key, val] of props) {
-    target[key] = val;
+const headingPlugin = {
+  name: "heading",
+  version: "1.0.0",
+  transform: (ast, ctx) => HeadingTransformer.transform(ast, ctx)
+};
+const tocPlugin = {
+  name: "toc",
+  version: "1.0.0",
+  transform: (ast, ctx) => TocTransformer.transform(ast, ctx)
+};
+const linksPlugin = {
+  name: "links",
+  version: "1.0.0",
+  transform: (ast, ctx) => LinksTransformer.transform(ast, ctx)
+};
+const excerptPlugin = {
+  name: "excerpt",
+  version: "1.0.0",
+  transform: (ast, ctx) => ExcerptTransformer.transform(ast, ctx)
+};
+const readingTimePlugin = {
+  name: "readingTime",
+  version: "1.0.0",
+  transform: (ast, ctx) => ReadingTimeTransformer.transform(ast, ctx)
+};
+const referencePlugin = {
+  name: "reference",
+  version: "1.0.0",
+  transform: (ast, ctx) => ReferenceTransformer.transform(ast, ctx)
+};
+const BUILTIN_PLUGINS = [
+  { name: "heading", order: 10, plugin: headingPlugin },
+  { name: "toc", order: 20, plugin: tocPlugin },
+  { name: "links", order: 30, plugin: linksPlugin },
+  { name: "excerpt", order: 40, plugin: excerptPlugin },
+  { name: "readingTime", order: 50, plugin: readingTimePlugin },
+  { name: "reference", order: 100, plugin: referencePlugin }
+];
+function registerBuiltinPlugins(enabled) {
+  const enabledSet = enabled ? new Set(enabled) : null;
+  const registered = [];
+  for (const def of BUILTIN_PLUGINS) {
+    if (enabledSet && !enabledSet.has(def.name)) continue;
+    registerPlugin(def.plugin, def.order);
+    registered.push(def.name);
   }
-  return target;
-};
-const _sfc_main$3 = {
-  __name: "MarkdownRenderer",
-  __ssrInlineRender: true,
-  props: {
-    value: { type: Object, default: () => ({}) },
-    document: { type: Object, default: null },
-    ast: { type: Object, default: null },
-    theme: { type: String, default: "default" },
-    fallback: { type: Boolean, default: true }
-  },
-  setup(__props) {
-    marked.setOptions({
-      gfm: true,
-      breaks: true,
-      mangle: false,
-      headerIds: true
-    });
-    const props = __props;
-    const source = props.document || props.value || {};
-    const frontmatter = computed(() => {
-      if (source.frontmatter && typeof source.frontmatter === "object") return source.frontmatter;
-      if (props.ast?.frontmatter && typeof props.ast.frontmatter === "object") return props.ast.frontmatter;
-      return {};
-    });
-    const toc = computed(() => {
-      if (Array.isArray(source._toc) && source._toc.length > 0) return source._toc;
-      if (Array.isArray(props.ast?.toc)) return props.ast.toc;
-      return [];
-    });
-    const readingTime = computed(() => {
-      if (source._readingTime != null) return source._readingTime;
-      if (props.ast?.readingTime != null) return props.ast.readingTime;
-      return null;
-    });
-    const markdownString = computed(() => {
-      if (typeof props.ast?.content === "string" && props.ast.content.trim()) {
-        return props.ast.content;
-      }
-      if (typeof source.body === "string" && source.body.trim()) {
-        return source.body;
-      }
-      if (typeof source.content === "string" && source.content.trim()) {
-        return source.content;
-      }
-      if (typeof source === "string") return source;
-      return "";
-    });
-    const renderedHtml = computed(() => {
-      const md = markdownString.value;
-      if (!md) return "";
-      try {
-        return marked.parse(md) || "";
-      } catch (e) {
-        return "";
-      }
-    });
-    const wrapperClass = computed(() => [
-      "ce-markdown-renderer",
-      `ce-theme-${props.theme}`
-    ]);
-    const innerClass = computed(() => [
-      "ce-content",
-      "prose",
-      "prose-neutral",
-      "dark:prose-invert",
-      "max-w-none"
-    ]);
-    return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(mergeProps({
-        class: wrapperClass.value,
-        "data-ce-markdown-renderer": ""
-      }, _attrs))} data-v-19c429b1>`);
-      ssrRenderSlot(_ctx.$slots, "header", {
-        toc: toc.value,
-        frontmatter: frontmatter.value
-      }, null, _push, _parent);
-      _push(`<div class="${ssrRenderClass([innerClass.value, "ce-content-body"])}" data-v-19c429b1>`);
-      ssrRenderSlot(_ctx.$slots, "body-start", {}, null, _push, _parent);
-      if (renderedHtml.value) {
-        _push(`<div class="ce-markdown" data-v-19c429b1>${renderedHtml.value ?? ""}</div>`);
-      } else {
-        _push(`<!---->`);
-      }
-      ssrRenderSlot(_ctx.$slots, "body-end", {}, null, _push, _parent);
-      if (!renderedHtml.value) {
-        ssrRenderSlot(_ctx.$slots, "empty", {}, null, _push, _parent);
-      } else {
-        _push(`<!---->`);
-      }
-      _push(`</div>`);
-      ssrRenderSlot(_ctx.$slots, "footer", {
-        toc: toc.value,
-        frontmatter: frontmatter.value,
-        readingTime: readingTime.value
-      }, null, _push, _parent);
-      _push(`</div>`);
-    };
+  return registered;
+}
+function createEngine(config = {}) {
+  clearPlugins();
+  registerBuiltinPlugins(config.plugins);
+  if (config.customPlugins) {
+    for (const p of config.customPlugins) {
+      registerPlugin(p, p.order || 100);
+    }
   }
-};
-const _sfc_setup$3 = _sfc_main$3.setup;
-_sfc_main$3.setup = (props, ctx) => {
-  const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("render/theme/MarkdownRenderer.vue");
-  return _sfc_setup$3 ? _sfc_setup$3(props, ctx) : void 0;
-};
-const MarkdownRenderer = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-19c429b1"]]);
+  return {
+    async parse(md, opts = {}) {
+      return parseMarkdown(md, { ...config.parserOptions, ...opts });
+    },
+    async render(content, opts = {}) {
+      const target = opts.target || "html";
+      if (target === "html") {
+        return renderToHTML$1(content, opts);
+      }
+      return renderToVNode$1(content, opts);
+    },
+    async compile(md, opts = {}) {
+      const htmlResult = await runRenderPipeline$1(md, {
+        ...opts,
+        renderTarget: "html"
+      });
+      const vnodeResult = await runRenderPipeline$1(md, {
+        ...opts,
+        renderTarget: "vnode"
+      });
+      return {
+        ast: htmlResult.ast,
+        enhancedAST: htmlResult.enhancedAST,
+        html: htmlResult.rendered || "",
+        vnode: vnodeResult.rendered || null,
+        errors: [...htmlResult.errors, ...vnodeResult.errors]
+      };
+    },
+    registerPlugin(plugin2, order = 100) {
+      registerPlugin(plugin2, order);
+    },
+    unregisterPlugin(name) {
+      unregisterPlugin(name);
+    },
+    listPlugins() {
+      return getPlugins().map((p) => p.name);
+    },
+    run(content, opts) {
+      return runRenderPipeline$1(content, opts);
+    }
+  };
+}
+let defaultEngine = null;
+function getEngine$1() {
+  if (!defaultEngine) {
+    defaultEngine = createEngine();
+  }
+  return defaultEngine;
+}
 const VueRenderer = {
   name: "vue-renderer",
   async renderToVNode(ast, context = {}) {
-    return {
-      __vnodeReady: true,
-      ast,
-      context,
-      component: MarkdownRenderer,
-      props: buildRendererProps(ast, context)
-    };
+    const engine2 = getEngine$1();
+    const result = await engine2.run(ast, {
+      renderTarget: "vnode",
+      rendererContext: context
+    });
+    return result.rendered || null;
   },
   async renderToHTML(ast, context = {}) {
-    const content = typeof ast?.content === "string" ? ast.content : ast?.raw || "";
-    return escapeHtml(content);
+    const engine2 = getEngine$1();
+    const result = await engine2.run(ast, {
+      renderTarget: "html",
+      rendererContext: context
+    });
+    return result.rendered || "";
   }
 };
-function buildRendererProps(ast, context) {
-  const frontmatter = ast?.frontmatter || {};
-  const body = typeof ast?.content === "string" ? ast.content : "";
-  const documentLike = {
-    body,
-    ...frontmatter,
-    _toc: ast?.toc || [],
-    _excerpt: ast?.excerpt || "",
-    _readingTime: ast?.readingTime || null,
-    _md: {
-      ast,
-      theme: context.theme || "default",
-      highlight: context.highlight !== false
+function registerRender(opts = {}) {
+  createEngine({ plugins: opts.transformers?.enabled });
+  const engine2 = getEngine$1();
+  const pluginNames = engine2.listPlugins();
+  const parserName = opts.parser && opts.parser.name || "markdown";
+  const parserAdapter = {
+    async parse(raw, parseOpts) {
+      return engine2.parse(raw, parseOpts || {});
     }
   };
-  return {
-    value: documentLike,
-    document: documentLike,
-    theme: context.theme || "default",
-    ast
-  };
-}
-function escapeHtml(s = "") {
-  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-}
-const TRANSFORMER_DEFS = [
-  { name: "heading", order: 10, module: HeadingTransformer },
-  { name: "toc", order: 20, module: TocTransformer },
-  { name: "links", order: 30, module: LinksTransformer },
-  { name: "excerpt", order: 40, module: ExcerptTransformer },
-  { name: "readingTime", order: 50, module: ReadingTimeTransformer },
-  { name: "reference", order: 100, module: ReferenceTransformer }
-];
-function registerRender(opts = {}) {
-  const parserName = opts.parser && opts.parser.name || "markdown";
-  registerParser(parserName, MarkdownParser, true);
-  const enabled = opts.transformers && opts.transformers.enabled ? new Set(opts.transformers.enabled) : null;
-  const registered = [];
-  for (const def of TRANSFORMER_DEFS) {
-    if (enabled && !enabled.has(def.name)) continue;
-    registerTransformer(def.name, def.module, def.order);
-    registered.push(def.name);
-  }
+  registerParser(parserName, parserAdapter, true);
   const rendererName = opts.renderer && opts.renderer.name || "vue";
   registerRenderer(rendererName, VueRenderer, true);
-  return { parser: parserName, transformers: registered, renderer: rendererName };
+  return { parser: parserName, transformers: pluginNames, renderer: rendererName };
 }
+const engine = getEngine$1();
 async function runRenderPipeline(rawContent, opts = {}) {
-  const result = {
-    raw: rawContent,
-    ast: null,
-    enhancedAST: null,
-    rendered: null,
-    errors: []
-  };
-  const parser = opts.parser || getParser() || void 0;
-  const transformers = opts.transformers || getTransformers();
-  const renderer = opts.renderer || getRenderer() || void 0;
-  try {
-    if (parser && typeof rawContent === "string") {
-      result.ast = await parser.parse(rawContent, opts.parserOptions || {});
-    } else if (rawContent && typeof rawContent === "object") {
-      const obj = rawContent;
-      if (obj.type === "root" || obj.ast) {
-        result.ast = obj.ast || obj;
-      } else if (typeof obj.body === "string") {
-        const body = obj.body;
-        if (parser) {
-          result.ast = await parser.parse(body, opts.parserOptions || {});
-        } else {
-          result.ast = {
-            type: "root",
-            children: [],
-            frontmatter: {},
-            content: body,
-            __passthrough: true
-          };
-        }
-      } else {
-        result.ast = rawContent;
-      }
-    } else {
-      result.ast = rawContent;
-    }
-    result.enhancedAST = result.ast;
-    for (const t of transformers) {
-      try {
-        result.enhancedAST = await t.transform(
-          result.enhancedAST || {},
-          {
-            ...opts,
-            pipelineResult: result
-          }
-        );
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : String(e);
-        result.errors.push(new Error(`[RenderPipeline][Transformer] ${msg}`));
-      }
-    }
-    if (renderer && result.enhancedAST) {
-      try {
-        if (opts.renderTarget === "html") {
-          result.rendered = await renderer.renderToHTML(
-            result.enhancedAST,
-            opts
-          );
-        } else {
-          result.rendered = renderer.renderToVNode ? await renderer.renderToVNode(
-            result.enhancedAST,
-            opts
-          ) : await renderer.renderToHTML(
-            result.enhancedAST,
-            opts
-          );
-        }
-      } catch (e) {
-        const msg = e instanceof Error ? e.message : String(e);
-        result.errors.push(new Error(`[RenderPipeline][Renderer] ${msg}`));
-      }
-    }
-  } catch (e) {
-    result.errors.push(e instanceof Error ? e : new Error(String(e)));
-  }
-  return result;
+  const target = opts.renderTarget || "vnode";
+  return engine.run(rawContent, {
+    parserOptions: opts.parserOptions,
+    transformerContext: opts.transformerContext,
+    rendererContext: opts.rendererContext,
+    renderTarget: target,
+    plugins: opts.plugins
+  });
 }
 async function renderToHTML(rawContent, opts = {}) {
   const r = await runRenderPipeline(rawContent, { ...opts, renderTarget: "html" });
@@ -2282,8 +2581,8 @@ function getEngine() {
 async function bootEngine(opts = {}) {
   const data = registerData(opts.data || {});
   const render = registerRender(opts.render || {});
-  const engine = await initContentEngine();
-  return { ok: true, engine, data, render };
+  const engine2 = await initContentEngine();
+  return { ok: true, engine: engine2, data, render };
 }
 async function bootContentEngine(opts = {}) {
   return bootEngine(opts);
@@ -2291,18 +2590,18 @@ async function bootContentEngine(opts = {}) {
 const engine_server_K3Wbu2ehhZMqR7q2Nzx9XLvm_AjcGgkg1BFyo3H_LLU = /* @__PURE__ */ defineNuxtPlugin(async (nuxtApp) => {
   let __temp, __restore;
   [__temp, __restore] = executeAsync(() => bootContentEngine()), await __temp, __restore();
-  const engine = getEngine();
-  nuxtApp.provide("engine", engine);
-  nuxtApp.provide("contentEngine", engine);
+  const engine2 = getEngine();
+  nuxtApp.provide("engine", engine2);
+  nuxtApp.provide("contentEngine", engine2);
   return {
     provide: {
-      engine,
-      contentEngine: engine,
+      engine: engine2,
+      contentEngine: engine2,
       contentQuery: {
-        getChapter: (slug, opts) => engine.getChapter(slug, opts),
-        getLesson: (slug, opts) => engine.getLesson(slug, opts),
-        listChapters: (opts) => engine.listChapters(opts),
-        renderContent: (raw, opts) => engine.renderContent(raw, opts)
+        getChapter: (slug, opts) => engine2.getChapter(slug, opts),
+        getLesson: (slug, opts) => engine2.getLesson(slug, opts),
+        listChapters: (opts) => engine2.listChapters(opts),
+        renderContent: (raw, opts) => engine2.renderContent(raw, opts)
       }
     }
   };
@@ -2315,7 +2614,7 @@ const plugins = [
   engine_server_K3Wbu2ehhZMqR7q2Nzx9XLvm_AjcGgkg1BFyo3H_LLU
 ];
 const layouts = {
-  default: defineAsyncComponent(() => import('./default-DSjUeHZf.mjs').then((m) => m.default || m))
+  default: defineAsyncComponent(() => import('./default-Epjx6a0M.mjs').then((m) => m.default || m))
 };
 const routeRulesMatcher = _routeRulesMatcher;
 const LayoutLoader = defineComponent({
@@ -3099,8 +3398,8 @@ const _sfc_main$1 = {
     const statusText = _error.statusMessage ?? (is404 ? "Page Not Found" : "Internal Server Error");
     const description = _error.message || _error.toString();
     const stack = void 0;
-    const _Error404 = defineAsyncComponent(() => import('./error-404-BSYZPpZq.mjs'));
-    const _Error = defineAsyncComponent(() => import('./error-500-B6cwEKxd.mjs'));
+    const _Error404 = defineAsyncComponent(() => import('./error-404-CC24t_8_.mjs'));
+    const _Error = defineAsyncComponent(() => import('./error-500-B0Ne07un.mjs'));
     const ErrorTemplate = is404 ? _Error404 : _Error;
     return (_ctx, _push, _parent, _attrs) => {
       _push(ssrRenderComponent(unref(ErrorTemplate), mergeProps({ status: unref(status), statusText: unref(statusText), statusCode: unref(status), statusMessage: unref(statusText), description: unref(description), stack: unref(stack) }, _attrs), null, _parent));
@@ -3192,5 +3491,5 @@ let entry;
 }
 const entry_default = ((ssrContext) => entry(ssrContext));
 
-export { MarkdownRenderer as M, _export_sfc as _, useRouter as a, useNuxtApp as b, useRuntimeConfig as c, nuxtLinkDefaults as d, entry_default as default, encodeRoutePath as e, useHead as f, useRoute as g, courses as h, getDb as i, chapters as j, exercises as k, lessons as l, navigateTo as n, resolveRouteObject as r, useAsyncData as u };
+export { useRouter as a, useNuxtApp as b, useRuntimeConfig as c, nuxtLinkDefaults as d, entry_default as default, encodeRoutePath as e, useHead as f, useRoute as g, getEngine$1 as h, courses as i, getDb as j, chapters as k, lessons as l, exercises as m, navigateTo as n, resolveRouteObject as r, useAsyncData as u };
 //# sourceMappingURL=server.mjs.map

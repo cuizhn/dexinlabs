@@ -26,7 +26,7 @@ Implementer 执行代码
 
 Version: 1.0
 
-Status: Draft
+Status: **Partially Implemented**（2026-07-09：Content Engine 目录重构 + Markdown Engine V1 全量落地；Search Engine / Learning Engine 仍为蓝图）
 
 Priority: Highest
 
@@ -111,7 +111,9 @@ Infrastructure
 
 ```
 
-Content Engine 定义内容获取的领域接口（如 findLessonById），但具体的数据库访问通过 Infrastructure 层的 Drizzle ORM 实现。Content Engine 依赖于 Infrastructure 的抽象接口，而非直接耦合 Drizzle。
+Content Engine 定义内容获取的领域接口（如 findLessonById），但具体的数据库访问通过 Infrastructure 层的 Drizzle ORM 实现。Content Engine 依赖于 Infrastructure 的抽象接口，而非直接耦合 Drizzle，代码位于 `app/modules/content/`。
+
+**Markdown Engine** 是 Domain Engines 层中的**根目录独立基础设施**，代码位于仓库根目录 `markdown-engine/`（**不放在 `app/` 下**），保证零 Nuxt/Vue/DB 依赖，未来可独立发布为 npm 包。平台提供公共路径别名 `@me` → `markdown-engine/src`，业务代码统一通过 `import { createEngine, renderToHTML, runRenderPipeline } from '@me'` 使用，禁止直接 import 内部子路径。
 ---
 
 # 3. 核心架构原则
@@ -214,20 +216,24 @@ Engine 特征：
 
 ## Markdown Engine
 
+**位置（强制执行）**：根目录 `markdown-engine/`（禁止放在 `app/markdown-engine/` 或 `app/render/modules/markdown/` 等 app 内部路径）。业务代码通过别名 `@me` → `markdown-engine/src` 访问公共 API。
 
 职责：
 
-- Markdown解析
-- AST处理
-- 插件系统
-- 渲染转换
-
+- Markdown解析（marked.lexer → MDAST 兼容 AST）
+- AST处理（统一类型真源：`@me/ast/types.ts`，禁止业务层复制类型）
+- 插件系统（Engine 自管 Map-based Registry，不依赖 `@core/registry`；内置 6 个插件按 order 升序：Heading 10 → TOC 20 → Links 30 → Excerpt 40 → ReadingTime 50 → Reference 100）
+- 渲染转换：Pipeline 固定顺序 `Parse → runPlugins → Renderer`，双输出格式：
+  - **HTML string**：SSR/SEO/邮件/PDF 导出用
+  - **框架无关 JSON VNode 描述树**（`{ type, is, props, children }`，可 `JSON.stringify`）：由 UI 层（app/render/）适配 Vue/React 等渲染
+- 公共 API 入口（`@me/index.ts`）：`createEngine / getEngine / parseMarkdown / runRenderPipeline / renderToHTML / renderToVNode / compile / registerPlugin / unregisterPlugin`
 
 不负责：
 
 - 内容存储
 - 用户权限
 - 课程结构
+- 直接挂载 Vue 组件引用（必须是 JSON VNode 描述，由 Vue 适配层动态 `<component :is>` 渲染）
 
 
 
@@ -335,14 +341,15 @@ Markdown Engine:
 
 现在：
 
-markdown-it
-
+marked.lexer() + 手动转换为 MDAST 兼容 AST（详细选型理由见 markdown-engine/ADR.md ADR 002、008）
 
 未来：
 
 remark
 rehype
 micromark
+
+（注：Parser 技术可替换属于 Engine 内部决策，只要公共 API（createEngine/render/parse）形状不变，对 Module / Page / Database 无影响。AST Schema 是公共契约，更换 Parser 必须保持 MDAST 兼容的节点 shape，不能改根节点 type 或 heading/code 等核心节点结构，否则视为 Breaking Change 必须走 RFC）
 
 
 不影响：
