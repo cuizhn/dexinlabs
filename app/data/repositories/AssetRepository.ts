@@ -1,7 +1,8 @@
 import { eq, asc, desc, sql } from 'drizzle-orm'
 import { getDb, assets, type DbInstance } from '../../../drizzle/db'
+import type { Asset } from '../../../content-engine/models/index'
 
-type SelectAsset = typeof assets.$inferSelect
+type SelectAsset = Asset
 type InsertAsset = typeof assets.$inferInsert
 
 export interface AssetListOptions {

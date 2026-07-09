@@ -1,8 +1,9 @@
 import { exerciseRepository } from '../repositories/index.js'
 import type { ExerciseRepository, ExerciseListByChapterRow } from '../repositories/index.js'
-import { exercises } from '~~/drizzle/db'
+import type { Exercise } from '../../../content-engine/models/index'
+import { queries } from '../../../content-engine/queries/index'
 
-type SelectExercise = typeof exercises.$inferSelect
+type SelectExercise = Exercise
 
 export interface ExerciseServiceDeps {
   exercises?: ExerciseRepository
@@ -16,11 +17,15 @@ export class ExerciseService {
   }
 
   async listByChapter(chapterSlug: string): Promise<ExerciseListByChapterRow[]> {
-    return this.exercises.listByChapter(chapterSlug)
+    const q = queries.normalizeByChapter(chapterSlug)
+    if (!q.isValid) return []
+    return this.exercises.listByChapter(q.chapterSlug || String(chapterSlug))
   }
 
   async getBySlug(slug: string): Promise<SelectExercise | null> {
-    return this.exercises.getBySlug(slug)
+    const q = queries.normalizeBySlug(slug)
+    if (!q.isValid) return null
+    return this.exercises.getBySlug(q.slug)
   }
 }
 

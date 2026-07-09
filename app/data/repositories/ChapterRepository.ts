@@ -1,8 +1,9 @@
 import { eq, and, or, asc, desc, sql } from 'drizzle-orm'
 import type { SQL } from 'drizzle-orm'
 import { getDb, chapters, courses, type DbInstance } from '../../../drizzle/db'
+import type { Chapter } from '../../../content-engine/models/index'
 
-type SelectChapter = typeof chapters.$inferSelect
+type SelectChapter = Chapter
 type InsertChapter = typeof chapters.$inferInsert
 
 export interface ChapterFilters {

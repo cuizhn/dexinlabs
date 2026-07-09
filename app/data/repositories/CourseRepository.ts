@@ -1,7 +1,8 @@
 import { eq, asc, desc, sql } from 'drizzle-orm'
 import { getDb, courses, type DbInstance } from '../../../drizzle/db'
+import type { Course } from '../../../content-engine/models/index'
 
-type SelectCourse = typeof courses.$inferSelect
+type SelectCourse = Course
 type InsertCourse = typeof courses.$inferInsert
 
 export interface CourseListOptions {

@@ -1,5 +1,5 @@
 import { defineEventHandler } from 'h3'
-import { courseService } from '@data/services/index'
+import { courseService } from '@ce'
 
 export default defineEventHandler(async () => {
   return courseService.getDefault()

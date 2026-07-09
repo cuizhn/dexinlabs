@@ -4,10 +4,11 @@ import {
 } from '../repositories/index.js'
 import type { LessonRepository, LessonListByChapterRow } from '../repositories/index.js'
 import type { ChapterRepository } from '../repositories/index.js'
-import { lessons, chapters } from '~~/drizzle/db'
+import type { Chapter, Lesson } from '../../../content-engine/models/index'
+import { queries } from '../../../content-engine/queries/index'
 
-type SelectLesson = typeof lessons.$inferSelect
-type SelectChapter = typeof chapters.$inferSelect
+type SelectLesson = Lesson
+type SelectChapter = Chapter
 
 export type LessonWithChapter = Omit<SelectLesson, 'chapter'> & {
   chapter: SelectChapter | null
@@ -28,11 +29,15 @@ export class LessonService {
   }
 
   async listByChapter(chapterSlug: string): Promise<LessonListByChapterRow[]> {
-    return this.lessons.listByChapter(chapterSlug)
+    const q = queries.normalizeByChapter(chapterSlug)
+    if (!q.isValid) return []
+    return this.lessons.listByChapter(q.chapterSlug || String(chapterSlug))
   }
 
   async getBySlug(slug: string): Promise<LessonWithChapter | null> {
-    const lesson = await this.lessons.getBySlug(slug)
+    const q = queries.normalizeBySlug(slug)
+    if (!q.isValid) return null
+    const lesson = await this.lessons.getBySlug(q.slug)
     if (!lesson) return null
     let chapter: SelectChapter | null = null
     if (lesson.chapterId) {

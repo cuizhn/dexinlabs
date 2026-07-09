@@ -6,17 +6,18 @@ import {
 import type { CourseRepository } from '../repositories/index.js'
 import type { ChapterRepository, ChapterListByCourseRow } from '../repositories/index.js'
 import type { LessonRepository, LessonListByChapterRow } from '../repositories/index.js'
-import { courses, chapters, lessons } from '~~/drizzle/db'
+import type { Course, Chapter, Lesson } from '../../../content-engine/models/index'
+import { queries } from '../../../content-engine/queries/index'
 
-type SelectCourse = typeof courses.$inferSelect
-type SelectChapter = typeof chapters.$inferSelect
-type SelectLesson = typeof lessons.$inferSelect
+type SelectCourse = Course
+type SelectChapter = Chapter
+type SelectLesson = Lesson
 
 interface ChapterWithLessons extends ChapterListByCourseRow {
-  lessons: LessonListByChapterRow[]
+  lessons: (LessonListByChapterRow & { [key: string]: unknown })[]
 }
 
-interface CourseWithChapters extends SelectCourse {
+type CourseWithChapters = SelectCourse & {
   chapters: ChapterWithLessons[]
 }
 
@@ -48,21 +49,23 @@ export class CourseService {
     const chaptersAggregated: ChapterWithLessons[] = []
     for (const chapter of chapters) {
       const lessons = await this.lessons.listByChapter(chapter.slug)
-      chaptersAggregated.push({ ...chapter, lessons })
+      chaptersAggregated.push({ ...chapter, lessons: lessons as unknown as ChapterWithLessons['lessons'] })
     }
-    return { ...course, chapters: chaptersAggregated }
+    return { ...course, chapters: chaptersAggregated } as unknown as CourseWithChapters
   }
 
   async getBySlug(slug: string): Promise<CourseWithChapters | null> {
-    const course = await this.courses.getBySlug(slug)
+    const q = queries.normalizeBySlug(slug)
+    if (!q.isValid) return null
+    const course = await this.courses.getBySlug(q.slug)
     if (!course) return null
     const chapters = await this.chapters.listByCourse(course.slug)
     const chaptersAggregated: ChapterWithLessons[] = []
     for (const chapter of chapters) {
       const lessons = await this.lessons.listByChapter(chapter.slug)
-      chaptersAggregated.push({ ...chapter, lessons })
+      chaptersAggregated.push({ ...chapter, lessons: lessons as unknown as ChapterWithLessons['lessons'] })
     }
-    return { ...course, chapters: chaptersAggregated }
+    return { ...course, chapters: chaptersAggregated } as unknown as CourseWithChapters
   }
 }
 

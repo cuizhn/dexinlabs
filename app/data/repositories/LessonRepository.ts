@@ -1,8 +1,9 @@
 import { eq, and, or, asc, desc, sql } from 'drizzle-orm'
 import type { SQL } from 'drizzle-orm'
 import { getDb, lessons, chapters, type DbInstance } from '../../../drizzle/db'
+import type { Lesson } from '../../../content-engine/models/index'
 
-type SelectLesson = typeof lessons.$inferSelect
+type SelectLesson = Lesson
 type InsertLesson = typeof lessons.$inferInsert
 
 export interface LessonFilters {

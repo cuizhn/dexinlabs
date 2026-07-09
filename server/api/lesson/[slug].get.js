@@ -1,5 +1,5 @@
 import { defineEventHandler, getRouterParam, createError } from 'h3'
-import { lessonService } from '@data/services/index'
+import { lessonService } from '@ce'
 
 export default defineEventHandler(async event => {
   const slug = getRouterParam(event, 'slug')

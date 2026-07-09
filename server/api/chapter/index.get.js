@@ -1,5 +1,5 @@
 import { defineEventHandler, getQuery } from 'h3'
-import { chapterService } from '@data/services/index'
+import { chapterService } from '@ce'
 
 export default defineEventHandler(async event => {
   const query = getQuery(event)

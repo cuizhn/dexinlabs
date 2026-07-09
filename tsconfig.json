@@ -11,22 +11,18 @@
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "paths": {
-      "@core": ["app/core"],
-      "@core/*": ["app/core/*"],
       "@boot": ["app/boot"],
       "@boot/*": ["app/boot/*"],
       "@data": ["app/data"],
       "@data/*": ["app/data/*"],
-      "@render": ["app/render"],
-      "@render/*": ["app/render/*"],
       "@shared": ["app/shared"],
       "@shared/*": ["app/shared/*"],
-      "@modules": ["app/modules"],
-      "@modules/*": ["app/modules/*"],
       "@server": ["server"],
       "@server/*": ["server/*"],
       "@me": ["markdown-engine/src"],
       "@me/*": ["markdown-engine/src/*"],
+      "@ce": ["content-engine"],
+      "@ce/*": ["content-engine/*"],
       "~/*": ["app/*"],
       "~~/*": ["./*"]
     }
@@ -41,7 +37,8 @@
     "server/**/*.js",
     "content/**/*.ts",
     "content/**/*.js",
-    "markdown-engine/**/*.ts"
+    "markdown-engine/**/*.ts",
+    "content-engine/**/*.ts"
   ],
   "exclude": [
     "node_modules",

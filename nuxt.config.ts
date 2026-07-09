@@ -55,14 +55,12 @@ export default defineNuxtConfig({
   },
 
   alias: {
-    '@core': path.resolve(rootDir, 'app/core'),
     '@boot': path.resolve(rootDir, 'app/boot'),
     '@data': path.resolve(rootDir, 'app/data'),
-    '@render': path.resolve(rootDir, 'app/render'),
     '@shared': path.resolve(rootDir, 'app/shared'),
-    '@modules': path.resolve(rootDir, 'app/modules'),
     '@server': path.resolve(rootDir, 'server'),
-    '@me': path.resolve(rootDir, 'markdown-engine/src')
+    '@me': path.resolve(rootDir, 'markdown-engine/src'),
+    '@ce': path.resolve(rootDir, 'content-engine')
   },
 
   nitro: {
@@ -76,14 +74,12 @@ export default defineNuxtConfig({
 
     resolve: {
       alias: {
-        '@core': path.resolve(rootDir, 'app/core'),
         '@boot': path.resolve(rootDir, 'app/boot'),
         '@data': path.resolve(rootDir, 'app/data'),
-        '@render': path.resolve(rootDir, 'app/render'),
         '@shared': path.resolve(rootDir, 'app/shared'),
-        '@modules': path.resolve(rootDir, 'app/modules'),
         '@server': path.resolve(rootDir, 'server'),
-        '@me': path.resolve(rootDir, 'markdown-engine/src')
+        '@me': path.resolve(rootDir, 'markdown-engine/src'),
+        '@ce': path.resolve(rootDir, 'content-engine')
       }
     }
   }

@@ -6,11 +6,12 @@ import {
 import type { ChapterRepository, ChapterListByCourseRow } from '../repositories/index.js'
 import type { LessonRepository, LessonListByChapterRow } from '../repositories/index.js'
 import type { ExerciseRepository, ExerciseListByChapterRow } from '../repositories/index.js'
-import { chapters, lessons, exercises } from '~~/drizzle/db'
+import type { Chapter, Lesson, Exercise } from '../../../content-engine/models/index'
+import { queries } from '../../../content-engine/queries/index'
 
-type SelectChapter = typeof chapters.$inferSelect
-type SelectLesson = typeof lessons.$inferSelect
-type SelectExercise = typeof exercises.$inferSelect
+type SelectChapter = Chapter
+type SelectLesson = Lesson
+type SelectExercise = Exercise
 
 export interface ChapterWithRelations {
   chapter: SelectChapter
@@ -40,15 +41,18 @@ export class ChapterService {
   }
 
   async list(courseSlug?: string): Promise<ChapterListByCourseRow[] | SelectChapter[]> {
+    const q = queries.normalizeListChapters(courseSlug || {})
     if (!courseSlug) return this.chapters.list()
-    return this.chapters.listByCourse(courseSlug)
+    return this.chapters.listByCourse(q.courseSlug || courseSlug)
   }
 
   async getBySlug(slug: string): Promise<ChapterWithRelations | null> {
-    const chapter = await this.chapters.getBySlug(slug)
+    const q = queries.normalizeBySlug(slug)
+    if (!q.isValid) return null
+    const chapter = await this.chapters.getBySlug(q.slug)
     if (!chapter) return null
-    const lessons = await this.lessons.listByChapter(slug)
-    const exercise = await this.exercises.getOneByChapter(slug)
+    const lessons = await this.lessons.listByChapter(q.slug)
+    const exercise = await this.exercises.getOneByChapter(q.slug)
     return {
       chapter,
       lessons,
