@@ -218,7 +218,6 @@ HTML 是展示层。
 
 Markdown:
 
-```md
 :::
 
 x²+y²
@@ -365,7 +364,12 @@ Browser
 
 Interactive Page
 
+Vue Renderer 的输出不应是直接挂载的 Vue 实例，而应是 JSON 格式的 VNode 描述或组件 Props 树。例如：
+ 
+{ "type": "MathNode", "props": { "formula": "x^2" }, "is": "KatexElement" }
+ 
 
+由前端的 <MarkdownRenderer> 组件接收该树，并使用 Nuxt 的动态组件 <component :is="..."> 进行渲染。
 输出 JSON：
 
 Search Index
