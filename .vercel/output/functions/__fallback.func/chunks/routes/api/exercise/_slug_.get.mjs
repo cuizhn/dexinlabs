@@ -1,4 +1,5 @@
 import { d as defineEventHandler, g as getRouterParam, c as createError } from '../../../_/nitro.mjs';
+import { q as queries } from '../../../_/index.mjs';
 import { e as exerciseRepository } from '../../../_/ExerciseRepository.mjs';
 import 'node:http';
 import 'node:https';
@@ -7,26 +8,29 @@ import 'node:buffer';
 import 'node:fs';
 import 'node:path';
 import 'node:crypto';
-import 'drizzle-orm';
-import '../../../_/db.mjs';
 import 'node:process';
 import 'drizzle-orm/neon-serverless';
 import '@neondatabase/serverless';
 import 'drizzle-orm/pg-core';
+import 'drizzle-orm';
 
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, key + "" , value);
 class ExerciseService {
-  constructor({ exercises: exercises2 = exerciseRepository } = {}) {
+  constructor({ exercises = exerciseRepository } = {}) {
     __publicField(this, "exercises");
-    this.exercises = exercises2;
+    this.exercises = exercises;
   }
   async listByChapter(chapterSlug) {
-    return this.exercises.listByChapter(chapterSlug);
+    const q = queries.normalizeByChapter(chapterSlug);
+    if (!q.isValid) return [];
+    return this.exercises.listByChapter(q.chapterSlug || String(chapterSlug));
   }
   async getBySlug(slug) {
-    return this.exercises.getBySlug(slug);
+    const q = queries.normalizeBySlug(slug);
+    if (!q.isValid) return null;
+    return this.exercises.getBySlug(q.slug);
   }
 }
 const exerciseService = new ExerciseService();

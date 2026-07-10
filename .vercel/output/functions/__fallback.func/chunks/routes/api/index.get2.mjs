@@ -1,6 +1,6 @@
 import { d as defineEventHandler } from '../../_/nitro.mjs';
+import { a as courses, g as getDb, q as queries } from '../../_/index.mjs';
 import { desc, asc, eq, sql } from 'drizzle-orm';
-import { a as courses, g as getDb } from '../../_/db.mjs';
 import { c as chapterRepository, l as lessonRepository } from '../../_/LessonRepository.mjs';
 import 'node:http';
 import 'node:https';
@@ -91,13 +91,13 @@ var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 class CourseService {
-  constructor({ courses: courses2 = courseRepository, chapters: chapters2 = chapterRepository, lessons: lessons2 = lessonRepository } = {}) {
+  constructor({ courses = courseRepository, chapters = chapterRepository, lessons = lessonRepository } = {}) {
     __publicField(this, "courses");
     __publicField(this, "chapters");
     __publicField(this, "lessons");
-    this.courses = courses2;
-    this.chapters = chapters2;
-    this.lessons = lessons2;
+    this.courses = courses;
+    this.chapters = chapters;
+    this.lessons = lessons;
   }
   async list() {
     return this.courses.list();
@@ -105,22 +105,24 @@ class CourseService {
   async getDefault() {
     const course = await this.courses.getDefault();
     if (!course) return null;
-    const chapters2 = await this.chapters.listByCourse(course.slug);
+    const chapters = await this.chapters.listByCourse(course.slug);
     const chaptersAggregated = [];
-    for (const chapter of chapters2) {
-      const lessons2 = await this.lessons.listByChapter(chapter.slug);
-      chaptersAggregated.push({ ...chapter, lessons: lessons2 });
+    for (const chapter of chapters) {
+      const lessons = await this.lessons.listByChapter(chapter.slug);
+      chaptersAggregated.push({ ...chapter, lessons });
     }
     return { ...course, chapters: chaptersAggregated };
   }
   async getBySlug(slug) {
-    const course = await this.courses.getBySlug(slug);
+    const q = queries.normalizeBySlug(slug);
+    if (!q.isValid) return null;
+    const course = await this.courses.getBySlug(q.slug);
     if (!course) return null;
-    const chapters2 = await this.chapters.listByCourse(course.slug);
+    const chapters = await this.chapters.listByCourse(course.slug);
     const chaptersAggregated = [];
-    for (const chapter of chapters2) {
-      const lessons2 = await this.lessons.listByChapter(chapter.slug);
-      chaptersAggregated.push({ ...chapter, lessons: lessons2 });
+    for (const chapter of chapters) {
+      const lessons = await this.lessons.listByChapter(chapter.slug);
+      chaptersAggregated.push({ ...chapter, lessons });
     }
     return { ...course, chapters: chaptersAggregated };
   }

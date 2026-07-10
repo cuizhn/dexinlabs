@@ -4038,7 +4038,7 @@ function _expandFromEnv(value) {
 const _inlineRuntimeConfig = {
   "app": {
     "baseURL": "/",
-    "buildId": "1a31fa81-9328-4ea1-b5b4-01332caafd73",
+    "buildId": "175a446d-9b81-446c-b222-cd4c50e17a20",
     "buildAssetsDir": "/_nuxt/",
     "cdnURL": ""
   },
@@ -4696,5 +4696,5 @@ function defineRenderHandler(render) {
   });
 }
 
-export { $fetch as $, getRouteRules as A, getResponseStatusText as B, getResponseStatus as C, getQuery as a, withoutTrailingSlash as b, createError$1 as c, defineEventHandler as d, getRouteRulesForPath as e, withQuery as f, getRouterParam as g, hasProtocol as h, isScriptProtocol as i, joinURL as j, parseURL as k, encodePath as l, decodePath as m, getContext as n, hash$1 as o, parseQuery as p, defu as q, executeAsync as r, sanitizeStatusCode as s, toNodeListener as t, useNitroApp as u, joinRelativeURL as v, withTrailingSlash as w, useRuntimeConfig as x, defineRenderHandler as y, destr as z };
+export { $fetch as $, hash$1 as A, defu as B, executeAsync as C, getQuery as a, withoutTrailingSlash as b, createError$1 as c, defineEventHandler as d, getRouteRulesForPath as e, withQuery as f, getRouterParam as g, hasProtocol as h, isScriptProtocol as i, joinURL as j, joinRelativeURL as k, useRuntimeConfig as l, encodePath as m, defineRenderHandler as n, destr as o, parseQuery as p, getRouteRules as q, getResponseStatusText as r, getResponseStatus as s, toNodeListener as t, useNitroApp as u, parseURL as v, withTrailingSlash as w, decodePath as x, sanitizeStatusCode as y, getContext as z };
 //# sourceMappingURL=nitro.mjs.map

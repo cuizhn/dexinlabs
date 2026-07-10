@@ -24,9 +24,9 @@ Implementer 执行代码
 ```md
 # 德鑫实验室平台架构规范
 
-Version: 1.0
+Version: 1.1
 
-Status: **Partially Implemented**（2026-07-09：Content Engine 目录重构 + Markdown Engine V1 全量落地；Search Engine / Learning Engine 仍为蓝图）
+Status: **Partially Implemented**（2026-07-10：Core 五域归位（content-engine/markdown-engine/database/storage）+ Boot 聚合层删除 + Engine 独立·Application 编排 100% 落地；Search Engine / Learning Engine 仍为蓝图）
 
 Priority: Highest
 
@@ -111,9 +111,9 @@ Infrastructure
 
 ```
 
-Content Engine 定义内容获取的领域接口（如 findLessonById），但具体的数据库访问通过 Infrastructure 层的 Drizzle ORM 实现。Content Engine 依赖于 Infrastructure 的抽象接口，而非直接耦合 Drizzle，代码位于 `app/modules/content/`。
+Content Engine 定义内容获取的领域接口（如 findLessonById），但具体的数据库访问通过 Infrastructure 层的 Drizzle ORM 实现。Content Engine 依赖于 Infrastructure 的抽象接口，而非直接耦合 Drizzle，代码位于 `app/core/content-engine/`（统一 Core 目录下的内容能力域，禁止放在 app/modules 或 app/data 等泛化目录）。
 
-**Markdown Engine** 是 Domain Engines 层中的**根目录独立基础设施**，代码位于仓库根目录 `markdown-engine/`（**不放在 `app/` 下**），保证零 Nuxt/Vue/DB 依赖，未来可独立发布为 npm 包。平台提供公共路径别名 `@me` → `markdown-engine/src`，业务代码统一通过 `import { createEngine, renderToHTML, runRenderPipeline } from '@me'` 使用，禁止直接 import 内部子路径。
+**Markdown Engine** 是 Domain Engines 层中的**独立纯技术基础设施**，代码位于统一 Core 目录 `app/core/markdown-engine/`（**不放在 app/modules/course、components、render/modules 等业务路径下**），严格保持零 Nuxt / 零 Vue / 零 DB 依赖，未来可独立发布为 npm 包（目录迁移到 app/core 仅属统一组织方式，不影响独立发布能力；只要保持零 app/* 依赖即可）。平台提供公共路径别名 `@me` → `app/core/markdown-engine/src`，业务代码统一通过 `import { createEngine, renderToHTML, runRenderPipeline } from '@me'` 使用，禁止直接 import 内部子路径。
 ---
 
 # 3. 核心架构原则
@@ -177,6 +177,30 @@ Course Module
 
 ---
 
+## 3.2 Core 目录统一组织原则（v4 起强制执行）
+
+所有与业务无关、可被多个业务模块共享的**纯技术核心能力**，统一放入 `app/core/`，禁止再放在项目根目录或泛化的 app/data 下：
+
+```text
+app/
+└── core/                 【十年稳定 · 只承载非业务纯技术能力】
+    ├── content-engine/      【内容能力】内容组织/查询/模型/服务（禁止 import Markdown）
+    ├── markdown-engine/     【Markdown 能力】解析/转换/渲染（禁止 import Course/Lesson/Repository）
+    ├── database/            【数据能力】Drizzle 连接/Schema/Migration/Repository 实现（独占 drizzle 包引用）
+    └── storage/             【资源能力】对象存储（上传/删除/URL/meta）
+
+app/
+└── modules/              【业务模块】course / practice / review ...
+                           → 仅允许依赖 @core/**，不得直接引用 drizzle/repository
+```
+
+**关键规则**：
+- 根目录只保留构建配置类文件（package.json / nuxt.config.ts / drizzle.config.ts / tsconfig.json），**禁止任何 Engine / 基础设施代码直接放在根目录**（v4 之前的 markdown-engine/content-engine 根目录模式 100% 废止）
+- Database 层的 `drizzle-orm` / `drizzle-kit` 包引用，**只允许出现在 `app/core/database/**` + 根 `drizzle.config.ts`**，Application（Page/Component/Composable/Plugin）禁止直接 import（v4 起是宪法级红线，见 adr0710 §6）
+- 两个 Engine（content-engine ↔ markdown-engine）必须**零互相引用**，组合权永远在 Application 具体业务（Nuxt Page / Server API / Plugin / Composable），禁止再创建任何"总 Engine Facade / Boot 总启动层"把两 Engine 写死绑定（v4 起删除 app/boot 整目录）
+
+---
+
 # 4. Engine 层规范
 
 
@@ -216,7 +240,7 @@ Engine 特征：
 
 ## Markdown Engine
 
-**位置（强制执行）**：根目录 `markdown-engine/`（禁止放在 `app/markdown-engine/` 或 `app/render/modules/markdown/` 等 app 内部路径）。业务代码通过别名 `@me` → `markdown-engine/src` 访问公共 API。
+**位置（强制执行）**：统一 Core 目录 `app/core/markdown-engine/`（禁止放在 `app/modules/course/markdown/`、`components/MarkdownRenderer.vue`、`app/render/modules/markdown/` 等业务/组件路径下作为核心实现）。业务代码通过别名 `@me` → `app/core/markdown-engine/src` 访问公共 API。
 
 职责：
 
@@ -288,7 +312,7 @@ Markdown Engine 必须独立维护。
 
 ```
 
-markdown-engine/
+app/core/markdown-engine/
 
 ├── DESIGN.md
 ├── SPEC.md
@@ -341,7 +365,7 @@ Markdown Engine:
 
 现在：
 
-marked.lexer() + 手动转换为 MDAST 兼容 AST（详细选型理由见 markdown-engine/ADR.md ADR 002、008）
+marked.lexer() + 手动转换为 MDAST 兼容 AST（详细选型理由见 app/core/markdown-engine/ADR.md ADR 002、008）
 
 未来：
 

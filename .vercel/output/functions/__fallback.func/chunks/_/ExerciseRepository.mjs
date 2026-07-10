@@ -1,5 +1,5 @@
 import { eq, and, desc, asc, or, sql } from 'drizzle-orm';
-import { e as exercises, g as getDb, c as chapters } from './db.mjs';
+import { e as exercises, g as getDb, c as chapters } from './index.mjs';
 
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;

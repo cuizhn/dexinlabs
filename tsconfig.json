@@ -11,18 +11,16 @@
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "paths": {
-      "@boot": ["app/boot"],
-      "@boot/*": ["app/boot/*"],
-      "@data": ["app/data"],
-      "@data/*": ["app/data/*"],
       "@shared": ["app/shared"],
       "@shared/*": ["app/shared/*"],
       "@server": ["server"],
       "@server/*": ["server/*"],
-      "@me": ["markdown-engine/src"],
-      "@me/*": ["markdown-engine/src/*"],
-      "@ce": ["content-engine"],
-      "@ce/*": ["content-engine/*"],
+      "@core": ["app/core"],
+      "@core/*": ["app/core/*"],
+      "@me": ["app/core/markdown-engine/src"],
+      "@me/*": ["app/core/markdown-engine/src/*"],
+      "@ce": ["app/core/content-engine"],
+      "@ce/*": ["app/core/content-engine/*"],
       "~/*": ["app/*"],
       "~~/*": ["./*"]
     }
@@ -32,13 +30,11 @@
     "app/**/*.js",
     "app/**/*.vue",
     "app/**/*.d.ts",
-    "drizzle/**/*.ts",
+    "app/core/**/*.ts",
     "server/**/*.ts",
     "server/**/*.js",
     "content/**/*.ts",
-    "content/**/*.js",
-    "markdown-engine/**/*.ts",
-    "content-engine/**/*.ts"
+    "content/**/*.js"
   ],
   "exclude": [
     "node_modules",

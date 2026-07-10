@@ -1,5 +1,5 @@
-import { getDb, createDb, closeDb, schema, db } from '../../drizzle/db'
-import * as tables from '../../drizzle/schema'
+import { getDb, createDb, closeDb, schema, db } from '@core/database'
+import * as tables from '@core/database'
 
 export function useDb() {
   return getDb()

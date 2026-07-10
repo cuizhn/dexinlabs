@@ -1,3 +1,4 @@
+import { q as queries } from './index.mjs';
 import { c as chapterRepository, l as lessonRepository } from './LessonRepository.mjs';
 import { e as exerciseRepository } from './ExerciseRepository.mjs';
 
@@ -6,29 +7,32 @@ var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { en
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 class ChapterService {
   constructor({
-    chapters: chapters2 = chapterRepository,
-    lessons: lessons2 = lessonRepository,
-    exercises: exercises2 = exerciseRepository
+    chapters = chapterRepository,
+    lessons = lessonRepository,
+    exercises = exerciseRepository
   } = {}) {
     __publicField(this, "chapters");
     __publicField(this, "lessons");
     __publicField(this, "exercises");
-    this.chapters = chapters2;
-    this.lessons = lessons2;
-    this.exercises = exercises2;
+    this.chapters = chapters;
+    this.lessons = lessons;
+    this.exercises = exercises;
   }
   async list(courseSlug) {
+    const q = queries.normalizeListChapters(courseSlug || {});
     if (!courseSlug) return this.chapters.list();
-    return this.chapters.listByCourse(courseSlug);
+    return this.chapters.listByCourse(q.courseSlug || courseSlug);
   }
   async getBySlug(slug) {
-    const chapter = await this.chapters.getBySlug(slug);
+    const q = queries.normalizeBySlug(slug);
+    if (!q.isValid) return null;
+    const chapter = await this.chapters.getBySlug(q.slug);
     if (!chapter) return null;
-    const lessons2 = await this.lessons.listByChapter(slug);
-    const exercise = await this.exercises.getOneByChapter(slug);
+    const lessons = await this.lessons.listByChapter(q.slug);
+    const exercise = await this.exercises.getOneByChapter(q.slug);
     return {
       chapter,
-      lessons: lessons2,
+      lessons,
       exercise: exercise || null
     };
   }

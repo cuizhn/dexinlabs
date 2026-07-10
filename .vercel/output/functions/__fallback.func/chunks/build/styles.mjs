@@ -1,12 +1,12 @@
 const interopDefault = r => r.default || r || [];
 const styles = {
-  "pages/course/[chapter]/[lesson].vue": () => import('./_lesson_-styles.wvnChYVN.mjs').then(interopDefault),
   "pages/course/[chapter]/index.vue": () => import('./index-styles.Cfk2ugc5.mjs').then(interopDefault),
-  "pages/about.vue": () => import('./about-styles.CcmPY18k.mjs').then(interopDefault),
+  "pages/course/[chapter]/[lesson].vue": () => import('./_lesson_-styles.wvnChYVN.mjs').then(interopDefault),
   "pages/exercise/[chapter].vue": () => import('./_chapter_-styles.B9BiL00x.mjs').then(interopDefault),
+  "pages/about.vue": () => import('./about-styles.CcmPY18k.mjs').then(interopDefault),
+  "pages/study.vue": () => import('./study-styles.DlE4T8EI.mjs').then(interopDefault),
   "pages/course/index.vue": () => import('./index-styles.CiOwtCib.mjs').then(interopDefault),
   "pages/methods.vue": () => import('./methods-styles.JeHCoJ_Y.mjs').then(interopDefault),
-  "pages/study.vue": () => import('./study-styles.DlE4T8EI.mjs').then(interopDefault),
   "pages/index.vue": () => import('./index-styles.C6cldqA9.mjs').then(interopDefault),
   "components/home/FeatureGrid.vue": () => import('./FeatureGrid-styles.UsC9WN-0.mjs').then(interopDefault),
   "components/home/CTASection.vue": () => import('./CTASection-styles.D5fZFnUn.mjs').then(interopDefault),

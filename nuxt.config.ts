@@ -43,8 +43,7 @@ export default defineNuxtConfig({
 
   components: {
     dirs: [
-      { path: '~/components' },
-      { path: '~/render/components', prefix: '' }
+      { path: '~/components' }
     ]
   },
 
@@ -55,12 +54,11 @@ export default defineNuxtConfig({
   },
 
   alias: {
-    '@boot': path.resolve(rootDir, 'app/boot'),
-    '@data': path.resolve(rootDir, 'app/data'),
     '@shared': path.resolve(rootDir, 'app/shared'),
     '@server': path.resolve(rootDir, 'server'),
-    '@me': path.resolve(rootDir, 'markdown-engine/src'),
-    '@ce': path.resolve(rootDir, 'content-engine')
+    '@core': path.resolve(rootDir, 'app/core'),
+    '@me': path.resolve(rootDir, 'app/core/markdown-engine/src'),
+    '@ce': path.resolve(rootDir, 'app/core/content-engine')
   },
 
   nitro: {
@@ -74,12 +72,11 @@ export default defineNuxtConfig({
 
     resolve: {
       alias: {
-        '@boot': path.resolve(rootDir, 'app/boot'),
-        '@data': path.resolve(rootDir, 'app/data'),
         '@shared': path.resolve(rootDir, 'app/shared'),
         '@server': path.resolve(rootDir, 'server'),
-        '@me': path.resolve(rootDir, 'markdown-engine/src'),
-        '@ce': path.resolve(rootDir, 'content-engine')
+        '@core': path.resolve(rootDir, 'app/core'),
+        '@me': path.resolve(rootDir, 'app/core/markdown-engine/src'),
+        '@ce': path.resolve(rootDir, 'app/core/content-engine')
       }
     }
   }

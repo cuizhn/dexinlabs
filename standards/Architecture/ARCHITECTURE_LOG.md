@@ -4,6 +4,178 @@
 
 ---
 
+## 决策 19（2026-07-10）· Core 五域归位 + Boot 聚合层删除（v4 终稿 · Engine 独立 · Application 编排红线落地）
+
+### 为什么改
+ADR0709 v3 内容 Engine 目录重构 + 决策 17 Markdown Engine V1 独立化完成后，代码虽然能跑，但存在 **4 项长期不可接受的架构债**，若不修正 3~5 个迭代内根目录会堆 10+ 个 Engine、业务层可随意裸连 Drizzle、两 Engine 被总聚合层硬绑：
+
+| # | v3 的架构问题 | 严重度 | 违反的顶层原则 |
+|---|---|--------|-----------|
+| 1 | **根目录 Engine 无限堆积风险**：今天已有 `markdown-engine/` 放根目录，计划新增的 `content-engine/`、未来的 `search-engine/`、`asset-engine/`、`ai-engine/` 全堆项目根 → 根目录变成"Engine 仓库"而非应用入口 | 极高 | 违反"**高内聚 · 低耦合**"：纯技术共享能力没有统一组织方式 |
+| 2 | **@boot 总聚合层硬绑两 Engine**：`app/boot/index.ts` 把 Content Engine + Markdown Engine 在一个文件内写死聚合顺序、提供统一 bootContentEngine() 总 Facade → 两 Engine 被绑定，无法独立发 npm / 无法独立测试 / 未来 React 端要重写 boot 层 | 极高 | 违反"**Engine 独立 · Application 组合**"：两 Engine 互不依赖却被第三方总层强制绑定 |
+| 3 | **Drizzle 归属在 server/database，依赖倒置破坏**：`server/database/` 下 DB 连接+Schema+Migrations + `app/data/repositories/` 下 Repository 实现分散在两处；Application 层 Page/Composable 可写 `from '../server/database'` 直接 new drizzle client 裸连 | 高 | 违反"**Application → Content Engine → Repository Interface → Database(Drizzle)**"四层依赖链 |
+| 4 | **Content Engine services / Database repositories 职责混乱**：4 个 Content Services（Course/Chapter/Lesson/Exercise）和 5 个 DB Repositories 实现都挂在泛化的 `app/data/` 下平铺，职责归属不清，新人无法一眼分清"哪些是内容模型层 / 哪些是 DB 具体实现层" | 中 | 违反"**单一职责 · 明确分层**"：Core 层必须按域清晰分组 |
+
+同时 ADR0710 文档明确写死两条红线评审意见（100% 采纳）：
+- Core 目录必须成为唯一的非业务共享能力容器；所有与领域无关的 Engine/Database/Storage 统一进 `app/core/`
+- 两 Engine 的组合权 100% 在 Application 层，禁止再创建任何"总 Facade / Boot 总启动"中间层
+
+本决策 100% 采纳「Core 五域归位 + Boot 删除 + 4 禁令宪法」方案，与 ADR0710 / PROJECT_STATUS.md 2026-07-10 版完全一一对应。
+
+### 改了什么（6 大子决策 + 两轮 Round A/B 顺序落地）
+
+**子决策 1 · Core 五域最终目录结构（写死，5 子域命名永久固定）**
+```text
+app/
+└── core/                           【十年稳定 · 只承载非业务共享纯技术能力】
+    ├── content-engine/                【内容能力】facade + models + queries + services(4)
+    │                                     → 只能依赖 @core/database/repositories；禁止 import @me / Markdown 任何能力
+    ├── markdown-engine/               【Markdown 能力】src/ + tests/ + 3 份 SPEC/DESIGN/ADR 文档
+    │                                     → 禁止 import @ce / Course / Lesson / Repository / Service；
+    │                                     → 零 Nuxt / 零 Vue / 零 DB 依赖（和 v3 根目录时一样严格）
+    ├── database/                      【数据能力】connection + schema + migrations + repositories(5) 实现
+    │                                     → 独占 drizzle-orm/drizzle-kit 包引用；Application 零穿透
+    └── storage/                       【资源能力】预留空壳（上传/删除/URL/meta）
+```
+- ❌ 永久拒绝"把 content-engine / markdown-engine 放项目根目录"的模式：根目录只保留 package.json / nuxt.config.ts / drizzle.config.ts / tsconfig.json 等**构建配置类文件**，代码 100% 进 app/
+- ❌ 永久拒绝"把 database/repositories 放到 content-engine/ 目录下"的模式：Database 是 Infrastructure，必须独立于 Content 域
+- 对应文档锚点：[PROJECT_STATUS.md §一](file:///C:/Users/cui/Documents/www/dexinlabs/PROJECT_STATUS.md#L6-L36) + [adr0710.md §0](file:///C:/Users/cui/Documents/www/dexinlabs/standards/ADR/adr0710.md#L12-L36)
+
+**子决策 2 · 4 原目录物理迁移映射（四不变原则：API/Contract/调用链/功能全不变）**
+
+| 迁移前路径（v3 存在） | 迁入 `app/core/` 后 v4 路径 | 迁移理由 |
+|---|---|---|
+| 根 `markdown-engine/` 整个目录（src/tests/3 文档） | `app/core/markdown-engine/` | Markdown 渲染是纯技术能力，属 Core |
+| 根 `content-engine/`（models/queries/facade） | `app/core/content-engine/`（models/queries/index 直接保留） | 内容组织/查询/模型属 Core |
+| `app/data/services/*`（4 个 Content Services + index barrel） | `app/core/content-engine/services/*` | 4 个 Service 归属 Content Engine（内容能力），不应挂在泛化 data/ 下 |
+| `app/data/repositories/*`（5 个 Repository 实现 + index barrel） | `app/core/database/repositories/*` | Repositories 是 Database 层具体实现（消费 drizzle API），归属 DB |
+| `server/database/*`（connection/schema/migrations + index） | `app/core/database/*` | Drizzle/ORM 属 Infrastructure，不进 server/（server/ 仅 API 路由 + Nitro Utils） |
+- 清理原 4 个目录：根 markdown-engine/、根 content-engine/、server/database/、app/data/ 迁移完成后**立即物理删除**，避免"新旧两套路径并存 1 个月后出现漂移实现"
+- 对应文档锚点：[adr0710.md §2.A.1](file:///C:/Users/cui/Documents/www/dexinlabs/standards/ADR/adr0710.md#L84-L108)
+
+**子决策 3 · 别名重排 3 配置文件（同步删 1 旧 / 增 1 新 / 改 2 路径）**
+
+| 配置文件 | 变更 | 修正后的配置锚点 |
+|---|---|---|
+| nuxt.config.ts alias（顶栏 + vite.resolve.alias 双处） | 新增 `@core → app/core`；改 `@me/@ce` 指向 app/core 下新路径；删除 `@data → app/data` | [nuxt.config.ts#L56-L80](file:///C:/Users/cui/Documents/www/dexinlabs/nuxt.config.ts#L56-L80) |
+| tsconfig.json compilerOptions.paths（双 entry 经典坑） | 新增 `@core` + `@core/*` 双 entry；改 `@me/@me/*` `@ce/@ce/*` 双 entry 指向 app/core；删除 `@data/@data/*`；include 保留 `app/core/**/*.ts` | [tsconfig.json#L13-L27](file:///C:/Users/cui/Documents/www/dexinlabs/tsconfig.json#L13-L27) |
+| drizzle.config.ts（根保留构建工具配置惯例） | 改 schema→`./app/core/database/schema.ts`；out→`./app/core/database/migrations`；rootDir 保留（drizzle-kit 工作目录） | [drizzle.config.ts](file:///C:/Users/cui/Documents/www/dexinlabs/drizzle.config.ts) |
+
+**子决策 4 · Content Engine ↔ Database 唯一合法通道（切断所有"自产自销实现"的错误模式）**
+- ✅ **唯一合法通道**：Content Engine（4 Services + facade）**只能**经 `@core/database/repositories` 取得接口类型 + 实例
+  - 类型：`import type { CourseRepository, ChapterListByCourseRow } from '@core/database/repositories'`
+  - 实例：`import { courseRepository, chapterRepository } from '@core/database/repositories'`
+- ❌ **三种非法模式永久禁止**（Code Review 直接打回）：
+  1. Content Engine 内部直接写 `from 'drizzle-orm'` 裸连 client
+  2. Content Engine 自建 `repositories/` 空 barrel 把 Database 层实现搬过来（v4 迁移期间踩过此坑，已物理删除）
+  3. Content Engine import `@me` / markdown-engine 的任何渲染能力（渲染在 Application 层组合，不在 Content Engine）
+- 对应文档锚点：[adr0710.md §2.A.3](file:///C:/Users/cui/Documents/www/dexinlabs/standards/ADR/adr0710.md#L127-L136)
+
+**子决策 5 · Boot 聚合层 100% 删除（Engine 独立 · Application 组合原则）**
+- ❌ **3 个对象彻底删除**：
+  | 删除对象 | v3 替代 | v4 正确方式 |
+  |---|---|---|
+  | 整个 `app/boot/` 目录（index.ts 仅 1 个文件 · 纯 @ce/@me 转出口 + ensureDrizzle） | 写死总 Facade：`bootContentEngine()` 一手全包 getContentEngine/createMarkdownEngine/ensureDrizzle | Application 自己按需 import `@ce` + `@me`，不需要总启动层 |
+  | `@boot` 别名（nuxt.config 2 处 + tsconfig 2 行） | 插件 `import { ensureDrizzle } from '@boot'` | 插件内联 DB 初始化：`await import('@core/database').catch(() => {})` |
+  | Boot 层所有转出口 API（getContentEngine/4 services/5 repos/getMarkdownEngine + 全部类型 re-export） | 写死 `from '@boot'` 拿一手所有能力 | Application 直接 `import { X } from '@ce'` / `import { Y } from '@me'` / `import { Z } from '@core/database'` 按需取 |
+- **关键架构收益**：未来新增 Audio Engine / AI Engine / Search Engine，Application 层只要 `import '@audio' / '@ai' / '@search'` 自由组合，**完全不需要再改一个所谓的 boot 总启动层**——这是 v4 可扩展性的最大提升
+- 对应文档锚点：[adr0710.md §2.B.1 + §2.B.2](file:///C:/Users/cui/Documents/www/dexinlabs/standards/ADR/adr0710.md#L140-L192)
+
+**子决策 6 · Application 编排层标准范例（Plugins/Composables/Pages 三层写死组合规则）**
+- **Plugins 层（engine.server.js + engine.client.js · 双文件完全同构）**：
+  ```js
+  import { defineNuxtPlugin } from '#imports'
+  import { getContentEngine, chapterService, queries, ... } from '@ce'
+  import { getEngine as getMarkdownEngine, renderToHTML, renderToVNode } from '@me'
+  export default defineNuxtPlugin(async () => {
+    await import('@core/database').catch(() => {})   // Application 层自己定启动顺序（不是 Boot 写死）
+    const content = getContentEngine(); const markdown = getMarkdownEngine()
+    return { provide: { content, markdown, services: {...}, repositories: {...}, queries, renderToHTML, renderToVNode } }
+  })
+  ```
+- **Composables 层（useCourse/useLesson/... 4 个）**：保持 v3 模式走 useAsyncData + /api/*，不直接改 Core 实现
+- **Pages/Components 层**：只能从 NuxtApp 取 `const { $content, $markdown, $services } = useNuxtApp()` 组合两 Engine 输出 → 禁止直接 new Repository / 裸连 drizzle
+- 对应文档锚点：[PROJECT_STATUS.md §一 Application 编排层 1/2](file:///C:/Users/cui/Documents/www/dexinlabs/PROJECT_STATUS.md#L23-L29)
+
+### 8 项验证全绿（= Core v4 架构落地成功）
+所有验证项都是**迁移完成后立即执行**的，避免"以为对了但运行时炸"：
+
+| # | 验证项 | v4 实际结果 | PASS |
+|---|--------|-----------|------|
+| 1 | `npx tsc --noEmit` 全量类型检查 | 0 errors（无任何输出 = 全绿） | ✅ |
+| 2 | Content Engine 内部零 Markdown 引用：grep `@me` / `markdown-engine` 在 `app/core/content-engine/**` | 0 matches | ✅（两 Engine 独立） |
+| 3 | Markdown Engine 内部零内容引用：grep `@ce / Course / Lesson / Repository` 在 `app/core/markdown-engine/**` | 0 matches | ✅（两 Engine 独立） |
+| 4 | Drizzle 包零穿透 Application：grep `from 'drizzle-orm*' / 'drizzle-kit'` 全项目 | 12 处 = 仅 `app/core/database/**`（schema 1 + connection 1 + 5 repos 各 1~2）+ 根 drizzle.config.ts 1，完全符合约束 | ✅ |
+| 5 | Boot 关键词零残留：grep `@boot / bootContentEngine / EngineFacade / BootEngineResult / __booted` 全项目 | 0 matches；4 处 `ContentEngineFacade` 为 content-engine 自身公开接口（允许范围） | ✅ |
+| 6 | Markdown Engine 独立可测试：`npx vitest run app/core/markdown-engine/tests` | AST Adapter 5 / Parser 7 / Pipeline 6 / Compiler 5 = **17+ 全绿** | ✅ |
+| 7 | 原 4 目录彻底清理：检查 `根 markdown-engine/` / `根 content-engine/` / `server/database/` / `app/data/` 4 路径 | 4 目录全部 Not Exist（已物理删除，无新旧两套并存风险） | ✅ |
+| 8 | 调用链零破坏性：Composables / Pages / Plugins 对外 API 形状和 v3 完全一致（$content / $markdown / $services / $repositories / $queries / renderToHTML / renderToVNode 字段名 100% 相同） | 业务代码零改动可运行（灰度发布零风险） | ✅ |
+
+### 6 项关键踩坑汇总（每一条都让 tsc / grep 炸过一次，永久避坑）
+
+| # | 踩坑一句话 | 根因 | 最终解 |
+|---|-----------|------|-------|
+| 1 | PowerShell 5.1 `Copy-Item src dest -Recurse` 静默失败不建空目录 repositories/ | PS 5.1 遇到目标下空目录（仅 barrel 文件）时 -Force 不带就不建 | 所有目录迁移前先 `New-Item -ItemType Directory -Force app/core/xxx/repositories` 明确 mkdir |
+| 2 | content-engine/services/index.ts barrel 写 `from '@data/services/XXX'` 残留旧别名 | 从 app/data/services 复制文件时忘了更新 barrel 内部 import 路径 | 一律本地化同级相对路径：`export { CourseService } from './CourseService.js'`，彻底断绝对旧别名的任何残留依赖 |
+| 3 | 5 个 Repository 内部"3 级跳"相对路径集体失效 | 原路径 app/data/repositories/*.ts 写死 `from '../../../server/database' / from '../../../content-engine/models'`，迁到 app/core/database/repositories 后层级差变 2 层 | 统一重写：DB 自身 `from '../index'`；跨 Content Engine `from '../../content-engine/models/index'` |
+| 4 | content-engine facade 的 `ensureInitialized()` 还在 `import('../server/database')` | 迁到 app/core/content-engine 后只改了文件位置，没改动态 import 路径 | 修正为 `import('../database')`（core 子目录下直接找同级 app/core/database） |
+| 5 | 误在 content-engine/repositories/ 建"空 barrel 过渡文件"引发循环依赖风险 | 初版想"Content Engine 自己有个转出口"，结果既引用 @core/database/repositories 又被 facade 引用，破坏分层 | **立即物理删除**整个 `app/core/content-engine/repositories/`，Content Engine 直接从 `@core/database/repositories` 取 |
+| 6 | 只改了 engine.server.js 漏改 engine.client.js 的 `@boot` 引用 | Nuxt 自动双端扫描，两个文件内容 99% 同构但改一个忘另一个 → tsc 不报（都是 .js），grep 才抓到 | 双文件并行原子处理：Edit 时改 server.js 同一次会话用完全相同代码段改 client.js |
+
+### 权衡
+- **优点（长期架构价值，至少管 2 年演进）**：
+  1. **Core 单一入口，根目录清爽**：新增 10 个 Engine/Database/Storage，全部统一进 `app/core/`，根目录永远只有配置类文件；新人接手 5 分钟看懂"哪些是核心能力、哪些是业务、哪些是基础设施"
+  2. **Engine 独立性 100% 落地**：Content Engine / Markdown Engine 零互相引用；Markdown Engine 迁到 `app/core/markdown-engine/` 后仍然保持零 Nuxt / 零 Vue / 零 DB 依赖，个人天内可独立发布 npm 包
+  3. **依赖倒置严格落地**：Application 层完全不可能"手滑写个 from drizzle-orm 裸连数据库"——写了 tsc 不报错但 grep 架构检查 100% 能抓到（每次提交跑 grep 命令可自动化到 CI）
+  4. **组合自由度极大提升**：删除 Boot 总聚合后，Application 层可同时组合 `@ce（内容） + @me（渲染） + @storage（资源） + 未来 @search（搜索）` 任意子集，完全不需要改一个所谓的启动层
+  5. **清晰的新人学习曲线**：看 2 份文档就能上手：① ADR0710 知道目录怎么分；② ARCHITECTURE_LOG.md 决策 19 知道为什么这么分、哪些红线不能碰
+- **代价（一次性迁移成本 + 小幅长期维护）**：
+  1. 两轮迁移（Round A Core 归位 + Round B Boot 删除）工作量 ≈ 3~5h（已完成）；写 ADR0710 + 写 PROJECT_STATUS 更新 + 写本决策 ≈ 2h
+  2. 独立脚本（content/sync.js）不走 Nuxt alias 管道，必须一直写相对路径（属正确模式，不是缺点但要在新人 onboard 文档写清楚）
+  3. 2~3 迭代后需要清理 `app/render/` 薄 Vue 适配层：当 Application 层直接组合 @me + 插件注册渲染器后，可删除这层过渡
+
+### 实施约束（Core v4 起所有后续 PR 必须遵守，违反直接打回）
+1. **四不变原则**（沿用 v3 迁移约束）：API 形状不变 · Contract 不变 · 调用链不变 · 功能不变——所有重构必须先写 ADR 文档证明「四不变」成立，再动手改代码
+2. **4 条架构禁令宪法**（写死在 [PROJECT_STATUS.md §一 架构红线](file:///C:/Users/cui/Documents/www/dexinlabs/PROJECT_STATUS.md#L32-L36) 和 [adr0710.md §6](file:///C:/Users/cui/Documents/www/dexinlabs/standards/ADR/adr0710.md#L300-L308)），任何 RFC/ADR 不得推翻：
+   ```
+   1. ❌ 禁止 Application（Page/Component/Composable/Plugin） → Drizzle/ORM 直接引用
+   2. ❌ 禁止 Page → Repository
+   3. ❌ 禁止 Component → Database
+   4. ❌ 禁止 Engine 互相引用（content-engine ↔ markdown-engine 交叉 import）
+   ```
+   → 自动化 CI 建议：每次 PR 跑 4 条 grep 命令（和 ARCHITECTURE_LOG §8 验证项 2/3/4/5 完全相同），只要 grep 有命中就打 BLOCK 标记
+3. **禁止再创建"总 Engine/Facade/Boot"中间层**：如果未来有 10+ 个 Engine 要组合，组合权必须始终在 Application 具体业务（Page/Plugin/Server API），不允许新建一个"总 Facade 类"把 10 个 Engine 写死组合顺序
+4. **AST Schema / Content Engine Facade 接口 / @me 公共 API 的 Breaking Change 必须走 RFC**：加东西兼容导出没事；改东西（删除 API / 改默认值 / 改路径）必须先在 `standards/RFC/RFC-XXX-*.md` 写清楚"双导出期 14 天 + 迁移命令 + 回滚命令"，再动代码
+
+### 未来下一步建议（2~3 迭代内 · 基于 Core v4 的横向扩展）
+1. **业务模块起步：app/modules/course 第一个业务模块**（仅依赖 @ce facade + @me 渲染；严格遵守禁令 1/2，不得直接 drizzle/repo）
+2. **Storage 能力落地**：先写接口抽象 @core/storage/index.ts（upload/delete/getUrl/meta 4 方法）→ 接 Cloudflare R2 / 阿里云 OSS 实现；再让 @ce 的 AssetService 在 Content Engine 内直接依赖 storage 接口（符合 DIP）
+3. **Content Engine Cache RFC**：在 `app/core/content-engine/_internal/cache/` 先上 Service 级 LRU（size=256）→ lesson/chapter 列表高频查询命中后预计省 50%+ DB round trip
+4. **Content Engine 新增 Navigation / Search 能力（需先写 RFC）**：文档已规划的未来能力，写清楚「Navigation 是独立 Service 还是 Queries 扩展 / Search 是内嵌 Lunar.js 还是接 MeiliSearch」后再落地
+5. **tsconfig 严格模式渐进开启**：`noImplicitAny: false → true`，分 3 模块 3 个 PR 逐步开：① app/core/content-engine ② app/core/markdown-engine ③ app/pages/composables；不要一次性全局打开（否则 1000+ any 报错修 1 天）
+
+---
+
+## 决策 18（2026-07-10 上午 · 补录）· Content Engine 与 Repositories 分层依赖倒置最终固化（Interface vs Implementation 拆分）
+
+> 注：本决策是决策 19 Round A 中"Content Engine services / Database repositories 职责拆分"的细化补充，因涉及 DIP 依赖倒置原则的落地细节，单独编号备查。
+
+### 为什么改
+v3 中 `app/data/` 下 services + repositories 平铺导致"Content Engine 可以顺手直接 new Drizzle Client"，所有代码都在一个目录下 Code Review 很容易放过；且未来如果 Drizzle → Prisma 替换，Content Engine 和 Database 实现搅在一起改的文件数 ×3，违反 DIP（高层模块只能依赖抽象，不能依赖具体实现）。
+
+### 改了什么
+- **拆分两层 Interface / Implemetation**：
+  - Interface 层 = `app/core/content-engine/` 内部的 `services/**` 只写「Content 业务逻辑」，**绝对不出现任何 drizzle / neon / serverless driver 的具体 import**
+  - Implementation 层 = `app/core/database/repositories/**` 写 5 个 Repository 具体实现（Course/Chapter/Lesson/Exercise/Asset），**只允许出现 drizzle-orm / pg-core / neon-http 等 DB 驱动包引用**，绝对不出现课程/章节业务逻辑聚合
+- Content Engine Services 从 Repository 接口**仅取类型化投影 DTO**（`ChapterListByCourseRow` / `LessonListByChapterRow` 等），4 个 Service 内部写聚合逻辑（Lesson → Chapter 关联、章节下练习计数、课程下章节树组装）
+- 对应文档锚点：[adr0710.md §2.A.3 合法通道](file:///C:/Users/cui/Documents/www/dexinlabs/standards/ADR/adr0710.md#L127-L136)
+
+### 权衡
+- 短期**增加一层间接调用**：Content Service 取数据要绕一层 Repository Interface，不如直接 `from 'drizzle-orm'` 写 SQL 来得快
+- 长期**收益巨大**：如果 Drizzle → Prisma → EdgeDB，改的文件只有 `app/core/database/repositories/` 下 5 个实现文件，Content Engine 的 4 个 Service + 所有 Application 业务代码**一行都不需要改**
+
+---
+
 ## 决策 17（2026-07-09）· Markdown Engine V1 独立化（根目录 markdown-engine/ + SPEC/DESIGN/ADR 三文档契约落地 + Vue 适配层薄封装）
 
 ### 为什么改

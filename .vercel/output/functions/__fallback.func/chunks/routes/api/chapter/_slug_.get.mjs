@@ -7,13 +7,13 @@ import 'node:buffer';
 import 'node:fs';
 import 'node:path';
 import 'node:crypto';
-import '../../../_/LessonRepository.mjs';
-import 'drizzle-orm';
-import '../../../_/db.mjs';
+import '../../../_/index.mjs';
 import 'node:process';
 import 'drizzle-orm/neon-serverless';
 import '@neondatabase/serverless';
 import 'drizzle-orm/pg-core';
+import 'drizzle-orm';
+import '../../../_/LessonRepository.mjs';
 import '../../../_/ExerciseRepository.mjs';
 
 const _slug__get = defineEventHandler(async (event) => {

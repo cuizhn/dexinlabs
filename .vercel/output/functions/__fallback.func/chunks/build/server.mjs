@@ -1,12 +1,12 @@
 import process from 'node:process';globalThis._importMeta_=globalThis._importMeta_||{url:"file:///_entry.js",env:process.env};import { hasInjectionContext, inject, getCurrentInstance, defineAsyncComponent, defineComponent, h, computed, unref, shallowRef, provide, shallowReactive, ref, Suspense, Fragment, createElementBlock, cloneVNode, isRef, toValue, onServerPrefetch, reactive, createApp, onErrorCaptured, createVNode, resolveDynamicComponent, effectScope, nextTick, toRef, mergeProps, withCtx, getCurrentScope, isReadonly, useSSRContext, isShallow, isReactive, toRaw } from 'vue';
-import { k as parseURL, l as encodePath, m as decodePath, h as hasProtocol, i as isScriptProtocol, j as joinURL, f as withQuery, s as sanitizeStatusCode, n as getContext, $ as $fetch, o as hash, q as defu, c as createError$1, r as executeAsync } from '../_/nitro.mjs';
+import { v as parseURL, m as encodePath, x as decodePath, h as hasProtocol, i as isScriptProtocol, j as joinURL, f as withQuery, y as sanitizeStatusCode, z as getContext, $ as $fetch, A as hash, B as defu, c as createError$1, C as executeAsync } from '../_/nitro.mjs';
 import { u as useHead$1, h as headSymbol, b as baseURL } from '../routes/renderer.mjs';
 import { useRoute as useRoute$1, RouterView, createMemoryHistory, createRouter, START_LOCATION } from 'vue-router';
-import { sql, relations, eq, and, asc, desc } from 'drizzle-orm';
+import { sql, relations, desc, asc, eq, and, or } from 'drizzle-orm';
+import { pgTable, timestamp, text, integer, varchar, serial, uniqueIndex, index } from 'drizzle-orm/pg-core';
 import process from 'node:process';
 import { drizzle } from 'drizzle-orm/neon-serverless';
 import { Pool } from '@neondatabase/serverless';
-import { pgTable, timestamp, text, integer, varchar, serial, index, uniqueIndex } from 'drizzle-orm/pg-core';
 import { marked } from 'marked';
 import { ssrRenderSuspense, ssrRenderComponent, ssrRenderVNode, ssrRenderAttrs } from 'vue/server-renderer';
 import { isPlainObject } from '@vue/shared';
@@ -701,42 +701,42 @@ const _routes = [
   {
     name: "course-chapter-lesson",
     path: "/course/:chapter()/:lesson()",
-    component: () => import('./_lesson_-BRijA9hz.mjs')
+    component: () => import('./_lesson_-ONbBqFtt.mjs')
   },
   {
     name: "course-chapter",
     path: "/course/:chapter()",
-    component: () => import('./index-BSdBW1mw.mjs')
+    component: () => import('./index-By7-XWik.mjs')
   },
   {
     name: "exercise-chapter",
     path: "/exercise/:chapter()",
-    component: () => import('./_chapter_-BXg-5Xh5.mjs')
+    component: () => import('./_chapter_-CTWTMMOP.mjs')
   },
   {
     name: "about",
     path: "/about",
-    component: () => import('./about-CUtOQMTl.mjs')
+    component: () => import('./about-Ck4hsYxO.mjs')
   },
   {
     name: "course",
     path: "/course",
-    component: () => import('./index-BBkukLkQ.mjs')
+    component: () => import('./index-DQ1F9xCN.mjs')
   },
   {
     name: "methods",
     path: "/methods",
-    component: () => import('./methods-C1b_bL4g.mjs')
+    component: () => import('./methods-CXlvZv8U.mjs')
   },
   {
     name: "study",
     path: "/study",
-    component: () => import('./study-DjzBYMlw.mjs')
+    component: () => import('./study-Dj0-DzdY.mjs')
   },
   {
     name: "index",
     path: "/",
-    component: () => import('./index-D4nD9jPf.mjs')
+    component: () => import('./index-BySJeKza.mjs')
   }
 ];
 const _wrapInTransition = (props, children) => {
@@ -1142,104 +1142,6 @@ const revive_payload_server_MVtmlZaQpj6ApFmshWfUWl5PehCebzaBf2NuRMiIbms = /* @__
 const components_plugin_4kY4pyzJIYX99vmMAAIorFf3CnAaptHitJgf7JxiED8 = /* @__PURE__ */ defineNuxtPlugin({
   name: "nuxt:global-components"
 });
-function assertContract$2(obj) {
-  if (obj === null || obj === void 0) {
-    throw new Error("[assertContract] Object is null or undefined");
-  }
-}
-function assertSourceContract(source) {
-  assertContract$2(source);
-  const required = ["findOne", "findAll", "count"];
-  for (const method of required) {
-    if (typeof source[method] !== "function") {
-      throw new Error(`[SourceContract] Missing method: ${method}`);
-    }
-  }
-}
-function assertContract$1(obj) {
-  if (obj === null || obj === void 0) {
-    throw new Error("[assertContract] Object is null or undefined");
-  }
-}
-function assertQueryContract(query) {
-  assertContract$1(query);
-  const required = ["getCourse", "getChapter", "getLesson", "getExercise", "listChapters"];
-  for (const method of required) {
-    if (typeof query[method] !== "function") {
-      throw new Error(`[QueryContract] Missing method: ${method}`);
-    }
-  }
-}
-function assertContract(obj) {
-  if (obj === null || obj === void 0) {
-    throw new Error("[assertContract] Object is null or undefined");
-  }
-}
-function assertParserContract(parser) {
-  assertContract(parser);
-  if (typeof parser.parse !== "function") {
-    throw new Error("[ParserContract] Missing required method: parse(raw, opts)");
-  }
-}
-function assertSourceContractGeneric(x) {
-  assertSourceContract(x);
-}
-function assertParserContractGeneric(x) {
-  assertParserContract(x);
-}
-function assertQueryContractGeneric(x) {
-  assertQueryContract(x);
-}
-const __registry = {
-  sources: /* @__PURE__ */ new Map(),
-  parsers: /* @__PURE__ */ new Map(),
-  transformers: [],
-  renderers: /* @__PURE__ */ new Map(),
-  queries: /* @__PURE__ */ new Map(),
-  defaultSource: null,
-  defaultParser: null,
-  defaultRenderer: null,
-  defaultQuery: null
-};
-function registerSource(name, source, setAsDefault = false) {
-  assertSourceContractGeneric(source);
-  __registry.sources.set(name, source);
-  if (setAsDefault || !__registry.defaultSource) {
-    __registry.defaultSource = source;
-  }
-  return source;
-}
-function registerParser(name, parser, setAsDefault = false) {
-  assertParserContractGeneric(parser);
-  __registry.parsers.set(name, parser);
-  if (setAsDefault || !__registry.defaultParser) {
-    __registry.defaultParser = parser;
-  }
-  return parser;
-}
-function registerQuery(name, query, setAsDefault = false) {
-  assertQueryContractGeneric(query);
-  __registry.queries.set(name, query);
-  if (setAsDefault || !__registry.defaultQuery) {
-    __registry.defaultQuery = query;
-  }
-  return query;
-}
-function getSource(name) {
-  return name ? __registry.sources.get(name) : __registry.defaultSource;
-}
-function getParser(name) {
-  return name ? __registry.parsers.get(name) : __registry.defaultParser;
-}
-function getRenderer(name) {
-  return name ? __registry.renderers.get(name) : __registry.defaultRenderer;
-}
-function getQuery(name) {
-  return name ? __registry.queries.get(name) : __registry.defaultQuery;
-}
-function getTransformers() {
-  return __registry.transformers.map((t) => t.transformer);
-}
 const courses = pgTable("courses", {
   id: serial("id").primaryKey(),
   slug: varchar("slug", { length: 255 }).notNull(),
@@ -1387,7 +1289,7 @@ function ensureDbInitialized() {
   if (!_dbInstance) {
     const connectionString = process.env.DATABASE_URL;
     if (!connectionString) {
-      throw new Error("[drizzle/db] process.env.DATABASE_URL is empty. Ensure env var is set.");
+      throw new Error("[server/database/connection] process.env.DATABASE_URL is empty. Ensure env var is set.");
     }
     const poolConfig = { connectionString };
     _poolInstance = new Pool(poolConfig);
@@ -1395,8 +1297,29 @@ function ensureDbInitialized() {
   }
   return _dbInstance;
 }
+function createDb(options = {}) {
+  const connectionString = options.connectionString || process.env.DATABASE_URL;
+  if (!connectionString) {
+    throw new Error(
+      "[server/database/connection] DATABASE_URL is missing. Either set env DATABASE_URL or pass connectionString explicitly."
+    );
+  }
+  const pool = options.pool || new Pool({ connectionString });
+  return drizzle(pool, { schema: schema$1 });
+}
 function getDb() {
   return ensureDbInitialized();
+}
+async function closeDb() {
+  if (_poolInstance) {
+    try {
+      await _poolInstance.end();
+    } catch {
+    } finally {
+      _poolInstance = null;
+      _dbInstance = null;
+    }
+  }
 }
 const dbOperations = [
   "select",
@@ -1407,7 +1330,7 @@ const dbOperations = [
   "query",
   "run"
 ];
-new Proxy({}, {
+const db = new Proxy({}, {
   get(_target, prop, _receiver) {
     if (typeof prop === "symbol") {
       return void 0;
@@ -1433,157 +1356,694 @@ new Proxy({}, {
     return Object.getOwnPropertyDescriptor(ensureDbInitialized(), prop);
   }
 });
-const COLLECTION_TO_TABLE = {
-  course: courses,
-  courses,
-  chapter: chapters,
-  chapters,
-  lesson: lessons,
-  lessons,
-  exercise: exercises,
-  exercises,
-  asset: assets,
-  assets
-};
-function resolveTable(collection) {
-  if (!collection) return null;
-  const key = String(collection).toLowerCase();
-  return COLLECTION_TO_TABLE[key] || COLLECTION_TO_TABLE[key.replace(/s$/, "")] || null;
-}
-function castPrimitiveId(v) {
-  if (v == null) return null;
-  if (typeof v === "number") return v;
-  if (typeof v === "bigint") return Number(v);
-  const s = String(v);
-  const n = parseInt(s, 10);
-  if (!Number.isNaN(n) && String(n) === s) return n;
-  return v;
-}
-function buildWhereFromCriteria(table, criteria = {}) {
-  const clauses = [];
-  const entries = Object.entries(criteria);
-  for (const [k, v] of entries) {
-    if (v == null) continue;
-    const col = table[k];
-    if (!col) continue;
-    const value = k === "id" || k.endsWith("Id") ? castPrimitiveId(v) : v;
-    clauses.push(eq(col, value));
-  }
-  return clauses.length ? and(...clauses) : void 0;
-}
-function buildOrderClauses(table, order = {}) {
-  if (!order) return [asc(table.id)];
-  if (Array.isArray(order)) {
-    return order.map((o) => {
-      if (!o) return asc(table.id);
-      const [field2, dir2] = Object.entries(o)[0] || ["id", "asc"];
-      const direction2 = String(dir2).toLowerCase() === "desc" ? desc : asc;
-      return direction2(table[field2] || table.id);
-    });
-  }
-  const { field = "id", dir = "asc" } = order;
-  const direction = String(dir).toLowerCase() === "desc" ? desc : asc;
-  return [direction(table[field] || table.id), asc(table.id)];
-}
-class DatabaseSource {
-  constructor(connectionOrOpts = {}) {
-    this.connection = connectionOrOpts;
-    this.name = "database";
+class CourseRepository {
+  _explicitDb;
+  table;
+  constructor(db2) {
+    this._explicitDb = db2 || null;
+    this.table = courses;
   }
   _getDb() {
-    return this.connection?.db || this.connection || getDb();
+    return this._explicitDb || getDb();
   }
-  async findOne(collection, where = {}) {
-    const table = resolveTable(collection);
-    const db = this._getDb();
-    if (!table) return null;
-    const criteria = buildWhereFromCriteria(table, where);
-    let query = db.select().from(table);
-    if (criteria) query = query.where(criteria);
-    const rows = await query.limit(1).catch(() => []);
+  async list({ orderBy = "order", order = "asc" } = {}) {
+    const sortDir = order.toLowerCase() === "desc" ? desc : asc;
+    const sortCol = orderBy === "id" ? this.table.id : this.table.order;
+    return this._getDb().select().from(this.table).orderBy(sortDir(sortCol));
+  }
+  async getBySlug(slug) {
+    if (!slug) return null;
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.slug, slug)).limit(1);
     return rows[0] || null;
   }
-  async findAll(collection, opts = {}) {
-    const table = resolveTable(collection);
-    const db = this._getDb();
-    if (!table) return [];
-    const where = buildWhereFromCriteria(table, opts.where || {});
-    const orderBy = buildOrderClauses(table, opts.order);
-    let query = db.select().from(table);
-    if (where) query = query.where(where);
-    query = query.orderBy(...orderBy);
-    if (typeof opts.limit === "number") query = query.limit(opts.limit);
-    if (typeof opts.offset === "number") query = query.offset(opts.offset);
-    return query.catch(() => []);
+  async getById(id) {
+    if (!id) return null;
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.id, Number(id))).limit(1);
+    return rows[0] || null;
   }
-  async count(collection, where = {}) {
-    const table = resolveTable(collection);
-    const db = this._getDb();
-    if (!table) return 0;
-    const criteria = buildWhereFromCriteria(table, where);
-    let query = db.select({ count: sql`count(*)`.mapWith(Number) }).from(table);
-    if (criteria) query = query.where(criteria);
-    const rows = await query.catch(() => [{ count: 0 }]);
+  async getDefault() {
+    let row = await this.getBySlug("pep-7a");
+    if (!row) {
+      const rows = await this._getDb().select().from(this.table).orderBy(asc(this.table.order), asc(this.table.id)).limit(1);
+      row = rows[0] || null;
+    }
+    return row;
+  }
+  async count() {
+    const rows = await this._getDb().select({
+      count: sql`count(*)`.mapWith(Number)
+    }).from(this.table);
     return Number(rows[0]?.count ?? 0);
   }
-  static get contract() {
-    return SourceContract;
+  async create(data) {
+    const rows = await this._getDb().insert(this.table).values(data).returning();
+    return rows[0] || null;
+  }
+  async updateBySlug(slug, data) {
+    const patch = { ...data, updatedAt: /* @__PURE__ */ new Date() };
+    delete patch.id;
+    delete patch.slug;
+    delete patch.createdAt;
+    const rows = await this._getDb().update(this.table).set(patch).where(eq(this.table.slug, slug)).returning();
+    return rows[0] || null;
+  }
+  async upsert(data) {
+    const { id, createdAt, ...rest } = data || {};
+    const payload = { ...rest };
+    const onConflictSet = { ...rest };
+    delete onConflictSet.slug;
+    onConflictSet.updatedAt = /* @__PURE__ */ new Date();
+    const rows = await this._getDb().insert(this.table).values(payload).onConflictDoUpdate({
+      target: this.table.slug,
+      set: onConflictSet
+    }).returning();
+    return rows[0] || null;
+  }
+  async deleteBySlug(slug) {
+    return this._getDb().delete(this.table).where(eq(this.table.slug, slug));
   }
 }
-function createSource(type, deps = {}, opts = {}) {
-  switch (type) {
-    case "database":
-    case "neon":
-    case "neon-drizzle":
-    case "markdown":
-    case "filesystem":
-      return new DatabaseSource(deps.connection || deps, opts);
-    default:
-      throw new Error(
-        `[createSource] Unknown source type: ${type}. Supported: database | neon | neon-drizzle`
-      );
+const courseRepository = new CourseRepository();
+class ChapterRepository {
+  _explicitDb;
+  table;
+  constructor(db2) {
+    this._explicitDb = db2 || null;
+    this.table = chapters;
+  }
+  _getDb() {
+    return this._explicitDb || getDb();
+  }
+  _buildWhere({ course, courseId, slug } = {}) {
+    const clauses = [];
+    if (slug) clauses.push(eq(this.table.slug, slug));
+    if (courseId) clauses.push(eq(this.table.courseId, Number(courseId)));
+    if (course) clauses.push(eq(this.table.course, course));
+    return clauses.length ? and(...clauses) : void 0;
+  }
+  async list({ course, courseId, orderBy = "order", order = "asc" } = {}) {
+    const sortDir = order.toLowerCase() === "desc" ? desc : asc;
+    const sortCol = orderBy === "id" ? this.table.id : this.table.order;
+    const where = this._buildWhere({ course, courseId });
+    let query = this._getDb().select().from(this.table);
+    if (where) query = query.where(where);
+    return query.orderBy(sortDir(sortCol));
+  }
+  async listByCourse(courseSlug) {
+    if (!courseSlug) return [];
+    const rows = await this._getDb().select({
+      id: this.table.id,
+      slug: this.table.slug,
+      title: this.table.title,
+      summary: this.table.summary,
+      order: this.table.order,
+      course: this.table.course,
+      cover: this.table.cover,
+      body: this.table.body,
+      courseId: this.table.courseId,
+      createdAt: this.table.createdAt,
+      updatedAt: this.table.updatedAt
+    }).from(this.table).leftJoin(courses, eq(this.table.courseId, courses.id)).where(
+      or(
+        eq(this.table.course, courseSlug),
+        eq(courses.slug, courseSlug)
+      )
+    ).orderBy(asc(this.table.order), asc(this.table.id));
+    return rows;
+  }
+  async getBySlug(slug) {
+    if (!slug) return null;
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.slug, slug)).limit(1);
+    return rows[0] || null;
+  }
+  async getById(id) {
+    if (!id) return null;
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.id, Number(id))).limit(1);
+    return rows[0] || null;
+  }
+  async count(filters = {}) {
+    const where = this._buildWhere(filters);
+    let query = this._getDb().select({ count: sql`count(*)`.mapWith(Number) }).from(this.table);
+    if (where) query = query.where(where);
+    const rows = await query;
+    return Number(rows[0]?.count ?? 0);
+  }
+  async create(data) {
+    const rows = await this._getDb().insert(this.table).values(data).returning();
+    return rows[0] || null;
+  }
+  async updateBySlug(slug, data) {
+    const patch = { ...data, updatedAt: /* @__PURE__ */ new Date() };
+    delete patch.id;
+    delete patch.slug;
+    delete patch.createdAt;
+    const rows = await this._getDb().update(this.table).set(patch).where(eq(this.table.slug, slug)).returning();
+    return rows[0] || null;
+  }
+  async upsert(data) {
+    const { id, createdAt, ...rest } = data || {};
+    const payload = { ...rest };
+    const onConflictSet = { ...rest };
+    delete onConflictSet.slug;
+    onConflictSet.updatedAt = /* @__PURE__ */ new Date();
+    const rows = await this._getDb().insert(this.table).values(payload).onConflictDoUpdate({
+      target: this.table.slug,
+      set: onConflictSet
+    }).returning();
+    return rows[0] || null;
+  }
+  async deleteBySlug(slug) {
+    return this._getDb().delete(this.table).where(eq(this.table.slug, slug));
   }
 }
-function buildLazyQueryFacade() {
+const chapterRepository = new ChapterRepository();
+class LessonRepository {
+  _explicitDb;
+  table;
+  constructor(db2) {
+    this._explicitDb = db2 || null;
+    this.table = lessons;
+  }
+  _getDb() {
+    return this._explicitDb || getDb();
+  }
+  _buildWhere({ chapter, chapterId, slug } = {}) {
+    const clauses = [];
+    if (slug) clauses.push(eq(this.table.slug, slug));
+    if (chapterId) clauses.push(eq(this.table.chapterId, Number(chapterId)));
+    if (chapter) clauses.push(eq(this.table.chapter, chapter));
+    return clauses.length ? and(...clauses) : void 0;
+  }
+  async list({ chapter, chapterId, orderBy = "order", order = "asc" } = {}) {
+    const sortDir = order.toLowerCase() === "desc" ? desc : asc;
+    const sortCol = orderBy === "id" ? this.table.id : this.table.order;
+    const where = this._buildWhere({ chapter, chapterId });
+    let query = this._getDb().select().from(this.table);
+    if (where) query = query.where(where);
+    return query.orderBy(sortDir(sortCol));
+  }
+  async listByChapter(chapterSlug) {
+    if (!chapterSlug) return [];
+    const rows = await this._getDb().select({
+      id: this.table.id,
+      slug: this.table.slug,
+      title: this.table.title,
+      summary: this.table.summary,
+      order: this.table.order,
+      chapter: this.table.chapter,
+      objectives: this.table.objectives,
+      intro: this.table.intro,
+      body: this.table.body,
+      summaryText: this.table.summaryText,
+      notes: this.table.notes,
+      chapterId: this.table.chapterId,
+      createdAt: this.table.createdAt,
+      updatedAt: this.table.updatedAt
+    }).from(this.table).leftJoin(chapters, eq(this.table.chapterId, chapters.id)).where(
+      or(
+        eq(this.table.chapter, chapterSlug),
+        eq(chapters.slug, chapterSlug)
+      )
+    ).orderBy(asc(this.table.order), asc(this.table.id));
+    return rows;
+  }
+  async getBySlug(slug) {
+    if (!slug) return null;
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.slug, slug)).limit(1);
+    return rows[0] || null;
+  }
+  async getById(id) {
+    if (!id) return null;
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.id, Number(id))).limit(1);
+    return rows[0] || null;
+  }
+  async count(filters = {}) {
+    const where = this._buildWhere(filters);
+    let query = this._getDb().select({ count: sql`count(*)`.mapWith(Number) }).from(this.table);
+    if (where) query = query.where(where);
+    const rows = await query;
+    return Number(rows[0]?.count ?? 0);
+  }
+  async create(data) {
+    const rows = await this._getDb().insert(this.table).values(data).returning();
+    return rows[0] || null;
+  }
+  async updateBySlug(slug, data) {
+    const patch = { ...data, updatedAt: /* @__PURE__ */ new Date() };
+    delete patch.id;
+    delete patch.slug;
+    delete patch.createdAt;
+    const rows = await this._getDb().update(this.table).set(patch).where(eq(this.table.slug, slug)).returning();
+    return rows[0] || null;
+  }
+  async upsert(data) {
+    const { id, createdAt, ...rest } = data || {};
+    const payload = { ...rest };
+    const onConflictSet = { ...rest };
+    delete onConflictSet.slug;
+    onConflictSet.cyc = /* @__PURE__ */ new Date();
+    const rows = await this._getDb().insert(this.table).values(payload).onConflictDoUpdate({
+      target: this.table.slug,
+      set: onConflictSet
+    }).returning();
+    return rows[0] || null;
+  }
+  async deleteBySlug(slug) {
+    return this._getDb().delete(this.table).where(eq(this.table.slug, slug));
+  }
+}
+const lessonRepository = new LessonRepository();
+class ExerciseRepository {
+  _explicitDb;
+  table;
+  constructor(db2) {
+    this._explicitDb = db2 || null;
+    this.table = exercises;
+  }
+  _getDb() {
+    return this._explicitDb || getDb();
+  }
+  _buildWhere({ chapter, chapterId, slug } = {}) {
+    const clauses = [];
+    if (slug) clauses.push(eq(this.table.slug, slug));
+    if (chapterId) clauses.push(eq(this.table.chapterId, Number(chapterId)));
+    if (chapter) clauses.push(eq(this.table.chapter, chapter));
+    return clauses.length ? and(...clauses) : void 0;
+  }
+  async list({ chapter, chapterId, orderBy = "order", order = "asc" } = {}) {
+    const sortDir = order.toLowerCase() === "desc" ? desc : asc;
+    const sortCol = orderBy === "id" ? this.table.id : this.table.order;
+    const where = this._buildWhere({ chapter, chapterId });
+    let query = this._getDb().select().from(this.table);
+    if (where) query = query.where(where);
+    return query.orderBy(sortDir(sortCol));
+  }
+  async listByChapter(chapterSlug) {
+    if (!chapterSlug) return [];
+    const rows = await this._getDb().select({
+      id: this.table.id,
+      slug: this.table.slug,
+      title: this.table.title,
+      summary: this.table.summary,
+      description: this.table.description,
+      body: this.table.body,
+      order: this.table.order,
+      chapter: this.table.chapter,
+      hint: this.table.hint,
+      answer: this.table.answer,
+      analysis: this.table.analysis,
+      chapterId: this.table.chapterId,
+      createdAt: this.table.createdAt,
+      updatedAt: this.table.updatedAt
+    }).from(this.table).leftJoin(chapters, eq(this.table.chapterId, chapters.id)).where(
+      or(
+        eq(this.table.chapter, chapterSlug),
+        eq(chapters.slug, chapterSlug)
+      )
+    ).orderBy(asc(this.table.order), asc(this.table.id));
+    return rows;
+  }
+  async getBySlug(slug) {
+    if (!slug) return null;
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.slug, slug)).limit(1);
+    return rows[0] || null;
+  }
+  async getById(id) {
+    if (!id) return null;
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.id, Number(id))).limit(1);
+    return rows[0] || null;
+  }
+  async getOneByChapter(chapterSlug) {
+    if (!chapterSlug) return null;
+    const list = await this.listByChapter(chapterSlug);
+    return list[0] || null;
+  }
+  async count(filters = {}) {
+    const where = this._buildWhere(filters);
+    let query = this._getDb().select({ count: sql`count(*)`.mapWith(Number) }).from(this.table);
+    if (where) query = query.where(where);
+    const rows = await query;
+    return Number(rows[0]?.count ?? 0);
+  }
+  async create(data) {
+    const rows = await this._getDb().insert(this.table).values(data).returning();
+    return rows[0] || null;
+  }
+  async updateBySlug(slug, data) {
+    const patch = { ...data, updatedAt: /* @__PURE__ */ new Date() };
+    delete patch.id;
+    delete patch.slug;
+    delete patch.createdAt;
+    const rows = await this._getDb().update(this.table).set(patch).where(eq(this.table.slug, slug)).returning();
+    return rows[0] || null;
+  }
+  async upsert(data) {
+    const { id, createdAt, ...rest } = data || {};
+    const payload = { ...rest };
+    const onConflictSet = { ...rest };
+    delete onConflictSet.slug;
+    onConflictSet.updatedAt = /* @__PURE__ */ new Date();
+    const rows = await this._getDb().insert(this.table).values(payload).onConflictDoUpdate({
+      target: this.table.slug,
+      set: onConflictSet
+    }).returning();
+    return rows[0] || null;
+  }
+  async deleteBySlug(slug) {
+    return this._getDb().delete(this.table).where(eq(this.table.slug, slug));
+  }
+}
+const exerciseRepository = new ExerciseRepository();
+class AssetRepository {
+  _explicitDb;
+  table;
+  constructor(db2) {
+    this._explicitDb = db2 || null;
+    this.table = assets;
+  }
+  _getDb() {
+    return this._explicitDb || getDb();
+  }
+  async list({ type, orderBy = "id", order = "asc" } = {}) {
+    const sortDir = order.toLowerCase() === "desc" ? desc : asc;
+    let query = this._getDb().select().from(this.table);
+    if (type) query = query.where(eq(this.table.type, type));
+    const sortColumn = this.table[orderBy] || this.table.id;
+    return query.orderBy(sortDir(sortColumn));
+  }
+  async getBySlug(slug) {
+    if (!slug) return null;
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.slug, slug)).limit(1);
+    return rows[0] || null;
+  }
+  async getById(id) {
+    if (!id) return null;
+    const rows = await this._getDb().select().from(this.table).where(eq(this.table.id, Number(id))).limit(1);
+    return rows[0] || null;
+  }
+  async count() {
+    const rows = await this._getDb().select({
+      count: sql`count(*)`.mapWith(Number)
+    }).from(this.table);
+    return Number(rows[0]?.count ?? 0);
+  }
+  async create(data) {
+    const rows = await this._getDb().insert(this.table).values(data).returning();
+    return rows[0] || null;
+  }
+  async updateBySlug(slug, data) {
+    const patch = { ...data, updatedAt: /* @__PURE__ */ new Date() };
+    delete patch.id;
+    delete patch.slug;
+    delete patch.createdAt;
+    const rows = await this._getDb().update(this.table).set(patch).where(eq(this.table.slug, slug)).returning();
+    return rows[0] || null;
+  }
+  async upsert(data) {
+    const { id, createdAt, ...rest } = data || {};
+    const payload = { ...rest };
+    const onConflictSet = { ...rest };
+    delete onConflictSet.slug;
+    onConflictSet.updatedAt = /* @__PURE__ */ new Date();
+    const rows = await this._getDb().insert(this.table).values(payload).onConflictDoUpdate({
+      target: this.table.slug,
+      set: onConflictSet
+    }).returning();
+    return rows[0] || null;
+  }
+  async deleteBySlug(slug) {
+    return this._getDb().delete(this.table).where(eq(this.table.slug, slug));
+  }
+}
+const assetRepository = new AssetRepository();
+function toNumberOrUndefined(value) {
+  if (value === null || value === void 0 || value === "") return void 0;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : void 0;
+}
+function normalizeSort(input = {}) {
+  const orderBy = input.orderBy === "id" || input.orderBy === "order" ? input.orderBy : "order";
+  const order = input.order === "asc" || input.order === "desc" ? input.order : "asc";
+  return { orderBy, order };
+}
+function normalizePaginate(input = {}) {
+  const result = {};
+  const limit = toNumberOrUndefined(input.limit);
+  const offset = toNumberOrUndefined(input.offset);
+  if (limit !== void 0 && limit > 0) result.limit = limit;
+  if (offset !== void 0 && offset >= 0) result.offset = offset;
+  return result;
+}
+function normalizeBySlug(input) {
+  const slug = typeof input === "string" ? input : input && typeof input === "object" ? input.slug : "";
+  const clean = String(slug || "").trim();
+  if (!clean) {
+    return { slug: "", isValid: false, error: "slug is required" };
+  }
+  return { slug: clean, isValid: true };
+}
+function normalizeByCourse(input) {
+  const raw = typeof input === "string" ? { courseSlug: input } : input && typeof input === "object" ? input : {};
+  const courseSlugRaw = raw.courseSlug !== void 0 && raw.courseSlug !== null ? raw.courseSlug : raw.course;
+  const courseSlug = typeof courseSlugRaw === "string" ? courseSlugRaw.trim() : void 0;
+  const courseId = toNumberOrUndefined(raw.courseId);
+  if (!courseSlug && courseId === void 0) {
+    return { isValid: false, error: "courseSlug or courseId is required" };
+  }
   return {
-    async getCourse(slug, opts = {}) {
-      const { loadCourse } = await import('./course-BkLNpvGw.mjs');
-      return loadCourse(slug, opts);
-    },
-    async getChapter(slug, opts = {}) {
-      const { loadChapter } = await import('./chapter-B4T1dsyd.mjs');
-      return loadChapter(slug, opts);
-    },
-    async getLesson(slug, opts = {}) {
-      const { loadLesson } = await import('./lesson-BuuKqqmp.mjs');
-      return loadLesson(slug, opts);
-    },
-    async getExercise(slug, opts = {}) {
-      const exerciseOpts = opts;
-      if (exerciseOpts && exerciseOpts.source) {
-        return exerciseOpts.source.findOne("exercise", { slug });
-      }
-      const { default: services } = await import('./index-D14U1YfW.mjs');
-      const { courseService } = services;
-      return courseService.exercises?.getBySlug?.(slug) || null;
-    },
-    async listChapters(opts = {}) {
-      const { listChapters } = await import('./chapter-B4T1dsyd.mjs');
-      return listChapters(opts);
+    courseSlug,
+    courseId,
+    isValid: true
+  };
+}
+function normalizeByChapter(input) {
+  const raw = typeof input === "string" ? { chapterSlug: input } : input && typeof input === "object" ? input : {};
+  const chapterSlugRaw = raw.chapterSlug !== void 0 && raw.chapterSlug !== null ? raw.chapterSlug : raw.chapter;
+  const chapterSlug = typeof chapterSlugRaw === "string" ? chapterSlugRaw.trim() : void 0;
+  const chapterId = toNumberOrUndefined(raw.chapterId);
+  if (!chapterSlug && chapterId === void 0) {
+    return { isValid: false, error: "chapterSlug or chapterId is required" };
+  }
+  return {
+    chapterSlug,
+    chapterId,
+    isValid: true
+  };
+}
+function normalizeListChapters(input) {
+  const raw = typeof input === "string" ? { courseSlug: input } : input && typeof input === "object" ? input : {};
+  const byCourse = normalizeByCourse({
+    course: raw.course,
+    courseId: raw.courseId,
+    courseSlug: raw.courseSlug
+  });
+  const sort = normalizeSort(raw);
+  const paginate = normalizePaginate(raw);
+  return {
+    ...byCourse,
+    ...sort,
+    ...paginate
+  };
+}
+function normalizeListLessons(input) {
+  const raw = typeof input === "string" ? { chapterSlug: input } : input && typeof input === "object" ? input : {};
+  const byChapter = normalizeByChapter({
+    chapter: raw.chapter,
+    chapterId: raw.chapterId,
+    chapterSlug: raw.chapterSlug
+  });
+  const sort = normalizeSort(raw);
+  const paginate = normalizePaginate(raw);
+  return {
+    ...byChapter,
+    ...sort,
+    ...paginate
+  };
+}
+function normalizeListExercises(input) {
+  const raw = typeof input === "string" ? { chapterSlug: input } : input && typeof input === "object" ? input : {};
+  const byChapter = normalizeByChapter({
+    chapter: raw.chapter,
+    chapterId: raw.chapterId,
+    chapterSlug: raw.chapterSlug
+  });
+  const sort = normalizeSort(raw);
+  const paginate = normalizePaginate(raw);
+  return {
+    ...byChapter,
+    ...sort,
+    ...paginate
+  };
+}
+const queries = {
+  normalizeBySlug,
+  normalizeByCourse,
+  normalizeByChapter,
+  normalizeListChapters,
+  normalizeListLessons,
+  normalizeListExercises
+};
+class CourseService {
+  courses;
+  chapters;
+  lessons;
+  constructor({ courses: courses2 = courseRepository, chapters: chapters2 = chapterRepository, lessons: lessons2 = lessonRepository } = {}) {
+    this.courses = courses2;
+    this.chapters = chapters2;
+    this.lessons = lessons2;
+  }
+  async list() {
+    return this.courses.list();
+  }
+  async getDefault() {
+    const course = await this.courses.getDefault();
+    if (!course) return null;
+    const chapters2 = await this.chapters.listByCourse(course.slug);
+    const chaptersAggregated = [];
+    for (const chapter of chapters2) {
+      const lessons2 = await this.lessons.listByChapter(chapter.slug);
+      chaptersAggregated.push({ ...chapter, lessons: lessons2 });
     }
-  };
+    return { ...course, chapters: chaptersAggregated };
+  }
+  async getBySlug(slug) {
+    const q = queries.normalizeBySlug(slug);
+    if (!q.isValid) return null;
+    const course = await this.courses.getBySlug(q.slug);
+    if (!course) return null;
+    const chapters2 = await this.chapters.listByCourse(course.slug);
+    const chaptersAggregated = [];
+    for (const chapter of chapters2) {
+      const lessons2 = await this.lessons.listByChapter(chapter.slug);
+      chaptersAggregated.push({ ...chapter, lessons: lessons2 });
+    }
+    return { ...course, chapters: chaptersAggregated };
+  }
 }
-function registerData(opts = {}) {
-  const sourceName = opts.sourceName || "neon-drizzle";
-  const source = createSource("database", opts.sourceOptions || {}, { name: sourceName });
-  registerSource("database", source, true);
-  registerSource(sourceName, source, false);
-  const query = opts.query || buildLazyQueryFacade();
-  registerQuery("default", query, true);
-  return {
-    source: sourceName,
-    query: "default"
-  };
+const courseService = new CourseService();
+class ChapterService {
+  chapters;
+  lessons;
+  exercises;
+  constructor({
+    chapters: chapters2 = chapterRepository,
+    lessons: lessons2 = lessonRepository,
+    exercises: exercises2 = exerciseRepository
+  } = {}) {
+    this.chapters = chapters2;
+    this.lessons = lessons2;
+    this.exercises = exercises2;
+  }
+  async list(courseSlug) {
+    const q = queries.normalizeListChapters(courseSlug || {});
+    if (!courseSlug) return this.chapters.list();
+    return this.chapters.listByCourse(q.courseSlug || courseSlug);
+  }
+  async getBySlug(slug) {
+    const q = queries.normalizeBySlug(slug);
+    if (!q.isValid) return null;
+    const chapter = await this.chapters.getBySlug(q.slug);
+    if (!chapter) return null;
+    const lessons2 = await this.lessons.listByChapter(q.slug);
+    const exercise = await this.exercises.getOneByChapter(q.slug);
+    return {
+      chapter,
+      lessons: lessons2,
+      exercise: exercise || null
+    };
+  }
+}
+const chapterService = new ChapterService();
+class LessonService {
+  lessons;
+  chapters;
+  constructor({ lessons: lessons2 = lessonRepository, chapters: chapters2 = chapterRepository } = {}) {
+    this.lessons = lessons2;
+    this.chapters = chapters2;
+  }
+  async listByChapter(chapterSlug) {
+    const q = queries.normalizeByChapter(chapterSlug);
+    if (!q.isValid) return [];
+    return this.lessons.listByChapter(q.chapterSlug || String(chapterSlug));
+  }
+  async getBySlug(slug) {
+    const q = queries.normalizeBySlug(slug);
+    if (!q.isValid) return null;
+    const lesson = await this.lessons.getBySlug(q.slug);
+    if (!lesson) return null;
+    let chapter = null;
+    if (lesson.chapterId) {
+      chapter = await this.chapters.getById(lesson.chapterId) || null;
+    }
+    if (!chapter && lesson.chapter) {
+      chapter = await this.chapters.getBySlug(lesson.chapter) || null;
+    }
+    return { ...lesson, chapter };
+  }
+}
+const lessonService = new LessonService();
+class ExerciseService {
+  exercises;
+  constructor({ exercises: exercises2 = exerciseRepository } = {}) {
+    this.exercises = exercises2;
+  }
+  async listByChapter(chapterSlug) {
+    const q = queries.normalizeByChapter(chapterSlug);
+    if (!q.isValid) return [];
+    return this.exercises.listByChapter(q.chapterSlug || String(chapterSlug));
+  }
+  async getBySlug(slug) {
+    const q = queries.normalizeBySlug(slug);
+    if (!q.isValid) return null;
+    return this.exercises.getBySlug(q.slug);
+  }
+}
+const exerciseService = new ExerciseService();
+let __initialized = false;
+async function ensureInitialized() {
+  if (__initialized) return;
+  try {
+    await Promise.resolve().then(function () { return indexBOoMtBZE; });
+  } catch {
+  }
+  __initialized = true;
+}
+const facade = {
+  async getCourse(slug, opts = {}) {
+    const q = queries.normalizeBySlug(slug);
+    if (!q.isValid) return null;
+    await ensureInitialized();
+    const result = await courseService.getBySlug(q.slug);
+    return result;
+  },
+  async getChapter(slug, opts = {}) {
+    const q = queries.normalizeBySlug(slug);
+    if (!q.isValid) return null;
+    await ensureInitialized();
+    return chapterService.getBySlug(q.slug);
+  },
+  async getLesson(slug, opts = {}) {
+    const q = queries.normalizeBySlug(slug);
+    if (!q.isValid) return null;
+    await ensureInitialized();
+    return lessonService.getBySlug(q.slug);
+  },
+  async getExercise(slug, opts = {}) {
+    const q = queries.normalizeBySlug(slug);
+    if (!q.isValid) return null;
+    await ensureInitialized();
+    return exerciseService.getBySlug(q.slug);
+  },
+  async listChapters(opts = {}) {
+    const q = queries.normalizeListChapters(opts);
+    await ensureInitialized();
+    const courseSlug = q.courseSlug || void 0;
+    const result = await chapterService.list(courseSlug);
+    return result;
+  }
+};
+function getContentEngine() {
+  return facade;
 }
 function parseFrontmatter(raw = "") {
   if (typeof raw !== "string") return { data: raw || {}, content: "" };
@@ -2171,7 +2631,7 @@ function escapeHtml$1(s = "") {
 function escapeAttr(s = "") {
   return escapeHtml$1(s);
 }
-async function renderToHTML$2(ast, context = {}) {
+async function renderToHTML$1(ast, context = {}) {
   if (!ast) return "";
   const content = typeof ast.content === "string" ? ast.content : "";
   if (!content) return "";
@@ -2328,12 +2788,12 @@ function adaptChildren(children) {
   if (!children || children.length === 0) return "";
   return children.map((child) => adaptNode(child)).filter(Boolean);
 }
-async function renderToVNode$2(ast, context = {}) {
+async function renderToVNode$1(ast, context = {}) {
   if (!ast) return null;
   const tree = compileToRenderTree(ast, { theme: context.theme });
   return renderTreeToVNode(tree, context);
 }
-async function runRenderPipeline$1(rawContent, opts = {}) {
+async function runRenderPipeline(rawContent, opts = {}) {
   const result = {
     raw: rawContent,
     ast: null,
@@ -2366,9 +2826,9 @@ async function runRenderPipeline$1(rawContent, opts = {}) {
     }
     if (enhanced) {
       if (opts.renderTarget === "html") {
-        result.rendered = await renderToHTML$2(enhanced, opts.rendererContext || {});
+        result.rendered = await renderToHTML$1(enhanced, opts.rendererContext || {});
       } else {
-        result.rendered = await renderToVNode$2(enhanced, opts.rendererContext || {});
+        result.rendered = await renderToVNode$1(enhanced, opts.rendererContext || {});
       }
     }
   } catch (e) {
@@ -2376,12 +2836,12 @@ async function runRenderPipeline$1(rawContent, opts = {}) {
   }
   return result;
 }
-async function renderToHTML$1(rawContent, opts = {}) {
-  const r = await runRenderPipeline$1(rawContent, { ...opts, renderTarget: "html" });
+async function renderToHTML(rawContent, opts = {}) {
+  const r = await runRenderPipeline(rawContent, { ...opts, renderTarget: "html" });
   return r.rendered || "";
 }
-async function renderToVNode$1(rawContent, opts = {}) {
-  const r = await runRenderPipeline$1(rawContent, { ...opts, renderTarget: "vnode" });
+async function renderToVNode(rawContent, opts = {}) {
+  const r = await runRenderPipeline(rawContent, { ...opts, renderTarget: "vnode" });
   return r.rendered || null;
 }
 const TocTransformer = {
@@ -2535,16 +2995,16 @@ function createEngine(config = {}) {
     async render(content, opts = {}) {
       const target = opts.target || "html";
       if (target === "html") {
-        return renderToHTML$1(content, opts);
+        return renderToHTML(content, opts);
       }
-      return renderToVNode$1(content, opts);
+      return renderToVNode(content, opts);
     },
     async compile(md, opts = {}) {
-      const htmlResult = await runRenderPipeline$1(md, {
+      const htmlResult = await runRenderPipeline(md, {
         ...opts,
         renderTarget: "html"
       });
-      const vnodeResult = await runRenderPipeline$1(md, {
+      const vnodeResult = await runRenderPipeline(md, {
         ...opts,
         renderTarget: "vnode"
       });
@@ -2566,301 +3026,45 @@ function createEngine(config = {}) {
       return getPlugins().map((p) => p.name);
     },
     run(content, opts) {
-      return runRenderPipeline$1(content, opts);
+      return runRenderPipeline(content, opts);
     }
   };
 }
 let defaultEngine = null;
-function getEngine$1() {
+function getEngine() {
   if (!defaultEngine) {
     defaultEngine = createEngine();
   }
   return defaultEngine;
 }
-function registerRender(opts = {}) {
-  createEngine({ plugins: opts.transformers?.enabled });
-  const engine2 = getEngine$1();
-  const pluginNames = engine2.listPlugins();
-  const parserName = opts.parser && opts.parser.name || "markdown";
-  const parserAdapter = {
-    async parse(raw, parseOpts) {
-      return engine2.parse(raw, parseOpts || {});
-    }
-  };
-  registerParser(parserName, parserAdapter, true);
-  return { parser: parserName, transformers: pluginNames };
-}
-const engine = getEngine$1();
-async function runRenderPipeline(rawContent, opts = {}) {
-  const target = opts.renderTarget || "vnode";
-  return engine.run(rawContent, {
-    parserOptions: opts.parserOptions,
-    transformerContext: opts.transformerContext,
-    rendererContext: opts.rendererContext,
-    renderTarget: target,
-    plugins: opts.plugins
-  });
-}
-async function renderToHTML(rawContent, opts = {}) {
-  const r = await runRenderPipeline(rawContent, { ...opts, renderTarget: "html" });
-  return r.rendered || "";
-}
-async function renderToVNode(rawContent, opts = {}) {
-  const r = await runRenderPipeline(rawContent, { ...opts, renderTarget: "vnode" });
-  return r.rendered || null;
-}
-const __engine_state = {
-  initialized: false
-};
-async function initContentEngine(bootFn = null) {
-  if (__engine_state.initialized) return getEngine();
-  if (typeof bootFn === "function") {
-    await bootFn();
-  }
-  __engine_state.initialized = true;
-  return getEngine();
-}
-function _runDataPipe(operation, params = {}, opts = {}) {
-  return new Promise((resolve) => {
-    const result = {
-      operation,
-      params,
-      source: null,
-      loaderMeta: {},
-      data: null,
-      errors: []
-    };
-    const source = opts.source || getSource() || void 0;
-    const loader = opts.loader || void 0;
-    const query = opts.query || getQuery() || void 0;
-    try {
-      result.source = source ? source.constructor?.name || "anonymous" : null;
-      switch (operation) {
-        case "getCourse":
-        case "getChapter":
-        case "getLesson":
-        case "getExercise":
-        case "listChapters": {
-          const op = operation;
-          const args = Array.isArray(params) ? params : [params];
-          if (query && typeof query[op] === "function") {
-            const qFn = query[op];
-            if (qFn) {
-              qFn(...args).then((d) => {
-                result.data = d;
-                resolve(result);
-              }).catch((e) => {
-                result.errors.push(e instanceof Error ? e : new Error(String(e)));
-                resolve(result);
-              });
-              return;
-            }
-          } else if (loader && typeof loader[op] === "function") {
-            const loaderFn = loader[op];
-            if (loaderFn) {
-              loaderFn(...args).then((d) => {
-                result.data = d;
-                resolve(result);
-              }).catch((e) => {
-                result.errors.push(e instanceof Error ? e : new Error(String(e)));
-                resolve(result);
-              });
-              return;
-            }
-          }
-          resolve(result);
-          break;
-        }
-        case "findOne": {
-          if (source) {
-            const [collection, where] = params;
-            source.findOne(collection, where).then((d) => {
-              result.data = d;
-              resolve(result);
-            }).catch((e) => {
-              result.errors.push(e instanceof Error ? e : new Error(String(e)));
-              resolve(result);
-            });
-            return;
-          }
-          resolve(result);
-          break;
-        }
-        case "findAll": {
-          if (source) {
-            const [collection, findOpts] = params;
-            source.findAll(collection, findOpts || {}).then((d) => {
-              result.data = d;
-              resolve(result);
-            }).catch((e) => {
-              result.errors.push(e instanceof Error ? e : new Error(String(e)));
-              resolve(result);
-            });
-            return;
-          }
-          resolve(result);
-          break;
-        }
-        case "count": {
-          if (source) {
-            const [collection, where] = params;
-            source.count(collection, where || {}).then((d) => {
-              result.data = d;
-              resolve(result);
-            }).catch((e) => {
-              result.errors.push(e instanceof Error ? e : new Error(String(e)));
-              resolve(result);
-            });
-            return;
-          }
-          resolve(result);
-          break;
-        }
-        default:
-          result.errors.push(new Error(`[Engine.data.pipe] Unknown operation: ${operation}`));
-          resolve(result);
-      }
-    } catch (e) {
-      result.errors.push(e instanceof Error ? e : new Error(String(e)));
-      resolve(result);
-    }
-  });
-}
-function getEngine() {
-  const facade = {
-    isInitialized() {
-      return __engine_state.initialized;
-    },
-    data: {
-      source(name = null) {
-        return getSource(name || void 0);
-      },
-      query(name = null) {
-        return getQuery(name || void 0);
-      },
-      async getCourse(slug, opts = {}) {
-        const q = getQuery();
-        if (!q) throw new Error("[Engine.data] No Query registered. Run registerData() first.");
-        return q.getCourse(slug, opts);
-      },
-      async getChapter(slug, opts = {}) {
-        const q = getQuery();
-        if (!q) throw new Error("[Engine.data] No Query registered. Run registerData() first.");
-        return q.getChapter(slug, opts);
-      },
-      async getLesson(slug, opts = {}) {
-        const q = getQuery();
-        if (!q) throw new Error("[Engine.data] No Query registered. Run registerData() first.");
-        return q.getLesson(slug, opts);
-      },
-      async getExercise(slug, opts = {}) {
-        const q = getQuery();
-        if (!q) throw new Error("[Engine.data] No Query registered. Run registerData() first.");
-        return q.getExercise(slug, opts);
-      },
-      async listChapters(opts = {}) {
-        const q = getQuery();
-        if (!q) throw new Error("[Engine.data] No Query registered. Run registerData() first.");
-        return q.listChapters(opts);
-      },
-      async findOne(collection, where = {}) {
-        const s = getSource();
-        if (!s) throw new Error("[Engine.data] No Source registered. Run registerData() first.");
-        return s.findOne(collection, where);
-      },
-      async findAll(collection, opts = {}) {
-        const s = getSource();
-        if (!s) throw new Error("[Engine.data] No Source registered. Run registerData() first.");
-        return s.findAll(collection, opts);
-      },
-      async count(collection, where = {}) {
-        const s = getSource();
-        if (!s) throw new Error("[Engine.data] No Source registered. Run registerData() first.");
-        return s.count(collection, where);
-      },
-      async pipe(operation, params = {}, opts = {}) {
-        return _runDataPipe(operation, params, opts);
-      }
-    },
-    render: {
-      parser(name = null) {
-        return getParser(name || void 0);
-      },
-      renderer(name = null) {
-        return getRenderer(name || void 0);
-      },
-      transformers() {
-        return getTransformers();
-      },
-      async pipe(content, opts = {}) {
-        return runRenderPipeline(content, opts);
-      },
-      async toHTML(content, opts = {}) {
-        return renderToHTML(content, opts);
-      },
-      async toVNode(content, opts = {}) {
-        return renderToVNode(content, opts);
-      }
-    },
-    source(name = null) {
-      return getSource(name || void 0);
-    },
-    query(name = null) {
-      return getQuery(name || void 0);
-    },
-    parser(name = null) {
-      return getParser(name || void 0);
-    },
-    renderer(name = null) {
-      return getRenderer(name || void 0);
-    },
-    async pipe(content, opts = {}) {
-      const isDataOperation = Boolean(
-        opts && (opts.operation || typeof content === "object" && content !== null && typeof content.slug === "string" && !("body" in content))
-      );
-      if (isDataOperation) {
-        return _runDataPipe(opts.operation || "findOne", content, opts);
-      }
-      return runRenderPipeline(content, opts);
-    },
-    async getChapter(slug, opts = {}) {
-      return this.data.getChapter(slug, opts);
-    },
-    async getLesson(slug, opts = {}) {
-      return this.data.getLesson(slug, opts);
-    },
-    async listChapters(opts = {}) {
-      return this.data.listChapters(opts);
-    },
-    async renderContent(content, opts = {}) {
-      return this.render.pipe(content, opts);
-    }
-  };
-  return facade;
-}
-async function bootEngine(opts = {}) {
-  const data = registerData(opts.data || {});
-  const render = registerRender(opts.render || {});
-  const engine2 = await initContentEngine();
-  return { ok: true, engine: engine2, data, render };
-}
-async function bootContentEngine(opts = {}) {
-  return bootEngine(opts);
-}
-const engine_server_K3Wbu2ehhZMqR7q2Nzx9XLvm_AjcGgkg1BFyo3H_LLU = /* @__PURE__ */ defineNuxtPlugin(async (nuxtApp) => {
+const engine_server_K3Wbu2ehhZMqR7q2Nzx9XLvm_AjcGgkg1BFyo3H_LLU = /* @__PURE__ */ defineNuxtPlugin(async () => {
   let __temp, __restore;
-  [__temp, __restore] = executeAsync(() => bootContentEngine()), await __temp, __restore();
-  const engine2 = getEngine();
+  [__temp, __restore] = executeAsync(() => Promise.resolve().then(function () { return indexBOoMtBZE; }).catch(() => {
+  })), await __temp, __restore();
+  const content = getContentEngine();
+  const markdown = getEngine();
+  const services = {
+    chapter: chapterService,
+    lesson: lessonService,
+    course: courseService,
+    exercise: exerciseService
+  };
+  const repositories = {
+    chapter: chapterRepository,
+    lesson: lessonRepository,
+    course: courseRepository,
+    exercise: exerciseRepository,
+    asset: assetRepository
+  };
   return {
     provide: {
-      engine: engine2,
-      contentEngine: engine2,
-      contentQuery: {
-        getChapter: (slug, opts) => engine2.getChapter(slug, opts),
-        getLesson: (slug, opts) => engine2.getLesson(slug, opts),
-        listChapters: (opts) => engine2.listChapters(opts),
-        renderContent: (raw, opts) => engine2.renderContent(raw, opts)
-      }
+      content,
+      markdown,
+      services,
+      repositories,
+      queries,
+      renderToHTML,
+      renderToVNode
     }
   };
 });
@@ -2872,7 +3076,7 @@ const plugins = [
   engine_server_K3Wbu2ehhZMqR7q2Nzx9XLvm_AjcGgkg1BFyo3H_LLU
 ];
 const layouts = {
-  default: defineAsyncComponent(() => import('./default-Epjx6a0M.mjs').then((m) => m.default || m))
+  default: defineAsyncComponent(() => import('./default-z6y_m6xI.mjs').then((m) => m.default || m))
 };
 const routeRulesMatcher = _routeRulesMatcher;
 const LayoutLoader = defineComponent({
@@ -3656,8 +3860,8 @@ const _sfc_main$1 = {
     const statusText = _error.statusMessage ?? (is404 ? "Page Not Found" : "Internal Server Error");
     const description = _error.message || _error.toString();
     const stack = void 0;
-    const _Error404 = defineAsyncComponent(() => import('./error-404-CC24t_8_.mjs'));
-    const _Error = defineAsyncComponent(() => import('./error-500-B0Ne07un.mjs'));
+    const _Error404 = defineAsyncComponent(() => import('./error-404-DBxMoYVo.mjs'));
+    const _Error = defineAsyncComponent(() => import('./error-500-BNkMILC2.mjs'));
     const ErrorTemplate = is404 ? _Error404 : _Error;
     return (_ctx, _push, _parent, _attrs) => {
       _push(ssrRenderComponent(unref(ErrorTemplate), mergeProps({ status: unref(status), statusText: unref(statusText), statusCode: unref(status), statusMessage: unref(statusText), description: unref(description), stack: unref(stack) }, _attrs), null, _parent));
@@ -3749,5 +3953,23 @@ let entry;
 }
 const entry_default = ((ssrContext) => entry(ssrContext));
 
-export { useRouter as a, useNuxtApp as b, useRuntimeConfig as c, nuxtLinkDefaults as d, entry_default as default, encodeRoutePath as e, useHead as f, useRoute as g, getEngine$1 as h, courses as i, getDb as j, chapters as k, lessons as l, exercises as m, navigateTo as n, resolveRouteObject as r, useAsyncData as u };
+const indexBOoMtBZE = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+	__proto__: null,
+	assets: assets,
+	chapters: chapters,
+	chaptersRelations: chaptersRelations,
+	closeDb: closeDb,
+	courses: courses,
+	coursesRelations: coursesRelations,
+	createDb: createDb,
+	db: db,
+	exercises: exercises,
+	exercisesRelations: exercisesRelations,
+	getDb: getDb,
+	lessons: lessons,
+	lessonsRelations: lessonsRelations,
+	schema: schema
+}, Symbol.toStringTag, { value: 'Module' }));
+
+export { assets as a, chaptersRelations as b, chapters as c, closeDb as d, entry_default as default, courses as e, coursesRelations as f, createDb as g, db as h, exercises as i, exercisesRelations as j, getDb as k, lessons as l, lessonsRelations as m, useRouter as n, encodeRoutePath as o, navigateTo as p, useNuxtApp as q, resolveRouteObject as r, schema as s, useRuntimeConfig as t, useAsyncData as u, nuxtLinkDefaults as v, useHead as w, useRoute as x, getEngine as y };
 //# sourceMappingURL=server.mjs.map
