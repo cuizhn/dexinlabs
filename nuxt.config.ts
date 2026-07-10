@@ -61,9 +61,9 @@ export default defineNuxtConfig({
     '@ce': path.resolve(rootDir, 'app/core/content-engine')
   },
 
-  nitro: {
-    preset: 'vercel'
-  },
+  // nitro: {
+  //   preset: 'vercel'
+  // },
 
   vite: {
     optimizeDeps: {
