@@ -1,4 +1,3 @@
-import process from 'node:process'
 import { drizzle } from 'drizzle-orm/neon-serverless'
 import { Pool, type PoolConfig } from '@neondatabase/serverless'
 import * as schema from './schema'

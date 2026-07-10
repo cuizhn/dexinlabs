@@ -1,4 +1,3 @@
-import process from 'node:process'
 import { defineConfig } from 'drizzle-kit'
 
 const DATABASE_URL: string | undefined = process.env.DATABASE_URL
