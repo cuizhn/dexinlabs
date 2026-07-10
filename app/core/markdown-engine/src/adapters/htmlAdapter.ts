@@ -12,6 +12,7 @@
  */
 import type { RenderNode, RenderRoot, RenderTree, RendererAdapterContext } from '../types/render-tree'
 import { slugifyHeading } from '../transformer/heading'
+import { renderFormulaToKatexHtml } from '../utils/katex'
 
 export function renderTreeToHTML(
   tree: RenderTree,
@@ -109,9 +110,8 @@ function renderNode(node: RenderNode | string): string {
     case 'Math':
     case 'InlineMath': {
       const formula = typeof node.props?.formula === 'string' ? node.props.formula : ''
-      const display = node.type === 'Math' && node.props?.display !== false
-      const delim = display ? '$$' : '$'
-      return `<span class="math math-${display ? 'display' : 'inline'}" data-display="${display ? 'true' : 'false'}">${delim}${escapeHtml(formula)}${delim}</span>`
+      const displayMode = node.type === 'Math' && node.props?.display !== false
+      return renderFormulaToKatexHtml(formula, displayMode)
     }
 
     case 'Table':

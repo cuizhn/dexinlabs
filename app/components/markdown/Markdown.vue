@@ -24,7 +24,7 @@
  *
  * 【严格禁止】（违反任意一条属于 Legacy Implementation，需打回重写）：
  *   - Markdown Parsing：禁止 marked.parse() / markdown-it 等直接写在这里，必须走 Engine
- *   - Plugin Registration：禁止直接 registerPlugin，必须通过 Engine 配置或 @render/register.ts 统一入口
+ *   - Plugin Registration：禁止直接在组件内 registerPlugin；如需启用自定义插件请在 Application 层（plugins/engine.*）通过 `@me` 的 `createEngine({ builtin: [...] })` 配置或显式 `registerPlugin()` 统一入口注入
  *   - AST Processing：禁止自己 walk children 取文本、slug 生成、TOC 构建——全部用 Engine 的 plugin
  *   - HTML Rendering Logic：禁止手写 AST→HTML 字符串拼接，必须使用 Engine.rendered 的产物
  */

@@ -181,22 +181,96 @@ function convertInlineToken(token: MarkedToken): AstNode | null {
 /**
  * 数学节点注入（Parser math 选项启用时调用）。
  * 只操作 Internal AST，不依赖 marked Token。
+ *
+ * 策略（2 层扫描 + 合并）：
+ *   ① 对块级节点（paragraph / heading / blockquote 等）的 children：
+ *        先合并相邻 text + html(<br/>) → 一个大 text 串
+ *        再跑 adapterExtractMathFromText 同时识别 inline ($...$) 与 display ($$...$$)
+ *        保证跨换行 / 跨 <br/> 的 display 公式（常见教学场景：$$ 独占一行）被正确识别
+ *   ② 对其他子节点：递归进入
  */
 export function adapterInjectMathNodes(children: InternalAstNode[]): void {
-  for (const node of children) {
-    if (node.children && Array.isArray(node.children)) {
+  let i = 0
+  while (i < children.length) {
+    const node: InternalAstNode | undefined = children[i]
+    if (!node) {
+      i++
+      continue
+    }
+    if (Array.isArray(node.children) && node.children.length > 0) {
+      // ① 合并该块级节点的相邻 text + <br/>，再拆分数学公式
+      const mergedOrNull = mergeAdjacentTextAndBr(node.children as AstNode[])
+      if (mergedOrNull !== null) {
+        const extracted = adapterExtractMathFromText(mergedOrNull.joined)
+        if (extracted !== null && extracted.length > 0 &&
+          !(extracted.length === 1 && extracted[0]?.type === 'text')) {
+          // 成功拆出公式 → 直接替换 children
+          node.children = extracted as unknown as InternalAstNode[]
+          // 替换后，对内部子节点（如 paragraph children[*].children）再递归，避免遗漏嵌套
+          adapterInjectMathNodes(node.children)
+          i++
+          continue
+        }
+      }
+      // 未能拆出 → 普通递归
       adapterInjectMathNodes(node.children)
     }
-    if (typeof node.value === 'string') {
+    if (typeof node.value === 'string' && (!node.children || node.children.length === 0)) {
       const mathNodes = adapterExtractMathFromText(node.value)
-      if (mathNodes) {
-        const idx = children.indexOf(node)
+      if (mathNodes && mathNodes.length > 1) {
+        const idx = children.indexOf(node as InternalAstNode)
         if (idx !== -1) {
-          children.splice(idx, 1, ...mathNodes)
+          children.splice(idx, 1, ...(mathNodes as unknown as InternalAstNode[]))
+          i = idx + mathNodes.length
+          continue
         }
       }
     }
+    i++
   }
+}
+
+function mergeAdjacentTextAndBr(children: AstNode[]): { joined: string } | null {
+  if (!Array.isArray(children) || children.length === 0) return null
+  // 若 children 里本身已出现 math/inlineMath → 跳过
+  if (children.some(c => c && (c.type === 'math' || c.type === 'inlineMath'))) return null
+  // 必须所有子节点都是：text / inlineCode / strong / em / del / html(br) / link 等 "inline 级" 节点
+  // 且至少 1 个 text 含 $ 或至少 2 个 text + html(br) 组合
+  let hasDollar = false
+  for (const c of children) {
+    if (!c) continue
+    if (typeof (c as AstNode).value === 'string' && String((c as AstNode).value).includes('$')) {
+      hasDollar = true
+      break
+    }
+  }
+  if (!hasDollar) return null
+
+  const parts: string[] = []
+  for (const c of children) {
+    if (!c) continue
+    const type = (c as AstNode).type
+    if (type === 'text') {
+      const v = (c as AstNode & { value?: string }).value
+      if (typeof v === 'string') parts.push(v)
+      continue
+    }
+    if (type === 'html') {
+      const v = (c as AstNode & { value?: string }).value
+      if (typeof v === 'string' && /<br\s*\/?>\s*/i.test(v)) {
+        parts.push('\n')
+        continue
+      }
+      // 其他 HTML 暂不处理 → 不合并
+      return null
+    }
+    // 其他 inline 类型（strong/em/del/link/inlineCode/image）→ 公式不会穿这些节点的 value，不合并
+    // 保持原样（递归到 children 再处理）
+    return null
+  }
+
+  if (parts.length === 0) return null
+  return { joined: parts.join('') }
 }
 
 function adapterExtractMathFromText(text: string): AstNode[] | null {

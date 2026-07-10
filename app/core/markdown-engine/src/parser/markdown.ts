@@ -40,11 +40,12 @@ export async function parseMarkdown(
   try {
     const tokens = marked.lexer(content) as unknown as MarkedToken[]
 
-    if (opts.math) {
+    if (opts.math !== false) {
       const temp = buildInternalRoot(tokens, content, frontmatter, { source: 'marked-lexer' })
       adapterInjectMathNodes(temp.children)
       ;(temp as RootAstNode).__parseSource = 'marked-lexer'
       ;(temp as RootAstNode).__parsedAt = Date.now()
+      ;(temp as RootAstNode).__mathEnabled = true
       return temp as RootAstNode
     }
 
