@@ -5,10 +5,10 @@ var __defProp$1 = Object.defineProperty;
 var __defNormalProp$1 = (obj, key, value) => key in obj ? __defProp$1(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField$1 = (obj, key, value) => __defNormalProp$1(obj, typeof key !== "symbol" ? key + "" : key, value);
 class ChapterRepository {
-  constructor(db2) {
+  constructor(db) {
     __publicField$1(this, "_explicitDb");
     __publicField$1(this, "table");
-    this._explicitDb = db2 || null;
+    this._explicitDb = db || null;
     this.table = chapters;
   }
   _getDb() {
@@ -103,10 +103,10 @@ var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 class LessonRepository {
-  constructor(db2) {
+  constructor(db) {
     __publicField(this, "_explicitDb");
     __publicField(this, "table");
-    this._explicitDb = db2 || null;
+    this._explicitDb = db || null;
     this.table = lessons;
   }
   _getDb() {

@@ -85,37 +85,61 @@ const dbOperations: DbKey[] = [
   'run'
 ]
 
+function safeEnsureDbInitialized(): DbInstance | null {
+  try {
+    return ensureDbInitialized()
+  } catch (e) {
+    if (e && (e as Error & { code?: string }).code === 'DATABASE_URL_MISSING') {
+      return null
+    }
+    throw e
+  }
+}
+
 export const db: DbInstance = new Proxy<DbInstance>({} as unknown as DbInstance, {
   get<K extends keyof DbInstance>(_target: DbInstance, prop: string | symbol, _receiver: unknown): DbInstance[K] | undefined {
     if (typeof prop === 'symbol') {
       return undefined as unknown as DbInstance[K]
     }
     const key = prop as DbKey | string
+    const instance = safeEnsureDbInitialized()
+    if (!instance) {
+      if (dbOperations.includes(key as DbKey) || key === 'transaction') {
+        return ((() => {
+          throw Object.assign(
+            new Error('[app/core/database/db] DATABASE_URL missing — cannot run DB operation. Set env DATABASE_URL.'),
+            { code: 'DATABASE_URL_MISSING' }
+          )
+        }) as unknown) as DbInstance[K]
+      }
+      return undefined as unknown as DbInstance[K]
+    }
     if (dbOperations.includes(key as DbKey) || key === 'transaction') {
-      const instance = ensureDbInitialized()
       const fn = instance[prop as keyof DbInstance] as unknown as (...args: unknown[]) => unknown
       if (typeof fn === 'function') {
-        return ((...args: unknown[]) =>
-          fn.apply(instance, args)) as unknown as DbInstance[K]
+        return ((...args: unknown[]) => fn.apply(instance, args)) as unknown as DbInstance[K]
       }
       return fn as unknown as DbInstance[K]
     }
-    return Reflect.get(ensureDbInitialized(), prop) as DbInstance[K]
+    return Reflect.get(instance, prop) as DbInstance[K]
   },
 
   has(_target: DbInstance, prop: string | symbol): boolean {
-    return prop in ensureDbInitialized()
+    const instance = safeEnsureDbInitialized()
+    return instance ? prop in instance : false
   },
 
   ownKeys(_target: DbInstance): ArrayLike<string | symbol> {
-    return Object.keys(ensureDbInitialized())
+    const instance = safeEnsureDbInitialized()
+    return instance ? Object.keys(instance) : []
   },
 
   getOwnPropertyDescriptor(
     _target: DbInstance,
     prop: string | symbol
   ): PropertyDescriptor | undefined {
-    return Object.getOwnPropertyDescriptor(ensureDbInitialized(), prop)
+    const instance = safeEnsureDbInitialized()
+    return instance ? Object.getOwnPropertyDescriptor(instance, prop) : undefined
   }
 })
 

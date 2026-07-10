@@ -1133,7 +1133,7 @@ const revive_payload_server_MVtmlZaQpj6ApFmshWfUWl5PehCebzaBf2NuRMiIbms = /* @__
     }
   }
 });
-const components_plugin_z4hgvsiddfKkfXTP6M8M4zG5Cb7sGnDhcryKVM45Di4 = /* @__PURE__ */ defineNuxtPlugin({
+const components_plugin_4kY4pyzJIYX99vmMAAIorFf3CnAaptHitJgf7JxiED8 = /* @__PURE__ */ defineNuxtPlugin({
   name: "nuxt:global-components"
 });
 const engine_server_K3Wbu2ehhZMqR7q2Nzx9XLvm_AjcGgkg1BFyo3H_LLU = /* @__PURE__ */ defineNuxtPlugin(async () => {
@@ -1146,11 +1146,12 @@ const engine_server_K3Wbu2ehhZMqR7q2Nzx9XLvm_AjcGgkg1BFyo3H_LLU = /* @__PURE__ *
   let renderToVNodeFn = null;
   try {
     ;
-    [__temp, __restore] = executeAsync(() => import('./index-CnDYM83h.mjs')), await __temp, __restore();
+    [__temp, __restore] = executeAsync(() => import('./index-jKSvCmu5.mjs')), await __temp, __restore();
   } catch (e) {
+    console.error("[engine.server] database unavailable:", e?.message || String(e));
   }
   try {
-    const ce = ([__temp, __restore] = executeAsync(() => import('./index-DikUCEzK.mjs')), __temp = await __temp, __restore(), __temp);
+    const ce = ([__temp, __restore] = executeAsync(() => import('./index-46e-h5dv.mjs')), __temp = await __temp, __restore(), __temp);
     if (typeof ce.getContentEngine === "function") content = ce.getContentEngine();
     services = {
       chapter: ce.chapterService || null,
@@ -1160,6 +1161,7 @@ const engine_server_K3Wbu2ehhZMqR7q2Nzx9XLvm_AjcGgkg1BFyo3H_LLU = /* @__PURE__ *
     };
     queriesFallback = ce.queries || null;
   } catch (e) {
+    console.error("[engine.server] content-engine unavailable:", e?.message || String(e), e?.stack || "");
   }
   try {
     const me = ([__temp, __restore] = executeAsync(() => import('./index-BVTkTKBe.mjs')), __temp = await __temp, __restore(), __temp);
@@ -1167,6 +1169,7 @@ const engine_server_K3Wbu2ehhZMqR7q2Nzx9XLvm_AjcGgkg1BFyo3H_LLU = /* @__PURE__ *
     if (typeof me.renderToHTML === "function") renderToHTMLFn = me.renderToHTML;
     if (typeof me.renderToVNode === "function") renderToVNodeFn = me.renderToVNode;
   } catch (e) {
+    console.error("[engine.server] markdown-engine unavailable:", e?.message || String(e), e?.stack || "");
   }
   return {
     provide: {
@@ -1183,7 +1186,7 @@ const plugins = [
   unhead_k2P3m_ZDyjlr2mMYnoDPwavjsDN8hBlk9cFai0bbopU,
   plugin,
   revive_payload_server_MVtmlZaQpj6ApFmshWfUWl5PehCebzaBf2NuRMiIbms,
-  components_plugin_z4hgvsiddfKkfXTP6M8M4zG5Cb7sGnDhcryKVM45Di4,
+  components_plugin_4kY4pyzJIYX99vmMAAIorFf3CnAaptHitJgf7JxiED8,
   engine_server_K3Wbu2ehhZMqR7q2Nzx9XLvm_AjcGgkg1BFyo3H_LLU
 ];
 const layouts = {

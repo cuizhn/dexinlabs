@@ -24,8 +24,8 @@ const _sfc_main$2 = {
   __ssrInlineRender: true,
   setup(__props) {
     const navItems = [
-      { path: "/", label: "\u9996\u9875", exact: true },
-      { path: "/course", label: "\u8BFE\u7A0B\u4E2D\u5FC3" }
+      { path: "/", label: "首页", exact: true },
+      { path: "/course", label: "课程中心" }
     ];
     const isMenuOpen = ref(false);
     const route = useRoute();
@@ -46,10 +46,10 @@ const _sfc_main$2 = {
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`<span class="app-header__logo-icon" data-v-16538138${_scopeId}>\u2211</span><span class="app-header__logo-text" data-v-16538138${_scopeId}>Dexin Labs</span>`);
+            _push2(`<span class="app-header__logo-icon" data-v-16538138${_scopeId}>∑</span><span class="app-header__logo-text" data-v-16538138${_scopeId}>Dexin Labs</span>`);
           } else {
             return [
-              createVNode("span", { class: "app-header__logo-icon" }, "\u2211"),
+              createVNode("span", { class: "app-header__logo-icon" }, "∑"),
               createVNode("span", { class: "app-header__logo-text" }, "Dexin Labs")
             ];
           }
@@ -75,7 +75,7 @@ const _sfc_main$2 = {
           _: 2
         }, _parent));
       });
-      _push(`<!--]--></nav><button class="app-header__menu-btn" aria-label="\u5207\u6362\u5BFC\u822A\u83DC\u5355" data-v-16538138><span class="${ssrRenderClass([{ "app-header__menu-icon--open": isMenuOpen.value }, "app-header__menu-icon"])}" data-v-16538138></span></button></div><nav class="${ssrRenderClass([{ "app-header__mobile-nav--open": isMenuOpen.value }, "app-header__mobile-nav"])}" data-v-16538138><!--[-->`);
+      _push(`<!--]--></nav><button class="app-header__menu-btn" aria-label="切换导航菜单" data-v-16538138><span class="${ssrRenderClass([{ "app-header__menu-icon--open": isMenuOpen.value }, "app-header__menu-icon"])}" data-v-16538138></span></button></div><nav class="${ssrRenderClass([{ "app-header__mobile-nav--open": isMenuOpen.value }, "app-header__mobile-nav"])}" data-v-16538138><!--[-->`);
       ssrRenderList(navItems, (item) => {
         _push(ssrRenderComponent(_component_NuxtLink, {
           key: item.path,
@@ -109,17 +109,17 @@ const __nuxt_component_0 = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId
 const _sfc_main$1 = {};
 function _sfc_ssrRender$1(_ctx, _push, _parent, _attrs) {
   const _component_NuxtLink = __nuxt_component_0$1;
-  _push(`<footer${ssrRenderAttrs(mergeProps({ class: "app-footer" }, _attrs))} data-v-257c11a0><div class="app-footer__container" data-v-257c11a0><div class="app-footer__brand" data-v-257c11a0><span class="app-footer__logo" data-v-257c11a0>\u2211</span><span class="app-footer__name" data-v-257c11a0>Dexin Labs</span><p class="app-footer__desc" data-v-257c11a0>\u7406\u89E3\u4E3A\u5148\uFF0C\u5E94\u7528\u4E3A\u672C\u3002\u8BA9\u5B66\u4E60\u771F\u6B63\u5F97\u5FC3\u5E94\u624B\u3002</p></div><div class="app-footer__links" data-v-257c11a0><div class="app-footer__group" data-v-257c11a0><h4 class="app-footer__group-title" data-v-257c11a0>\u5F00\u59CB\u5B66\u4E60</h4>`);
+  _push(`<footer${ssrRenderAttrs(mergeProps({ class: "app-footer" }, _attrs))} data-v-257c11a0><div class="app-footer__container" data-v-257c11a0><div class="app-footer__brand" data-v-257c11a0><span class="app-footer__logo" data-v-257c11a0>∑</span><span class="app-footer__name" data-v-257c11a0>Dexin Labs</span><p class="app-footer__desc" data-v-257c11a0>理解为先，应用为本。让学习真正得心应手。</p></div><div class="app-footer__links" data-v-257c11a0><div class="app-footer__group" data-v-257c11a0><h4 class="app-footer__group-title" data-v-257c11a0>开始学习</h4>`);
   _push(ssrRenderComponent(_component_NuxtLink, {
     to: "/study",
     class: "app-footer__link"
   }, {
     default: withCtx((_, _push2, _parent2, _scopeId) => {
       if (_push2) {
-        _push2(`\u540C\u6B65\u5B66\u4E60`);
+        _push2(`同步学习`);
       } else {
         return [
-          createTextVNode("\u540C\u6B65\u5B66\u4E60")
+          createTextVNode("同步学习")
         ];
       }
     }),
@@ -131,10 +131,10 @@ function _sfc_ssrRender$1(_ctx, _push, _parent, _attrs) {
   }, {
     default: withCtx((_, _push2, _parent2, _scopeId) => {
       if (_push2) {
-        _push2(`\u8BFE\u7A0B\u4E2D\u5FC3`);
+        _push2(`课程中心`);
       } else {
         return [
-          createTextVNode("\u8BFE\u7A0B\u4E2D\u5FC3")
+          createTextVNode("课程中心")
         ];
       }
     }),
@@ -146,26 +146,26 @@ function _sfc_ssrRender$1(_ctx, _push, _parent, _attrs) {
   }, {
     default: withCtx((_, _push2, _parent2, _scopeId) => {
       if (_push2) {
-        _push2(`\u5B66\u4E60\u65B9\u6CD5`);
+        _push2(`学习方法`);
       } else {
         return [
-          createTextVNode("\u5B66\u4E60\u65B9\u6CD5")
+          createTextVNode("学习方法")
         ];
       }
     }),
     _: 1
   }, _parent));
-  _push(`</div><div class="app-footer__group" data-v-257c11a0><h4 class="app-footer__group-title" data-v-257c11a0>\u5173\u4E8E</h4>`);
+  _push(`</div><div class="app-footer__group" data-v-257c11a0><h4 class="app-footer__group-title" data-v-257c11a0>关于</h4>`);
   _push(ssrRenderComponent(_component_NuxtLink, {
     to: "/about",
     class: "app-footer__link"
   }, {
     default: withCtx((_, _push2, _parent2, _scopeId) => {
       if (_push2) {
-        _push2(`\u54C1\u724C\u6545\u4E8B`);
+        _push2(`品牌故事`);
       } else {
         return [
-          createTextVNode("\u54C1\u724C\u6545\u4E8B")
+          createTextVNode("品牌故事")
         ];
       }
     }),
@@ -177,16 +177,16 @@ function _sfc_ssrRender$1(_ctx, _push, _parent, _attrs) {
   }, {
     default: withCtx((_, _push2, _parent2, _scopeId) => {
       if (_push2) {
-        _push2(`\u8054\u7CFB\u4E0E\u53CD\u9988`);
+        _push2(`联系与反馈`);
       } else {
         return [
-          createTextVNode("\u8054\u7CFB\u4E0E\u53CD\u9988")
+          createTextVNode("联系与反馈")
         ];
       }
     }),
     _: 1
   }, _parent));
-  _push(`</div></div></div><div class="app-footer__bottom" data-v-257c11a0><div class="app-footer__bottom-container" data-v-257c11a0><p class="app-footer__copyright" data-v-257c11a0>Dexin Labs \xB7 \u5F97\u5FC3\u5B9E\u9A8C\u5BA4 \u2014 \u7406\u89E3\u4E3A\u5148\uFF0C\u5E94\u7528\u4E3A\u672C</p></div></div></footer>`);
+  _push(`</div></div></div><div class="app-footer__bottom" data-v-257c11a0><div class="app-footer__bottom-container" data-v-257c11a0><p class="app-footer__copyright" data-v-257c11a0>Dexin Labs · 得心实验室 — 理解为先，应用为本</p></div></div></footer>`);
 }
 const _sfc_setup$1 = _sfc_main$1.setup;
 _sfc_main$1.setup = (props, ctx) => {

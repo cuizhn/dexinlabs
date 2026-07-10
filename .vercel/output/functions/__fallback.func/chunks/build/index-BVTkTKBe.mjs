@@ -88,24 +88,18 @@ function convertListItem(item) {
   return { type: "listItem", children };
 }
 function convertTable(token) {
-  const headerCells = (token.header || []).map((cell, i) => {
-    var _a;
-    return {
-      type: "tableCell",
-      align: ((_a = token.align) == null ? void 0 : _a[i]) || null,
-      children: adapterConvertInlineTokens(cell.tokens || [{ type: "text", text: cell.text || "" }])
-    };
-  });
+  const headerCells = (token.header || []).map((cell, i) => ({
+    type: "tableCell",
+    align: token.align?.[i] || null,
+    children: adapterConvertInlineTokens(cell.tokens || [{ type: "text", text: cell.text || "" }])
+  }));
   const rows = (token.rows || []).map((row) => ({
     type: "tableRow",
-    children: row.map((cell, i) => {
-      var _a;
-      return {
-        type: "tableCell",
-        align: ((_a = token.align) == null ? void 0 : _a[i]) || null,
-        children: adapterConvertInlineTokens(cell.tokens || [{ type: "text", text: cell.text || "" }])
-      };
-    })
+    children: row.map((cell, i) => ({
+      type: "tableCell",
+      align: token.align?.[i] || null,
+      children: adapterConvertInlineTokens(cell.tokens || [{ type: "text", text: cell.text || "" }])
+    }))
   }));
   return {
     type: "table",
@@ -176,7 +170,6 @@ function adapterInjectMathNodes(children) {
   }
 }
 function adapterExtractMathFromText(text) {
-  var _a, _b, _c;
   if (!text.includes("$")) return null;
   const nodes = [];
   let remaining = text;
@@ -188,7 +181,7 @@ function adapterExtractMathFromText(text) {
     const inlineMatch = remaining.match(inlineRe);
     let match = null;
     let display = false;
-    if (displayMatch && (!inlineMatch || ((_a = displayMatch.index) != null ? _a : 0) <= ((_b = inlineMatch.index) != null ? _b : 0))) {
+    if (displayMatch && (!inlineMatch || (displayMatch.index ?? 0) <= (inlineMatch.index ?? 0))) {
       match = displayMatch;
       display = true;
     } else if (inlineMatch) {
@@ -201,7 +194,7 @@ function adapterExtractMathFromText(text) {
     }
     nodes.push({
       type: display ? "math" : "inlineMath",
-      value: ((_c = match[1]) != null ? _c : "").trim(),
+      value: (match[1] ?? "").trim(),
       display
     });
     hasMath = true;
@@ -239,8 +232,8 @@ async function parseMarkdown(raw, opts = {}) {
   if (typeof raw !== "string") {
     return buildInternalRoot(
       [],
-      (raw == null ? void 0 : raw.body) || (raw == null ? void 0 : raw.content) || "",
-      (raw == null ? void 0 : raw.frontmatter) || {},
+      raw?.body || raw?.content || "",
+      raw?.frontmatter || {},
       { source: "passthrough", passthrough: true }
     );
   }
@@ -477,18 +470,17 @@ function renderTreeToHTML(tree, _context = {}) {
   return root.map((n) => renderNode(n)).join("\n");
 }
 function renderNode(node) {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t;
   if (typeof node === "string") return escapeHtml$1(node);
   if (!node || !node.type) return "";
   switch (node.type) {
     case "Root": {
       const children = node.children;
-      const cls = Array.isArray((_a = node.props) == null ? void 0 : _a.class) ? ` class="${(_c = (_b = node.props) == null ? void 0 : _b.class) == null ? void 0 : _c.join(" ")}"` : "";
+      const cls = Array.isArray(node.props?.class) ? ` class="${node.props?.class?.join(" ")}"` : "";
       return `<div${cls} data-md-root="true">${children.map((c) => renderNode(c)).join("")}</div>`;
     }
     case "Heading": {
-      const level = Number(((_d = node.props) == null ? void 0 : _d.level) || 1);
-      const id = typeof ((_e = node.props) == null ? void 0 : _e.id) === "string" ? node.props.id : (() => {
+      const level = Number(node.props?.level || 1);
+      const id = typeof node.props?.id === "string" ? node.props.id : (() => {
         const text = getTextFromChildren(node.children);
         return text ? slugifyHeading(text) : void 0;
       })();
@@ -500,7 +492,7 @@ function renderNode(node) {
       return `<p>${renderChildren(node.children)}</p>
 `;
     case "Text": {
-      const value = typeof ((_f = node.props) == null ? void 0 : _f.value) === "string" ? node.props.value : "";
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
       return escapeHtml$1(value);
     }
     case "Strong":
@@ -510,30 +502,30 @@ function renderNode(node) {
     case "Delete":
       return `<del>${renderChildren(node.children)}</del>`;
     case "Link": {
-      const href = escapeAttr(String(((_g = node.props) == null ? void 0 : _g.href) || ""));
-      const target = typeof ((_h = node.props) == null ? void 0 : _h.target) === "string" ? ` target="${escapeAttr(node.props.target)}"` : "";
-      const rel = typeof ((_i = node.props) == null ? void 0 : _i.rel) === "string" ? ` rel="${escapeAttr(node.props.rel)}"` : "";
-      const title = typeof ((_j = node.props) == null ? void 0 : _j.title) === "string" ? ` title="${escapeAttr(node.props.title)}"` : "";
+      const href = escapeAttr(String(node.props?.href || ""));
+      const target = typeof node.props?.target === "string" ? ` target="${escapeAttr(node.props.target)}"` : "";
+      const rel = typeof node.props?.rel === "string" ? ` rel="${escapeAttr(node.props.rel)}"` : "";
+      const title = typeof node.props?.title === "string" ? ` title="${escapeAttr(node.props.title)}"` : "";
       return `<a href="${href}"${target}${rel}${title}>${renderChildren(node.children)}</a>`;
     }
     case "Image": {
-      const src = escapeAttr(String(((_k = node.props) == null ? void 0 : _k.src) || ""));
-      const alt = escapeAttr(String(((_l = node.props) == null ? void 0 : _l.alt) || ""));
+      const src = escapeAttr(String(node.props?.src || ""));
+      const alt = escapeAttr(String(node.props?.alt || ""));
       return `<img src="${src}" alt="${alt}"/>`;
     }
     case "Code": {
-      const lang = typeof ((_m = node.props) == null ? void 0 : _m.lang) === "string" ? node.props.lang : "";
-      const value = typeof ((_n = node.props) == null ? void 0 : _n.value) === "string" ? node.props.value : "";
+      const lang = typeof node.props?.lang === "string" ? node.props.lang : "";
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
       const langAttr = lang ? ` data-lang="${escapeAttr(lang)}"` : "";
       return `<pre${langAttr}><code${langAttr}>${escapeHtml$1(value)}</code></pre>
 `;
     }
     case "InlineCode": {
-      const value = typeof ((_o = node.props) == null ? void 0 : _o.value) === "string" ? node.props.value : "";
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
       return `<code>${escapeHtml$1(value)}</code>`;
     }
     case "List": {
-      const tag = ((_p = node.props) == null ? void 0 : _p.ordered) ? "ol" : "ul";
+      const tag = node.props?.ordered ? "ol" : "ul";
       return `<${tag}>
 ${renderChildren(node.children)}
 </${tag}>
@@ -550,13 +542,13 @@ ${renderChildren(node.children)}
       return `<hr/>
 `;
     case "Html": {
-      const value = typeof ((_q = node.props) == null ? void 0 : _q.value) === "string" ? node.props.value : "";
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
       return value;
     }
     case "Math":
     case "InlineMath": {
-      const formula = typeof ((_r = node.props) == null ? void 0 : _r.formula) === "string" ? node.props.formula : "";
-      const display = node.type === "Math" && ((_s = node.props) == null ? void 0 : _s.display) !== false;
+      const formula = typeof node.props?.formula === "string" ? node.props.formula : "";
+      const display = node.type === "Math" && node.props?.display !== false;
       const delim = display ? "$$" : "$";
       return `<span class="math math-${display ? "display" : "inline"}" data-display="${display ? "true" : "false"}">${delim}${escapeHtml$1(formula)}${delim}</span>`;
     }
@@ -566,7 +558,7 @@ ${renderChildren(node.children)}
     case "TableRow":
       return `<tr>${renderChildren(node.children)}</tr>`;
     case "TableCell": {
-      const align = typeof ((_t = node.props) == null ? void 0 : _t.align) === "string" ? node.props.align : null;
+      const align = typeof node.props?.align === "string" ? node.props.align : null;
       const style = align ? ` style="text-align:${escapeAttr(align)}"` : "";
       return `<td${style}>${renderChildren(node.children)}</td>`;
     }
@@ -583,9 +575,8 @@ function getTextFromChildren(children) {
   if (typeof children === "string") return children;
   if (!children || children.length === 0) return "";
   return children.map((c) => {
-    var _a;
     if (typeof c === "string") return c;
-    if (c.type === "Text") return String(((_a = c.props) == null ? void 0 : _a.value) || "");
+    if (c.type === "Text") return String(c.props?.value || "");
     return getTextFromChildren(c.children);
   }).join("");
 }
@@ -614,31 +605,29 @@ function renderTreeToVNode(tree, context = {}) {
   return adaptRoot(root, context);
 }
 function adaptRoot(root, context) {
-  var _a;
   const children = (root.children || []).map((c) => adaptNode(c)).filter(Boolean);
   return {
     type: "root",
     is: "div",
     props: {
-      class: Array.isArray((_a = root.props) == null ? void 0 : _a.class) ? root.props.class : ["ce-markdown", `ce-theme-${context.theme || "default"}`],
+      class: Array.isArray(root.props?.class) ? root.props.class : ["ce-markdown", `ce-theme-${context.theme || "default"}`],
       "data-md-root": true
     },
     children
   };
 }
 function adaptNode(node) {
-  var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r;
   if (typeof node === "string") {
     return { type: "text", is: "#text", props: { nodeValue: node } };
   }
   if (!node || !node.type) return null;
   switch (node.type) {
     case "Heading": {
-      const level = Number(((_a = node.props) == null ? void 0 : _a.level) || 1);
+      const level = Number(node.props?.level || 1);
       return {
         type: "heading",
         is: `h${level}`,
-        props: { id: typeof ((_b = node.props) == null ? void 0 : _b.id) === "string" ? node.props.id : void 0 },
+        props: { id: typeof node.props?.id === "string" ? node.props.id : void 0 },
         children: adaptChildren(node.children)
       };
     }
@@ -649,7 +638,7 @@ function adaptNode(node) {
         children: adaptChildren(node.children)
       };
     case "Text": {
-      const value = typeof ((_c = node.props) == null ? void 0 : _c.value) === "string" ? node.props.value : "";
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
       return { type: "text", is: "#text", props: { nodeValue: value } };
     }
     case "Strong":
@@ -663,10 +652,10 @@ function adaptNode(node) {
         type: "link",
         is: "a",
         props: {
-          href: String(((_d = node.props) == null ? void 0 : _d.href) || ""),
-          target: typeof ((_e = node.props) == null ? void 0 : _e.target) === "string" ? node.props.target : void 0,
-          rel: typeof ((_f = node.props) == null ? void 0 : _f.rel) === "string" ? node.props.rel : void 0,
-          title: typeof ((_g = node.props) == null ? void 0 : _g.title) === "string" ? node.props.title : void 0
+          href: String(node.props?.href || ""),
+          target: typeof node.props?.target === "string" ? node.props.target : void 0,
+          rel: typeof node.props?.rel === "string" ? node.props.rel : void 0,
+          title: typeof node.props?.title === "string" ? node.props.title : void 0
         },
         children: adaptChildren(node.children)
       };
@@ -676,14 +665,14 @@ function adaptNode(node) {
         type: "image",
         is: "img",
         props: {
-          src: String(((_h = node.props) == null ? void 0 : _h.src) || ""),
-          alt: String(((_i = node.props) == null ? void 0 : _i.alt) || "")
+          src: String(node.props?.src || ""),
+          alt: String(node.props?.alt || "")
         }
       };
     }
     case "Code": {
-      const lang = typeof ((_j = node.props) == null ? void 0 : _j.lang) === "string" ? node.props.lang : "";
-      const value = typeof ((_k = node.props) == null ? void 0 : _k.value) === "string" ? node.props.value : "";
+      const lang = typeof node.props?.lang === "string" ? node.props.lang : "";
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
       return {
         type: "code",
         is: "pre",
@@ -699,11 +688,11 @@ function adaptNode(node) {
       };
     }
     case "InlineCode": {
-      const value = typeof ((_l = node.props) == null ? void 0 : _l.value) === "string" ? node.props.value : "";
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
       return { type: "inlineCode", is: "code", props: { nodeValue: value } };
     }
     case "List": {
-      const ordered = !!((_m = node.props) == null ? void 0 : _m.ordered);
+      const ordered = !!node.props?.ordered;
       return {
         type: "list",
         is: ordered ? "ol" : "ul",
@@ -717,12 +706,12 @@ function adaptNode(node) {
     case "ThematicBreak":
       return { type: "thematicBreak", is: "hr" };
     case "Html": {
-      const value = typeof ((_n = node.props) == null ? void 0 : _n.value) === "string" ? node.props.value : "";
+      const value = typeof node.props?.value === "string" ? node.props.value : "";
       return { type: "html", is: "div", props: { innerHTML: value } };
     }
     case "Math": {
-      const formula = typeof ((_o = node.props) == null ? void 0 : _o.formula) === "string" ? node.props.formula : "";
-      ((_p = node.props) == null ? void 0 : _p.display) !== false;
+      const formula = typeof node.props?.formula === "string" ? node.props.formula : "";
+      node.props?.display !== false;
       return {
         type: "math",
         is: "KatexElement",
@@ -730,7 +719,7 @@ function adaptNode(node) {
       };
     }
     case "InlineMath": {
-      const formula = typeof ((_q = node.props) == null ? void 0 : _q.formula) === "string" ? node.props.formula : "";
+      const formula = typeof node.props?.formula === "string" ? node.props.formula : "";
       return {
         type: "inlineMath",
         is: "KatexElement",
@@ -744,7 +733,7 @@ function adaptNode(node) {
     case "TableCell":
       return { type: "tableCell", is: "td", children: adaptChildren(node.children) };
     default: {
-      const v = (_r = node.props) == null ? void 0 : _r.value;
+      const v = node.props?.value;
       return v != null ? { type: String(node.type || "text"), is: "#text", props: { nodeValue: String(v) } } : null;
     }
   }
@@ -859,7 +848,7 @@ const ExcerptTransformer = {
     const plain = content.replace(/[#*`>\[\]\n]+/g, " ").replace(/\s+/g, " ").trim();
     const excerptLimit = context.excerptLimit || 140;
     if (ast) {
-      ast.excerpt = plain.length > excerptLimit ? plain.slice(0, excerptLimit) + "\u2026" : plain;
+      ast.excerpt = plain.length > excerptLimit ? plain.slice(0, excerptLimit) + "…" : plain;
     }
     return ast;
   }

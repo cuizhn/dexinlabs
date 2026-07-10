@@ -29,7 +29,7 @@ const _sfc_main = {
     const chapterSlug = route.params.chapter;
     const { currentChapter } = ([__temp, __restore] = withAsyncContext(() => useChapter(chapterSlug)), __temp = await __temp, __restore(), __temp);
     useHead({
-      title: computed(() => currentChapter.value ? `${currentChapter.value.title} \xB7 \u7AE0\u8282` : "\u7AE0\u8282")
+      title: computed(() => currentChapter.value ? `${currentChapter.value.title} · 章节` : "章节")
     });
     return (_ctx, _push, _parent, _attrs) => {
       const _component_NuxtLink = __nuxt_component_0;
@@ -42,31 +42,31 @@ const _sfc_main = {
         }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`\u8BFE\u7A0B\u4E2D\u5FC3`);
+              _push2(`课程中心`);
             } else {
               return [
-                createTextVNode("\u8BFE\u7A0B\u4E2D\u5FC3")
+                createTextVNode("课程中心")
               ];
             }
           }),
           _: 1
         }, _parent));
-        _push(`<span class="chapter-detail__bc-sep" data-v-4f0b8d78>/</span><span class="chapter-detail__bc-current" data-v-4f0b8d78>${ssrInterpolate(unref(currentChapter).title)}</span></nav></div></section><section class="chapter-detail__body" data-v-4f0b8d78><div class="container chapter-detail__layout" data-v-4f0b8d78><div class="chapter-detail__main" data-v-4f0b8d78><h2 class="chapter-detail__section-title" data-v-4f0b8d78>\u8BFE\u65F6\u5185\u5BB9</h2></div><aside class="chapter-detail__side" data-v-4f0b8d78>`);
+        _push(`<span class="chapter-detail__bc-sep" data-v-4f0b8d78>/</span><span class="chapter-detail__bc-current" data-v-4f0b8d78>${ssrInterpolate(unref(currentChapter).title)}</span></nav></div></section><section class="chapter-detail__body" data-v-4f0b8d78><div class="container chapter-detail__layout" data-v-4f0b8d78><div class="chapter-detail__main" data-v-4f0b8d78><h2 class="chapter-detail__section-title" data-v-4f0b8d78>课时内容</h2></div><aside class="chapter-detail__side" data-v-4f0b8d78>`);
         _push(ssrRenderComponent(_component_NuxtLink, {
           to: `/exercise/${unref(chapterSlug)}`,
           class: "exercise-card"
         }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`<div class="exercise-card__icon" data-v-4f0b8d78${_scopeId}>\u2726</div><div class="exercise-card__body" data-v-4f0b8d78${_scopeId}><h3 class="exercise-card__title" data-v-4f0b8d78${_scopeId}>\u7AE0\u8282\u7EC3\u4E60</h3><p class="exercise-card__desc" data-v-4f0b8d78${_scopeId}>\u5DE9\u56FA\u6240\u5B66\uFF0C\u8BAD\u7EC3\u6570\u5B66\u601D\u7EF4</p></div><span class="exercise-card__cta" data-v-4f0b8d78${_scopeId}>\u5F00\u59CB\u7EC3\u4E60 \u2192</span>`);
+              _push2(`<div class="exercise-card__icon" data-v-4f0b8d78${_scopeId}>✦</div><div class="exercise-card__body" data-v-4f0b8d78${_scopeId}><h3 class="exercise-card__title" data-v-4f0b8d78${_scopeId}>章节练习</h3><p class="exercise-card__desc" data-v-4f0b8d78${_scopeId}>巩固所学，训练数学思维</p></div><span class="exercise-card__cta" data-v-4f0b8d78${_scopeId}>开始练习 →</span>`);
             } else {
               return [
-                createVNode("div", { class: "exercise-card__icon" }, "\u2726"),
+                createVNode("div", { class: "exercise-card__icon" }, "✦"),
                 createVNode("div", { class: "exercise-card__body" }, [
-                  createVNode("h3", { class: "exercise-card__title" }, "\u7AE0\u8282\u7EC3\u4E60"),
-                  createVNode("p", { class: "exercise-card__desc" }, "\u5DE9\u56FA\u6240\u5B66\uFF0C\u8BAD\u7EC3\u6570\u5B66\u601D\u7EF4")
+                  createVNode("h3", { class: "exercise-card__title" }, "章节练习"),
+                  createVNode("p", { class: "exercise-card__desc" }, "巩固所学，训练数学思维")
                 ]),
-                createVNode("span", { class: "exercise-card__cta" }, "\u5F00\u59CB\u7EC3\u4E60 \u2192")
+                createVNode("span", { class: "exercise-card__cta" }, "开始练习 →")
               ];
             }
           }),
@@ -74,7 +74,7 @@ const _sfc_main = {
         }, _parent));
         _push(`</aside></div></section><!--]-->`);
       } else {
-        _push(`<div class="chapter-detail__empty" data-v-4f0b8d78>\u6682\u672A\u627E\u5230\u8BE5\u7AE0\u8282</div>`);
+        _push(`<div class="chapter-detail__empty" data-v-4f0b8d78>暂未找到该章节</div>`);
       }
       _push(`</div>`);
     };

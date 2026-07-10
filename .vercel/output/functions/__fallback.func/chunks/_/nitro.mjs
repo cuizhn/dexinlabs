@@ -609,7 +609,7 @@ function _routerNodeToTable(initialPath, initialNode) {
   return table;
 }
 
-function isPlainObject(value) {
+function isPlainObject$1(value) {
   if (value === null || typeof value !== "object") {
     return false;
   }
@@ -627,7 +627,7 @@ function isPlainObject(value) {
 }
 
 function _defu(baseObject, defaults, namespace = ".", merger) {
-  if (!isPlainObject(defaults)) {
+  if (!isPlainObject$1(defaults)) {
     return _defu(baseObject, {}, namespace, merger);
   }
   const object = { ...defaults };
@@ -644,7 +644,7 @@ function _defu(baseObject, defaults, namespace = ".", merger) {
     }
     if (Array.isArray(value) && Array.isArray(object[key])) {
       object[key] = [...value, ...object[key]];
-    } else if (isPlainObject(value) && isPlainObject(object[key])) {
+    } else if (isPlainObject$1(value) && isPlainObject$1(object[key])) {
       object[key] = _defu(
         value,
         object[key],
@@ -4038,7 +4038,7 @@ function _expandFromEnv(value) {
 const _inlineRuntimeConfig = {
   "app": {
     "baseURL": "/",
-    "buildId": "a803c7f8-956d-4961-86f0-98014d497d71",
+    "buildId": "b69f4e4e-a4a0-48fe-a9d1-8aea6e09b50f",
     "buildAssetsDir": "/_nuxt/",
     "cdnURL": ""
   },
@@ -4492,8 +4492,93 @@ async function errorHandler(error, event) {
   // H3 will handle fallback
 }
 
+const isPlainObject = (v) => Object.prototype.toString.call(v) === "[object Object]";
+function stringifyErrorPayload(err) {
+  try {
+    if (!err) return String(err);
+    if (err instanceof Error) {
+      const extras = {};
+      for (const k of Object.keys(err)) {
+        if (k !== "message" && k !== "stack" && k !== "name") {
+          extras[k] = err[k];
+        }
+      }
+      const extrasStr = Object.keys(extras).length > 0 ? `
+  extras: ${JSON.stringify(extras, (_k, v) => {
+        try {
+          if (typeof v === "bigint") return v.toString();
+          if (v instanceof Error) return `${v.name}: ${v.message}`;
+          return v;
+        } catch {
+          return "[unserializable]";
+        }
+      }, 2)}` : "";
+      return `${err.name || "Error"}: ${err.message}
+  stack:
+${err.stack || "  (no stack trace)"}${extrasStr}`;
+    }
+    if (isPlainObject(err)) {
+      return JSON.stringify(err, null, 2);
+    }
+    return String(err);
+  } catch (fallbackErr) {
+    return `[failed to stringify error: ${fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr)}] \u2192 ${String(err)}`;
+  }
+}
+const _XWggeHzJ1Do7z7SRYB6hVPKFSE3ib7ph_T7OS66SUAc = (function(nitroApp) {
+  nitroApp.hooks.hook("error", (err, context) => {
+    var _a;
+    const errStatus = err && typeof err === "object" && err.statusCode || 0;
+    const errCode = err && typeof err === "object" && err.code || err && typeof err === "object" && ((_a = err.data) == null ? void 0 : _a.code) || null;
+    const isIntentional = (
+      // 4xx are client errors, intentional
+      errStatus >= 400 && errStatus < 500 || // 503 from our handlers with DATABASE_URL_MISSING is expected degradation
+      errStatus === 503 && errCode === "DATABASE_URL_MISSING"
+    );
+    const ctxStr = context ? `
+  context: ${JSON.stringify(context, (_k, v) => {
+      try {
+        if (v && typeof v === "object" && "method" in v && "url" in v) {
+          return `${v.method || "?"} ${v.url || "?"}`;
+        }
+        if (typeof v === "bigint") return v.toString();
+        if (v instanceof Error) return `${v.name}: ${v.message}`;
+        return v;
+      } catch {
+        return "[unserializable]";
+      }
+    }, 2)}` : "";
+    const payload = `${isIntentional ? "" : "UNCAUGHT "}Nitro error${ctxStr}
+${stringifyErrorPayload(err)}`;
+    if (isIntentional) {
+      console.debug(`[nitro:error:intentional:${errStatus}] ${payload}`);
+    } else {
+      console.error(`[nitro:error:UNEXPECTED${context && context.event ? ":request" : ":global"}] ${payload}`);
+    }
+  });
+  nitroApp.hooks.hook("request", (event) => {
+    var _a, _b, _c, _d, _e, _f, _g, _h;
+    try {
+      const url = (_d = (_c = (_b = (_a = event == null ? void 0 : event.node) == null ? void 0 : _a.req) == null ? void 0 : _b.url) != null ? _c : event.path) != null ? _d : "?";
+      const method = (_h = (_g = (_f = (_e = event == null ? void 0 : event.node) == null ? void 0 : _e.req) == null ? void 0 : _f.method) != null ? _g : event.method) != null ? _h : "?";
+      console.debug(`[nitro:request] \u2192 ${method} ${url}`);
+    } catch {
+    }
+  });
+  nitroApp.hooks.hook("afterResponse", (event) => {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
+    try {
+      const url = (_d = (_c = (_b = (_a = event == null ? void 0 : event.node) == null ? void 0 : _a.req) == null ? void 0 : _b.url) != null ? _c : event.path) != null ? _d : "?";
+      const method = (_h = (_g = (_f = (_e = event == null ? void 0 : event.node) == null ? void 0 : _e.req) == null ? void 0 : _f.method) != null ? _g : event.method) != null ? _h : "?";
+      const statusCode = (_m = (_l = (_j = (_i = event == null ? void 0 : event.node) == null ? void 0 : _i.res) == null ? void 0 : _j.statusCode) != null ? _l : (_k = event.res) == null ? void 0 : _k.statusCode) != null ? _m : 0;
+      console.debug(`[nitro:afterResponse] \u2190 ${method} ${url} \u2192 ${statusCode}`);
+    } catch {
+    }
+  });
+});
+
 const plugins = [
-  
+  _XWggeHzJ1Do7z7SRYB6hVPKFSE3ib7ph_T7OS66SUAc
 ];
 
 const _SxA8c9 = defineEventHandler(() => {});

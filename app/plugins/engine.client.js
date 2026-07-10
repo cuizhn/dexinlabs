@@ -9,15 +9,6 @@ export default defineNuxtPlugin(async () => {
   let renderToVNodeFn = null
 
   try {
-    await import('@core/database')
-  } catch (e) {
-    if (process.env.NODE_ENV !== 'production') {
-      // eslint-disable-next-line no-console
-      console.warn('[engine.client] database unavailable:', e?.message || String(e))
-    }
-  }
-
-  try {
     const ce = await import('@ce')
     if (typeof ce.getContentEngine === 'function') content = ce.getContentEngine()
     services = {
@@ -28,10 +19,8 @@ export default defineNuxtPlugin(async () => {
     }
     queriesFallback = ce.queries || null
   } catch (e) {
-    if (process.env.NODE_ENV !== 'production') {
-      // eslint-disable-next-line no-console
-      console.warn('[engine.client] content-engine unavailable:', e?.message || String(e))
-    }
+    // eslint-disable-next-line no-console
+    console.error('[engine.client] content-engine unavailable:', e?.message || String(e), e?.stack || '')
   }
 
   try {
@@ -40,10 +29,8 @@ export default defineNuxtPlugin(async () => {
     if (typeof me.renderToHTML === 'function') renderToHTMLFn = me.renderToHTML
     if (typeof me.renderToVNode === 'function') renderToVNodeFn = me.renderToVNode
   } catch (e) {
-    if (process.env.NODE_ENV !== 'production') {
-      // eslint-disable-next-line no-console
-      console.warn('[engine.client] markdown-engine unavailable:', e?.message || String(e))
-    }
+    // eslint-disable-next-line no-console
+    console.error('[engine.client] markdown-engine unavailable:', e?.message || String(e), e?.stack || '')
   }
 
   return {

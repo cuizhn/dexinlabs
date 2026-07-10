@@ -177,30 +177,54 @@ const dbOperations = [
   "query",
   "run"
 ];
+function safeEnsureDbInitialized() {
+  try {
+    return ensureDbInitialized();
+  } catch (e) {
+    if (e && e.code === "DATABASE_URL_MISSING") {
+      return null;
+    }
+    throw e;
+  }
+}
 new Proxy({}, {
   get(_target, prop, _receiver) {
     if (typeof prop === "symbol") {
       return void 0;
     }
     const key = prop;
+    const instance = safeEnsureDbInitialized();
+    if (!instance) {
+      if (dbOperations.includes(key) || key === "transaction") {
+        return (() => {
+          throw Object.assign(
+            new Error("[app/core/database/db] DATABASE_URL missing \u2014 cannot run DB operation. Set env DATABASE_URL."),
+            { code: "DATABASE_URL_MISSING" }
+          );
+        });
+      }
+      return void 0;
+    }
     if (dbOperations.includes(key) || key === "transaction") {
-      const instance = ensureDbInitialized();
       const fn = instance[prop];
       if (typeof fn === "function") {
         return ((...args) => fn.apply(instance, args));
       }
       return fn;
     }
-    return Reflect.get(ensureDbInitialized(), prop);
+    return Reflect.get(instance, prop);
   },
   has(_target, prop) {
-    return prop in ensureDbInitialized();
+    const instance = safeEnsureDbInitialized();
+    return instance ? prop in instance : false;
   },
   ownKeys(_target) {
-    return Object.keys(ensureDbInitialized());
+    const instance = safeEnsureDbInitialized();
+    return instance ? Object.keys(instance) : [];
   },
   getOwnPropertyDescriptor(_target, prop) {
-    return Object.getOwnPropertyDescriptor(ensureDbInitialized(), prop);
+    const instance = safeEnsureDbInitialized();
+    return instance ? Object.getOwnPropertyDescriptor(instance, prop) : void 0;
   }
 });
 
