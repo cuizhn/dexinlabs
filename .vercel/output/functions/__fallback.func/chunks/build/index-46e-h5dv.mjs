@@ -5,10 +5,13 @@ import 'drizzle-orm/neon-serverless';
 import '@neondatabase/serverless';
 import 'drizzle-orm/pg-core';
 
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 class CourseRepository {
-  _explicitDb;
-  table;
   constructor(db) {
+    __publicField(this, "_explicitDb");
+    __publicField(this, "table");
     this._explicitDb = db || null;
     this.table = courses;
   }
@@ -39,10 +42,11 @@ class CourseRepository {
     return row;
   }
   async count() {
+    var _a, _b;
     const rows = await this._getDb().select({
       count: sql`count(*)`.mapWith(Number)
     }).from(this.table);
-    return Number(rows[0]?.count ?? 0);
+    return Number((_b = (_a = rows[0]) == null ? void 0 : _a.count) != null ? _b : 0);
   }
   async create(data) {
     const rows = await this._getDb().insert(this.table).values(data).returning();
@@ -74,9 +78,9 @@ class CourseRepository {
 }
 const courseRepository = new CourseRepository();
 class ChapterRepository {
-  _explicitDb;
-  table;
   constructor(db) {
+    __publicField(this, "_explicitDb");
+    __publicField(this, "table");
     this._explicitDb = db || null;
     this.table = chapters;
   }
@@ -131,11 +135,12 @@ class ChapterRepository {
     return rows[0] || null;
   }
   async count(filters = {}) {
+    var _a, _b;
     const where = this._buildWhere(filters);
     let query = this._getDb().select({ count: sql`count(*)`.mapWith(Number) }).from(this.table);
     if (where) query = query.where(where);
     const rows = await query;
-    return Number(rows[0]?.count ?? 0);
+    return Number((_b = (_a = rows[0]) == null ? void 0 : _a.count) != null ? _b : 0);
   }
   async create(data) {
     const rows = await this._getDb().insert(this.table).values(data).returning();
@@ -167,9 +172,9 @@ class ChapterRepository {
 }
 const chapterRepository = new ChapterRepository();
 class LessonRepository {
-  _explicitDb;
-  table;
   constructor(db) {
+    __publicField(this, "_explicitDb");
+    __publicField(this, "table");
     this._explicitDb = db || null;
     this.table = lessons;
   }
@@ -227,11 +232,12 @@ class LessonRepository {
     return rows[0] || null;
   }
   async count(filters = {}) {
+    var _a, _b;
     const where = this._buildWhere(filters);
     let query = this._getDb().select({ count: sql`count(*)`.mapWith(Number) }).from(this.table);
     if (where) query = query.where(where);
     const rows = await query;
-    return Number(rows[0]?.count ?? 0);
+    return Number((_b = (_a = rows[0]) == null ? void 0 : _a.count) != null ? _b : 0);
   }
   async create(data) {
     const rows = await this._getDb().insert(this.table).values(data).returning();
@@ -263,9 +269,9 @@ class LessonRepository {
 }
 const lessonRepository = new LessonRepository();
 class ExerciseRepository {
-  _explicitDb;
-  table;
   constructor(db) {
+    __publicField(this, "_explicitDb");
+    __publicField(this, "table");
     this._explicitDb = db || null;
     this.table = exercises;
   }
@@ -328,11 +334,12 @@ class ExerciseRepository {
     return list[0] || null;
   }
   async count(filters = {}) {
+    var _a, _b;
     const where = this._buildWhere(filters);
     let query = this._getDb().select({ count: sql`count(*)`.mapWith(Number) }).from(this.table);
     if (where) query = query.where(where);
     const rows = await query;
-    return Number(rows[0]?.count ?? 0);
+    return Number((_b = (_a = rows[0]) == null ? void 0 : _a.count) != null ? _b : 0);
   }
   async create(data) {
     const rows = await this._getDb().insert(this.table).values(data).returning();
@@ -471,10 +478,10 @@ const queries = {
   normalizeListExercises
 };
 class CourseService {
-  courses;
-  chapters;
-  lessons;
   constructor({ courses: courses2 = courseRepository, chapters: chapters2 = chapterRepository, lessons: lessons2 = lessonRepository } = {}) {
+    __publicField(this, "courses");
+    __publicField(this, "chapters");
+    __publicField(this, "lessons");
     this.courses = courses2;
     this.chapters = chapters2;
     this.lessons = lessons2;
@@ -509,14 +516,14 @@ class CourseService {
 }
 const courseService = new CourseService();
 class ChapterService {
-  chapters;
-  lessons;
-  exercises;
   constructor({
     chapters: chapters2 = chapterRepository,
     lessons: lessons2 = lessonRepository,
     exercises: exercises2 = exerciseRepository
   } = {}) {
+    __publicField(this, "chapters");
+    __publicField(this, "lessons");
+    __publicField(this, "exercises");
     this.chapters = chapters2;
     this.lessons = lessons2;
     this.exercises = exercises2;
@@ -542,9 +549,9 @@ class ChapterService {
 }
 const chapterService = new ChapterService();
 class LessonService {
-  lessons;
-  chapters;
   constructor({ lessons: lessons2 = lessonRepository, chapters: chapters2 = chapterRepository } = {}) {
+    __publicField(this, "lessons");
+    __publicField(this, "chapters");
     this.lessons = lessons2;
     this.chapters = chapters2;
   }
@@ -570,8 +577,8 @@ class LessonService {
 }
 const lessonService = new LessonService();
 class ExerciseService {
-  exercises;
   constructor({ exercises: exercises2 = exerciseRepository } = {}) {
+    __publicField(this, "exercises");
     this.exercises = exercises2;
   }
   async listByChapter(chapterSlug) {

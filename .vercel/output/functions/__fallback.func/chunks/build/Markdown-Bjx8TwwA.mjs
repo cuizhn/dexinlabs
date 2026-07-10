@@ -55,28 +55,31 @@ const _sfc_main = {
       }
     }, { immediate: true });
     const frontmatter = computed(() => {
-      if (enhancedAST.value?.frontmatter && typeof enhancedAST.value.frontmatter === "object") {
+      var _a, _b;
+      if (((_a = enhancedAST.value) == null ? void 0 : _a.frontmatter) && typeof enhancedAST.value.frontmatter === "object") {
         return enhancedAST.value.frontmatter;
       }
       const source = props.document || props.value || {};
       if (source.frontmatter && typeof source.frontmatter === "object") return source.frontmatter;
-      if (props.ast?.frontmatter && typeof props.ast.frontmatter === "object") return props.ast.frontmatter;
+      if (((_b = props.ast) == null ? void 0 : _b.frontmatter) && typeof props.ast.frontmatter === "object") return props.ast.frontmatter;
       return {};
     });
     const toc = computed(() => {
-      if (Array.isArray(enhancedAST.value?.toc) && enhancedAST.value.toc.length > 0) {
+      var _a, _b;
+      if (Array.isArray((_a = enhancedAST.value) == null ? void 0 : _a.toc) && enhancedAST.value.toc.length > 0) {
         return enhancedAST.value.toc;
       }
       const source = props.document || props.value || {};
       if (Array.isArray(source._toc) && source._toc.length > 0) return source._toc;
-      if (Array.isArray(props.ast?.toc)) return props.ast.toc;
+      if (Array.isArray((_b = props.ast) == null ? void 0 : _b.toc)) return props.ast.toc;
       return [];
     });
     const readingTime = computed(() => {
-      if (enhancedAST.value?.readingTime != null) return enhancedAST.value.readingTime;
+      var _a, _b;
+      if (((_a = enhancedAST.value) == null ? void 0 : _a.readingTime) != null) return enhancedAST.value.readingTime;
       const source = props.document || props.value || {};
       if (source._readingTime != null) return source._readingTime;
-      if (props.ast?.readingTime != null) return props.ast.readingTime;
+      if (((_b = props.ast) == null ? void 0 : _b.readingTime) != null) return props.ast.readingTime;
       return null;
     });
     const wrapperClass = computed(() => [
@@ -91,6 +94,7 @@ const _sfc_main = {
       "max-w-none"
     ]);
     return (_ctx, _push, _parent, _attrs) => {
+      var _a;
       _push(`<div${ssrRenderAttrs(mergeProps({
         class: wrapperClass.value,
         "data-ce-markdown-renderer": ""
@@ -102,7 +106,7 @@ const _sfc_main = {
       _push(`<div class="${ssrRenderClass([innerClass.value, "ce-content-body"])}" data-v-4d65b530>`);
       ssrRenderSlot(_ctx.$slots, "body-start", {}, null, _push, _parent);
       if (renderedHtml.value) {
-        _push(`<div class="ce-markdown" data-v-4d65b530>${renderedHtml.value ?? ""}</div>`);
+        _push(`<div class="ce-markdown" data-v-4d65b530>${(_a = renderedHtml.value) != null ? _a : ""}</div>`);
       } else {
         _push(`<!---->`);
       }

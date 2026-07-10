@@ -24,6 +24,7 @@ const _slug__get = defineEventHandler(async (event) => {
       statusMessage: "Slug is required"
     });
   }
+  ff;
   try {
     const result = await chapterService.getBySlug(slug);
     if (!result || !result.chapter) {

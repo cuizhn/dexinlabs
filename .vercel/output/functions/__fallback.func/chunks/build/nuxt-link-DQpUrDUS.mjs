@@ -21,7 +21,7 @@ function defineNuxtLink(options) {
     return typeof link === "string" && link.startsWith("#");
   }
   function resolveTrailingSlashBehavior(to, resolve, trailingSlash) {
-    const effectiveTrailingSlash = trailingSlash ?? options.trailingSlash;
+    const effectiveTrailingSlash = trailingSlash != null ? trailingSlash : options.trailingSlash;
     if (!to || effectiveTrailingSlash !== "append" && effectiveTrailingSlash !== "remove") {
       return to;
     }
@@ -38,6 +38,7 @@ function defineNuxtLink(options) {
     return resolvedPath;
   }
   function useNuxtLink(props) {
+    var _a, _b, _c;
     const router = useRouter();
     const config = useRuntimeConfig();
     const hasTarget = computed(() => !!unref(props.target) && unref(props.target) !== "_self");
@@ -64,9 +65,10 @@ function defineNuxtLink(options) {
       }
       return resolveTrailingSlashBehavior(path, router.resolve, unref(props.trailingSlash));
     });
-    const link = isExternal.value ? void 0 : useBuiltinLink?.({ ...props, to, viewTransition: unref(props.viewTransition) });
+    const link = isExternal.value ? void 0 : useBuiltinLink == null ? void 0 : useBuiltinLink({ ...props, to, viewTransition: unref(props.viewTransition) });
     const href = computed(() => {
-      const effectiveTrailingSlash = unref(props.trailingSlash) ?? options.trailingSlash;
+      var _a2, _b2, _c2;
+      const effectiveTrailingSlash = (_a2 = unref(props.trailingSlash)) != null ? _a2 : options.trailingSlash;
       if (!to.value || isAbsoluteUrl.value || isHashLinkWithoutHashMode(to.value)) {
         const raw = to.value;
         return typeof raw === "string" ? sanitizeExternalHref(raw) : raw;
@@ -78,7 +80,7 @@ function defineNuxtLink(options) {
         return safe === null ? null : applyTrailingSlashBehavior(safe, effectiveTrailingSlash);
       }
       if (typeof to.value === "object") {
-        return router.resolve(to.value)?.href ?? null;
+        return (_c2 = (_b2 = router.resolve(to.value)) == null ? void 0 : _b2.href) != null ? _c2 : null;
       }
       return applyTrailingSlashBehavior(joinURL(config.app.baseURL, to.value), effectiveTrailingSlash);
     });
@@ -89,9 +91,9 @@ function defineNuxtLink(options) {
       isExternal,
       //
       href,
-      isActive: link?.isActive ?? computed(() => to.value === router.currentRoute.value.path),
-      isExactActive: link?.isExactActive ?? computed(() => to.value === router.currentRoute.value.path),
-      route: link?.route ?? computed(() => router.resolve(to.value)),
+      isActive: (_a = link == null ? void 0 : link.isActive) != null ? _a : computed(() => to.value === router.currentRoute.value.path),
+      isExactActive: (_b = link == null ? void 0 : link.isExactActive) != null ? _b : computed(() => to.value === router.currentRoute.value.path),
+      route: (_c = link == null ? void 0 : link.route) != null ? _c : computed(() => router.resolve(to.value)),
       async navigate(_e) {
         if (href.value === null) {
           return;
@@ -205,6 +207,7 @@ function defineNuxtLink(options) {
         }
       }
       return () => {
+        var _a;
         if (!isExternal.value && !hasTarget.value && !isHashLinkWithoutHashMode(to.value)) {
           const routerLinkProps = {
             ref: elRef,
@@ -277,17 +280,18 @@ function defineNuxtLink(options) {
           rel,
           target,
           onClick: async (event) => {
+            var _a2;
             if (isExternal.value || hasTarget.value) {
               return;
             }
             event.preventDefault();
             try {
-              const encodedHref = encodeRoutePath(href.value ?? "");
+              const encodedHref = encodeRoutePath((_a2 = href.value) != null ? _a2 : "");
               return await (props.replace ? router.replace(encodedHref) : router.push(encodedHref));
             } finally {
             }
           }
-        }, slots.default?.());
+        }, (_a = slots.default) == null ? void 0 : _a.call(slots));
       };
     }
   });

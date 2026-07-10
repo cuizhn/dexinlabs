@@ -21,39 +21,39 @@ import '@vue/shared';
 import './index-BVTkTKBe.mjs';
 import 'marked';
 
-const md = `# 📖 基础排版示例
+const md = `# \u{1F4D6} \u57FA\u7840\u6392\u7248\u793A\u4F8B
 
-这是一段介绍 Morph-MD 组件库的 **基础段落**。我们支持 *斜体*、**粗体**、以及 \`行内代码\`。
+\u8FD9\u662F\u4E00\u6BB5\u4ECB\u7ECD Morph-MD \u7EC4\u4EF6\u5E93\u7684 **\u57FA\u7840\u6BB5\u843D**\u3002\u6211\u4EEC\u652F\u6301 *\u659C\u4F53*\u3001**\u7C97\u4F53**\u3001\u4EE5\u53CA \`\u884C\u5185\u4EE3\u7801\`\u3002
 
-> 💡 **引用块：** Morph-MD 遵循 *高内聚低耦合* 设计原则，使用独立维护的 Markdown Engine 作为唯一解析管道（Parser 技术为 marked.lexer + MDAST 兼容 AST），通过 Transformer Plugin 体系统一产出 TOC、Excerpt、ReadingTime 等结构化增强数据。
+> \u{1F4A1} **\u5F15\u7528\u5757\uFF1A** Morph-MD \u9075\u5FAA *\u9AD8\u5185\u805A\u4F4E\u8026\u5408* \u8BBE\u8BA1\u539F\u5219\uFF0C\u4F7F\u7528\u72EC\u7ACB\u7EF4\u62A4\u7684 Markdown Engine \u4F5C\u4E3A\u552F\u4E00\u89E3\u6790\u7BA1\u9053\uFF08Parser \u6280\u672F\u4E3A marked.lexer + MDAST \u517C\u5BB9 AST\uFF09\uFF0C\u901A\u8FC7 Transformer Plugin \u4F53\u7CFB\u7EDF\u4E00\u4EA7\u51FA TOC\u3001Excerpt\u3001ReadingTime \u7B49\u7ED3\u6784\u5316\u589E\u5F3A\u6570\u636E\u3002
 
-## 无序列表
+## \u65E0\u5E8F\u5217\u8868
 
-- Vue 3 组件化封装
-- Nuxt 3 开箱即用
-- 插件式扩展（highlight / katex / mermaid）
-- SSR 友好，客户端 hydrate
+- Vue 3 \u7EC4\u4EF6\u5316\u5C01\u88C5
+- Nuxt 3 \u5F00\u7BB1\u5373\u7528
+- \u63D2\u4EF6\u5F0F\u6269\u5C55\uFF08highlight / katex / mermaid\uFF09
+- SSR \u53CB\u597D\uFF0C\u5BA2\u6237\u7AEF hydrate
 
-## 有序列表
+## \u6709\u5E8F\u5217\u8868
 
-1. 解析 Markdown String
-2. 输出 HTML String
-3. 通过 Plugin Pipeline
-4. 最终 v-html 渲染
+1. \u89E3\u6790 Markdown String
+2. \u8F93\u51FA HTML String
+3. \u901A\u8FC7 Plugin Pipeline
+4. \u6700\u7EC8 v-html \u6E32\u67D3
 
-## 链接与图片
+## \u94FE\u63A5\u4E0E\u56FE\u7247
 
-访问 [Morph-MD Repository](https://example.com/morph-md) 获取更多信息。
+\u8BBF\u95EE [Morph-MD Repository](https://example.com/morph-md) \u83B7\u53D6\u66F4\u591A\u4FE1\u606F\u3002
 
-## 表格
+## \u8868\u683C
 
-| 特性 | 支持状态 | 备注 |
+| \u7279\u6027 | \u652F\u6301\u72B6\u6001 | \u5907\u6CE8 |
 |------|----------|------|
-| 标题 H1-H6 | ✅ | 完整支持 |
-| 列表 (ul/ol) | ✅ | 嵌套支持 |
-| 代码高亮 | ✅ | Prism.js |
-| 数学公式 | ✅ | KaTeX |
-| Mermaid 图表 | ✅ | SSR fallback + client hydrate |
+| \u6807\u9898 H1-H6 | \u2705 | \u5B8C\u6574\u652F\u6301 |
+| \u5217\u8868 (ul/ol) | \u2705 | \u5D4C\u5957\u652F\u6301 |
+| \u4EE3\u7801\u9AD8\u4EAE | \u2705 | Prism.js |
+| \u6570\u5B66\u516C\u5F0F | \u2705 | KaTeX |
+| Mermaid \u56FE\u8868 | \u2705 | SSR fallback + client hydrate |
 
 ---
 `;
@@ -61,9 +61,9 @@ const _sfc_main = {
   __name: "study",
   __ssrInlineRender: true,
   setup(__props) {
-    useHead({ title: "同步学习" });
+    useHead({ title: "\u540C\u6B65\u5B66\u4E60" });
     return (_ctx, _push, _parent, _attrs) => {
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "info-page" }, _attrs))} data-v-84093043><section class="info-page__header" data-v-84093043><div class="container" data-v-84093043><span class="info-page__tag" data-v-84093043>同步学习</span><h1 class="info-page__title" data-v-84093043>跟着节奏，稳步前行</h1>`);
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "info-page" }, _attrs))} data-v-84093043><section class="info-page__header" data-v-84093043><div class="container" data-v-84093043><span class="info-page__tag" data-v-84093043>\u540C\u6B65\u5B66\u4E60</span><h1 class="info-page__title" data-v-84093043>\u8DDF\u7740\u8282\u594F\uFF0C\u7A33\u6B65\u524D\u884C</h1>`);
       _push(ssrRenderComponent(Markdown, {
         content: md,
         class: "info-page__desc"

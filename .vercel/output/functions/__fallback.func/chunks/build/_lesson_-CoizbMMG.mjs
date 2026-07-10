@@ -23,6 +23,7 @@ import './index-BVTkTKBe.mjs';
 import 'marked';
 
 async function useLesson(slug, options = {}) {
+  var _a;
   const key = `lesson:${slug || "empty"}`;
   const { data, pending, error, refresh } = await useAsyncData(
     key,
@@ -30,7 +31,7 @@ async function useLesson(slug, options = {}) {
     {
       default: () => null,
       server: true,
-      lazy: options.lazy ?? false,
+      lazy: (_a = options.lazy) != null ? _a : false,
       ...options
     }
   );
@@ -49,17 +50,22 @@ const _sfc_main = {
     const route = useRoute();
     const lessonSlug = Array.isArray(route.params.lesson) ? route.params.lesson[0] : route.params.lesson;
     const { lesson, loading } = ([__temp, __restore] = withAsyncContext(() => useLesson(lessonSlug)), __temp = await __temp, __restore(), __temp);
-    const chapterSlug = computed(() => lesson.value?.chapter?.slug || route.params.chapter);
+    const chapterSlug = computed(() => {
+      var _a, _b;
+      return ((_b = (_a = lesson.value) == null ? void 0 : _a.chapter) == null ? void 0 : _b.slug) || route.params.chapter;
+    });
     useHead({
       title: computed(() => {
+        var _a, _b, _c;
         const parts = [];
-        if (lesson.value?.title) parts.push(lesson.value.title);
-        if (lesson.value?.chapter?.title) parts.push(lesson.value.chapter.title);
-        parts.push("课时");
-        return parts.join(" · ");
+        if ((_a = lesson.value) == null ? void 0 : _a.title) parts.push(lesson.value.title);
+        if ((_c = (_b = lesson.value) == null ? void 0 : _b.chapter) == null ? void 0 : _c.title) parts.push(lesson.value.chapter.title);
+        parts.push("\u8BFE\u65F6");
+        return parts.join(" \xB7 ");
       })
     });
     return (_ctx, _push, _parent, _attrs) => {
+      var _a;
       const _component_NuxtLink = __nuxt_component_0;
       _push(`<div${ssrRenderAttrs(mergeProps({ class: "lesson-detail" }, _attrs))} data-v-d82cfb40><section class="lesson-detail__header" data-v-d82cfb40><div class="container lesson-detail__container" data-v-d82cfb40><nav class="lesson-detail__breadcrumb" data-v-d82cfb40>`);
       _push(ssrRenderComponent(_component_NuxtLink, {
@@ -68,10 +74,10 @@ const _sfc_main = {
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`课程中心`);
+            _push2(`\u8BFE\u7A0B\u4E2D\u5FC3`);
           } else {
             return [
-              createTextVNode("课程中心")
+              createTextVNode("\u8BFE\u7A0B\u4E2D\u5FC3")
             ];
           }
         }),
@@ -84,11 +90,12 @@ const _sfc_main = {
           class: "lesson-detail__bc-link"
         }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
+            var _a2, _b, _c, _d;
             if (_push2) {
-              _push2(`${ssrInterpolate(unref(lesson)?.chapter?.title || "章节")}`);
+              _push2(`${ssrInterpolate(((_b = (_a2 = unref(lesson)) == null ? void 0 : _a2.chapter) == null ? void 0 : _b.title) || "\u7AE0\u8282")}`);
             } else {
               return [
-                createTextVNode(toDisplayString(unref(lesson)?.chapter?.title || "章节"), 1)
+                createTextVNode(toDisplayString(((_d = (_c = unref(lesson)) == null ? void 0 : _c.chapter) == null ? void 0 : _d.title) || "\u7AE0\u8282"), 1)
               ];
             }
           }),
@@ -97,13 +104,13 @@ const _sfc_main = {
       } else {
         _push(`<!---->`);
       }
-      _push(`<span class="lesson-detail__bc-sep" data-v-d82cfb40>/</span><span class="lesson-detail__bc-current" data-v-d82cfb40>${ssrInterpolate(unref(lesson)?.title || "课时")}</span></nav></div></section><section class="lesson-detail__body" data-v-d82cfb40><div class="container lesson-detail__container" data-v-d82cfb40>`);
+      _push(`<span class="lesson-detail__bc-sep" data-v-d82cfb40>/</span><span class="lesson-detail__bc-current" data-v-d82cfb40>${ssrInterpolate(((_a = unref(lesson)) == null ? void 0 : _a.title) || "\u8BFE\u65F6")}</span></nav></div></section><section class="lesson-detail__body" data-v-d82cfb40><div class="container lesson-detail__container" data-v-d82cfb40>`);
       if (unref(loading)) {
-        _push(`<div class="lesson-detail__empty" data-v-d82cfb40>课时内容加载中...</div>`);
+        _push(`<div class="lesson-detail__empty" data-v-d82cfb40>\u8BFE\u65F6\u5185\u5BB9\u52A0\u8F7D\u4E2D...</div>`);
       } else if (unref(lesson)) {
         _push(ssrRenderComponent(Markdown, { value: unref(lesson) }, null, _parent));
       } else {
-        _push(`<div class="lesson-detail__empty" data-v-d82cfb40>课时内容未找到</div>`);
+        _push(`<div class="lesson-detail__empty" data-v-d82cfb40>\u8BFE\u65F6\u5185\u5BB9\u672A\u627E\u5230</div>`);
       }
       _push(`</div></section></div>`);
     };

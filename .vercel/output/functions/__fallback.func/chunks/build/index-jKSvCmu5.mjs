@@ -152,7 +152,7 @@ function ensureDbInitialized() {
     const connectionString = process.env.DATABASE_URL;
     if (!connectionString) {
       const err = new Error(
-        "[app/core/database/connection] process.env.DATABASE_URL is empty. Please set the DATABASE_URL environment variable. If you are on Vercel, configure it in Project → Settings → Environment Variables."
+        "[app/core/database/connection] process.env.DATABASE_URL is empty. Please set the DATABASE_URL environment variable. If you are on Vercel, configure it in Project \u2192 Settings \u2192 Environment Variables."
       );
       err.code = "DATABASE_URL_MISSING";
       throw err;
@@ -219,7 +219,7 @@ const db = new Proxy({}, {
       if (dbOperations.includes(key) || key === "transaction") {
         return (() => {
           throw Object.assign(
-            new Error("[app/core/database/db] DATABASE_URL missing — cannot run DB operation. Set env DATABASE_URL."),
+            new Error("[app/core/database/db] DATABASE_URL missing \u2014 cannot run DB operation. Set env DATABASE_URL."),
             { code: "DATABASE_URL_MISSING" }
           );
         });

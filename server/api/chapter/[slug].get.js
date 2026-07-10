@@ -10,7 +10,7 @@ export default defineEventHandler(async event => {
       statusMessage: 'Slug is required'
     })
   }
-
+ff    
   try {
     const result = await chapterService.getBySlug(slug)
 

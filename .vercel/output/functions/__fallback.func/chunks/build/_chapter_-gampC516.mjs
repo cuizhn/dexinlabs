@@ -24,6 +24,7 @@ import './index-BVTkTKBe.mjs';
 import 'marked';
 
 async function useExercise(slug, options = {}) {
+  var _a;
   const key = `exercise:${slug || "empty"}`;
   const { data, pending, error, refresh } = await useAsyncData(
     key,
@@ -31,7 +32,7 @@ async function useExercise(slug, options = {}) {
     {
       default: () => null,
       server: true,
-      lazy: options.lazy ?? false,
+      lazy: (_a = options.lazy) != null ? _a : false,
       ...options
     }
   );
@@ -53,7 +54,7 @@ const _sfc_main = {
     const { currentChapter, loading: chapterLoading } = ([__temp, __restore] = withAsyncContext(() => useChapter(chapterSlug)), __temp = await __temp, __restore(), __temp);
     const loading = computed(() => exerciseLoading.value || chapterLoading.value);
     useHead({
-      title: computed(() => chapterTitle.value ? `${chapterTitle.value} · 练习` : "章节练习")
+      title: computed(() => chapterTitle.value ? `${chapterTitle.value} \xB7 \u7EC3\u4E60` : "\u7AE0\u8282\u7EC3\u4E60")
     });
     const chapterTitle = computed(() => currentChapter.value && currentChapter.value.title);
     return (_ctx, _push, _parent, _attrs) => {
@@ -65,10 +66,10 @@ const _sfc_main = {
       }, {
         default: withCtx((_, _push2, _parent2, _scopeId) => {
           if (_push2) {
-            _push2(`课程中心`);
+            _push2(`\u8BFE\u7A0B\u4E2D\u5FC3`);
           } else {
             return [
-              createTextVNode("课程中心")
+              createTextVNode("\u8BFE\u7A0B\u4E2D\u5FC3")
             ];
           }
         }),
@@ -82,10 +83,10 @@ const _sfc_main = {
         }, {
           default: withCtx((_, _push2, _parent2, _scopeId) => {
             if (_push2) {
-              _push2(`${ssrInterpolate(chapterTitle.value || "章节")}`);
+              _push2(`${ssrInterpolate(chapterTitle.value || "\u7AE0\u8282")}`);
             } else {
               return [
-                createTextVNode(toDisplayString(chapterTitle.value || "章节"), 1)
+                createTextVNode(toDisplayString(chapterTitle.value || "\u7AE0\u8282"), 1)
               ];
             }
           }),
@@ -94,11 +95,11 @@ const _sfc_main = {
       } else {
         _push(`<!---->`);
       }
-      _push(`<span class="exercise-page__bc-sep" data-v-1298aeec>/</span><span class="exercise-page__bc-current" data-v-1298aeec>章节练习</span></nav><h1 class="exercise-page__title" data-v-1298aeec>${ssrInterpolate(chapterTitle.value ? `${chapterTitle.value} · 练习` : "章节练习")}</h1><p class="exercise-page__desc" data-v-1298aeec> 思考 → 尝试 → 提示 → 修正 → 理解 → 总结 → 迁移。让每一次练习都成为思维的生长。 </p></div></section><section class="exercise-page__body" data-v-1298aeec><div class="container exercise-page__container" data-v-1298aeec>`);
+      _push(`<span class="exercise-page__bc-sep" data-v-1298aeec>/</span><span class="exercise-page__bc-current" data-v-1298aeec>\u7AE0\u8282\u7EC3\u4E60</span></nav><h1 class="exercise-page__title" data-v-1298aeec>${ssrInterpolate(chapterTitle.value ? `${chapterTitle.value} \xB7 \u7EC3\u4E60` : "\u7AE0\u8282\u7EC3\u4E60")}</h1><p class="exercise-page__desc" data-v-1298aeec> \u601D\u8003 \u2192 \u5C1D\u8BD5 \u2192 \u63D0\u793A \u2192 \u4FEE\u6B63 \u2192 \u7406\u89E3 \u2192 \u603B\u7ED3 \u2192 \u8FC1\u79FB\u3002\u8BA9\u6BCF\u4E00\u6B21\u7EC3\u4E60\u90FD\u6210\u4E3A\u601D\u7EF4\u7684\u751F\u957F\u3002 </p></div></section><section class="exercise-page__body" data-v-1298aeec><div class="container exercise-page__container" data-v-1298aeec>`);
       if (loading.value) {
-        _push(`<div class="exercise-page__empty" data-v-1298aeec>练习内容加载中...</div>`);
+        _push(`<div class="exercise-page__empty" data-v-1298aeec>\u7EC3\u4E60\u5185\u5BB9\u52A0\u8F7D\u4E2D...</div>`);
       } else if (unref(exercise)) {
-        _push(`<!--[--><h2 class="exercise-page__section-title" data-v-1298aeec>${ssrInterpolate(unref(exercise).title || "练习题")}</h2>`);
+        _push(`<!--[--><h2 class="exercise-page__section-title" data-v-1298aeec>${ssrInterpolate(unref(exercise).title || "\u7EC3\u4E60\u9898")}</h2>`);
         if (unref(exercise).description) {
           _push(`<div class="exercise-page__intro" data-v-1298aeec>${ssrInterpolate(unref(exercise).description)}</div>`);
         } else {
@@ -111,7 +112,7 @@ const _sfc_main = {
         }
         _push(`<!--]-->`);
       } else {
-        _push(`<div class="exercise-page__placeholder" data-v-1298aeec><div class="placeholder-card" data-v-1298aeec><div class="placeholder-card__icon" data-v-1298aeec>✎</div><h3 class="placeholder-card__title" data-v-1298aeec>练习内容准备中</h3><p class="placeholder-card__desc" data-v-1298aeec> 本章节的交互练习正在精心设计中。请先完成课时学习，扎实掌握每个概念。 </p>`);
+        _push(`<div class="exercise-page__placeholder" data-v-1298aeec><div class="placeholder-card" data-v-1298aeec><div class="placeholder-card__icon" data-v-1298aeec>\u270E</div><h3 class="placeholder-card__title" data-v-1298aeec>\u7EC3\u4E60\u5185\u5BB9\u51C6\u5907\u4E2D</h3><p class="placeholder-card__desc" data-v-1298aeec> \u672C\u7AE0\u8282\u7684\u4EA4\u4E92\u7EC3\u4E60\u6B63\u5728\u7CBE\u5FC3\u8BBE\u8BA1\u4E2D\u3002\u8BF7\u5148\u5B8C\u6210\u8BFE\u65F6\u5B66\u4E60\uFF0C\u624E\u5B9E\u638C\u63E1\u6BCF\u4E2A\u6982\u5FF5\u3002 </p>`);
         if (unref(chapterSlug)) {
           _push(ssrRenderComponent(_component_NuxtLink, {
             to: `/course/${unref(chapterSlug)}`,
@@ -119,10 +120,10 @@ const _sfc_main = {
           }, {
             default: withCtx((_, _push2, _parent2, _scopeId) => {
               if (_push2) {
-                _push2(` ← 返回章节页 `);
+                _push2(` \u2190 \u8FD4\u56DE\u7AE0\u8282\u9875 `);
               } else {
                 return [
-                  createTextVNode(" ← 返回章节页 ")
+                  createTextVNode(" \u2190 \u8FD4\u56DE\u7AE0\u8282\u9875 ")
                 ];
               }
             }),

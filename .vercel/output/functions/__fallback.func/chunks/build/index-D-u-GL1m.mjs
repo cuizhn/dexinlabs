@@ -25,11 +25,11 @@ const _sfc_main = {
   __ssrInlineRender: true,
   async setup(__props) {
     let __temp, __restore;
-    useHead({ title: "课程中心" });
+    useHead({ title: "\u8BFE\u7A0B\u4E2D\u5FC3" });
     const { chapters } = ([__temp, __restore] = withAsyncContext(() => useChapter()), __temp = await __temp, __restore(), __temp);
     return (_ctx, _push, _parent, _attrs) => {
       const _component_NuxtLink = __nuxt_component_0;
-      _push(`<div${ssrRenderAttrs(mergeProps({ class: "course-index" }, _attrs))} data-v-b34c8f99><section class="course-index__header" data-v-b34c8f99><div class="container" data-v-b34c8f99><span class="course-index__tag" data-v-b34c8f99>课程中心</span><h1 class="course-index__title" data-v-b34c8f99>探索数学的旅程</h1><p class="course-index__subtitle" data-v-b34c8f99> 每一个章节都是精心设计的学习单元，从理解到应用，让你真正得心应手 </p></div></section><section class="course-index__body" data-v-b34c8f99><div class="container" data-v-b34c8f99>`);
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "course-index" }, _attrs))} data-v-b34c8f99><section class="course-index__header" data-v-b34c8f99><div class="container" data-v-b34c8f99><span class="course-index__tag" data-v-b34c8f99>\u8BFE\u7A0B\u4E2D\u5FC3</span><h1 class="course-index__title" data-v-b34c8f99>\u63A2\u7D22\u6570\u5B66\u7684\u65C5\u7A0B</h1><p class="course-index__subtitle" data-v-b34c8f99> \u6BCF\u4E00\u4E2A\u7AE0\u8282\u90FD\u662F\u7CBE\u5FC3\u8BBE\u8BA1\u7684\u5B66\u4E60\u5355\u5143\uFF0C\u4ECE\u7406\u89E3\u5230\u5E94\u7528\uFF0C\u8BA9\u4F60\u771F\u6B63\u5F97\u5FC3\u5E94\u624B </p></div></section><section class="course-index__body" data-v-b34c8f99><div class="container" data-v-b34c8f99>`);
       if (unref(chapters).length) {
         _push(`<div class="course-index__grid" data-v-b34c8f99><!--[-->`);
         ssrRenderList(unref(chapters), (c) => {
@@ -46,7 +46,7 @@ const _sfc_main = {
                 } else {
                   _push2(`<!---->`);
                 }
-                _push2(`<div class="chapter-card__footer" data-v-b34c8f99${_scopeId}><span class="chapter-card__cta" data-v-b34c8f99${_scopeId}>进入学习 →</span></div>`);
+                _push2(`<div class="chapter-card__footer" data-v-b34c8f99${_scopeId}><span class="chapter-card__cta" data-v-b34c8f99${_scopeId}>\u8FDB\u5165\u5B66\u4E60 \u2192</span></div>`);
               } else {
                 return [
                   createVNode("div", { class: "chapter-card__order" }, toDisplayString(String(c.order).padStart(2, "0")), 1),
@@ -56,7 +56,7 @@ const _sfc_main = {
                     class: "chapter-card__desc"
                   }, toDisplayString(c.description), 1)) : createCommentVNode("", true),
                   createVNode("div", { class: "chapter-card__footer" }, [
-                    createVNode("span", { class: "chapter-card__cta" }, "进入学习 →")
+                    createVNode("span", { class: "chapter-card__cta" }, "\u8FDB\u5165\u5B66\u4E60 \u2192")
                   ])
                 ];
               }
