@@ -1,1 +1,0 @@
-import{courseService as n}from"./DruXMxIm.js";import"./CQwA9GJj.js";async function i(e=null,c={}){const{source:u}=c,o=e?await n.getBySlug(e):await n.getDefault();if(!o)return null;const s={},t=o.chapters||[];for(const r of t)s[r.slug]=r.lessons||[];return{...o,chapters:t,lessonsMap:s,__loadedBy:"content-loader/course",__source:u?.name||null}}export{i as loadCourse};
