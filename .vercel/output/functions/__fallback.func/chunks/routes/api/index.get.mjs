@@ -1,4 +1,4 @@
-import { d as defineEventHandler, a as getQuery } from '../../_/nitro.mjs';
+import { d as defineEventHandler, a as getQuery, c as createError } from '../../_/nitro.mjs';
 import { c as chapterService } from '../../_/ChapterService.mjs';
 import 'node:http';
 import 'node:https';
@@ -19,7 +19,22 @@ import '../../_/ExerciseRepository.mjs';
 const index_get = defineEventHandler(async (event) => {
   const query = getQuery(event);
   const courseSlug = query.course && typeof query.course === "string" ? query.course : null;
-  return chapterService.list(courseSlug);
+  try {
+    return await chapterService.list(courseSlug);
+  } catch (e) {
+    if (e && e.code === "DATABASE_URL_MISSING") {
+      throw createError({
+        statusCode: 503,
+        statusMessage: "DATABASE_URL is not configured",
+        data: { message: e.message, code: e.code, hint: "Vercel: Project \u2192 Settings \u2192 Environment Variables \u2192 Add DATABASE_URL" }
+      });
+    }
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Failed to list chapters",
+      data: { message: (e == null ? void 0 : e.message) || String(e) }
+    });
+  }
 });
 
 export { index_get as default };

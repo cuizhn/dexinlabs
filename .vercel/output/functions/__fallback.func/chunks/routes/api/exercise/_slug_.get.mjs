@@ -43,14 +43,30 @@ const _slug__get = defineEventHandler(async (event) => {
       statusMessage: "Slug is required"
     });
   }
-  const exercise = await exerciseService.getBySlug(slug);
-  if (!exercise) {
+  try {
+    const exercise = await exerciseService.getBySlug(slug);
+    if (!exercise) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: `Exercise not found: ${slug}`
+      });
+    }
+    return exercise;
+  } catch (e) {
+    if (e && e.statusCode) throw e;
+    if (e && e.code === "DATABASE_URL_MISSING") {
+      throw createError({
+        statusCode: 503,
+        statusMessage: "DATABASE_URL is not configured",
+        data: { message: e.message, code: e.code, hint: "Vercel: Project \u2192 Settings \u2192 Environment Variables \u2192 Add DATABASE_URL" }
+      });
+    }
     throw createError({
-      statusCode: 404,
-      statusMessage: `Exercise not found: ${slug}`
+      statusCode: 500,
+      statusMessage: "Failed to load exercise",
+      data: { message: (e == null ? void 0 : e.message) || String(e) }
     });
   }
-  return exercise;
 });
 
 export { _slug__get as default };

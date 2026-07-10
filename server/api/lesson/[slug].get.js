@@ -11,14 +11,30 @@ export default defineEventHandler(async event => {
     })
   }
 
-  const result = await lessonService.getBySlug(slug)
+  try {
+    const result = await lessonService.getBySlug(slug)
 
-  if (!result) {
+    if (!result) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: `Lesson not found: ${slug}`
+      })
+    }
+
+    return result
+  } catch (e) {
+    if (e && e.statusCode) throw e
+    if (e && e.code === 'DATABASE_URL_MISSING') {
+      throw createError({
+        statusCode: 503,
+        statusMessage: 'DATABASE_URL is not configured',
+        data: { message: e.message, code: e.code, hint: 'Vercel: Project → Settings → Environment Variables → Add DATABASE_URL' }
+      })
+    }
     throw createError({
-      statusCode: 404,
-      statusMessage: `Lesson not found: ${slug}`
+      statusCode: 500,
+      statusMessage: 'Failed to load lesson',
+      data: { message: e?.message || String(e) }
     })
   }
-
-  return result
 })

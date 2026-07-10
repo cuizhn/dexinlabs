@@ -13,7 +13,13 @@ function ensureDbInitialized(): DbInstance {
   if (!_dbInstance) {
     const connectionString: string | undefined = process.env.DATABASE_URL
     if (!connectionString) {
-      throw new Error('[server/database/connection] process.env.DATABASE_URL is empty. Ensure env var is set.')
+      const err = new Error(
+        '[app/core/database/connection] process.env.DATABASE_URL is empty. ' +
+        'Please set the DATABASE_URL environment variable. ' +
+        'If you are on Vercel, configure it in Project → Settings → Environment Variables.'
+      )
+      ;(err as Error & { code?: string }).code = 'DATABASE_URL_MISSING'
+      throw err
     }
     const poolConfig: PoolConfig = { connectionString }
     _poolInstance = new Pool(poolConfig)
@@ -31,9 +37,12 @@ export function createDb(options: CreateDbOptions = {}): DbInstance {
   const connectionString: string | undefined =
     options.connectionString || process.env.DATABASE_URL
   if (!connectionString) {
-    throw new Error(
-      '[server/database/connection] DATABASE_URL is missing. Either set env DATABASE_URL or pass connectionString explicitly.'
+    const err = new Error(
+      '[app/core/database/connection] DATABASE_URL is missing. ' +
+      'Either set env DATABASE_URL or pass connectionString explicitly to createDb().'
     )
+    ;(err as Error & { code?: string }).code = 'DATABASE_URL_MISSING'
+    throw err
   }
   const pool: Pool = options.pool || new Pool({ connectionString })
   return drizzle(pool, { schema })

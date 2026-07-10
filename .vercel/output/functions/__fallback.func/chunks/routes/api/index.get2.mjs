@@ -1,4 +1,4 @@
-import { d as defineEventHandler } from '../../_/nitro.mjs';
+import { d as defineEventHandler, c as createError } from '../../_/nitro.mjs';
 import { a as courses, g as getDb, q as queries } from '../../_/index.mjs';
 import { desc, asc, eq, sql } from 'drizzle-orm';
 import { c as chapterRepository, l as lessonRepository } from '../../_/LessonRepository.mjs';
@@ -130,7 +130,22 @@ class CourseService {
 const courseService = new CourseService();
 
 const index_get = defineEventHandler(async () => {
-  return courseService.getDefault();
+  try {
+    return await courseService.getDefault();
+  } catch (e) {
+    if (e && e.code === "DATABASE_URL_MISSING") {
+      throw createError({
+        statusCode: 503,
+        statusMessage: "DATABASE_URL is not configured",
+        data: { message: e.message, code: e.code, hint: "Vercel: Project \u2192 Settings \u2192 Environment Variables \u2192 Add DATABASE_URL" }
+      });
+    }
+    throw createError({
+      statusCode: 500,
+      statusMessage: "Failed to load course",
+      data: { message: (e == null ? void 0 : e.message) || String(e) }
+    });
+  }
 });
 
 export { index_get as default };

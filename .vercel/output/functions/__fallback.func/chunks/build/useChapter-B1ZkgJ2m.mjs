@@ -2,6 +2,7 @@ import { computed } from 'vue';
 import { u as useAsyncData } from './server.mjs';
 
 async function useChapter(slugOrOpts = null, opts = {}) {
+  var _a, _b;
   const isList = slugOrOpts === null || typeof slugOrOpts === "object";
   const options = isList ? slugOrOpts || {} : opts;
   if (isList) {
@@ -13,7 +14,7 @@ async function useChapter(slugOrOpts = null, opts = {}) {
       {
         default: () => [],
         server: true,
-        lazy: options.lazy ?? false,
+        lazy: (_a = options.lazy) != null ? _a : false,
         ...options
       }
     );
@@ -32,12 +33,18 @@ async function useChapter(slugOrOpts = null, opts = {}) {
     {
       default: () => ({ chapter: null, exercise: null }),
       server: true,
-      lazy: options.lazy ?? false,
+      lazy: (_b = options.lazy) != null ? _b : false,
       ...options
     }
   );
-  const currentChapter = computed(() => data.value?.chapter ?? null);
-  const currentExercise = computed(() => data.value?.exercise ?? null);
+  const currentChapter = computed(() => {
+    var _a2, _b2;
+    return (_b2 = (_a2 = data.value) == null ? void 0 : _a2.chapter) != null ? _b2 : null;
+  });
+  const currentExercise = computed(() => {
+    var _a2, _b2;
+    return (_b2 = (_a2 = data.value) == null ? void 0 : _a2.exercise) != null ? _b2 : null;
+  });
   return {
     data,
     currentChapter,
