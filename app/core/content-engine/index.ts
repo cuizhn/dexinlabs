@@ -88,6 +88,14 @@ export {
   exerciseService
 } from './services/index'
 
+export {
+  chapterRepository,
+  lessonRepository,
+  courseRepository,
+  exerciseRepository,
+  assetRepository
+} from '@core/database/repositories'
+
 export { queries } from './queries/index'
 
 export type {
