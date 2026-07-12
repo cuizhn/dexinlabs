@@ -24,7 +24,8 @@
     "js-yaml": "^5.2.1",
     "katex": "^0.17.0",
     "marked": "^18.0.5",
-    "nuxt": "^4.4.6"
+    "nuxt": "^4.4.6",
+    "vditor": "^3.11.2"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",

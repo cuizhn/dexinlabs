@@ -44,11 +44,11 @@ const { lesson, loading } = await useLesson(lessonSlug)
 const chapterSlug = computed(() => lesson.value?.chapter?.slug || route.params.chapter)
 
 useHead({
+  // title=lesson.title-chapter.title-得心实验室
   title: computed(() => {
     const parts = []
     if (lesson.value?.title) parts.push(lesson.value.title)
     if (lesson.value?.chapter?.title) parts.push(lesson.value.chapter.title)
-    parts.push('课时')
     return parts.join(' · ')
   })
 })

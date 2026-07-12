@@ -18,7 +18,7 @@
           <div class="chapter-detail__main">
             <h2 class="chapter-detail__section-title">课时内容</h2>
 
-            <!-- <ol v-if="lessons.length" class="lesson-list">
+            <ol v-if="lessons.length" class="lesson-list">
               <li v-for="(lesson, idx) in lessons" :key="lesson.slug" class="lesson-list__item">
                 <NuxtLink :to="`/course/${chapterSlug}/${lesson.slug}`" class="lesson-list__link">
                   <span class="lesson-list__index">{{ String(idx + 1).padStart(2, '0') }}</span>
@@ -34,7 +34,7 @@
                   <span class="lesson-list__arrow">→</span>
                 </NuxtLink>
               </li>
-            </ol> -->
+            </ol>
 
             
           </div>

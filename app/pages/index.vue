@@ -57,6 +57,12 @@
             <span class="landing__hero-stat-label">练习题库</span>
           </div>
         </div>
+
+        <div class="landing__hero-admin-entry">
+          <span class="landing__hero-admin-dot"></span>
+          <NuxtLink to="/admin" class="landing__hero-admin-link">开发者后台 / Admin · 数据库 CRUD</NuxtLink>
+          <span class="landing__hero-admin-arrow">→</span>
+        </div>
       </div>
 
       <div class="landing__hero-visual">
@@ -410,6 +416,52 @@ const steps = [
   width: 1px;
   height: 32px;
   background-color: var(--color-border);
+}
+
+.landing__hero-admin-entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: var(--spacing-xl);
+  padding: 8px 16px 8px 10px;
+  background-color: rgba(79, 70, 229, 0.05);
+  border: 1px solid rgba(79, 70, 229, 0.15);
+  border-radius: 100px;
+  transition: all 0.2s ease;
+}
+
+.landing__hero-admin-entry:hover {
+  background-color: rgba(79, 70, 229, 0.1);
+  border-color: var(--color-primary);
+}
+
+.landing__hero-admin-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.landing__hero-admin-link {
+  text-decoration: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.landing__hero-admin-entry:hover .landing__hero-admin-link {
+  color: var(--color-primary);
+}
+
+.landing__hero-admin-arrow {
+  font-size: 0.8125rem;
+  color: var(--color-primary);
+  transition: transform 0.2s ease;
+}
+
+.landing__hero-admin-entry:hover .landing__hero-admin-arrow {
+  transform: translateX(3px);
 }
 
 .landing__hero-visual {

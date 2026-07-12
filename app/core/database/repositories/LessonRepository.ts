@@ -146,7 +146,7 @@ export class LessonRepository {
     const payload: Omit<InsertLesson, 'id' | 'createdAt'> = { ...rest }
     const onConflictSet: Partial<InsertLesson> = { ...rest }
     delete (onConflictSet as { slug?: unknown }).slug
-    ;(onConflictSet as { cyc?: unknown }).cyc = new Date()
+    onConflictSet.updatedAt = new Date()
     const rows = await this._getDb()
       .insert(this.table)
       .values(payload as InsertLesson)
