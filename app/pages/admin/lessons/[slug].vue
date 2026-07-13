@@ -9,7 +9,7 @@
     </div>
     <p v-if="loading" class="admin-list__state">加载中...</p>
     <p v-else-if="err && !loadedOk" class="admin-list__state admin-list__state--err">加载失败：{{ err }}</p>
-    <LessonForm v-else :model-value="form" :is-new="false" @submit="onSubmit" @change="onAnyChange" @autosave="onAutoSave" />
+    <AdminLessonForm v-else :model-value="form" :is-new="false" @submit="onSubmit" @change="onAnyChange" @autosave="onAutoSave" />
   </div>
 </template>
 

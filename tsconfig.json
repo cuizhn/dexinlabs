@@ -37,8 +37,6 @@
     "app/core/**/*.ts",
     "server/**/*.ts",
     "server/**/*.js",
-    "content/**/*.ts",
-    "content/**/*.js",
     "drizzle.config.ts"
   ],
   "exclude": [

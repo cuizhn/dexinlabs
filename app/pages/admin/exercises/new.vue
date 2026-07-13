@@ -4,7 +4,7 @@
       <NuxtLink to="/admin/exercises" class="admin-list__back">← 练习列表</NuxtLink>
       <h1 class="admin-edit__title">新建练习 Exercise</h1>
     </div>
-    <ExerciseForm :model-value="form" :is-new="true" @submit="onSubmit" />
+    <AdminExerciseForm :model-value="form" :is-new="true" @submit="onSubmit" />
   </div>
 </template>
 

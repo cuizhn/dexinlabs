@@ -4,7 +4,7 @@
       <NuxtLink to="/admin/chapters" class="admin-list__back">← 章节列表</NuxtLink>
       <h1 class="admin-edit__title">新建章节 Chapter</h1>
     </div>
-    <ChapterForm :model-value="form" :is-new="true" @submit="onSubmit" />
+    <AdminChapterForm :model-value="form" :is-new="true" @submit="onSubmit" />
   </div>
 </template>
 
@@ -12,6 +12,7 @@
 import { reactive, ref } from 'vue'
 import { useHead, useRouter } from 'nuxt/app'
 import { useAdmin } from '~/composables/useAdmin'
+
 
 useHead({ title: '新建章节 · Admin' })
 const { createResource } = useAdmin()

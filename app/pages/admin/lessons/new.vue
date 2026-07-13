@@ -4,7 +4,7 @@
       <NuxtLink to="/admin/lessons" class="admin-list__back">← 课时列表</NuxtLink>
       <h1 class="admin-edit__title">新建课时 Lesson</h1>
     </div>
-    <LessonForm :model-value="form" :is-new="true" @submit="onSubmit" />
+    <AdminLessonForm :model-value="form" :is-new="true" @submit="onSubmit" />
   </div>
 </template>
 
