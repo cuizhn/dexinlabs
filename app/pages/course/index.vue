@@ -13,7 +13,7 @@
       <div class="container">
         <template v-if="chapters.length">
           <div class="course-index__grid">
-            <NuxtLink v-for="c in chapters" :key="c.id" :to="`/course/${c.slug}/${c.slug}-intro`" class="chapter-card">
+            <NuxtLink v-for="c in chapters" :key="c.id" :to="`/course/${c.slug}`" class="chapter-card">
               <div class="chapter-card__order">
                 {{ String(c.order).padStart(2, '0') }}
               </div>
