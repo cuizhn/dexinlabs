@@ -1,6 +1,6 @@
 <template>
   <div class="chapter-detail">
-    <template v-if="currentChapter">
+    <template v-if="chapter">
       <section class="chapter-detail__header">
         <div class="container">
           <nav class="chapter-detail__breadcrumb">
@@ -8,7 +8,7 @@
 
             <span class="chapter-detail__bc-sep">/</span>
 
-            <span class="chapter-detail__bc-current">{{ currentChapter.title }}</span>
+            <span class="chapter-detail__bc-current">{{ chapter.title }}</span>
           </nav>
         </div>
       </section>
@@ -66,10 +66,10 @@ import { computed } from 'vue'
 const route = useRoute()
 const chapterSlug = route.params.chapter
 
-const { currentChapter } = await useChapter(chapterSlug)
+const { chapter, lessons, loading } = await useChapterPage(chapterSlug)
 
 useHead({
-  title: computed(() => (currentChapter.value ? `${currentChapter.value.title} · 章节` : '章节'))
+  title: computed(() => (chapter.value ? `${chapter.value.title} · 章节` : '章节'))
 })
 </script>
 
