@@ -59,7 +59,7 @@
 import { useHead, useRoute } from 'nuxt/app'
 
 import { computed } from 'vue'
-import Markdown from '../../components/markdown/Markdown.vue'
+import Markdown from '../../components/markdown/render.vue'
 
 const route = useRoute()
 

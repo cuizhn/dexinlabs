@@ -16,7 +16,7 @@
 
 <script setup>
 import { useHead } from 'nuxt/app'
-import Markdown from '../components/markdown/Markdown.vue'
+import Markdown from '../components/markdown/render.vue'
 
 useHead({ title: '同步学习' })
 const md  = `# 📖 基础排版示例

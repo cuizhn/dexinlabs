@@ -11,7 +11,7 @@ export default defineEventHandler(async event => {
     })
   }
 
-  const result = await lessonService.getBySlug(slug)
+  const result = await lessonService.getLessonPage(slug)
 
   if (!result) {
     throw createError({

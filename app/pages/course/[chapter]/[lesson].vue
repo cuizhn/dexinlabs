@@ -21,7 +21,7 @@
     <section class="lesson-detail__body">
       <div class="container lesson-detail__container">
         <div v-if="loading" class="lesson-detail__empty">课时内容加载中...</div>
-        <Markdown v-else-if="lesson" :value="lesson" />
+        <MarkdownRender v-else-if="lesson" :value="lesson" />
         <div v-else class="lesson-detail__empty">课时内容未找到</div>
       </div>
     </section>
@@ -31,7 +31,6 @@
 <script setup>
 import { useHead, useRoute } from 'nuxt/app'
 import { computed } from 'vue'
-import Markdown from '../../../components/markdown/Markdown.vue'
 
 const route = useRoute()
 
@@ -39,16 +38,15 @@ const lessonSlug = Array.isArray(route.params.lesson)
   ? route.params.lesson[0]
   : route.params.lesson
 
-const { lesson, loading } = await useLesson(lessonSlug)
+const { lesson, chapter, course, loading } = await useLessonPage(lessonSlug)
 
-const chapterSlug = computed(() => lesson.value?.chapter?.slug || route.params.chapter)
+const chapterSlug = computed(() => chapter.value?.slug || route.params.chapter)
 
 useHead({
-  // title=lesson.title-chapter.title-得心实验室
   title: computed(() => {
     const parts = []
     if (lesson.value?.title) parts.push(lesson.value.title)
-    if (lesson.value?.chapter?.title) parts.push(lesson.value.chapter.title)
+    if (chapter.value?.title) parts.push(chapter.value.title)
     return parts.join(' · ')
   })
 })

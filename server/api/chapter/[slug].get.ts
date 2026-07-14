@@ -11,9 +11,9 @@ export default defineEventHandler(async event => {
     })
   }
 
-  const result = await chapterService.getBySlug(slug)
+  const result = await chapterService.getChapterPage(slug)
 
-  if (!result || !result.chapter) {
+  if (!result) {
     throw createError({
       statusCode: 404,
       statusMessage: `Chapter not found: ${slug}`

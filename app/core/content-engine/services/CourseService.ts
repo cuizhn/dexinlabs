@@ -103,6 +103,13 @@ export class CourseService {
     if (!q.isValid) throw new Error(q.error || 'slug is required')
     return this.courses.deleteBySlug(q.slug)
   }
+
+  async getCoursePage(slug: string): Promise<{
+    course: SelectCourse
+    chapters: ChapterWithLessons[]
+  } | null> {
+    return this.getBySlug(slug) as unknown as { course: SelectCourse; chapters: ChapterWithLessons[] } | null
+  }
 }
 
 export const courseService = new CourseService()

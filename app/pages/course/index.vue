@@ -41,7 +41,7 @@ import { useHead } from 'nuxt/app'
 
 useHead({ title: '课程中心' })
 
-const { chapters } = await useChapter()
+const { chapters } = await useCoursePage()
 </script>
 
 <style scoped>

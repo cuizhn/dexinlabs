@@ -111,6 +111,12 @@ export type {
 } from './models/index'
 
 export type {
+  LessonPage,
+  ChapterPage,
+  CoursePage
+} from './dto/index'
+
+export type {
   BySlugQuery,
   ByCourseQuery,
   ByChapterQuery,

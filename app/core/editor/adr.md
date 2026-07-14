@@ -1001,3 +1001,206 @@ Editor V1 修订后达成目标：
 
 **后续推荐下一步：** 在 Nuxt 插件中按 `$content` / `$markdown` 风格注入 `$editor = { create: (opts) => createEditor(opts) }`，并以 `@editor + @storage` 搭配实现 `LessonEditor.vue`——组件内部 **绝不** 写 `import vditor` / `new Vditor`。
 
+# Content Engine V2 · Composable（useLesson）职责调整
+
+## 背景
+
+目前 `LessonService` 与 `useLesson` 的职责存在一定重叠，导致 Service 层部分方法只是简单透传 Repository，没有真正承担业务职责。
+
+V2 的目标不是增加更多抽象，而是重新划分各层职责，使每一层只负责自己的工作。
+
+---
+
+# 最终职责划分
+
+```
+Vue Page
+    │
+    ▼
+Composable（useLesson）
+    │
+    ▼
+API（server/api）
+    │
+    ▼
+LessonService
+    │
+    ▼
+LessonRepository
+    │
+    ▼
+Database（Drizzle）
+```
+
+---
+
+# LessonRepository
+
+**职责：数据库访问层。**
+
+只负责：
+
+* CRUD
+* SQL 查询
+* Join（仅数据库层面的 Join）
+* 数据持久化
+
+例如：
+
+* getBySlug()
+* getById()
+* list()
+* create()
+* update()
+* delete()
+
+禁止：
+
+* 页面逻辑
+* 上下课计算
+* 面包屑
+* 权限
+* 业务规则
+
+Repository 永远不知道页面如何展示数据。
+
+---
+
+# LessonService
+
+**职责：业务层。**
+
+负责：
+
+* 业务规则
+* 数据组合
+* 调用多个 Repository
+* 返回页面真正需要的数据
+
+例如：
+
+```
+Lesson
+    ↓
+Chapter
+    ↓
+Course
+    ↓
+Previous Lesson
+    ↓
+Next Lesson
+```
+
+这些组合工作全部由 Service 完成。
+
+未来推荐的方法例如：
+
+```
+getLessonPage(slug)
+getChapterPage(slug)
+getCoursePage(slug)
+```
+
+Service 可以调用多个 Repository，但 Repository 不允许反向调用 Service。
+
+---
+
+# API
+
+**职责：HTTP 层。**
+
+只负责：
+
+* 参数获取
+* 调用 Service
+* 返回 JSON
+* HTTP Error
+
+禁止：
+
+* 查询数据库
+* 拼装业务数据
+* 编写业务规则
+
+API 应尽可能保持轻量。
+
+---
+
+# useLesson（Composable）
+
+**职责：Vue / Nuxt 适配层。**
+
+仅负责：
+
+* useAsyncData()
+* 调用 API
+* loading
+* error
+* refresh
+* SSR
+* Hydration
+* Nuxt Cache
+* 响应式封装
+
+例如：
+
+```
+const { lesson, loading, error, refresh } = await useLesson(slug)
+```
+
+其内部仅负责：
+
+```
+$fetch('/api/lesson/:slug')
+```
+
+禁止：
+
+* 查询多个接口再自行拼装
+* 计算上一课、下一课
+* 获取 Chapter、Course 后自行组合业务数据
+* 编写业务规则
+
+Composable 不负责业务，只负责让 Vue 页面方便使用数据。
+
+---
+
+# Vue Page
+
+页面职责保持最简单：
+
+```
+const { lesson } = await useLesson(route.params.slug)
+```
+
+页面直接渲染：
+
+* lesson
+* previous
+* next
+* chapter
+* course
+
+页面不关心这些数据来自哪里，也不负责组合。
+
+---
+
+# V2 设计原则
+
+以后遵循以下原则：
+
+* Repository 负责数据库。
+* Service 负责业务规则与数据组合。
+* API 负责 HTTP。
+* Composable 负责 Vue/Nuxt 响应式适配。
+* Page 负责渲染。
+
+任何业务逻辑都不应出现在 Composable 中，也不应出现在 Page 中。
+
+---
+
+# V2 目标
+
+V2 完成后，`useLesson()` 应尽可能保持轻量，主要承担 Vue 层适配职责；`LessonService` 成为真正的业务入口；`LessonRepository` 成为唯一的数据访问入口。
+
+最终实现各层职责单一、边界清晰、低耦合，便于未来扩展后台管理、移动端、小程序等不同客户端，而无需修改业务层逻辑。

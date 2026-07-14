@@ -1,10 +1,12 @@
 import {
   lessonRepository,
-  chapterRepository
+  chapterRepository,
+  courseRepository
 } from '@core/database/repositories'
 import type { LessonRepository, LessonListByChapterRow } from '@core/database/repositories'
 import type { ChapterRepository } from '@core/database/repositories'
-import type { Chapter, Lesson } from '../models/index'
+import type { CourseRepository } from '@core/database/repositories'
+import type { Chapter, Lesson, Course } from '../models/index'
 import { queries } from '../queries/index'
 
 type SelectLesson = Lesson
@@ -17,15 +19,18 @@ export type LessonWithChapter = Omit<SelectLesson, 'chapter'> & {
 export interface LessonServiceDeps {
   lessons?: LessonRepository
   chapters?: ChapterRepository
+  courses?: CourseRepository
 }
 
 export class LessonService {
   lessons: LessonRepository
   chapters: ChapterRepository
+  courses: CourseRepository
 
-  constructor({ lessons = lessonRepository, chapters = chapterRepository }: LessonServiceDeps = {}) {
+  constructor({ lessons = lessonRepository, chapters = chapterRepository, courses = courseRepository }: LessonServiceDeps = {}) {
     this.lessons = lessons
     this.chapters = chapters
+    this.courses = courses
   }
 
   async listByChapter(chapterSlug: string): Promise<LessonListByChapterRow[]> {
@@ -102,6 +107,68 @@ export class LessonService {
     const q = queries.normalizeBySlug(slug)
     if (!q.isValid) throw new Error(q.error || 'slug is required')
     return this.lessons.deleteBySlug(q.slug)
+  }
+
+  async getLessonPage(slug: string): Promise<{
+    lesson: SelectLesson
+    chapter: SelectChapter | null
+    course: Course | null
+    previousLesson: SelectLesson | null
+    nextLesson: SelectLesson | null
+  } | null> {
+    const q = queries.normalizeBySlug(slug)
+    if (!q.isValid) return null
+
+    const lesson = await this.lessons.getBySlug(q.slug)
+    if (!lesson) return null
+
+    let chapter: SelectChapter | null = null
+    let course: Course | null = null
+    let previousLesson: SelectLesson | null = null
+    let nextLesson: SelectLesson | null = null
+
+    if (lesson.chapterId) {
+      chapter = (await this.chapters.getById(lesson.chapterId)) || null
+    }
+    if (!chapter && lesson.chapter) {
+      chapter = (await this.chapters.getBySlug(lesson.chapter)) || null
+    }
+
+    if (chapter) {
+      if (chapter.courseId) {
+        course = (await this.courses.getById(chapter.courseId)) || null
+      }
+      if (!course && chapter.course) {
+        course = (await this.courses.getBySlug(chapter.course)) || null
+      }
+
+      const lessonsInChapter = await this.lessons.listByChapter(chapter.slug)
+      const currentIndex = lessonsInChapter.findIndex(l => l.slug === lesson.slug)
+      if (currentIndex >= 0) {
+        if (currentIndex > 0) {
+          const prevItem = lessonsInChapter[currentIndex - 1]
+          if (prevItem) {
+            const prev = await this.lessons.getBySlug(prevItem.slug)
+            if (prev) previousLesson = prev
+          }
+        }
+        if (currentIndex < lessonsInChapter.length - 1) {
+          const nextItem = lessonsInChapter[currentIndex + 1]
+          if (nextItem) {
+            const next = await this.lessons.getBySlug(nextItem.slug)
+            if (next) nextLesson = next
+          }
+        }
+      }
+    }
+
+    return {
+      lesson,
+      chapter,
+      course,
+      previousLesson,
+      nextLesson
+    }
   }
 }
 
