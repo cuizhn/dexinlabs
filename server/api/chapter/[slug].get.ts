@@ -1,5 +1,5 @@
 import { defineEventHandler, getRouterParam, createError } from 'h3'
-import { chapterService } from '@ce'
+import { getContentEngine } from '@ce'
 
 export default defineEventHandler(async event => {
   const slug = getRouterParam(event, 'slug')
@@ -11,7 +11,8 @@ export default defineEventHandler(async event => {
     })
   }
 
-  const result = await chapterService.getChapterPage(slug)
+  const engine = getContentEngine()
+  const result = await engine.getChapterPage(slug)
 
   if (!result) {
     throw createError({

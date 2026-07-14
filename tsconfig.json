@@ -21,8 +21,6 @@
       "@me/*": ["app/core/markdown-engine/src/*"],
       "@ce": ["app/core/content-engine"],
       "@ce/*": ["app/core/content-engine/*"],
-      "@editor": ["app/core/editor/src"],
-      "@editor/*": ["app/core/editor/src/*"],
       "@storage": ["app/core/storage-engine/src"],
       "@storage/*": ["app/core/storage-engine/src/*"],
       "~/*": ["app/*"],

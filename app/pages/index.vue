@@ -58,11 +58,7 @@
           </div>
         </div>
 
-        <div class="landing__hero-admin-entry">
-          <span class="landing__hero-admin-dot"></span>
-          <NuxtLink to="/admin" class="landing__hero-admin-link">开发者后台 / Admin · 数据库 CRUD</NuxtLink>
-          <span class="landing__hero-admin-arrow">→</span>
-        </div>
+        
       </div>
 
       <div class="landing__hero-visual">

@@ -1,14 +1,16 @@
 import { defineEventHandler, getQuery } from 'h3'
-import { courseService } from '@ce'
+import { getContentEngine } from '@ce'
 
 export default defineEventHandler(async event => {
   const query = getQuery(event)
   const slug = String(query.slug || '')
 
+  const engine = getContentEngine()
+
   if (slug) {
-    const result = await courseService.getCoursePage(slug)
+    const result = await engine.getCoursePage(slug)
     if (result) return result
   }
 
-  return courseService.getDefault()
+  return engine.getDefaultCourse()
 })

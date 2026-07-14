@@ -1,5 +1,5 @@
 import { defineEventHandler, getRouterParam, createError } from 'h3'
-import { lessonService } from '@ce'
+import { getContentEngine } from '@ce'
 
 export default defineEventHandler(async event => {
   const slug = getRouterParam(event, 'slug')
@@ -11,7 +11,8 @@ export default defineEventHandler(async event => {
     })
   }
 
-  const result = await lessonService.getLessonPage(slug)
+  const engine = getContentEngine()
+  const result = await engine.getLessonPage(slug)
 
   if (!result) {
     throw createError({
