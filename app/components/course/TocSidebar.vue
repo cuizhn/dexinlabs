@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="toc-sidebar" :class="{ 'toc-sidebar--mobile': isMobile }">
     <div class="toc-sidebar__header">
       <h3 class="toc-sidebar__title">目录</h3>

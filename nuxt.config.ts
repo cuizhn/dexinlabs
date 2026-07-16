@@ -116,9 +116,9 @@ export default defineNuxtConfig({
   alias: {
     '@shared': path.resolve(rootDir, 'app/shared'),
     '@server': path.resolve(rootDir, 'server'),
-    '@core': path.resolve(rootDir, 'app/core'),
-    '@me': path.resolve(rootDir, 'app/core/markdown-engine/src'),
-    '@ce': path.resolve(rootDir, 'app/core/content-engine')
+    '@markdown': path.resolve(rootDir, 'app/markdown'),
+    '@content': path.resolve(rootDir, 'app/content'),
+    '@database': path.resolve(rootDir, 'app/database')
   },
 
   /** 
@@ -140,9 +140,9 @@ export default defineNuxtConfig({
       alias: {
         '@shared': path.resolve(rootDir, 'app/shared'),
         '@server': path.resolve(rootDir, 'server'),
-        '@core': path.resolve(rootDir, 'app/core'),
-        '@me': path.resolve(rootDir, 'app/core/markdown-engine/src'),
-        '@ce': path.resolve(rootDir, 'app/core/content-engine')
+        '@markdown': path.resolve(rootDir, 'app/markdown'),
+        '@content': path.resolve(rootDir, 'app/content'),
+        '@database': path.resolve(rootDir, 'app/database')
       }
     }
   }

@@ -37,7 +37,7 @@
  * - 404 Not Found: 课时不存在
  */
 import { defineEventHandler, getRouterParam, createError } from 'h3'
-import { getContentEngine } from '@ce'
+import { getContentEngine } from '@content'
 
 export default defineEventHandler(async event => {
   /** 从 URL 路由参数中提取 slug */

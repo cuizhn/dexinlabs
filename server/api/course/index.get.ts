@@ -37,7 +37,7 @@
  * - 如果未提供 slug：返回默认课程
  */
 import { defineEventHandler, getQuery } from 'h3'
-import { getContentEngine } from '@ce'
+import { getContentEngine } from '@content'
 
 export default defineEventHandler(async event => {
   /** 获取 URL 查询参数 */

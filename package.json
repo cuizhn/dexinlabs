@@ -18,10 +18,23 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
+    "@types/hast": "^3.0.5",
+    "@types/mdast": "^4.0.4",
+    "@types/unist": "^3.0.3",
     "drizzle-orm": "^0.45.2",
     "katex": "^0.17.0",
-    "marked": "^18.0.5",
-    "nuxt": "^4.4.6"
+    "nuxt": "^4.4.6",
+    "rehype-katex": "^7.0.1",
+    "rehype-stringify": "^10.0.1",
+    "remark": "^15.0.1",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "remark-slug": "^7.0.1",
+    "unified": "^11.0.5",
+    "vfile": "^6.0.3"
   },
   "devDependencies": {
     "@types/node": "^26.1.0",

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <header class="app-header">
     <div class="app-header__container">
       <NuxtLink to="/" class="app-header__logo">
@@ -204,7 +204,7 @@ function closeMenu() {
   background-color: var(--color-bg-secondary);
 }
 
-@media (max-width: 768px) {
+@markdowndia (max-width: 768px) {
   .app-header__nav {
     display: none;
   }
@@ -220,7 +220,7 @@ function closeMenu() {
   }
 }
 
-@media (max-width: 480px) {
+@markdowndia (max-width: 480px) {
   .app-header__logo-text {
     font-size: 1rem;
   }

@@ -124,7 +124,7 @@ useHead({ title: '学习方法' })
   line-height: 1.6;
   margin: 0;
 }
-@media (max-width: 600px) {
+@markdowndia (max-width: 600px) {
   .principle-item {
     grid-template-columns: 1fr;
     gap: var(--spacing-sm);

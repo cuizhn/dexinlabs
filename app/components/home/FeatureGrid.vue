@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <section class="landing__features">
     <div class="landing__section-inner">
       <div class="landing__section-header">
@@ -774,7 +774,7 @@ const features = [
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
-@media (max-width: 1024px) {
+@markdowndia (max-width: 1024px) {
   .landing__hero-visual {
     display: none;
   }
@@ -805,7 +805,7 @@ const features = [
   }
 }
 
-@media (max-width: 768px) {
+@markdowndia (max-width: 768px) {
   .landing__hero {
     min-height: auto;
     padding: var(--spacing-2xl) var(--spacing-md);
@@ -892,7 +892,7 @@ const features = [
   }
 }
 
-@media (max-width: 480px) {
+@markdowndia (max-width: 480px) {
   .landing__hero-title {
     font-size: 1.875rem;
   }

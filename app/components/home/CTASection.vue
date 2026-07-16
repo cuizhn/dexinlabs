@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <section class="landing__cta">
     <div class="landing__cta-inner">
       <div class="landing__cta-deco">∑</div>

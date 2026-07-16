@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="quiz-input">
     <p class="quiz-input__question">{{ question }}</p>
 

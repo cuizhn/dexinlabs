@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="chapter-nav">
     <NuxtLink v-if="prev" :to="`/course/${prev.slug}`" class="chapter-nav__item chapter-nav__item--prev">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -107,7 +107,7 @@ defineProps({
   max-width: 48%;
 }
 
-@media (max-width: 768px) {
+@markdowndia (max-width: 768px) {
   .chapter-nav {
     flex-direction: column;
     gap: var(--spacing-md);

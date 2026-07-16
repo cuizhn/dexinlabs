@@ -55,10 +55,10 @@ if (!DATABASE_URL) {
 /** 导出 Drizzle 配置 */
 export default defineConfig({
   /** Schema 定义文件路径 */
-  schema: './app/core/database/schema.ts',
+  schema: './app/database/schema.ts',
   
   /** 迁移文件输出目录 */
-  out: './app/core/database/migrations',
+  out: './app/database/migrations',
   
   /** 数据库方言 */
   dialect: 'postgresql',

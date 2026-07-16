@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="course-sidebar">
     <h3 class="course-sidebar__title">章节目录</h3>
 

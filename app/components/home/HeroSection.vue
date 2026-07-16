@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <section class="hero">
     <h1>AI 驱动的数学学习系统</h1>
 

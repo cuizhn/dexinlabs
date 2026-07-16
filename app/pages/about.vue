@@ -157,7 +157,7 @@ useHead({ title: '关于 Dexin Labs' })
   line-height: 1.6;
   margin: 0;
 }
-@media (max-width: 640px) {
+@markdowndia (max-width: 640px) {
   .about-page__title {
     font-size: 1.875rem;
   }

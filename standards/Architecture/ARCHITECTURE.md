@@ -1,416 +1,432 @@
-根据你目前项目的发展方向，我建议这文件的定位如下：
+# 得心实验室 · 项目架构原则（Architecture V2）
 
-* `ARCHITECTURE.md`：**整个教育平台的最高层架构规则**，约束所有模块如何协作
-
-两者关系：
-
-```
-ARCHITECTURE.md
-        │
-        │ 定义系统边界
-        ↓
-
-markdown-engine/SPEC.md
-        │
-        │ 定义 Markdown Engine 内部规则
-        ↓
-
-Implementer 执行代码
-```
----
-
-# ARCHITECTURE.md
-
-```md
-# 德鑫实验室平台架构规范
-
-Version: 1.1
-
-Status: **Partially Implemented**（2026-07-10：Core 五域归位（content-engine/markdown-engine/database/storage）+ Boot 聚合层删除 + Engine 独立·Application 编排 100% 落地；Search Engine / Learning Engine 仍为蓝图）
-
-Priority: Highest
-
-
-# 1. 项目定位
-
-本项目是一个可长期演进的教育内容平台。
-
-核心目标：
-
-- 管理结构化课程内容
-- 支持多学科扩展
-- 支持学习流程
-- 支持练习系统
-- 支持未来智能学习能力
-
-
-系统不是单一网站，而是一个教育内容基础设施。
-
+> Last Updated: 2026-07-16
+> Version: Architecture V2
+> Status: 生效中 — 所有开发遵循本文件
 
 ---
 
-# 2. 总体架构
+# 一、架构思想升级说明
 
+本次不是目录调整，而是 **架构思想升级**。
 
-系统采用分层架构：
+**核心转变**：从"自主实现一切"转向"长期稳定维护"。
 
-```
+> 得心实验室不是一个追求"自主实现一切"的项目，而是一个追求"长期稳定维护"的项目。
+> 所有架构决策，以降低维护成本、提高可理解性、快速定位问题为最高优先级。
 
-Application Layer
-|
-|
-Business Modules
-|
-|
-Domain Engines
-|
-|
-Infrastructure
+今后新增任何代码前，请先判断：
 
-```
+1. 是否已有成熟方案？
+2. 是否只是重复封装？
+3. 是否真正属于得心实验室业务？
+4. 是否增加了维护成本？
+5. 出现问题时，能否快速定位到唯一模块？
 
-
-具体：
-
-
-```
-
-┌──────────────────────┐
-│       Pages          │
-│   Nuxt Application   │
-└──────────┬───────────┘
-|
-↓
-
-┌──────────────────────┐
-│     Modules          │
-│ course               │
-│ practice             │
-│ learning             │
-└──────────┬───────────┘
-|
-↓
-
-┌──────────────────────┐
-│      Engines         │
-│                      │
-│ Content Engine       │
-│ Markdown Engine      │
-│ Search Engine        │
-│ Learning Engine      │
-└──────────┬───────────┘
-|
-↓
-
-┌──────────────────────┐
-│ Infrastructure       │
-│ Database             │
-│ Storage              │
-│ External Services    │
-└──────────────────────┘
-
-```
-
-Content Engine 定义内容获取的领域接口（如 findLessonById），但具体的数据库访问通过 Infrastructure 层的 Drizzle ORM 实现。Content Engine 依赖于 Infrastructure 的抽象接口，而非直接耦合 Drizzle，代码位于 `app/core/content-engine/`（统一 Core 目录下的内容能力域，禁止放在 app/modules 或 app/data 等泛化目录）。
-
-**Markdown Engine** 是 Domain Engines 层中的**独立纯技术基础设施**，代码位于统一 Core 目录 `app/core/markdown-engine/`（**不放在 app/modules/course、components、render/modules 等业务路径下**），严格保持零 Nuxt / 零 Vue / 零 DB 依赖，未来可独立发布为 npm 包（目录迁移到 app/core 仅属统一组织方式，不影响独立发布能力；只要保持零 app/* 依赖即可）。平台提供公共路径别名 `@me` → `app/core/markdown-engine/src`，业务代码统一通过 `import { createEngine, renderToHTML, runRenderPipeline } from '@me'` 使用，禁止直接 import 内部子路径。
----
-
-# 3. 核心架构原则
-
-
-## 3.1 单向依赖原则
-
-
-依赖方向：
-
-```
-
-Application
-
-↓
-
-Modules
-
-↓
-
-Engines
-
-↓
-
-Infrastructure
-
-```
-
-
-禁止反向依赖。
-
-
-例如：
-
-允许：
-
-```
-
-Course Module
-
-调用
-
-Content Engine
-
-```
-
-
-禁止：
-
-```
-
-Content Engine
-
-调用
-
-Course Module
-
-```
-
-
+如果答案不满足以上原则，请重新设计。
 
 ---
 
-## 3.2 Core 目录统一组织原则（v4 起强制执行）
+# 二、最高原则
 
-所有与业务无关、可被多个业务模块共享的**纯技术核心能力**，统一放入 `app/core/`，禁止再放在项目根目录或泛化的 app/data 下：
+## 原则 1：成熟方案优先
 
-```text
-app/
-└── core/                 【十年稳定 · 只承载非业务纯技术能力】
-    ├── content-engine/      【内容能力】内容组织/查询/模型/服务（禁止 import Markdown）
-    ├── markdown-engine/     【Markdown 能力】解析/转换/渲染（禁止 import Course/Lesson/Repository）
-    ├── database/            【数据能力】Drizzle 连接/Schema/Migration/Repository 实现（独占 drizzle 包引用）
-    └── storage/             【资源能力】对象存储（上传/删除/URL/meta）
+优先采用成熟生态，而不是重复实现。
 
-app/
-└── modules/              【业务模块】course / practice / review ...
-                           → 仅允许依赖 @core/**，不得直接引用 drizzle/repository
-```
+| 能力 | 成熟方案 | 说明 |
+|------|----------|------|
+| Markdown 解析 | remark + unified | 不自己写 Parser/Lexer |
+| Markdown 插件 | remark ecosystem | remark-gfm、remark-math 等 |
+| 数据库 | PostgreSQL (Neon) | Serverless  PostgreSQL |
+| ORM | Drizzle ORM | 保持原生能力，不重复封装 |
+| 数学公式 | KaTeX | 通过 rehype-katex 集成 |
+| 服务端 | Nuxt / H3 | 复用框架能力 |
 
-**关键规则**：
-- 根目录只保留构建配置类文件（package.json / nuxt.config.ts / drizzle.config.ts / tsconfig.json），**禁止任何 Engine / 基础设施代码直接放在根目录**（v4 之前的 markdown-engine/content-engine 根目录模式 100% 废止）
-- Database 层的 `drizzle-orm` / `drizzle-kit` 包引用，**只允许出现在 `app/core/database/**` + 根 `drizzle.config.ts`**，Application（Page/Component/Composable/Plugin）禁止直接 import（v4 起是宪法级红线，见 adr0710 §6）
-- 两个 Engine（content-engine ↔ markdown-engine）必须**零互相引用**，组合权永远在 Application 具体业务（Nuxt Page / Server API / Plugin / Composable），禁止再创建任何"总 Engine Facade / Boot 总启动层"把两 Engine 写死绑定（v4 起删除 app/boot 整目录）
+Engine 不负责重新实现这些能力。
 
 ---
 
-# 4. Engine 层规范
+## 原则 2：只实现业务
 
+项目自己维护的代码，只负责真正的业务逻辑：
 
-Engine 是系统核心能力。
+- 教育业务
+- 内容组织
+- 课程模型
+- 学习流程
+- 权限控制
+- 学习记录
+- 练习系统
 
-
-Engine 特征：
-
-- 独立
-- 可复用
-- 与业务无关
-- 稳定 API
-- 长期维护
-
-
-当前 Engine：
-
-
-## Content Engine
-
-职责：
-
-- 内容获取
-- 内容索引
-- 内容查询
-- 内容生命周期
-
-
-不负责：
-
-- Markdown解析
-- 页面显示
-
+基础设施全部交给成熟方案。
 
 ---
 
+## 原则 3：Engine 是协调者
 
-## Markdown Engine
+Engine 是 **能力协调者（Coordinator）**，不是重复实现者。
 
-**位置（强制执行）**：统一 Core 目录 `app/core/markdown-engine/`（禁止放在 `app/modules/course/markdown/`、`components/MarkdownRenderer.vue`、`app/render/modules/markdown/` 等业务/组件路径下作为核心实现）。业务代码通过别名 `@me` → `app/core/markdown-engine/src` 访问公共 API。
+Engine 不重新实现：
+- Parser
+- Lexer
+- ORM
+- Storage
 
-职责：
-
-- Markdown解析（marked.lexer → MDAST 兼容 AST）
-- AST处理（统一类型真源：`@me/ast/types.ts`，禁止业务层复制类型）
-- 插件系统（Engine 自管 Map-based Registry，不依赖 `@core/registry`；内置 6 个插件按 order 升序：Heading 10 → TOC 20 → Links 30 → Excerpt 40 → ReadingTime 50 → Reference 100）
-- 渲染转换：Pipeline 固定顺序 `Parse → runPlugins → Renderer`，双输出格式：
-  - **HTML string**：SSR/SEO/邮件/PDF 导出用
-  - **框架无关 JSON VNode 描述树**（`{ type, is, props, children }`，可 `JSON.stringify`）：由 UI 层（app/render/）适配 Vue/React 等渲染
-- 公共 API 入口（`@me/index.ts`）：`createEngine / getEngine / parseMarkdown / runRenderPipeline / renderToHTML / renderToVNode / compile / registerPlugin / unregisterPlugin`
-
-不负责：
-
-- 内容存储
-- 用户权限
-- 课程结构
-- 直接挂载 Vue 组件引用（必须是 JSON VNode 描述，由 Vue 适配层动态 `<component :is>` 渲染）
-
-
+Engine 负责：
+- Processor 创建
+- Plugin 管理
+- 配置统一
+- 对外统一 API
 
 ---
 
-# 5. Module 层规范
+## 原则 4：避免无意义抽象
 
+不要为了分层而分层。
 
-Module 是业务领域。
-
-
-例如：
+如果某一层只是：
 
 ```
-
-modules/
-
-course
-
-practice
-
-learning
-
-user
-
+A → B
 ```
 
+没有增加任何业务价值，应删除。
 
-Module 可以：
-
-- 调用 Engine
-- 组合业务逻辑
-- 提供页面组件
-
-
-Module 不应该：
-
-- 自己实现 Markdown Parser
-- 自己访问数据库底层
-- 创建基础设施
-
+反模式示例：
+- Repository → Mapper → Entity → DTO → Service（层层转发，无业务价值）
+- API → Service → Repository → ORM（每层只做参数透传）
 
 ---
 
-# 6. Markdown Engine 架构要求
+## 原则 5：高内聚
 
+所有同一种能力放到同一个目录。
 
-Markdown Engine 必须独立维护。
+| 能力 | 目录 |
+|------|------|
+| Markdown | `app/core/markdown-engine/` |
+| 内容组织 | `app/core/content-engine/` |
+| 数据库 | `app/core/database/` |
 
-
-目录：
-
-```
-
-app/core/markdown-engine/
-
-├── DESIGN.md
-├── SPEC.md
-├── RFC/
-├── VERSION.md
-│
-├── src/
-│
-├── tests/
-│
-└── fixtures/
-
-```
-
-
-禁止：
-
-```
-
-modules/course/
-markdown/
-
-```
-
-
-或者：
-
-```
-
-components/
-MarkdownRenderer.vue
-
-```
-
-
-作为核心实现。
-
+这样出现问题时，可以立即定位到唯一模块。
 
 ---
 
-# 7. 技术替换原则
+## 原则 6：低耦合
 
+上层不知道下层的实现细节。
 
-任何 Engine 内部技术可以替换。
+Page 不知道：
+- Markdown 如何解析
+- 数据库如何查询
+- Storage 如何工作
 
-
-例如：
-
-Markdown Engine:
-
-现在：
-
-marked.lexer() + 手动转换为 MDAST 兼容 AST（详细选型理由见 app/core/markdown-engine/ADR.md ADR 002、008）
-
-未来：
-
-remark
-rehype
-micromark
-
-（注：Parser 技术可替换属于 Engine 内部决策，只要公共 API（createEngine/render/parse）形状不变，对 Module / Page / Database 无影响。AST Schema 是公共契约，更换 Parser 必须保持 MDAST 兼容的节点 shape，不能改根节点 type 或 heading/code 等核心节点结构，否则视为 Breaking Change 必须走 RFC）
-
-
-不影响：
-
-- Module
-- Page
-- Database
-
+只调用公开 API。
 
 ---
 
-# 8. AI Implementer 工作规则
+## 原则 7：业务优先
 
+业务需求决定技术方案。
 
-执行任务前必须阅读：
+不是为了使用某项技术，而增加架构复杂度。
 
-1. ARCHITECTURE.md
+---
 
-2. 对应 Engine SPEC.md
+## 原则 8：唯一职责归属
 
+每一种能力，在整个项目中只能有一个真正负责它的模块。
 
-实现时：
+| 能力 | 负责模块 |
+|------|----------|
+| Markdown | `markdown-engine` |
+| 内容 | `content-engine` |
+| 数据库 | `database` |
+| 对象存储 | `storage`（如需要） |
 
-优先保证：
+页面、组件、Query、API 不允许重复承担这些职责。
 
-1. 架构正确
-2. 边界清晰
-3. API稳定
-4. 可测试
+禁止多个模块共同维护同一种能力。
 
+所有能力必须拥有唯一归属。
 
-禁止：
+---
 
-- 快速堆代码
-- 跨层调用
-- 业务污染基础设施
+# 三、模块职责边界
 
+## 1. Markdown Engine
+
+**目标**：由"Markdown 实现者"调整为"Markdown 能力协调者"。
+
+### 技术栈
+
+使用 **remark + unified** 生态。
+
+优先使用成熟插件：
+- `remark-parse` — Markdown 解析
+- `remark-gfm` — GitHub Flavored Markdown
+- `remark-math` — 数学公式支持
+- `remark-directive` — 通用指令（如需要）
+- `rehype-katex` — KaTeX 数学渲染
+- `rehype-stringify` — HTML 输出（或 Vue 对应 Renderer）
+
+### 负责
+
+- remark Processor 创建与配置
+- Plugin 注册与管理
+- Markdown 配置统一
+- Renderer 配置（HTML / VNode / JSON）
+- 对外统一 API（`render()`、`parse()` 等）
+
+### 不负责
+
+- Parser 实现
+- Lexer 实现
+- Markdown AST 定义
+- Markdown 规范实现
+
+### 目录约定
+
+所有 Markdown 相关代码必须集中在 `app/core/markdown-engine/`。
+
+---
+
+## 2. Content Engine
+
+**目标**：由"多层业务框架"调整为"统一内容入口"。
+
+### 负责
+
+- 获取课程（getCourse / listCourses）
+- 获取章节（getChapter / listChapters）
+- 获取课时（getLesson / listLessons）
+- 获取练习（getExercise / listExercises）
+- 数据组合（Page DTO：上一篇/下一篇、导航等）
+- 缓存策略
+- 多数据源切换（FileSource / DatabaseSource）
+
+### 不负责
+
+- Markdown 渲染
+- Vue 组件
+- ORM 实现
+- HTML 生成
+
+### Repository
+
+保持轻量，只负责数据库 CRUD。
+
+不增加：
+- DTO 转换
+- Entity 映射
+- Mapper 层
+
+### Service
+
+只保留真正的业务逻辑：
+- 上一篇/下一篇
+- 导航结构
+- 权限判断
+- 学习进度
+- 内容组合
+
+### 对外 API
+
+Engine 对外提供统一内容 API，隐藏数据源实现细节。
+
+---
+
+## 3. Database
+
+### 技术栈
+
+Drizzle ORM + PostgreSQL (Neon Serverless)
+
+### 负责
+
+- Schema 定义
+- Migration 管理
+- Repository（CRUD 封装）
+- 连接管理
+
+### 不负责
+
+- 业务规则
+- DTO / Entity / Mapper 等无业务价值的层
+
+### 原则
+
+- 保持 Drizzle 原生能力，不重复封装 ORM
+- Schema、Migration、Repository 职责清晰
+- Repository 只做数据访问，不包含业务逻辑
+
+---
+
+## 4. API Layer
+
+**要求**：保持极薄。
+
+### 流程
+
+```
+Request
+   ↓
+API Handler（参数校验 + 错误处理）
+   ↓
+Service（业务逻辑）
+   ↓
+Response
+```
+
+### 负责
+
+- 参数校验（必填项、格式）
+- 调用 Service
+- 错误处理（400 / 404 / 503）
+- 返回响应
+
+### 不负责
+
+- 业务逻辑
+- 数据组合
+- 数据库查询
+
+---
+
+## 5. Query / Composable Layer
+
+**定位**：前端数据获取层。
+
+### 流程
+
+```
+Page
+  ↓
+useLessonPage() / useChapterPage()
+  ↓
+API
+```
+
+### 负责
+
+- 调用 API
+- 数据缓存（useAsyncData）
+- 加载状态
+- 错误状态
+
+### 不负责
+
+- 业务逻辑
+- 数据组合
+- Markdown 解析
+
+---
+
+## 6. Page Layer
+
+**定位**：纯展示层。
+
+### 负责
+
+- 获取数据（调用 Composable）
+- 调用组件
+- 页面布局与展示
+
+### 禁止
+
+- Markdown 解析
+- SQL 查询
+- 直接调用 Repository
+- 业务组合逻辑
+
+---
+
+# 四、分层架构总览
+
+```
+┌─────────────────────────────────┐
+│         Page (Vue/Nuxt)         │  展示层：仅负责展示
+└────────────────┬────────────────┘
+                 │
+┌────────────────▼────────────────┐
+│     Composable (use*Page)       │  数据获取层：API 调用 + 缓存
+└────────────────┬────────────────┘
+                 │
+┌────────────────▼────────────────┐
+│         API Routes              │  接口层：参数校验 + 错误处理
+└────────────────┬────────────────┘
+                 │
+┌────────────────▼────────────────┐
+│       Content Engine            │  业务入口：统一内容 API
+│  ┌───────────────────────────┐  │
+│  │  Service（业务逻辑）       │  │  上一篇/下一篇、导航、组合
+│  └─────────────┬─────────────┘  │
+│                │                │
+│  ┌─────────────▼─────────────┐  │
+│  │  Repository（数据访问）    │  │  仅 CRUD，无业务
+│  └───────────────────────────┘  │
+└────────────────┬────────────────┘
+                 │
+┌────────────────▼────────────────┐
+│    Database (Drizzle ORM)       │  基础设施层：Schema + Migration
+└─────────────────────────────────┘
+
+┌─────────────────────────────────┐
+│    Markdown Engine              │  独立能力层：remark + unified
+│  （零 Content Engine 依赖）      │
+└─────────────────────────────────┘
 ```
 
 ---
+
+# 五、数据流示例
+
+## 获取课时页面数据
+
+```
+1. 页面访问 /course/[chapter]/[lesson]
+   ↓
+2. useLessonPage(slug) 调用
+   ↓
+3. /api/lesson/[slug] 被请求
+   ↓
+4. API Handler：
+   - 校验 slug 参数
+   - 调用 contentEngine.getLessonPage(slug)
+   ↓
+5. Content Engine Facade：
+   - 根据 CONTENT_SOURCE 选择数据源
+   ↓
+6. DatabaseSource / FileSource：
+   - 调用 LessonService.getLessonPage(slug)
+   ↓
+7. LessonService：
+   - 调用 lessonRepository.getBySlug(slug)
+   - 调用 chapterRepository.getBySlug(chapterSlug)
+   - 计算 previousLesson / nextLesson
+   - 组合 LessonPage DTO 返回
+   ↓
+8. API 返回 JSON
+   ↓
+9. useLessonPage 接收数据，页面渲染
+```
+
+---
+
+# 六、开发原则
+
+优先级从高到低：
+
+1. **成熟生态优先** — 能用社区成熟方案就用
+2. **少量封装** — 只在必要时做薄封装
+3. **必要时自己实现** — 只有真正的业务逻辑才自己写
+
+**绝不为了展示架构而增加复杂度。**
+
+---
+
+# 七、一句话原则
+
+> **业务自己实现。**
+> **基础能力交给成熟生态。**
+> **Engine 负责组织，而不是重复实现。**

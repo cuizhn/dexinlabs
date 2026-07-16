@@ -37,7 +37,7 @@
  * - 500 Internal Server Error: 服务器内部错误
  */
 import { defineEventHandler, createError, getQuery } from 'h3'
-import { getContentEngine } from '@ce'
+import { getContentEngine } from '@content'
 
 export default defineEventHandler(async event => {
   try {

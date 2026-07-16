@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <NuxtLink to="/course" class="course-card">
     <div class="course-card__body">
       <h3 class="course-card__title">{{ course?.title ?? '课程标题' }}</h3>
@@ -186,7 +186,7 @@ const difficultyLabel = computed(() => {
   transform: translateX(4px);
 }
 
-@media (max-width: 768px) {
+@markdowndia (max-width: 768px) {
   .course-card {
     flex-direction: column;
     align-items: flex-start;

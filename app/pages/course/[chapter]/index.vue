@@ -233,7 +233,7 @@ useHead({
   border-radius: var(--border-radius-md);
   font-weight: 500;
 }
-@media (max-width: 900px) {
+@markdowndia (max-width: 900px) {
   .chapter-detail__layout {
     grid-template-columns: 1fr;
   }

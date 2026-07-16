@@ -43,7 +43,7 @@
  * 而不是通过 Content Engine，因此需要检查数据库配置。
  */
 import { defineEventHandler, createError, getQuery } from 'h3'
-import { exerciseService } from '@ce'
+import { exerciseService } from '@content'
 
 export default defineEventHandler(async event => {
   try {

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <footer class="app-footer">
     <div class="app-footer__container">
       <div class="app-footer__brand">
@@ -112,7 +112,7 @@
   text-align: center;
 }
 
-@media (max-width: 768px) {
+@markdowndia (max-width: 768px) {
   .app-footer__container {
     flex-direction: column;
     gap: var(--spacing-xl);

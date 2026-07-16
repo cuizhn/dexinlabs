@@ -63,12 +63,12 @@ import {
   exerciseRepository,
   assetRepository,
   queries
-} from '@ce'
+} from '@content'
 import {
   getEngine as getMarkdownEngine,
   renderToHTML,
   renderToVNode
-} from '@me'
+} from '@markdown'
 
 /**
  * 定义 Nuxt 插件
@@ -83,7 +83,7 @@ import {
  */
 export default defineNuxtPlugin(async () => {
   /** 导入数据库模块（服务端必须） */
-  await import('@core/database').catch(() => {})
+  await import('@database').catch(() => {})
   
   /** 获取 Content Engine 实例 */
   const content = getContentEngine()

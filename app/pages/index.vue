@@ -866,7 +866,7 @@ const steps = [
   line-height: 1.7;
 }
 
-@media (max-width: 1024px) {
+@markdowndia (max-width: 1024px) {
   .landing__hero-visual {
     display: none;
   }
@@ -897,7 +897,7 @@ const steps = [
   }
 }
 
-@media (max-width: 768px) {
+@markdowndia (max-width: 768px) {
   .landing__hero {
     min-height: auto;
     padding: var(--spacing-2xl) var(--spacing-md);
@@ -984,7 +984,7 @@ const steps = [
   }
 }
 
-@media (max-width: 480px) {
+@markdowndia (max-width: 480px) {
   .landing__hero-title {
     font-size: 1.875rem;
   }
