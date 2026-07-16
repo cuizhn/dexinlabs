@@ -1,64 +1,49 @@
-﻿import {
+import {
   courseRepository,
   chapterRepository,
   lessonRepository
 } from '@database/repositories'
-import type { ChapterListByCourseRow } from '@database/repositories'
-import type { LessonListByChapterRow } from '@database/repositories'
 import type { Course, Chapter, Lesson } from '../models/index'
+import type { CoursePage } from '../dto/index'
 import { queries } from '../queries/index'
-
-interface ChapterWithLessons extends ChapterListByCourseRow {
-  lessons: (LessonListByChapterRow & { [key: string]: unknown })[]
-}
-
-type CourseWithChapters = Course & {
-  chapters: ChapterWithLessons[]
-}
 
 export class CourseService {
   async list(): Promise<Course[]> {
     return courseRepository.list()
   }
 
-  async getDefault(): Promise<CourseWithChapters | null> {
+  async getDefault(): Promise<CoursePage | null> {
     const course = await courseRepository.getDefault()
     if (!course) return null
-    
-    const chapters = await chapterRepository.listByCourse(course.slug)
-    const chaptersAggregated: ChapterWithLessons[] = []
-    
-    for (const chapter of chapters) {
-      const lessons = await lessonRepository.listByChapter(chapter.slug)
-      chaptersAggregated.push({ ...chapter, lessons: lessons as unknown as ChapterWithLessons['lessons'] })
-    }
-    
-    return { ...course, chapters: chaptersAggregated } as unknown as CourseWithChapters
+    return this.buildCoursePage(course)
   }
 
-  async getBySlug(slug: string): Promise<CourseWithChapters | null> {
+  async getBySlug(slug: string): Promise<CoursePage | null> {
     const q = queries.normalizeBySlug(slug)
     if (!q.isValid) return null
-    
+
     const course = await courseRepository.getBySlug(q.slug)
     if (!course) return null
-    
-    const chapters = await chapterRepository.listByCourse(course.slug)
-    const chaptersAggregated: ChapterWithLessons[] = []
-    
-    for (const chapter of chapters) {
-      const lessons = await lessonRepository.listByChapter(chapter.slug)
-      chaptersAggregated.push({ ...chapter, lessons: lessons as unknown as ChapterWithLessons['lessons'] })
-    }
-    
-    return { ...course, chapters: chaptersAggregated } as unknown as CourseWithChapters
+    return this.buildCoursePage(course)
   }
 
-  async getCoursePage(slug: string): Promise<{
-    course: Course
-    chapters: ChapterWithLessons[]
-  } | null> {
-    return this.getBySlug(slug) as unknown as { course: Course; chapters: ChapterWithLessons[] } | null
+  async getCoursePage(slug: string): Promise<CoursePage | null> {
+    return this.getBySlug(slug)
+  }
+
+  private async buildCoursePage(course: Course): Promise<CoursePage> {
+    const chapters = await chapterRepository.listByCourse(course.slug)
+    const chaptersWithLessons: Chapter[] = []
+
+    for (const chapter of chapters) {
+      const lessons = await lessonRepository.listByChapter(chapter.slug)
+      chaptersWithLessons.push({ ...chapter, lessons: lessons as unknown as Lesson[] } as unknown as Chapter)
+    }
+
+    return {
+      course,
+      chapters: chaptersWithLessons
+    }
   }
 }
 

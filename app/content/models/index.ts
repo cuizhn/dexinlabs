@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Content Engine 模型定义 - 领域实体类型
  * 
  * 设计意图：
@@ -167,17 +167,6 @@ export interface Asset {
 
 /**
  * ChapterListOptions - 章节列表查询选项
- * 
- * 设计意图：
- * =========
- * 定义章节列表查询的可选参数，支持分页、排序和筛选。
- * 
- * 字段说明：
- * =========
- * - course/courseSlug: 按课程筛选
- * - limit/offset: 分页参数
- * - orderBy: 排序字段
- * - order: 排序方向（asc/desc）
  */
 export interface ChapterListOptions {
   course?: string | null
@@ -187,28 +176,4 @@ export interface ChapterListOptions {
   orderBy?: 'id' | 'order' | string
   order?: 'asc' | 'desc'
   [key: string]: unknown
-}
-
-/**
- * QueryOptions - 通用查询选项
- * 
- * 设计意图：
- * =========
- * 为所有查询方法提供通用的选项参数，便于未来扩展。
- */
-export interface QueryOptions {
-  [key: string]: unknown
-}
-
-/**
- * ChapterWithRelations - 包含关联数据的章节
- * 
- * 设计意图：
- * =========
- * 用于 getChapter() 方法的返回值，包含章节及其关联的课时和练习。
- */
-export interface ChapterWithRelations {
-  chapter: Chapter
-  lessons: Lesson[]
-  exercise: Exercise | null
 }

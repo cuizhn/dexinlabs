@@ -3,16 +3,9 @@ import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
 import type { Root as MdastRoot } from 'mdast'
-import type { Root as HastRoot } from 'hast'
 import type { VFile } from 'vfile'
 import { getPlugins } from './plugins/registry'
-import type { ParserOptions, TocEntry, ReadingTimeInfo } from './types'
-
-interface EnhancedMdastRoot extends MdastRoot {
-  frontmatter?: Record<string, unknown>
-  toc?: TocEntry[]
-  readingTime?: ReadingTimeInfo
-}
+import type { ParserOptions, TocEntry, ReadingTimeInfo, EnhancedMdastRoot } from './types'
 
 function extractFrontmatter(ast: MdastRoot): Record<string, unknown> {
   const result: Record<string, unknown> = {}
@@ -104,17 +97,30 @@ function calculateReadingTime(ast: MdastRoot): ReadingTimeInfo | null {
   return { minutes, words: wordCount }
 }
 
-function buildRemarkProcessor() {
+export async function parseMarkdown(md: string, options: ParserOptions = {}): Promise<EnhancedMdastRoot> {
   const processor = unified().use(remarkParse)
   const plugins = getPlugins()
   const remarkPlugins = plugins.filter(p => p.remark)
   for (const plugin of remarkPlugins) {
     processor.use(plugin.remark, plugin.options || {})
   }
-  return processor
+
+  const ast = processor.parse(md) as unknown as MdastRoot
+  const enhancedAst = ast as EnhancedMdastRoot
+  enhancedAst.frontmatter = extractFrontmatter(ast)
+  enhancedAst.toc = extractToc(ast)
+  const rt = calculateReadingTime(ast)
+  if (rt) {
+    enhancedAst.readingTime = rt
+  }
+
+  return enhancedAst
 }
 
-function buildFullProcessor() {
+export async function renderToHTML(
+  content: string,
+  options: ParserOptions = {}
+): Promise<{ html: string; ast: EnhancedMdastRoot; vfile: VFile }> {
   const processor = unified().use(remarkParse)
 
   const plugins = getPlugins()
@@ -132,61 +138,10 @@ function buildFullProcessor() {
 
   processor.use(rehypeStringify, { allowDangerousHtml: true })
 
-  return processor
-}
-
-export async function parseMarkdown(md: string, options: ParserOptions = {}): Promise<EnhancedMdastRoot> {
-  const processor = buildRemarkProcessor()
-  const ast = processor.parse(md) as unknown as MdastRoot
-
-  const enhancedAst = ast as EnhancedMdastRoot
-  enhancedAst.frontmatter = extractFrontmatter(ast)
-  enhancedAst.toc = extractToc(ast)
-  const rt = calculateReadingTime(ast)
-  if (rt) {
-    enhancedAst.readingTime = rt
-  }
-
-  return enhancedAst
-}
-
-export async function renderToHTML(
-  content: string | Record<string, unknown>,
-  options: ParserOptions = {}
-): Promise<{ html: string; ast: EnhancedMdastRoot; vfile: VFile }> {
-  const md = typeof content === 'string' ? content : (content.body || content.content || '') as string
-
-  const fullProcessor = buildFullProcessor()
-  const file = await fullProcessor.process(md)
+  const file = await processor.process(content)
   const html = String(file)
 
-  const ast = await parseMarkdown(md, options)
+  const ast = await parseMarkdown(content, options)
 
   return { html, ast, vfile: file }
 }
-
-export async function renderToHast(md: string, options: ParserOptions = {}): Promise<{ hast: HastRoot; ast: EnhancedMdastRoot; vfile: VFile }> {
-  const processor = unified().use(remarkParse)
-
-  const plugins = getPlugins()
-  const remarkPlugins = plugins.filter(p => p.remark)
-  for (const plugin of remarkPlugins) {
-    processor.use(plugin.remark, plugin.options || {})
-  }
-
-  processor.use(remarkRehype, { allowDangerousHtml: true })
-
-  const rehypePlugins = plugins.filter(p => p.rehype)
-  for (const plugin of rehypePlugins) {
-    processor.use(plugin.rehype, plugin.options || {})
-  }
-
-  const tree = processor.parse(md)
-  const hastTree = await processor.run(tree)
-  const hast = hastTree as unknown as HastRoot
-  const ast = await parseMarkdown(md, options)
-
-  return { hast, ast, vfile: { result: hast } as unknown as VFile }
-}
-
-export { extractFrontmatter, extractToc, calculateReadingTime }

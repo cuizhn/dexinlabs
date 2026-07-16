@@ -1,51 +1,29 @@
-﻿import {
+import {
   chapterRepository,
   lessonRepository,
   exerciseRepository,
   courseRepository
 } from '@database/repositories'
-import type { ChapterListByCourseRow } from '@database/repositories'
-import type { LessonListByChapterRow } from '@database/repositories'
-import type { ExerciseListByChapterRow } from '@database/repositories'
-import type { Chapter, Lesson, Exercise, Course, ChapterWithRelations } from '../models/index'
+import type { Chapter, Lesson, Exercise, Course } from '../models/index'
+import type { ChapterPage } from '../dto/index'
 import { queries } from '../queries/index'
 
 export class ChapterService {
-  async list(courseSlug?: string): Promise<ChapterListByCourseRow[] | Chapter[]> {
+  async list(courseSlug?: string): Promise<Chapter[]> {
     const q = queries.normalizeListChapters(courseSlug || {})
-    if (!courseSlug) return chapterRepository.list()
-    return chapterRepository.listByCourse(q.courseSlug || courseSlug)
+    if (!courseSlug) return chapterRepository.list() as unknown as Chapter[]
+    return chapterRepository.listByCourse(q.courseSlug || courseSlug) as unknown as Chapter[]
   }
 
-  async getBySlug(slug: string): Promise<ChapterWithRelations | null> {
-    const q = queries.normalizeBySlug(slug)
-    if (!q.isValid) return null
-    
-    const chapter = await chapterRepository.getBySlug(q.slug)
-    if (!chapter) return null
-    
-    const lessons = await lessonRepository.listByChapter(q.slug)
-    const exercise = await exerciseRepository.getOneByChapter(q.slug)
-    
-    return {
-      chapter,
-      lessons: lessons as unknown as Lesson[],
-      exercise: (exercise || null) as unknown as Exercise | null
-    }
+  async getBySlug(slug: string): Promise<ChapterPage | null> {
+    return this.getChapterPage(slug)
   }
 
   async listAll(): Promise<Chapter[]> {
     return chapterRepository.list()
   }
 
-  async getChapterPage(slug: string): Promise<{
-    chapter: Chapter
-    course: Course | null
-    lessons: Lesson[]
-    exercise: Exercise | null
-    previousChapter: Chapter | null
-    nextChapter: Chapter | null
-  } | null> {
+  async getChapterPage(slug: string): Promise<ChapterPage | null> {
     const q = queries.normalizeBySlug(slug)
     if (!q.isValid) return null
 
