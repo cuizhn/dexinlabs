@@ -41,8 +41,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import type { ContentSource } from './types'
-import type { Course, Chapter, Lesson, Exercise } from '../models/index'
-import type { LessonPage, ChapterPage, CoursePage } from '../dto/index'
+import type { Course, Chapter, Lesson, Exercise, LessonPage, ChapterPage, CoursePage } from '../models/index'
 
 /**
  * 解析后的 Markdown 数据结构

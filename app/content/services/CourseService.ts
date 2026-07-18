@@ -3,8 +3,7 @@ import {
   chapterRepository,
   lessonRepository
 } from '@database/repositories'
-import type { Course, Chapter, Lesson } from '../models/index'
-import type { CoursePage } from '../dto/index'
+import type { Course, Chapter, Lesson, CoursePage } from '../models/index'
 import { queries } from '../queries/index'
 
 export class CourseService {

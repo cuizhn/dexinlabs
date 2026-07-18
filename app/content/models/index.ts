@@ -177,3 +177,34 @@ export interface ChapterListOptions {
   order?: 'asc' | 'desc'
   [key: string]: unknown
 }
+
+/**
+ * LessonPage - 课时页面数据结构
+ */
+export interface LessonPage {
+  lesson: Lesson
+  chapter: Chapter | null
+  course: Course | null
+  previousLesson: Lesson | null
+  nextLesson: Lesson | null
+}
+
+/**
+ * ChapterPage - 章节页面数据结构
+ */
+export interface ChapterPage {
+  chapter: Chapter
+  course: Course | null
+  lessons: Lesson[]
+  exercise: Exercise | null
+  previousChapter: Chapter | null
+  nextChapter: Chapter | null
+}
+
+/**
+ * CoursePage - 课程页面数据结构
+ */
+export interface CoursePage {
+  course: Course
+  chapters: Chapter[]
+}

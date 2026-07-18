@@ -3,8 +3,7 @@ import {
   chapterRepository,
   courseRepository
 } from '@database/repositories'
-import type { Chapter, Lesson, Course } from '../models/index'
-import type { LessonPage } from '../dto/index'
+import type { Chapter, Lesson, Course, LessonPage } from '../models/index'
 import { queries } from '../queries/index'
 
 export type LessonWithChapter = Omit<Lesson, 'chapter'> & {

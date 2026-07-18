@@ -5,8 +5,7 @@ import {
   exerciseRepository
 } from '@database/repositories'
 import type { ContentSource } from './types'
-import type { Course, Chapter, Lesson, Exercise } from '../models/index'
-import type { LessonPage, ChapterPage, CoursePage } from '../dto/index'
+import type { Course, Chapter, Lesson, Exercise, LessonPage, ChapterPage, CoursePage } from '../models/index'
 import { courseService, chapterService, lessonService } from '../services/index'
 
 export class DatabaseSource implements ContentSource {

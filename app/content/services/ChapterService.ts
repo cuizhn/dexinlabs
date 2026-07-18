@@ -4,8 +4,7 @@ import {
   exerciseRepository,
   courseRepository
 } from '@database/repositories'
-import type { Chapter, Lesson, Exercise, Course } from '../models/index'
-import type { ChapterPage } from '../dto/index'
+import type { Chapter, Lesson, Exercise, Course, ChapterPage } from '../models/index'
 import { queries } from '../queries/index'
 
 export class ChapterService {

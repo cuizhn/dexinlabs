@@ -1,5 +1,4 @@
-import type { Course, Chapter, Lesson, Exercise } from '../models/index'
-import type { LessonPage, ChapterPage, CoursePage } from '../dto/index'
+import type { Course, Chapter, Lesson, Exercise, LessonPage, ChapterPage, CoursePage } from '../models/index'
 
 export interface ContentSource {
   getCourse(slug: string): Promise<Course | null>

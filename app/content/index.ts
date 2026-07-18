@@ -6,9 +6,11 @@ import type {
   Chapter,
   Lesson,
   Exercise,
-  ChapterListOptions
+  ChapterListOptions,
+  LessonPage,
+  ChapterPage,
+  CoursePage
 } from './models/index'
-import type { LessonPage, ChapterPage, CoursePage } from './dto/index'
 
 export interface ContentEngineFacade {
   getCourse(slug: string): Promise<Course | null>
@@ -159,13 +161,10 @@ export type {
   Exercise,
   Asset,
   BaseContentEntity,
-  ChapterListOptions
-} from './models/index'
-
-export type {
+  ChapterListOptions,
   LessonPage,
   ChapterPage,
   CoursePage
-} from './dto/index'
+} from './models/index'
 
 export default facade
