@@ -6,7 +6,7 @@
 
         <h1 class="info-page__title">跟着节奏，稳步前行</h1>
 
-         <Markdown :content="md"  class="info-page__desc" />
+         <ContentRenderer :content="md" class="info-page__desc" />
       </div>
     </section>
 
@@ -16,7 +16,7 @@
 
 <script setup>
 import { useHead } from 'nuxt/app'
-import Markdown from '../components/markdown/render.vue'
+import ContentRenderer from '../components/content/Renderer.vue'
 
 useHead({ title: '同步学习' })
 const md  = `# 📖 基础排版示例

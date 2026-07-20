@@ -1,10 +1,7 @@
-import {
-  lessonRepository,
-  chapterRepository,
-  courseRepository
-} from '@database/repositories'
-import type { Chapter, Lesson, Course, LessonPage } from '../models/index'
-import { queries } from '../queries/index'
+import { lessonRepository } from '@content/repositories'
+import type { Chapter, Lesson, LessonPage } from '../models/index'
+import { normalizeSlug } from '../utils'
+import { renderToHTML } from '@markdown'
 
 export type LessonWithChapter = Omit<Lesson, 'chapter'> & {
   chapter: Chapter | null
@@ -12,86 +9,44 @@ export type LessonWithChapter = Omit<Lesson, 'chapter'> & {
 
 export class LessonService {
   async listByChapter(chapterSlug: string): Promise<Lesson[]> {
-    const q = queries.normalizeByChapter(chapterSlug)
-    if (!q.isValid) return []
-    return lessonRepository.listByChapter(q.chapterSlug || String(chapterSlug)) as unknown as Promise<Lesson[]>
-  }
-
-  async getBySlug(slug: string): Promise<LessonWithChapter | null> {
-    const q = queries.normalizeBySlug(slug)
-    if (!q.isValid) return null
-
-    const lesson = await lessonRepository.getBySlug(q.slug)
-    if (!lesson) return null
-
-    let chapter: Chapter | null = null
-
-    if (lesson.chapterId) {
-      chapter = (await chapterRepository.getById(lesson.chapterId)) || null
-    }
-    if (!chapter && lesson.chapter) {
-      chapter = (await chapterRepository.getBySlug(lesson.chapter)) || null
-    }
-
-    return { ...lesson, chapter }
+    const clean = normalizeSlug(chapterSlug)
+    if (!clean) return []
+    return lessonRepository.listByChapter(clean)
   }
 
   async listAll(): Promise<Lesson[]> {
-    return lessonRepository.list() as unknown as Promise<Lesson[]>
+    return lessonRepository.list()
+  }
+
+  async getBySlug(slug: string): Promise<LessonWithChapter | null> {
+    const clean = normalizeSlug(slug)
+    if (!clean) return null
+    const data = await lessonRepository.getWithChapterAndCourse(clean)
+    if (!data) return null
+    return { ...data, chapter: data.chapterEntity || null } as unknown as LessonWithChapter
   }
 
   async getLessonPage(slug: string): Promise<LessonPage | null> {
-    const q = queries.normalizeBySlug(slug)
-    if (!q.isValid) return null
+    const clean = normalizeSlug(slug)
+    if (!clean) return null
 
-    const lesson = await lessonRepository.getBySlug(q.slug)
-    if (!lesson) return null
+    const data = await lessonRepository.getWithChapterAndCourse(clean)
+    if (!data) return null
 
-    let chapter: Chapter | null = null
-    let course: Course | null = null
-    let previousLesson: Lesson | null = null
-    let nextLesson: Lesson | null = null
+    const currentIndex = data.siblingLessons.findIndex(l => l.slug === data.slug)
+    const previousLesson = currentIndex > 0 ? (data.siblingLessons[currentIndex - 1] || null) : null
+    const nextLesson = currentIndex >= 0 && currentIndex < data.siblingLessons.length - 1
+      ? (data.siblingLessons[currentIndex + 1] || null)
+      : null
 
-    if (lesson.chapterId) {
-      chapter = (await chapterRepository.getById(lesson.chapterId)) || null
-    }
-    if (!chapter && lesson.chapter) {
-      chapter = (await chapterRepository.getBySlug(lesson.chapter)) || null
-    }
-
-    if (chapter) {
-      if (chapter.courseId) {
-        course = (await courseRepository.getById(chapter.courseId)) || null
-      }
-      if (!course && chapter.course) {
-        course = (await courseRepository.getBySlug(chapter.course)) || null
-      }
-
-      const lessonsInChapter = await lessonRepository.listByChapter(chapter.slug)
-      const currentIndex = lessonsInChapter.findIndex(l => l.slug === lesson.slug)
-
-      if (currentIndex >= 0) {
-        if (currentIndex > 0) {
-          const prevItem = lessonsInChapter[currentIndex - 1]
-          if (prevItem) {
-            const prev = await lessonRepository.getBySlug(prevItem.slug)
-            if (prev) previousLesson = prev as unknown as Lesson
-          }
-        }
-        if (currentIndex < lessonsInChapter.length - 1) {
-          const nextItem = lessonsInChapter[currentIndex + 1]
-          if (nextItem) {
-            const next = await lessonRepository.getBySlug(nextItem.slug)
-            if (next) nextLesson = next as unknown as Lesson
-          }
-        }
-      }
-    }
+    const bodyHtml = data.body ? await renderToHTML(data.body) : ''
+    const introHtml = data.intro ? await renderToHTML(data.intro) : ''
+    const summaryHtml = data.summaryText ? await renderToHTML(data.summaryText) : ''
 
     return {
-      lesson: lesson as unknown as Lesson,
-      chapter,
-      course,
+      lesson: { ...data, body: bodyHtml, intro: introHtml, summaryText: summaryHtml } as unknown as Lesson,
+      chapter: data.chapterEntity || null,
+      course: data.courseEntity || null,
       previousLesson,
       nextLesson
     }

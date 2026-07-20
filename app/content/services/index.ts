@@ -1,8 +1,5 @@
-﻿export { CourseService, courseService } from './CourseService.js'
-
-export { ChapterService, chapterService } from './ChapterService.js'
-
-export { LessonService, lessonService } from './LessonService.js'
-export type { LessonWithChapter } from './LessonService.js'
-
-export { ExerciseService, exerciseService } from './ExerciseService.js'
+export { CourseService, courseService } from './CourseService'
+export { ChapterService, chapterService } from './ChapterService'
+export { LessonService, lessonService } from './LessonService'
+export type { LessonWithChapter } from './LessonService'
+export { ExerciseService, exerciseService } from './ExerciseService'

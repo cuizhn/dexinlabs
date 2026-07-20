@@ -1,10 +1,7 @@
-import {
-  courseRepository,
-  chapterRepository,
-  lessonRepository
-} from '@database/repositories'
+import { courseRepository } from '@content/repositories'
 import type { Course, Chapter, Lesson, CoursePage } from '../models/index'
-import { queries } from '../queries/index'
+import { normalizeSlug } from '../utils'
+import { renderToHTML } from '@markdown'
 
 export class CourseService {
   async list(): Promise<Course[]> {
@@ -12,16 +9,17 @@ export class CourseService {
   }
 
   async getDefault(): Promise<CoursePage | null> {
-    const course = await courseRepository.getDefault()
+    const defaultCourse = await courseRepository.getDefault()
+    if (!defaultCourse) return null
+    const course = await courseRepository.getWithChaptersAndLessons(defaultCourse.slug)
     if (!course) return null
     return this.buildCoursePage(course)
   }
 
   async getBySlug(slug: string): Promise<CoursePage | null> {
-    const q = queries.normalizeBySlug(slug)
-    if (!q.isValid) return null
-
-    const course = await courseRepository.getBySlug(q.slug)
+    const clean = normalizeSlug(slug)
+    if (!clean) return null
+    const course = await courseRepository.getWithChaptersAndLessons(clean)
     if (!course) return null
     return this.buildCoursePage(course)
   }
@@ -30,18 +28,24 @@ export class CourseService {
     return this.getBySlug(slug)
   }
 
-  private async buildCoursePage(course: Course): Promise<CoursePage> {
-    const chapters = await chapterRepository.listByCourse(course.slug)
-    const chaptersWithLessons: Chapter[] = []
+  private async buildCoursePage(
+    course: Course & { chapters?: (Chapter & { lessons?: Lesson[] })[] }
+  ): Promise<CoursePage> {
+    const courseBodyHtml = course.body ? await renderToHTML(course.body) : ''
 
-    for (const chapter of chapters) {
-      const lessons = await lessonRepository.listByChapter(chapter.slug)
-      chaptersWithLessons.push({ ...chapter, lessons: lessons as unknown as Lesson[] } as unknown as Chapter)
-    }
+    const chapters = await Promise.all((course.chapters || []).map(async ch => {
+      const chapterBodyHtml = ch.body ? await renderToHTML(ch.body) : ''
+      const lessons = await Promise.all((ch.lessons || []).map(async l => ({
+        ...l,
+        body: l.body ? await renderToHTML(l.body) : '',
+        intro: l.intro ? await renderToHTML(l.intro) : ''
+      })))
+      return { ...ch, body: chapterBodyHtml, lessons }
+    }))
 
     return {
-      course,
-      chapters: chaptersWithLessons
+      course: { ...course, body: courseBodyHtml },
+      chapters
     }
   }
 }

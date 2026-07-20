@@ -21,7 +21,7 @@
     <section class="lesson-detail__body">
       <div class="container lesson-detail__container">
         <div v-if="loading" class="lesson-detail__empty">课时内容加载中...</div>
-        <MarkdownRender v-else-if="lesson" :value="lesson" />
+        <ContentRenderer v-else-if="lesson" :value="lesson" />
         <div v-else class="lesson-detail__empty">课时内容未找到</div>
       </div>
     </section>
@@ -31,6 +31,7 @@
 <script setup>
 import { useHead, useRoute } from 'nuxt/app'
 import { computed } from 'vue'
+import ContentRenderer from '../../../components/content/Renderer.vue'
 
 const route = useRoute()
 

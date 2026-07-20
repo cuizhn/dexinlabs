@@ -128,22 +128,9 @@ export default defineNuxtConfig({
    * },
    */
 
-  /** Vite 配置 */
   vite: {
-    /** 依赖优化 */
     optimizeDeps: {
       include: ['katex']
-    },
-
-    /** 路径别名配置（与上面的 alias 保持一致） */
-    resolve: {
-      alias: {
-        '@shared': path.resolve(rootDir, 'app/shared'),
-        '@server': path.resolve(rootDir, 'server'),
-        '@markdown': path.resolve(rootDir, 'app/markdown'),
-        '@content': path.resolve(rootDir, 'app/content'),
-        '@database': path.resolve(rootDir, 'app/database')
-      }
     }
   }
 })

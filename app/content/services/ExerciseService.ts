@@ -1,22 +1,22 @@
-import { exerciseRepository } from '@database/repositories'
+import { exerciseRepository } from '@content/repositories'
 import type { Exercise } from '../models/index'
-import { queries } from '../queries/index'
+import { normalizeSlug } from '../utils'
 
 export class ExerciseService {
   async listByChapter(chapterSlug: string): Promise<Exercise[]> {
-    const q = queries.normalizeByChapter(chapterSlug)
-    if (!q.isValid) return []
-    return exerciseRepository.listByChapter(q.chapterSlug || String(chapterSlug)) as unknown as Promise<Exercise[]>
+    const clean = normalizeSlug(chapterSlug)
+    if (!clean) return []
+    return exerciseRepository.listByChapter(clean)
   }
 
   async getBySlug(slug: string): Promise<Exercise | null> {
-    const q = queries.normalizeBySlug(slug)
-    if (!q.isValid) return null
-    return exerciseRepository.getBySlug(q.slug) as unknown as Promise<Exercise | null>
+    const clean = normalizeSlug(slug)
+    if (!clean) return null
+    return exerciseRepository.getBySlug(clean)
   }
 
   async listAll(): Promise<Exercise[]> {
-    return exerciseRepository.list() as unknown as Promise<Exercise[]>
+    return exerciseRepository.list()
   }
 }
 
