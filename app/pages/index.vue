@@ -122,10 +122,6 @@
 </template>
 
 <script setup>
-import { useHead } from 'nuxt/app'
-
-import { computed } from 'vue'
-
 useHead({
   title: 'Dexin Labs · 用数学理解世界'
 })
@@ -866,7 +862,7 @@ const steps = [
   line-height: 1.7;
 }
 
-@markdowndia (max-width: 1024px) {
+@media (max-width: 1024px) {
   .landing__hero-visual {
     display: none;
   }
@@ -897,7 +893,7 @@ const steps = [
   }
 }
 
-@markdowndia (max-width: 768px) {
+@media (max-width: 768px) {
   .landing__hero {
     min-height: auto;
     padding: var(--spacing-2xl) var(--spacing-md);
@@ -984,7 +980,7 @@ const steps = [
   }
 }
 
-@markdowndia (max-width: 480px) {
+@media (max-width: 480px) {
   .landing__hero-title {
     font-size: 1.875rem;
   }

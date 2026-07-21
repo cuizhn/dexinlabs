@@ -15,47 +15,32 @@
 </template>
 
 <script setup>
-import { useHead } from 'nuxt/app'
 import ContentRenderer from '../components/content/Renderer.vue'
 
 useHead({ title: '同步学习' })
-const md  = `# 📖 基础排版示例
+const md  = `# 同步学习
 
-这是一段介绍 Morph-MD 组件库的 **基础段落**。我们支持 *斜体*、**粗体**、以及 \`行内代码\`。
+得心实验室采用**理解为先、应用为本**的学习理念，帮助你在数学的世界里稳步前行。
 
-> 💡 **引用块：** Morph-MD 遵循 *高内聚低耦合* 设计原则，使用独立维护的 Markdown Engine 作为唯一解析管道（Parser 技术为 marked.lexer + MDAST 兼容 AST），通过 Transformer Plugin 体系统一产出 TOC、Excerpt、ReadingTime 等结构化增强数据。
+> 💡 **核心理念：** 每一个概念从本质讲起，先问"为什么"，再谈"怎么用"。知其然更知其所以然。
 
-## 无序列表
+## 学习方式
 
-- Vue 3 组件化封装
-- Nuxt 3 开箱即用
-- 插件式扩展（highlight / katex / mermaid）
-- SSR 友好，客户端 hydrate
+- 系统化课程：完整覆盖中学数学知识体系
+- 交互式练习：边学边练，即时反馈
+- KaTeX 公式渲染：数学表达式清晰呈现
+- 响应式设计：手机、平板、电脑随时随地学习
 
-## 有序列表
+## 学习路径
 
-1. 解析 Markdown String
-2. 输出 HTML String
-3. 通过 Plugin Pipeline
-4. 最终 v-html 渲染
-
-## 链接与图片
-
-访问 [Morph-MD Repository](https://example.com/morph-md) 获取更多信息。
-
-## 表格
-
-| 特性 | 支持状态 | 备注 |
-|------|----------|------|
-| 标题 H1-H6 | ✅ | 完整支持 |
-| 列表 (ul/ol) | ✅ | 嵌套支持 |
-| 代码高亮 | ✅ | Prism.js |
-| 数学公式 | ✅ | KaTeX |
-| Mermaid 图表 | ✅ | SSR fallback + client hydrate |
+1. 选择课程，进入章节学习
+2. 阅读课时内容，理解核心概念
+3. 完成章节练习，巩固所学知识
+4. 持续进阶，逐步提升数学思维
 
 ---
-`
 
+`
 </script>
 
 <style scoped>

@@ -14,7 +14,6 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
 import { renderToHTML } from '@markdown'
 
 const props = defineProps({
@@ -26,26 +25,34 @@ const props = defineProps({
 const renderedHtml = ref('')
 const loading = ref(false)
 
-const markdownString = computed(() => {
-  if (typeof props.content === 'string' && props.content.trim()) {
-    return props.content
-  }
-  const source = props.value || {}
-  if (typeof source === 'string') return source
-  if (typeof source.body === 'string' && source.body.trim()) {
-    return source.body
-  }
-  if (typeof source.content === 'string' && source.content.trim()) {
-    return source.content
-  }
+const prerenderedHtml = computed(() => {
+  const source = props.value
+  if (!source || typeof source === 'string') return ''
+  const parts = []
+  if (typeof source.introHtml === 'string' && source.introHtml.trim()) parts.push(source.introHtml)
+  if (typeof source.bodyHtml === 'string' && source.bodyHtml.trim()) parts.push(source.bodyHtml)
+  if (typeof source.summaryHtml === 'string' && source.summaryHtml.trim()) parts.push(source.summaryHtml)
+  if (parts.length) return parts.join('\n')
+  if (typeof source.contentHtml === 'string' && source.contentHtml.trim()) return source.contentHtml
   return ''
 })
 
+const markdownString = computed(() => {
+  if (prerenderedHtml.value) return ''
+  if (typeof props.content === 'string' && props.content.trim()) return props.content
+  const source = props.value || {}
+  if (typeof source === 'string') return source
+  if (typeof source.body === 'string' && source.body.trim()) return source.body
+  if (typeof source.content === 'string' && source.content.trim()) return source.content
+  return ''
+})
+
+watch(() => prerenderedHtml.value, (html) => {
+  if (html) renderedHtml.value = html
+}, { immediate: true })
+
 watch(() => markdownString.value, async (md) => {
-  if (!md) {
-    renderedHtml.value = ''
-    return
-  }
+  if (!md) return
   loading.value = true
   try {
     renderedHtml.value = await renderToHTML(md)

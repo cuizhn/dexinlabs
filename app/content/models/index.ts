@@ -139,33 +139,6 @@ export interface Exercise extends BaseContentEntity {
 }
 
 /**
- * Asset - 资源实体（图片、文件等）
- * 
- * 字段说明：
- * =========
- * - type: 资源类型（如 "image", "video", "file"）
- * - url: 资源访问 URL
- * - mime: MIME 类型
- * - size: 文件大小（字节）
- * - meta: 元数据（JSON 字符串）
- */
-export interface Asset {
-  id: number | null
-  slug: string
-  title: string
-  summary?: string | null
-  type: string
-  url: string
-  mime?: string | null
-  size?: number | null
-  meta?: string | null
-  order?: number
-  createdAt?: Date | string | null
-  updatedAt?: Date | string | null
-  [key: string]: unknown
-}
-
-/**
  * ChapterListOptions - 章节列表查询选项
  */
 export interface ChapterListOptions {

@@ -7,8 +7,6 @@
 </template>
 
 <script setup>
-import { useHead } from 'nuxt/app'
-
 useHead({
   titleTemplate: title => (title ? `${title} · Dexin Labs` : 'Dexin Labs · 得心实验室'),
 

@@ -17,7 +17,6 @@ export type {
   Chapter,
   Lesson,
   Exercise,
-  Asset,
   BaseContentEntity,
   ChapterListOptions,
   LessonPage,

@@ -16,6 +16,7 @@ export const BUILTIN_PLUGINS: Record<string, MarkdownPlugin> = {
     name: 'math',
     remark: remarkMath,
     rehype: rehypeKatex,
+    options: { strict: false },
     order: 20
   },
   frontmatter: {

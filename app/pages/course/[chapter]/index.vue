@@ -26,8 +26,8 @@
                   <div class="lesson-list__info">
                     <span class="lesson-list__title">{{ lesson.title }}</span>
 
-                    <span v-if="lesson.description" class="lesson-list__desc">
-                      {{ lesson.description }}
+                    <span v-if="lesson.summary" class="lesson-list__desc">
+                      {{ lesson.summary }}
                     </span>
                   </div>
 
@@ -60,9 +60,6 @@
 </template>
 
 <script setup>
-import { useHead, useRoute } from 'nuxt/app'
-import { computed } from 'vue'
-
 const route = useRoute()
 const chapterSlug = route.params.chapter
 
@@ -233,7 +230,7 @@ useHead({
   border-radius: var(--border-radius-md);
   font-weight: 500;
 }
-@markdowndia (max-width: 900px) {
+@media (max-width: 900px) {
   .chapter-detail__layout {
     grid-template-columns: 1fr;
   }

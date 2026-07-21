@@ -1,7 +1,6 @@
 import { chapterRepository } from '@content/repositories'
 import type { Chapter, ChapterPage } from '../models/index'
 import { normalizeSlug } from '../utils'
-import { renderToHTML } from '@markdown'
 
 export class ChapterService {
   async list(courseSlug?: string): Promise<Chapter[]> {
@@ -28,18 +27,18 @@ export class ChapterService {
       ? (data.siblingChapters[currentIndex + 1] || null)
       : null
 
-    const bodyHtml = data.body ? await renderToHTML(data.body) : ''
-
-    const lessonsWithHtml = await Promise.all((data.lessonList || []).map(async l => ({
-      ...l,
-      body: l.body ? await renderToHTML(l.body) : '',
-      intro: l.intro ? await renderToHTML(l.intro) : ''
-    })))
+    const lessons = (data.lessonList || []).map(l => ({
+      id: l.id,
+      slug: l.slug,
+      title: l.title,
+      summary: l.summary,
+      order: l.order
+    }))
 
     return {
-      chapter: { ...data, body: bodyHtml } as unknown as Chapter,
+      chapter: data as unknown as Chapter,
       course: data.courseEntity || null,
-      lessons: lessonsWithHtml,
+      lessons,
       exercise: data.exerciseEntity || null,
       previousChapter,
       nextChapter

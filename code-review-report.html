@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>代码审查报告 — Dexin Labs</title>
+<style>
+  :root {
+    --bg: #f8f9fb;
+    --surface: #ffffff;
+    --border: #e5e7eb;
+    --text: #1f2937;
+    --text-2: #6b7280;
+    --text-3: #9ca3af;
+    --red: #dc2626;
+    --red-bg: #fef2f2;
+    --red-border: #fecaca;
+    --amber: #d97706;
+    --amber-bg: #fffbeb;
+    --amber-border: #fde68a;
+    --blue: #2563eb;
+    --blue-bg: #eff6ff;
+    --blue-border: #bfdbfe;
+    --green: #059669;
+    --green-bg: #ecfdf5;
+    --green-border: #a7f3d0;
+    --code-bg: #f3f4f6;
+    --code-text: #374151;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 2rem 1rem;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  .header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .header .meta { color: var(--text-2); font-size: 0.875rem; }
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+  .stat {
+    text-align: center;
+    padding: 0.875rem 0.5rem;
+    border-radius: 8px;
+    border: 1px solid;
+  }
+  .stat .num { font-size: 1.75rem; font-weight: 800; line-height: 1; }
+  .stat .label { font-size: 0.75rem; margin-top: 0.25rem; color: var(--text-2); }
+  .stat.red { background: var(--red-bg); border-color: var(--red-border); }
+  .stat.red .num { color: var(--red); }
+  .stat.amber { background: var(--amber-bg); border-color: var(--amber-border); }
+  .stat.amber .num { color: var(--amber); }
+  .stat.blue { background: var(--blue-bg); border-color: var(--blue-border); }
+  .stat.blue .num { color: var(--blue); }
+  .stat.green { background: var(--green-bg); border-color: var(--green-border); }
+  .stat.green .num { color: var(--green); }
+
+  .section { margin-bottom: 1.5rem; }
+  .section-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    padding: 0.625rem 1rem;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .section-title.red { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); border-bottom: none; }
+  .section-title.amber { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); border-bottom: none; }
+  .section-title.blue { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); border-bottom: none; }
+  .section-body {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 0;
+  }
+
+  .issue {
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .issue:last-child { border-bottom: none; }
+  .issue-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    margin-bottom: 0.5rem;
+  }
+  .badge {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .badge.p0 { background: var(--red); color: #fff; }
+  .badge.p1 { background: var(--amber); color: #fff; }
+  .badge.p2 { background: var(--blue); color: #fff; }
+  .badge.p3 { background: var(--text-3); color: #fff; }
+  .issue-title { font-weight: 600; font-size: 0.95rem; }
+  .issue-desc { color: var(--text-2); font-size: 0.875rem; margin-bottom: 0.5rem; }
+  .issue-files { font-size: 0.8125rem; color: var(--text-2); margin-bottom: 0.5rem; }
+  .issue-files strong { color: var(--text); }
+  code, .mono {
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.85em;
+  }
+  .fix {
+    background: var(--green-bg);
+    border-left: 3px solid var(--green);
+    padding: 0.625rem 0.875rem;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+  }
+  .fix strong { color: var(--green); }
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .toc-title { font-weight: 600; font-size: 0.875rem; margin-bottom: 0.5rem; color: var(--text-2); }
+  .toc ul { list-style: none; }
+  .toc li { font-size: 0.875rem; padding: 2px 0; }
+  .toc li a { color: var(--blue); text-decoration: none; }
+  .toc li a:hover { text-decoration: underline; }
+  .count-pill {
+    display: inline-block;
+    background: var(--code-bg);
+    color: var(--text-2);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+    margin-left: 0.25rem;
+  }
+  .footer-note {
+    text-align: center;
+    color: var(--text-3);
+    font-size: 0.8rem;
+    padding: 1rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <h1>代码审查报告 — Dexin Labs</h1>
+    <div class="meta">审查范围：app/ + server/ 全部源文件 · 审查日期：2026-07-21</div>
+    <div class="summary">
+      <div class="stat red"><div class="num">2</div><div class="label">P0 严重错误</div></div>
+      <div class="stat amber"><div class="num">4</div><div class="label">P1 功能缺陷</div></div>
+      <div class="stat blue"><div class="num">7</div><div class="label">P2 流畅性问题</div></div>
+      <div class="stat green"><div class="num">3</div><div class="label">P3 冗余清理</div></div>
+    </div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">目录</div>
+    <ul>
+      <li><a href="#p0">P0 严重错误（导致运行时不正确行为）</a><span class="count-pill">2</span></li>
+      <li><a href="#p1">P1 功能缺陷（数据不显示 / 上下文断裂）</a><span class="count-pill">4</span></li>
+      <li><a href="#p2">P2 流畅性问题（冗余 / 误导 / 不一致）</a><span class="count-pill">7</span></li>
+      <li><a href="#p3">P3 冗余清理（死代码 / 无效配置）</a><span class="count-pill">3</span></li>
+    </ul>
+  </div>
+
+  <!-- P0 -->
+  <div class="section" id="p0">
+    <div class="section-title red">⚠ P0 严重错误 — 导致运行时不正确行为</div>
+    <div class="section-body">
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p0">P0</span>
+          <span class="issue-title">全局 CSS typo：<code>@media</code> 被写成了 <code>@markdowndia</code>（11 处 / 6 文件）</span>
+        </div>
+        <div class="issue-desc">
+          所有响应式媒体查询的 <code>@media</code> 关键字被误写为 <code>@markdowndia</code>，这是无效的 CSS at-rule，浏览器会<strong>静默忽略整个规则块</strong>。导致<strong>全站移动端响应式布局完全失效</strong>——手机端导航菜单不切换、网格不折叠、字号不缩小。
+        </div>
+        <div class="issue-files">
+          <strong>受影响文件：</strong><br>
+          • <code>app/pages/index.vue</code> — L865, L896, L983（3处）<br>
+          • <code>app/components/home/FeatureGrid.vue</code> — L775, L806, L893（3处）<br>
+          • <code>app/components/app/Header.vue</code> — L203, L219（2处）<br>
+          • <code>app/components/app/Footer.vue</code> — L115（1处）<br>
+          • <code>app/pages/methods.vue</code> — L125（1处）<br>
+          • <code>app/pages/about.vue</code> — L158（1处）
+        </div>
+        <div class="fix"><strong>修复：</strong>全局替换 <code>@markdowndia</code> → <code>@media</code>（11 处）。这是最高优先级修复。</div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p0">P0</span>
+          <span class="issue-title">数据字段不匹配：页面读取 <code>description</code> 但模型只有 <code>summary</code></span>
+        </div>
+        <div class="issue-desc">
+          <code>Chapter</code> 和 <code>Lesson</code> 的数据库表和 TypeScript 模型中<strong>没有 <code>description</code> 字段</strong>（只有 <code>summary</code>），但代码中多处读取 <code>.description</code>。由于模型有 <code>[key: string]: unknown</code> 索引签名，TypeScript 不报错，但运行时值为 <code>undefined</code>，导致<strong>描述文字永远不显示</strong>。
+        </div>
+        <div class="issue-files">
+          <strong>受影响位置：</strong><br>
+          • <code>app/content/services/ChapterService.ts:34</code> — <code>description: l.description</code> → 应为 <code>l.summary</code><br>
+          • <code>app/pages/course/index.vue:23-24</code> — <code>c.description</code> → 应为 <code>c.summary</code>（章节卡片描述不显示）<br>
+          • <code>app/pages/course/[chapter]/index.vue:29-30</code> — <code>lesson.description</code> → 应为 <code>lesson.summary</code>（课时列表描述不显示）
+        </div>
+        <div class="fix"><strong>修复：</strong>将上述 3 处 <code>description</code> 改为 <code>summary</code>。注意 <code>Exercise</code> 模型确实有 <code>description</code> 字段，<code>exercise/[chapter].vue</code> 中的用法是正确的。</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- P1 -->
+  <div class="section" id="p1">
+    <div class="section-title amber">● P1 功能缺陷 — 数据不显示 / 上下文断裂</div>
+    <div class="section-body">
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p1">P1</span>
+          <span class="issue-title">LessonService 预渲染了 <code>introHtml</code> / <code>summaryHtml</code> 但 Renderer 不使用</span>
+        </div>
+        <div class="issue-desc">
+          <code>LessonService.getLessonPage()</code> 对 <code>intro</code> 和 <code>summaryText</code> 做了 <code>renderToHTML</code>，生成了 <code>introHtml</code> 和 <code>summaryHtml</code> 字段返回给前端。但 <code>Renderer.vue</code> 只检查 <code>bodyHtml</code> 和 <code>contentHtml</code>，<strong>不认识 <code>introHtml</code> / <code>summaryHtml</code></strong>。导致课时页面的"引言"和"总结"内容渲染了却不显示。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>app/content/services/LessonService.ts:42-44</code>、<code>app/components/content/Renderer.vue:28-34</code></div>
+        <div class="fix"><strong>修复方案：</strong>①在 Renderer 中增加对 <code>introHtml</code>/<code>summaryHtml</code> 的处理（用 slot 或分段渲染）；或 ②如果设计上 intro/summary 不需要单独显示，移除 LessonService 中的无效渲染以节省开销。</div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p1">P1</span>
+          <span class="issue-title">CourseService 对每个 lesson 渲染 body/intro，但课程页不使用</span>
+        </div>
+        <div class="issue-desc">
+          <code>CourseService.buildCoursePage()</code> 遍历所有章节的所有课时，对每个 <code>lesson.body</code> 和 <code>lesson.intro</code> 调用 <code>renderToHTML</code>。但课程中心页面（<code>course/index.vue</code>）只用 chapter 的 <code>title</code>，不渲染任何 lesson 内容。这是<strong>大量无效的 Markdown 渲染</strong>（N 个课时 = N×2 次渲染），拖慢课程页加载。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>app/content/services/CourseService.ts:36-44</code></div>
+        <div class="fix"><strong>修复：</strong>移除 <code>buildCoursePage</code> 中对 lesson body/intro 的渲染，只保留 chapter 级别的 body 渲染（如果需要）。</div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p1">P1</span>
+          <span class="issue-title">Repository 的 leftJoin 使用了全为 NULL 的外键</span>
+        </div>
+        <div class="issue-desc">
+          <code>ChapterRepository.listByCourse</code>、<code>LessonRepository.listByChapter</code>、<code>ExerciseRepository.listByChapter</code> 中使用 <code>leftJoin(courses, eq(this.table.courseId, courses.id))</code> 做关联查询。但数据库中 <code>courseId</code> / <code>chapterId</code> 列<strong>全部为 NULL</strong>（数据实际通过 slug 字符串关联）。leftJoin 永远不会匹配到行，<code>or(eq(courses.slug, ...))</code> 条件也永远走不到。join 是<strong>死代码</strong>，虽然功能上靠 <code>eq(this.table.course, slug)</code> 还能工作，但增加了无意义的 JOIN 开销和误导性。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>ChapterRepository.ts:34</code>、<code>LessonRepository.ts:33</code>、<code>ExerciseRepository.ts:67</code></div>
+        <div class="fix"><strong>修复：</strong>移除 leftJoin，直接用 <code>where(eq(this.table.course, courseSlug))</code> 单条件查询。</div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p1">P1</span>
+          <span class="issue-title">exercise 页面为获取标题调用完整 useChapterPage，触发冗余查询</span>
+        </div>
+        <div class="issue-desc">
+          <code>exercise/[chapter].vue</code> 调用 <code>useChapterPage(chapterSlug)</code> 仅为获取 <code>chapter.title</code>。但 <code>useChapterPage</code> 会请求 <code>/api/chapter/:slug</code>，触发完整的章节关系查询（含 lessons、exercise、siblingChapters）。练习页只需要一个标题，却拉取了整页数据。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>app/pages/exercise/[chapter].vue:73</code></div>
+        <div class="fix"><strong>修复：</strong>用轻量 <code>useFetch('/api/chapter?course=...')</code> 或直接从 exercise 数据中携带 chapter title，避免额外请求。</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- P2 -->
+  <div class="section" id="p2">
+    <div class="section-title blue">○ P2 流畅性问题 — 冗余 / 误导 / 不一致</div>
+    <div class="section-body">
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p2">P2</span>
+          <span class="issue-title">Schema 双字段冗余：外键列（全 NULL）与 slug 列并存</span>
+        </div>
+        <div class="issue-desc">
+          <code>chapters</code> 表同时有 <code>courseId</code>（外键 → courses.id）和 <code>course</code>（course_slug 字符串）；<code>lessons</code> 和 <code>exercises</code> 同理有 <code>chapterId</code> 和 <code>chapter</code>。relations 定义用 slug 关联，但外键约束、索引仍维护 <code>courseId</code>/<code>chapterId</code>。两套关联机制并存导致<strong>认知混乱</strong>，且 Repository 代码中 leftJoin 错误地使用了外键路径。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>app/database/schema.ts:45,73,101</code></div>
+        <div class="fix"><strong>建议：</strong>需要数据库迁移。方案一：填充外键列并改用外键关联（推荐）；方案二：移除外键列，统一用 slug。短期内确保代码一致使用 slug 路径。</div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p2">P2</span>
+          <span class="issue-title">Schema 冗余索引：slug 上同时有 uniqueIndex 和普通 index</span>
+        </div>
+        <div class="issue-desc">
+          每个表的 slug 列上既有 <code>uniqueIndex</code> 又有普通 <code>index</code>。uniqueIndex 已自动创建索引，普通 index 完全冗余，增加写入开销。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>schema.ts:31-33,54-58,82-87,109-115</code>（courses/chapters/lessons/exercises 各有）</div>
+        <div class="fix"><strong>修复：</strong>移除 <code>idx_*_slug</code> 普通索引，保留 <code>idx_*_slug_unique</code>。</div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p2">P2</span>
+          <span class="issue-title">ExerciseRepository.listByChapter 手动列出全部字段，等同 select()</span>
+        </div>
+        <div class="issue-desc">
+          <code>listByChapter</code> 中用 <code>.select({ id:..., slug:..., title:..., ... })</code> 手动列出了 exercises 表的所有 14 个字段，与直接 <code>.select()</code>（返回所有字段）完全等价。冗余代码，增加维护负担。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>app/content/repositories/ExerciseRepository.ts:50-65</code></div>
+        <div class="fix"><strong>修复：</strong>替换为 <code>.select()</code>，删除手动字段列表。</div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p2">P2</span>
+          <span class="issue-title">FeatureGrid.vue 与 index.vue 大量重复 / 死 CSS</span>
+        </div>
+        <div class="issue-desc">
+          <code>FeatureGrid.vue</code> 包含 900+ 行 CSS，但组件模板只渲染 <code>.landing__features</code> 部分，<code>.landing__hero*</code>、<code>.landing__course*</code>、<code>.landing__btn*</code> 等大量样式是从 index.vue 复制来的<strong>死代码</strong>。同理 <code>index.vue</code> 中也有未使用的 <code>.landing__features*</code> 和 <code>.landing__course*</code> 样式。两个文件各自重复定义了同一批 CSS。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>app/components/home/FeatureGrid.vue</code>（L65-935）、<code>app/pages/index.vue</code>（L162-1026）</div>
+        <div class="fix"><strong>修复：</strong>FeatureGrid 只保留 <code>.landing__features*</code> 相关样式；index.vue 只保留 hero/how 相关样式。重复的 <code>.landing__btn</code> 提取到全局 CSS。</div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p2">P2</span>
+          <span class="issue-title">FeatureGrid.vue props 声明与本地变量同名，props 从未使用</span>
+        </div>
+        <div class="issue-desc">
+          <code>defineProps({ features })</code> 声明了 features prop，但同时 <code>const features = [...]</code> 定义了同名本地数组。模板中 <code>v-for="feat in features"</code> 解析到本地变量，props 从未被父组件传入也未被使用。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>app/components/home/FeatureGrid.vue:23-25</code></div>
+        <div class="fix"><strong>修复：</strong>移除 <code>defineProps</code> 声明，或改为从父组件传入数据。</div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p2">P2</span>
+          <span class="issue-title">study.vue 内容与技术栈不符</span>
+        </div>
+        <div class="issue-desc">
+          <code>study.vue</code> 硬编码的 Markdown 测试文本提到 "Morph-MD 组件库"、"marked.lexer + MDAST"、"Prism.js 代码高亮"、"Mermaid 图表" 等，但项目实际使用的是 <strong>unified + remark + rehype-katex</strong>，没有 marked/Prism/Mermaid。内容是旧技术栈的残留。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>app/pages/study.vue:21-56</code></div>
+        <div class="fix"><strong>修复：</strong>更新测试内容使其与实际技术栈一致，或移除此测试页面（Header 导航中已无此链接）。</div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p2">P2</span>
+          <span class="issue-title">exercise/index.get.ts 有 DATABASE_URL 检查但其他 API 没有</span>
+        </div>
+        <div class="issue-desc">
+          只有 <code>exercise/index.get.ts</code> 在入口处检查了 <code>process.env.DATABASE_URL</code>，其他 API（course/chapter/lesson）都没有。行为不一致，且实际数据库连接错误会在 <code>getDb()</code> 中抛出，这个检查是冗余的。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>server/api/exercise/index.get.ts:5-10</code></div>
+        <div class="fix"><strong>修复：</strong>移除该检查（由 <code>getDb()</code> 统一处理），或所有 API 统一添加。</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- P3 -->
+  <div class="section" id="p3">
+    <div class="section-title green">◇ P3 冗余清理 — 死代码 / 无效配置</div>
+    <div class="section-body">
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p3">P3</span>
+          <span class="issue-title">assets 表和 Asset 类型残留</span>
+        </div>
+        <div class="issue-desc">
+          AssetRepository 已删除，但 <code>schema.ts</code> 中 <code>assets</code> 表定义、<code>models/index.ts</code> 中 <code>Asset</code> 接口、<code>content/index.ts</code> 中 <code>Asset</code> 类型导出都还在。无任何代码使用。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>schema.ts:117-135,169</code>、<code>models/index.ts:152-166</code>、<code>content/index.ts:21</code></div>
+        <div class="fix"><strong>修复：</strong>移除 assets 表定义、Asset 接口和导出（如确认不再需要资源管理功能）。</div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p3">P3</span>
+          <span class="issue-title">tsconfig.json include 不存在的目录</span>
+        </div>
+        <div class="issue-desc">
+          <code>tsconfig.json</code> 的 <code>include</code> 中有 <code>"app/core/**/*.ts"</code>，但项目中没有 <code>app/core</code> 目录。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>tsconfig.json:32</code></div>
+        <div class="fix"><strong>修复：</strong>移除 <code>"app/core/**/*.ts"</code>。</div>
+      </div>
+
+      <div class="issue">
+        <div class="issue-head">
+          <span class="badge p3">P3</span>
+          <span class="issue-title">nuxt.config 中 @shared alias 指向不存在的目录</span>
+        </div>
+        <div class="issue-desc">
+          <code>nuxt.config.ts</code> 和 <code>tsconfig.json</code> 都定义了 <code>@shared</code> → <code>app/shared</code>，但项目中没有 <code>app/shared</code> 目录。
+        </div>
+        <div class="issue-files"><strong>文件：</strong><code>nuxt.config.ts:117</code>、<code>tsconfig.json:13-14</code></div>
+        <div class="fix"><strong>修复：</strong>移除未使用的 <code>@shared</code> alias。</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer-note">
+    审查完成 · 共 16 项发现（P0: 2 / P1: 4 / P2: 7 / P3: 3）<br>
+    建议优先修复 P0 的 <code>@markdowndia</code> → <code>@media</code> 和 <code>description</code> → <code>summary</code> 问题
+  </div>
+
+</div>
+</body>
+</html>

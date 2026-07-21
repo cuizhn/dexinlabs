@@ -1,5 +1,5 @@
-import { eq, asc, or } from 'drizzle-orm'
-import { getDb, lessons, chapters, type DbInstance } from '@database'
+import { eq, asc } from 'drizzle-orm'
+import { getDb, lessons, type DbInstance } from '@database'
 import type { Lesson, Chapter, Course } from '@content/models/index'
 
 export interface LessonWithRelations extends Lesson {
@@ -27,13 +27,11 @@ export class LessonRepository {
 
   async listByChapter(chapterSlug: string | undefined | null): Promise<Lesson[]> {
     if (!chapterSlug) return []
-    const rows = await this._getDb()
+    return this._getDb()
       .select()
       .from(this.table)
-      .leftJoin(chapters, eq(this.table.chapterId, chapters.id))
-      .where(or(eq(this.table.chapter, chapterSlug), eq(chapters.slug, chapterSlug)))
+      .where(eq(this.table.chapter, chapterSlug))
       .orderBy(asc(this.table.order), asc(this.table.id))
-    return rows as unknown as Lesson[]
   }
 
   async getBySlug(slug: string | undefined | null): Promise<Lesson | null> {

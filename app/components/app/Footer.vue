@@ -3,11 +3,11 @@
     <div class="app-footer__container">
       <div class="app-footer__brand">
         <span class="app-footer__logo">∑</span>
-        <span class="app-footer__name">Dexin Labs</span>
+        <span class="app-footer__name">得心实验室</span>
         <p class="app-footer__desc">理解为先，应用为本。让学习真正得心应手。</p>
       </div>
 
-      <div class="app-footer__links">
+      <!-- <div class="app-footer__links">
         <div class="app-footer__group">
           <h4 class="app-footer__group-title">开始学习</h4>
           <NuxtLink to="/study" class="app-footer__link">同步学习</NuxtLink>
@@ -20,12 +20,12 @@
           <NuxtLink to="/about" class="app-footer__link">品牌故事</NuxtLink>
           <NuxtLink to="/course" class="app-footer__link">联系与反馈</NuxtLink>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div class="app-footer__bottom">
       <div class="app-footer__bottom-container">
-        <p class="app-footer__copyright">Dexin Labs · 得心实验室 — 理解为先，应用为本</p>
+        <p class="app-footer__copyright">得心实验室 — 理解为先，应用为本</p>
       </div>
     </div>
   </footer>
@@ -112,7 +112,7 @@
   text-align: center;
 }
 
-@markdowndia (max-width: 768px) {
+@media (max-width: 768px) {
   .app-footer__container {
     flex-direction: column;
     gap: var(--spacing-xl);

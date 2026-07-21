@@ -44,7 +44,7 @@ export class LessonService {
     const summaryHtml = data.summaryText ? await renderToHTML(data.summaryText) : ''
 
     return {
-      lesson: { ...data, body: bodyHtml, intro: introHtml, summaryText: summaryHtml } as unknown as Lesson,
+      lesson: { ...data, bodyHtml, introHtml, summaryHtml } as unknown as Lesson,
       chapter: data.chapterEntity || null,
       course: data.courseEntity || null,
       previousLesson,

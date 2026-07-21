@@ -59,8 +59,6 @@
 </template>
 
 <script setup>
-import { useHead } from 'nuxt/app'
-
 useHead({ title: '关于 Dexin Labs' })
 </script>
 
@@ -157,7 +155,7 @@ useHead({ title: '关于 Dexin Labs' })
   line-height: 1.6;
   margin: 0;
 }
-@markdowndia (max-width: 640px) {
+@media (max-width: 640px) {
   .about-page__title {
     font-size: 1.875rem;
   }

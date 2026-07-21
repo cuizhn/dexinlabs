@@ -114,7 +114,6 @@ export default defineNuxtConfig({
 
   /** 路径别名配置 */
   alias: {
-    '@shared': path.resolve(rootDir, 'app/shared'),
     '@server': path.resolve(rootDir, 'server'),
     '@markdown': path.resolve(rootDir, 'app/markdown'),
     '@content': path.resolve(rootDir, 'app/content'),

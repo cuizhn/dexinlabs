@@ -29,9 +29,6 @@
 </template>
 
 <script setup>
-import { useHead, useRoute } from 'nuxt/app'
-import { computed } from 'vue'
-import ContentRenderer from '../../../components/content/Renderer.vue'
 
 const route = useRoute()
 

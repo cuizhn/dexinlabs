@@ -20,8 +20,8 @@
 
               <h2 class="chapter-card__title">{{ c.title }}</h2>
 
-              <p v-if="c.description" class="chapter-card__desc">
-                {{ c.description }}
+              <p v-if="c.summary" class="chapter-card__desc">
+                {{ c.summary }}
               </p>
 
               <div class="chapter-card__footer">

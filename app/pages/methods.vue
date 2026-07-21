@@ -45,8 +45,6 @@
 </template>
 
 <script setup>
-import { useHead } from 'nuxt/app'
-
 useHead({ title: '学习方法' })
 </script>
 
@@ -124,7 +122,7 @@ useHead({ title: '学习方法' })
   line-height: 1.6;
   margin: 0;
 }
-@markdowndia (max-width: 600px) {
+@media (max-width: 600px) {
   .principle-item {
     grid-template-columns: 1fr;
     gap: var(--spacing-sm);

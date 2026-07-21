@@ -56,26 +56,26 @@
 </template>
 
 <script setup>
-import { useHead, useRoute } from 'nuxt/app'
-
-import { computed } from 'vue'
 import ContentRenderer from '../../components/content/Renderer.vue'
 
 const route = useRoute()
-
 const chapterSlug = Array.isArray(route.params.chapter) ? route.params.chapter[0] : route.params.chapter
 
-const { exercise, loading: exerciseLoading } = await useExercise(chapterSlug)
+const { data: exerciseData, pending: loading } = await useFetch(
+  () => `/api/exercise?chapter=${chapterSlug}`
+)
 
-const { currentChapter, loading: chapterLoading } = await useChapter(chapterSlug)
+const exercise = computed(() => {
+  const list = exerciseData.value?.exercises
+  if (Array.isArray(list) && list.length > 0) return list[0]
+  return null
+})
 
-const loading = computed(() => (exerciseLoading.value || chapterLoading.value))
+const chapterTitle = computed(() => exerciseData.value?.chapterTitle || '')
 
 useHead({
   title: computed(() => (chapterTitle.value ? `${chapterTitle.value} · 练习` : '章节练习'))
 })
-
-const chapterTitle = computed(() => currentChapter.value && currentChapter.value.title)
 </script>
 
 <style scoped>

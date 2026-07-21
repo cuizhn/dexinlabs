@@ -3,7 +3,7 @@
     <div class="app-header__container">
       <NuxtLink to="/" class="app-header__logo">
         <span class="app-header__logo-icon">∑</span>
-        <span class="app-header__logo-text">Dexin Labs</span>
+        <span class="app-header__logo-text">得心实验室</span>
       </NuxtLink>
 
       <nav class="app-header__nav">
@@ -38,10 +38,6 @@
 </template>
 
 <script setup>
-import { useRoute } from 'nuxt/app'
-
-import { ref, computed } from 'vue'
-
 const navItems = [
   { path: '/', label: '首页', exact: true },
   { path: '/course', label: '课程中心' }
@@ -204,7 +200,7 @@ function closeMenu() {
   background-color: var(--color-bg-secondary);
 }
 
-@markdowndia (max-width: 768px) {
+@media (max-width: 768px) {
   .app-header__nav {
     display: none;
   }
@@ -220,7 +216,7 @@ function closeMenu() {
   }
 }
 
-@markdowndia (max-width: 480px) {
+@media (max-width: 480px) {
   .app-header__logo-text {
     font-size: 1rem;
   }

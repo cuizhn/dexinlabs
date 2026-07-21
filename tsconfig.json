@@ -10,8 +10,6 @@
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "paths": {
-      "@shared": ["app/shared"],
-      "@shared/*": ["app/shared/*"],
       "@server": ["server"],
       "@server/*": ["server/*"],
       "@markdown": ["app/markdown"],
@@ -29,7 +27,6 @@
     "app/**/*.js",
     "app/**/*.vue",
     "app/**/*.d.ts",
-    "app/core/**/*.ts",
     "server/**/*.ts",
     "server/**/*.js",
     "drizzle.config.ts"

@@ -29,8 +29,7 @@ export const courses = pgTable('courses', {
     .notNull()
 }, table => [
   uniqueIndex('idx_courses_slug_unique').on(table.slug),
-  index('idx_courses_order').on(table.order),
-  index('idx_courses_slug').on(table.slug)
+  index('idx_courses_order').on(table.order)
 ])
 
 export const chapters = pgTable('chapters', {
@@ -54,7 +53,6 @@ export const chapters = pgTable('chapters', {
   uniqueIndex('idx_chapters_slug_unique').on(table.slug),
   index('idx_chapters_course_id').on(table.courseId),
   index('idx_chapters_order').on(table.order),
-  index('idx_chapters_slug').on(table.slug),
   index('idx_chapters_course_slug').on(table.course)
 ])
 
@@ -82,7 +80,6 @@ export const lessons = pgTable('lessons', {
   uniqueIndex('idx_lessons_slug_unique').on(table.slug),
   index('idx_lessons_chapter_id').on(table.chapterId),
   index('idx_lessons_order').on(table.order),
-  index('idx_lessons_slug').on(table.slug),
   index('idx_lessons_chapter_slug').on(table.chapter)
 ])
 
@@ -110,28 +107,7 @@ export const exercises = pgTable('exercises', {
   uniqueIndex('idx_exercises_slug_unique').on(table.slug),
   index('idx_exercises_chapter_id').on(table.chapterId),
   index('idx_exercises_order').on(table.order),
-  index('idx_exercises_slug').on(table.slug),
   index('idx_exercises_chapter_slug').on(table.chapter)
-])
-
-export const assets = pgTable('assets', {
-  id: serial('id').primaryKey(),
-  slug: varchar('slug', { length: 255 }).notNull(),
-  title: varchar('title', { length: 255 }).notNull(),
-  type: varchar('type', { length: 64 }).default('file').notNull(),
-  url: text('url').notNull(),
-  mime: varchar('mime', { length: 128 }),
-  size: integer('size_bytes'),
-  meta: text('meta'),
-  createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
-    .default(sql`timezone('utc'::text, now())`)
-    .notNull(),
-  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
-    .default(sql`timezone('utc'::text, now())`)
-    .$onUpdateFn(() => new Date())
-    .notNull()
-}, table => [
-  uniqueIndex('idx_assets_slug_unique').on(table.slug)
 ])
 
 export const coursesRelations = relations(courses, ({ many }) => ({
@@ -166,7 +142,6 @@ export const schema = {
   chapters,
   lessons,
   exercises,
-  assets,
   coursesRelations,
   chaptersRelations,
   lessonsRelations,

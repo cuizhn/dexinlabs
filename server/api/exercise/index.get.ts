@@ -1,20 +1,17 @@
-import { defineEventHandler, createError, getQuery } from 'h3'
-import { exerciseService } from '@content'
+import { defineEventHandler, getQuery } from 'h3'
+import { exerciseService, chapterRepository } from '@content'
 
 export default defineEventHandler(async event => {
-  if (!process.env.DATABASE_URL) {
-    throw createError({
-      statusCode: 503,
-      statusMessage: 'DATABASE_URL is not configured.'
-    })
-  }
-
   const query = getQuery(event)
   const chapter = typeof query.chapter === 'string' ? query.chapter : undefined
 
   if (chapter) {
-    return exerciseService.listByChapter(chapter)
+    const [exercises, chapterData] = await Promise.all([
+      exerciseService.listByChapter(chapter),
+      chapterRepository.getBySlug(chapter)
+    ])
+    return { exercises, chapterTitle: chapterData?.title || '' }
   }
 
-  return exerciseService.listAll()
+  return { exercises: await exerciseService.listAll(), chapterTitle: '' }
 })
