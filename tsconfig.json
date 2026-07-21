@@ -4,10 +4,12 @@
     "strict": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    // 关闭 verbatimModuleSyntax 以允许 import type 与 value 混合导入
     "verbatimModuleSyntax": false,
     "resolveJsonModule": true,
     "types": ["node"],
     "baseUrl": ".",
+    // 忽略 TypeScript 6.0 弃用警告（待相关依赖更新后移除）
     "ignoreDeprecations": "6.0",
     "paths": {
       "@server": ["server"],
@@ -23,17 +25,19 @@
     }
   },
   "include": [
+    ".nuxt/nuxt.d.ts",
     "app/**/*.ts",
     "app/**/*.js",
     "app/**/*.vue",
     "app/**/*.d.ts",
     "server/**/*.ts",
     "server/**/*.js",
-    "drizzle.config.ts"
+    "drizzle.config.ts",
+    "nuxt.config.ts",
+    "eslint.config.mjs"
   ],
   "exclude": [
     "node_modules",
-    ".nuxt",
     ".output",
     ".vercel",
     "dist"

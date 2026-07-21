@@ -1,3 +1,6 @@
+/**
+ * 服务层统一导出
+ */
 export { CourseService, courseService } from './CourseService'
 export { ChapterService, chapterService } from './ChapterService'
 export { LessonService, lessonService } from './LessonService'

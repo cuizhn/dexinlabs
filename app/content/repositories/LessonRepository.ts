@@ -1,3 +1,6 @@
+/**
+ * 课时仓储 - 课时表的 CRUD 操作，含关联查询（章节、课程、兄弟课时）
+ */
 import { eq, asc } from 'drizzle-orm'
 import { getDb, lessons, type DbInstance } from '@database'
 import type { Lesson, Chapter, Course } from '@content/models/index'
@@ -70,6 +73,8 @@ export class LessonRepository {
       }
     })
     if (!result) return null
+    // Drizzle 关系查询字段名与 LessonWithRelations 接口不一致，需手动映射
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle 关系查询返回类型不含显式字段名
     const chapterRef = result.chapterRef as any
     return {
       ...result,

@@ -1,3 +1,4 @@
+<!-- 默认布局 - 包含全局顶栏、主内容区和页脚 -->
 <template>
   <div class="layout">
     <AppHeader />
@@ -9,8 +10,6 @@
     <AppFooter />
   </div>
 </template>
-
-<script setup></script>
 
 <style scoped>
 .layout {

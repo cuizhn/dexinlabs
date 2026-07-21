@@ -14,7 +14,8 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// 同步学习页面 - 展示平台学习理念与学习路径
 import ContentRenderer from '../components/content/Renderer.vue'
 
 useHead({ title: '同步学习' })

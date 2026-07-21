@@ -1,3 +1,8 @@
+/**
+ * 课程服务 - 封装课程相关的业务逻辑
+ *
+ * 提供课程查询、默认课程获取、课程页面数据组装等功能。
+ */
 import { courseRepository } from '@content/repositories'
 import type { Course, Chapter, Lesson, CoursePage } from '../models/index'
 import { normalizeSlug } from '../utils'

@@ -1,8 +1,8 @@
 # Architecture V2 Call Chain Audit
 
-> Audit Date: 2026-07-16
+> Audit Date: 2026-07-21
 > Status: Architecture V2 Stable
-> Last Refactor: Markdown Engine V2, Content Engine V2, Repository Cleanup
+> Last Refactor: Exercise API 越层修复, Content Engine 定位调整, Renderer.vue Vue Adapter 确认
 
 ---
 
@@ -16,8 +16,6 @@ Page /course/[chapter]/[lesson].vue
 Query (useLessonPage)
     ↓
 API (/api/lesson/[slug])
-    ↓
-Content Engine (getContentEngine().getLessonPage())
     ↓
 Service (LessonService.getLessonPage())
     ↓
@@ -35,8 +33,6 @@ Query (useChapterPage)
     ↓
 API (/api/chapter/[slug])
     ↓
-Content Engine (getContentEngine().getChapterPage())
-    ↓
 Service (ChapterService.getChapterPage())
     ↓
 Repository (ChapterRepository.getBySlug())
@@ -53,9 +49,7 @@ Query (useCoursePage)
     ↓
 API (/api/course)
     ↓
-Content Engine (getContentEngine().getDefaultCourse())
-    ↓
-Service (CourseService.getDefault())
+Service (CourseService.getCoursePage())
     ↓
 Repository (CourseRepository.getDefault())
     ↓
@@ -83,19 +77,19 @@ Database (Drizzle ORM)
 - Vue 组件渲染
 - 业务逻辑
 
-### content-engine
+### content 模块（Service 层）
 
 **负责**：
 - 获取课程/章节/课时/练习
 - 数据组合（上一课/下一课、导航、面包屑）
-- 缓存策略
-- 多数据源切换（FileSource / DatabaseSource）
 
 **不负责**：
 - Markdown 渲染
 - Vue 组件
 - ORM 实现
 - HTML 生成
+
+**未来扩展**：当引入多数据源或统一缓存时，升级为 Content Engine 协调层。
 
 ### database
 
@@ -156,7 +150,7 @@ Database (Drizzle ORM)
 **负责**：
 - 参数校验
 - 错误处理（400 / 404 / 503）
-- 调用 Content Engine
+- 调用 Service
 - 返回响应
 
 **不负责**：
@@ -202,18 +196,20 @@ Database (Drizzle ORM)
 | Page → Markdown Engine | ✅ 通过 | 页面不直接调用 Markdown Engine |
 | Component → Repository | ✅ 通过 | 无组件直接调用 Repository |
 | Component → Database | ✅ 通过 | 无组件直接访问数据库 |
-| Component → Markdown Engine | ✅ 通过 | 只有 render.vue（官方 Vue Adapter）调用 Engine |
-| API → Database | ✅ 通过 | API 只调用 Content Engine |
-| 业务层 → unified/remark/rehype/mdast/hast | ✅ 通过 | 所有 markdown 生态 import 都在 markdown-engine 内部 |
+| Component → Markdown Engine | ✅ 通过 | Renderer.vue 作为 Vue Adapter 调用 Engine，属于合理边界（见下方说明） |
+| API → Service | ✅ 通过 | API 只调用 Service，不直接访问 Repository |
+| API → Repository | ✅ 通过 | 已修复 exercise API 越层调用（2026-07-21） |
+| 业务层 → unified/remark/rehype/mdast/hast | ✅ 通过 | 所有 markdown 生态 import 都在 markdown engine 内部 |
 
 ### 特殊情况说明
 
-**render.vue（app/components/markdown/render.vue）**：
+**Renderer.vue（`app/components/content/Renderer.vue`）**：
 
-这是 Markdown Engine 的官方 Vue Adapter，属于特殊情况：
-- 它的唯一职责是调用 Engine API 并展示结果
+这是 Markdown Engine 的 Vue Adapter，属于合理边界：
+- 它的唯一职责是调用 Engine API（`renderToHTML`）并展示结果
 - 不包含任何业务逻辑
 - 不直接访问 Repository/Database
+- 作为 Engine 的表现层桥梁，Component → Vue Adapter → Engine 是合理的调用路径
 - 符合架构原则
 
 ---
@@ -241,7 +237,7 @@ Database (Drizzle ORM)
 - 所有新增代码必须由真实业务需求驱动
 - 优先采用成熟生态，不重复实现基础能力
 - 每种能力只能有一个负责它的模块
-- 保持调用链清晰：Page → Query → API → Content Engine → Service → Repository → Database
+- 保持调用链清晰：Page → Query → API → Service → Repository → Database
 
 ### 下一步工作重心
 

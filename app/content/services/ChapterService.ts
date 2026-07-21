@@ -1,3 +1,8 @@
+/**
+ * 章节服务 - 封装章节相关的业务逻辑
+ *
+ * 提供章节列表、章节页面数据组装（含前后章节导航、课时列表）等功能。
+ */
 import { chapterRepository } from '@content/repositories'
 import type { Chapter, ChapterPage } from '../models/index'
 import { normalizeSlug } from '../utils'
@@ -21,6 +26,7 @@ export class ChapterService {
     const data = await chapterRepository.getWithLessonsAndCourse(clean)
     if (!data) return null
 
+    // 在同课程的兄弟章节中定位当前章节，计算前后章节导航
     const currentIndex = data.siblingChapters.findIndex(c => c.slug === data.slug)
     const previousChapter = currentIndex > 0 ? (data.siblingChapters[currentIndex - 1] || null) : null
     const nextChapter = currentIndex >= 0 && currentIndex < data.siblingChapters.length - 1

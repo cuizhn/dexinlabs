@@ -1,7 +1,12 @@
+/**
+ * 课时服务 - 封装课时相关的业务逻辑
+ *
+ * 提供课时列表、课时详情、课时页面数据组装（含前后课时导航和 Markdown 渲染）等功能。
+ */
 import { lessonRepository } from '@content/repositories'
+import { renderToHTML } from '@markdown'
 import type { Chapter, Lesson, LessonPage } from '../models/index'
 import { normalizeSlug } from '../utils'
-import { renderToHTML } from '@markdown'
 
 export type LessonWithChapter = Omit<Lesson, 'chapter'> & {
   chapter: Chapter | null
@@ -39,9 +44,12 @@ export class LessonService {
       ? (data.siblingLessons[currentIndex + 1] || null)
       : null
 
-    const bodyHtml = data.body ? await renderToHTML(data.body) : ''
-    const introHtml = data.intro ? await renderToHTML(data.intro) : ''
-    const summaryHtml = data.summaryText ? await renderToHTML(data.summaryText) : ''
+    // 将 Markdown 字段渲染为 HTML，供前端直接展示
+    const [bodyHtml, introHtml, summaryHtml] = await Promise.all([
+      data.body ? renderToHTML(data.body) : '',
+      data.intro ? renderToHTML(data.intro) : '',
+      data.summaryText ? renderToHTML(data.summaryText) : ''
+    ])
 
     return {
       lesson: { ...data, bodyHtml, introHtml, summaryHtml } as unknown as Lesson,

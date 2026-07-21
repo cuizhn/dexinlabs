@@ -44,7 +44,8 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// 学习方法页面 - 展示四大数学学习原则
 useHead({ title: '学习方法' })
 </script>
 

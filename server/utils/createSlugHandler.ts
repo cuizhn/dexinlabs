@@ -1,3 +1,9 @@
+/**
+ * 通用 slug 路由处理器工厂
+ *
+ * 为 [slug].get.ts 类型的 API 端点提供统一的参数校验和 404 处理，
+ * 避免在每个实体路由中重复编写相同的错误处理代码。
+ */
 import { defineEventHandler, getRouterParam, createError } from 'h3'
 
 export function createSlugHandler<T>(
@@ -10,7 +16,7 @@ export function createSlugHandler<T>(
     if (!slug) {
       throw createError({
         statusCode: 400,
-        statusMessage: 'Slug is required'
+        statusMessage: '缺少 slug 参数'
       })
     }
 
@@ -19,7 +25,7 @@ export function createSlugHandler<T>(
     if (!result) {
       throw createError({
         statusCode: 404,
-        statusMessage: `${entityName} not found: ${slug}`
+        statusMessage: `未找到${entityName}：${slug}`
       })
     }
 

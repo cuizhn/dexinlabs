@@ -104,9 +104,9 @@ A → B
 
 | 能力 | 目录 |
 |------|------|
-| Markdown | `app/core/markdown-engine/` |
-| 内容组织 | `app/core/content-engine/` |
-| 数据库 | `app/core/database/` |
+| Markdown | `app/markdown/` |
+| 内容组织 | `app/content/` |
+| 数据库 | `app/database/` |
 
 这样出现问题时，可以立即定位到唯一模块。
 
@@ -139,9 +139,9 @@ Page 不知道：
 
 | 能力 | 负责模块 |
 |------|----------|
-| Markdown | `markdown-engine` |
-| 内容 | `content-engine` |
-| 数据库 | `database` |
+| Markdown | `app/markdown/` |
+| 内容 | `app/content/` |
+| 数据库 | `app/database/` |
 | 对象存储 | `storage`（如需要） |
 
 页面、组件、Query、API 不允许重复承担这些职责。
@@ -187,13 +187,27 @@ Page 不知道：
 
 ### 目录约定
 
-所有 Markdown 相关代码必须集中在 `app/core/markdown-engine/`。
+所有 Markdown 相关代码必须集中在 `app/markdown/`。
 
 ---
 
-## 2. Content Engine
+## 2. Content 模块
 
-**目标**：由"多层业务框架"调整为"统一内容入口"。
+**当前定位**：Service 层直接承担内容组合职责，API 调用 Service 获取数据。
+
+### 当前架构
+
+API Handler 直接调用对应的 Service（如 `chapterService.getChapterPage()`、`lessonService.getLessonPage()`），Service 负责数据组合并返回。不经过额外的门面层。
+
+### 未来扩展（Content Engine）
+
+当需要多数据源切换（FileSource / DatabaseSource）、统一缓存策略或更复杂的内容编排时，引入 Content Engine 作为统一协调层：
+
+```
+API → Content Engine（数据源选择 + 缓存） → Service → Repository
+```
+
+在单数据源阶段，Content Engine 不增加业务价值，暂不实现。
 
 ### 负责
 
@@ -202,8 +216,6 @@ Page 不知道：
 - 获取课时（getLesson / listLessons）
 - 获取练习（getExercise / listExercises）
 - 数据组合（Page DTO：上一篇/下一篇、导航等）
-- 缓存策略
-- 多数据源切换（FileSource / DatabaseSource）
 
 ### 不负责
 
@@ -232,7 +244,7 @@ Page 不知道：
 
 ### 对外 API
 
-Engine 对外提供统一内容 API，隐藏数据源实现细节。
+Service 对外提供内容数据，API Handler 调用 Service 获取。
 
 ---
 
@@ -357,14 +369,11 @@ API
 └────────────────┬────────────────┘
                  │
 ┌────────────────▼────────────────┐
-│       Content Engine            │  业务入口：统一内容 API
-│  ┌───────────────────────────┐  │
-│  │  Service（业务逻辑）       │  │  上一篇/下一篇、导航、组合
-│  └─────────────┬─────────────┘  │
-│                │                │
-│  ┌─────────────▼─────────────┐  │
-│  │  Repository（数据访问）    │  │  仅 CRUD，无业务
-│  └───────────────────────────┘  │
+│       Service（业务逻辑）        │  上一篇/下一篇、导航、组合
+└────────────────┬────────────────┘
+                 │
+┌────────────────▼────────────────┐
+│     Repository（数据访问）       │  仅 CRUD，无业务
 └────────────────┬────────────────┘
                  │
 ┌────────────────▼────────────────┐
@@ -373,8 +382,10 @@ API
 
 ┌─────────────────────────────────┐
 │    Markdown Engine              │  独立能力层：remark + unified
-│  （零 Content Engine 依赖）      │
+│  （零 Content 模块依赖）         │
 └─────────────────────────────────┘
+
+未来扩展：当需要多数据源或统一缓存时，在 API 与 Service 之间引入 Content Engine 协调层。
 ```
 
 ---
@@ -392,23 +403,18 @@ API
    ↓
 4. API Handler：
    - 校验 slug 参数
-   - 调用 contentEngine.getLessonPage(slug)
+   - 调用 lessonService.getLessonPage(slug)
    ↓
-5. Content Engine Facade：
-   - 根据 CONTENT_SOURCE 选择数据源
-   ↓
-6. DatabaseSource / FileSource：
-   - 调用 LessonService.getLessonPage(slug)
-   ↓
-7. LessonService：
+5. LessonService：
    - 调用 lessonRepository.getBySlug(slug)
    - 调用 chapterRepository.getBySlug(chapterSlug)
    - 计算 previousLesson / nextLesson
-   - 组合 LessonPage DTO 返回
+   - 将 body/intro/summaryText 渲染为 HTML
+   - 组合 LessonPage 返回
    ↓
-8. API 返回 JSON
+6. API 返回 JSON
    ↓
-9. useLessonPage 接收数据，页面渲染
+7. useLessonPage 接收数据，页面渲染
 ```
 
 ---
@@ -429,4 +435,4 @@ API
 
 > **业务自己实现。**
 > **基础能力交给成熟生态。**
-> **Engine 负责组织，而不是重复实现。**
+> **Service 负责业务逻辑，未来由 Content Engine 统一协调。**

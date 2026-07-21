@@ -1,4 +1,11 @@
 /**
+ * Content 模块数据模型定义
+ *
+ * 定义课程、章节、课时、练习等核心实体的 TypeScript 接口，
+ * 以及页面组合所需的扩展类型（LessonPage、ChapterPage、CoursePage）。
+ */
+
+/**
  * Content Engine 模型定义 - 领域实体类型
  * 
  * 设计意图：

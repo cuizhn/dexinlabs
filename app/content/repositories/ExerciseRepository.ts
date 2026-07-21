@@ -1,3 +1,6 @@
+/**
+ * 练习仓储 - 练习表的 CRUD 操作，支持多条件过滤和排序
+ */
 import { eq, and, asc, desc } from 'drizzle-orm'
 import type { SQL } from 'drizzle-orm'
 import { getDb, exercises, type DbInstance } from '@database'
@@ -39,7 +42,9 @@ export class ExerciseRepository {
     const sortDir = order.toLowerCase() === 'desc' ? desc : asc
     const sortCol = orderBy === 'id' ? this.table.id : this.table.order
     const where = this._buildWhere({ chapter, chapterId })
-    let query: any = this._getDb().select().from(this.table)
+    // Drizzle 链式查询构建器在条件 where 下难以精确推断类型
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle 链式构建器在动态 where 条件下类型推断受限
+    let query = this._getDb().select().from(this.table) as any
     if (where) query = query.where(where)
     return query.orderBy(sortDir(sortCol))
   }

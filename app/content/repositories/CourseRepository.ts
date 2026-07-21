@@ -1,3 +1,6 @@
+/**
+ * 课程仓储 - 课程表的 CRUD 操作
+ */
 import { eq, asc } from 'drizzle-orm'
 import { getDb, courses, type DbInstance } from '@database'
 import type { Course, Chapter, Lesson } from '@content/models/index'
@@ -65,6 +68,7 @@ export class CourseRepository {
         }
       }
     })
+    // Drizzle with 查询返回类型包含关系字段名，与 models 中的可选字段定义不完全匹配，需要显式断言
     return result as unknown as (Course & { chapters: (Chapter & { lessons: Lesson[] })[] }) | null
   }
 }

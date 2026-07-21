@@ -13,7 +13,7 @@
       <div class="container">
         <template v-if="chapters.length">
           <div class="course-index__grid">
-            <NuxtLink v-for="c in chapters" :key="c.id" :to="`/course/${c.slug}`" class="chapter-card">
+            <NuxtLink v-for="c in chapters" :key="c.slug" :to="`/course/${c.slug}`" class="chapter-card">
               <div class="chapter-card__order">
                 {{ String(c.order).padStart(2, '0') }}
               </div>
@@ -36,7 +36,8 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// 课程中心页面 - 展示所有章节卡片列表
 
 useHead({ title: '课程中心' })
 

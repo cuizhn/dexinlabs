@@ -13,7 +13,8 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// Markdown 内容渲染器 - 支持预渲染 HTML 和运行时 Markdown 转换，提供多个具名插槽
 import { renderToHTML } from '@markdown'
 
 const props = defineProps({
@@ -56,7 +57,8 @@ watch(() => markdownString.value, async (md) => {
   loading.value = true
   try {
     renderedHtml.value = await renderToHTML(md)
-  } catch (e) {
+  } catch (error) {
+    console.error('[Renderer] Markdown 渲染失败:', error)
     renderedHtml.value = ''
   } finally {
     loading.value = false

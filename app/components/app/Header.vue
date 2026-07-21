@@ -37,8 +37,15 @@
   </header>
 </template>
 
-<script setup>
-const navItems = [
+<script setup lang="ts">
+// 全局顶部导航栏 - 包含 Logo、桌面端导航链接和移动端汉堡菜单
+interface NavItem {
+  path: string
+  label: string
+  exact?: boolean
+}
+
+const navItems: NavItem[] = [
   { path: '/', label: '首页', exact: true },
   { path: '/course', label: '课程中心' }
 ]
@@ -49,7 +56,7 @@ const route = useRoute()
 
 const currentPath = computed(() => route.path)
 
-function isActive(item) {
+function isActive(item: NavItem) {
   if (item.exact) return currentPath.value === item.path
   return currentPath.value === item.path || currentPath.value.startsWith(`${item.path}/`)
 }

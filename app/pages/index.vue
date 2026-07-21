@@ -121,7 +121,8 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// 首页 - 着陆页，包含英雄区、特色功能展示和学习路径介绍
 useHead({
   title: 'Dexin Labs · 用数学理解世界'
 })

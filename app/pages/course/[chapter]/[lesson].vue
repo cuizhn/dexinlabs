@@ -10,7 +10,7 @@
             :to="`/course/${chapterSlug}`"
             class="lesson-detail__bc-link"
           >
-            {{ lesson?.chapter?.title || '章节' }}
+            {{ chapter?.title || '章节' }}
           </NuxtLink>
           <span class="lesson-detail__bc-sep">/</span>
           <span class="lesson-detail__bc-current">{{ lesson?.title || '课时' }}</span>
@@ -28,7 +28,8 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// 课时详情页 - 展示单个课时的 Markdown 内容，含面包屑导航和前后课时切换
 
 const route = useRoute()
 
@@ -36,7 +37,7 @@ const lessonSlug = Array.isArray(route.params.lesson)
   ? route.params.lesson[0]
   : route.params.lesson
 
-const { lesson, chapter, course, loading } = await useLessonPage(lessonSlug)
+const { lesson, chapter, loading } = await useLessonPage(lessonSlug)
 
 const chapterSlug = computed(() => chapter.value?.slug || route.params.chapter)
 

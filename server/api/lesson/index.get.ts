@@ -1,3 +1,8 @@
+/**
+ * GET /api/lesson - 获取课时列表
+ *
+ * ?chapter=xxx 时按章节过滤，否则返回全部课时。
+ */
 import { defineEventHandler, getQuery } from 'h3'
 import { lessonService } from '@content'
 

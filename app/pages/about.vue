@@ -58,7 +58,8 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// 关于页面 - 品牌故事与核心原则展示
 useHead({ title: '关于 Dexin Labs' })
 </script>
 

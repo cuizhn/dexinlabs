@@ -59,11 +59,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// 章节详情页 - 展示章节下的课时列表与练习入口
 const route = useRoute()
-const chapterSlug = route.params.chapter
+const chapterSlug = Array.isArray(route.params.chapter)
+  ? route.params.chapter[0]
+  : route.params.chapter
 
-const { chapter, lessons, loading } = await useChapterPage(chapterSlug)
+const { chapter, lessons, loading: _loading } = await useChapterPage(chapterSlug)
 
 useHead({
   title: computed(() => (chapter.value ? `${chapter.value.title} · 章节` : '章节'))

@@ -1,16 +1,17 @@
+/**
+ * GET /api/exercise - 获取练习列表
+ *
+ * ?chapter=xxx 时返回指定章节的练习及章节标题，否则返回全部练习。
+ */
 import { defineEventHandler, getQuery } from 'h3'
-import { exerciseService, chapterRepository } from '@content'
+import { exerciseService } from '@content'
 
 export default defineEventHandler(async event => {
   const query = getQuery(event)
   const chapter = typeof query.chapter === 'string' ? query.chapter : undefined
 
   if (chapter) {
-    const [exercises, chapterData] = await Promise.all([
-      exerciseService.listByChapter(chapter),
-      chapterRepository.getBySlug(chapter)
-    ])
-    return { exercises, chapterTitle: chapterData?.title || '' }
+    return exerciseService.listByChapterWithMeta(chapter)
   }
 
   return { exercises: await exerciseService.listAll(), chapterTitle: '' }

@@ -19,7 +19,8 @@
     </div>
   </section>
 </template>
-<script setup>
+<script setup lang="ts">
+// 首页特色功能网格 - 以卡片网格形式展示平台核心优势
 const features = [
   {
     icon: '📐',

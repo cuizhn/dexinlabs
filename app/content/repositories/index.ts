@@ -1,3 +1,6 @@
+/**
+ * 仓储层统一导出
+ */
 export { CourseRepository, courseRepository } from './CourseRepository'
 export { ChapterRepository, chapterRepository } from './ChapterRepository'
 export type { ChapterWithRelations } from './ChapterRepository'

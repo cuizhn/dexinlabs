@@ -1,3 +1,10 @@
+/**
+ * 数据库表结构定义（Drizzle ORM Schema）
+ *
+ * 定义了课程、章节、课时、练习四张表及其关联关系。
+ * 表之间通过 slug 字段建立关系查询（Drizzle relations），
+ * 同时保留整数外键（courseId、chapterId）用于数据库级约束。
+ */
 import {
   pgTable,
   serial,
@@ -23,6 +30,8 @@ export const courses = pgTable('courses', {
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
     .default(sql`timezone('utc'::text, now())`)
     .notNull(),
+  // 注意：$onUpdateFn 仅在通过 Drizzle ORM 更新记录时生效，
+  // 原生 SQL 更新需手动设置 updated_at 或通过数据库触发器实现
   updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
     .default(sql`timezone('utc'::text, now())`)
     .$onUpdateFn(() => new Date())
@@ -114,6 +123,11 @@ export const coursesRelations = relations(courses, ({ many }) => ({
   chapters: many(chapters)
 }))
 
+/**
+ * 关系定义使用 slug 关联（而非整数外键），
+ * 因为业务层（Repository/API 路由）主要按 slug 查询，slug 上已有唯一索引。
+ * 整数外键（courseId 等）仅用于数据库级约束（级联删除等）。
+ */
 export const chaptersRelations = relations(chapters, ({ one, many }) => ({
   courseRef: one(courses, {
     fields: [chapters.course],

@@ -1,4 +1,5 @@
-﻿<template>
+﻿<!-- 全局页脚 - 品牌标识与版权信息 -->
+<template>
   <footer class="app-footer">
     <div class="app-footer__container">
       <div class="app-footer__brand">
@@ -6,21 +7,6 @@
         <span class="app-footer__name">得心实验室</span>
         <p class="app-footer__desc">理解为先，应用为本。让学习真正得心应手。</p>
       </div>
-
-      <!-- <div class="app-footer__links">
-        <div class="app-footer__group">
-          <h4 class="app-footer__group-title">开始学习</h4>
-          <NuxtLink to="/study" class="app-footer__link">同步学习</NuxtLink>
-          <NuxtLink to="/course" class="app-footer__link">课程中心</NuxtLink>
-          <NuxtLink to="/methods" class="app-footer__link">学习方法</NuxtLink>
-        </div>
-
-        <div class="app-footer__group">
-          <h4 class="app-footer__group-title">关于</h4>
-          <NuxtLink to="/about" class="app-footer__link">品牌故事</NuxtLink>
-          <NuxtLink to="/course" class="app-footer__link">联系与反馈</NuxtLink>
-        </div>
-      </div> -->
     </div>
 
     <div class="app-footer__bottom">

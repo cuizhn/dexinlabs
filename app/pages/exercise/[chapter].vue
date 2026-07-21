@@ -55,7 +55,8 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+// 章节练习页 - 展示章节的交互式练习题
 import ContentRenderer from '../../components/content/Renderer.vue'
 
 const route = useRoute()
