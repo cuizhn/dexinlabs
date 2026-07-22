@@ -19,7 +19,7 @@
             <p class="learning-home__subtitle">从「一元二次方程」开始<br />这是初中数学的核心主题之一</p>
 
             <div class="learning-home__actions">
-              <NuxtLink to="/代数/一元二次方程" class="learning-home__btn learning-home__btn--primary">
+              <NuxtLink to="/algebra/quadratic-equation-in-one-unknown" class="learning-home__btn learning-home__btn--primary">
                 开始学习
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
