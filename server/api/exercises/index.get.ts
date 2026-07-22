@@ -1,17 +1,19 @@
-/**
- * GET /api/exercises - 获取练习列表
- *
- * ?topic=xxx 时返回指定主题的练习及主题标题，否则返回全部练习。
- */
-import { defineEventHandler, getQuery } from 'h3'
+import { defineEventHandler, getQuery, createError } from 'h3'
 import { exerciseService } from '@content'
+import { assertDatabaseReady } from '@server/utils/error'
 
 export default defineEventHandler(async event => {
+  assertDatabaseReady()
+
   const query = getQuery(event)
   const topic = typeof query.topic === 'string' ? query.topic : undefined
 
   if (topic) {
-    return exerciseService.listByTopicWithMeta(topic)
+    const result = await exerciseService.listByTopicWithMeta(topic)
+    if (!result) {
+      throw createError({ statusCode: 404, message: `未找到主题：${topic}` })
+    }
+    return result
   }
 
   return { exercises: await exerciseService.listAll(), topicTitle: '' }

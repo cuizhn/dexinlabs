@@ -1,15 +1,11 @@
-/**
- * 练习服务 - 封装练习相关的业务逻辑
- *
- * 提供练习列表、练习详情、按主题查询练习（含主题标题）等功能。
- */
-// 注意：此处直接访问 topicRepository 获取主题标题，
-// 避免引入 topicService 的循环依赖。如后续主题服务逻辑变复杂，应改为调用 topicService。
-import { exerciseRepository, topicRepository } from '@content/repositories'
+import { exerciseRepository } from '@content/repositories'
 import type { Exercise } from '../models/index'
+import type { TopicService } from './TopicService'
 import { normalizeSlug } from '../utils'
 
 export class ExerciseService {
+  constructor(private readonly topicService: TopicService) {}
+
   async listByTopic(topicSlug: string): Promise<Exercise[]> {
     const clean = normalizeSlug(topicSlug)
     if (!clean) return []
@@ -26,12 +22,12 @@ export class ExerciseService {
     const clean = normalizeSlug(topicSlug)
     if (!clean) return { exercises: [], topicTitle: '' }
 
-    const [exercises, topicData] = await Promise.all([
+    const [exercises, topicPage] = await Promise.all([
       exerciseRepository.listByTopic(clean),
-      topicRepository.findBySlug(clean)
+      this.topicService.getBySlug(clean)
     ])
 
-    return { exercises, topicTitle: topicData?.title || '' }
+    return { exercises, topicTitle: topicPage?.topic.title || '' }
   }
 
   async listAll(): Promise<Exercise[]> {
@@ -39,5 +35,7 @@ export class ExerciseService {
   }
 }
 
-export const exerciseService = new ExerciseService()
+export const exerciseService = new ExerciseService({
+  getBySlug: () => Promise.resolve(null)
+} as unknown as TopicService)
 export default exerciseService

@@ -1,30 +1,26 @@
 <template>
   <div class="lesson-detail">
-    <section class="lesson-detail__header">
+    <header class="lesson-detail__header">
       <div class="container lesson-detail__container">
-        <nav class="lesson-detail__breadcrumb">
-          <NuxtLink to="/map" class="lesson-detail__bc-link">知识地图</NuxtLink>
-          <span class="lesson-detail__bc-sep">/</span>
-          <NuxtLink
-            v-if="topicSlug"
-            :to="`/${domainSlug}/${topicSlug}`"
-            class="lesson-detail__bc-link"
-          >
-            {{ topic?.title || '' }}
-          </NuxtLink>
-          <span class="lesson-detail__bc-sep">/</span>
-          <span class="lesson-detail__bc-current">{{ lesson?.title || '学习' }}</span>
-        </nav>
-      </div>
-    </section>
+        <NuxtLink
+          :to="`/${domainSlug}/${topicSlug}`"
+          class="lesson-detail__back"
+        >
+          ←
+        </NuxtLink>
 
-    <section class="lesson-detail__body">
+        <h1 class="lesson-detail__title">{{ lesson?.title || '学习' }}</h1>
+
+        <span class="lesson-detail__progress">{{ lessonIndex }} / {{ totalLessons }}</span>
+      </div>
+    </header>
+
+    <main class="lesson-detail__body">
       <div class="container lesson-detail__container">
         <div v-if="loading" class="lesson-detail__empty">内容加载中...</div>
         <ContentRenderer v-else-if="lesson" :value="lesson" />
         <div v-else class="lesson-detail__empty">内容未找到</div>
 
-        <!-- 上一课 / 下一课导航 -->
         <nav v-if="previousLesson || nextLesson" class="lesson-detail__nav">
           <NuxtLink
             v-if="previousLesson"
@@ -43,70 +39,74 @@
           </NuxtLink>
         </nav>
       </div>
-    </section>
+    </main>
   </div>
 </template>
 
 <script setup lang="ts">
-/**
- * 课时详情页 - 展示单个课时的 Markdown 内容
- * 含面包屑导航和前后课时切换
- */
 const lessonSlug = useRouteParam('lesson') ?? ''
 const topicSlug = useRouteParam('topic') ?? ''
 const domainSlug = useRouteParam('domain') ?? ''
 
-const { lesson, topic, previousLesson, nextLesson, loading } = await useLessonPage(lessonSlug)
+const { lesson, previousLesson, nextLesson, loading } = await useLessonPage(lessonSlug)
+
+const lessonIndex = computed(() => lesson.value?.order ?? 1)
+const totalLessons = computed(() => {
+  const total = previousLesson.value ? lessonIndex.value : lessonIndex.value
+  if (nextLesson.value) return total + 1
+  return total
+})
 
 useHead({
-  title: computed(() => {
-    const parts = []
-    if (lesson.value?.title) parts.push(lesson.value.title)
-    if (topic.value?.title) parts.push(topic.value.title)
-    return parts.join(' · ')
-  })
+  title: computed(() => lesson.value?.title || '学习')
 })
 </script>
 
 <style scoped>
 .lesson-detail__header {
-  padding: var(--spacing-lg) 0;
-  background: var(--color-bg-secondary);
+  padding: var(--spacing-md) 0;
   border-bottom: 1px solid var(--color-border);
 }
+
 .lesson-detail__container {
   max-width: 760px;
 }
-.lesson-detail__breadcrumb {
-  display: flex;
-  gap: var(--spacing-xs);
-  align-items: center;
-  font-size: 0.875rem;
-  flex-wrap: wrap;
-}
-.lesson-detail__bc-link {
-  color: var(--color-text-secondary);
-  text-decoration: none;
-}
-.lesson-detail__bc-link:hover {
-  color: var(--color-primary);
-}
-.lesson-detail__bc-sep {
+
+.lesson-detail__back {
+  font-size: 1.25rem;
   color: var(--color-text-light);
+  text-decoration: none;
+  transition: color 150ms ease;
 }
-.lesson-detail__bc-current {
-  color: var(--color-text-primary);
+
+.lesson-detail__back:hover {
+  color: var(--color-text-secondary);
+}
+
+.lesson-detail__title {
+  font-size: 1rem;
   font-weight: 500;
+  color: var(--color-text-secondary);
+  margin: 0;
 }
+
+.lesson-detail__progress {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  font-family: var(--font-mono);
+}
+
 .lesson-detail__body {
   padding: var(--spacing-2xl) 0 var(--spacing-3xl);
 }
+
 .lesson-detail__empty {
   padding: var(--spacing-3xl) 0;
   text-align: center;
   color: var(--color-text-muted);
   font-size: 0.95rem;
 }
+
 .lesson-detail__nav {
   display: flex;
   justify-content: space-between;
@@ -115,28 +115,39 @@ useHead({
   padding-top: var(--spacing-xl);
   border-top: 1px solid var(--color-border);
 }
+
 .lesson-detail__nav-link {
   padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--color-bg-white);
-  border: 1px solid var(--color-border);
   border-radius: var(--border-radius-md);
   text-decoration: none;
-  color: var(--color-text-primary);
   font-size: 0.875rem;
   font-weight: 500;
-  transition:
-    border-color 150ms ease,
-    box-shadow 150ms ease;
+  transition: all 150ms ease;
   max-width: 45%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.lesson-detail__nav-link:hover {
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-sm);
+
+.lesson-detail__nav-link--prev {
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
 }
+
+.lesson-detail__nav-link--prev:hover {
+  border-color: var(--color-primary);
+}
+
 .lesson-detail__nav-link--next {
+  background: linear-gradient(135deg, var(--color-primary), #6366f1);
+  color: #fff;
   margin-left: auto;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+.lesson-detail__nav-link--next:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
 }
 </style>

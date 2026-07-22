@@ -75,7 +75,8 @@ export default defineNuxtConfig({
     '@server': path.resolve(rootDir, 'server'),
     '@markdown': path.resolve(rootDir, 'app/markdown'),
     '@content': path.resolve(rootDir, 'app/content'),
-    '@database': path.resolve(rootDir, 'app/database')
+    '@database': path.resolve(rootDir, 'app/database'),
+    '@progress': path.resolve(rootDir, 'app/progress')
   },
 
   /** 

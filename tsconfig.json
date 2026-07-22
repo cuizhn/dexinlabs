@@ -20,6 +20,8 @@
       "@content/*": ["app/content/*"],
       "@database": ["app/database"],
       "@database/*": ["app/database/*"],
+      "@progress": ["app/progress"],
+      "@progress/*": ["app/progress/*"],
       "~/*": ["app/*"],
       "~~/*": ["./*"]
     }
