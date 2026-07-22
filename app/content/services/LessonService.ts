@@ -5,44 +5,44 @@
  */
 import { lessonRepository } from '@content/repositories'
 import { renderToHTML } from '@markdown'
-import type { Chapter, Lesson, LessonPage } from '../models/index'
-import { normalizeSlug } from '../utils'
+import type { Topic, Lesson, LessonPage } from '../models/index'
+import { normalizeSlug, toLesson, toTopic, toDomain, getSiblings } from '../utils'
 
-export type LessonWithChapter = Omit<Lesson, 'chapter'> & {
-  chapter: Chapter | null
+export type LessonWithTopic = Omit<Lesson, 'topic'> & {
+  topic: Topic | null
 }
 
 export class LessonService {
-  async listByChapter(chapterSlug: string): Promise<Lesson[]> {
-    const clean = normalizeSlug(chapterSlug)
+  async listByTopic(topicSlug: string): Promise<Lesson[]> {
+    const clean = normalizeSlug(topicSlug)
     if (!clean) return []
-    return lessonRepository.listByChapter(clean)
+    return lessonRepository.listByTopic(clean)
   }
 
   async listAll(): Promise<Lesson[]> {
     return lessonRepository.list()
   }
 
-  async getBySlug(slug: string): Promise<LessonWithChapter | null> {
+  async getBySlug(slug: string): Promise<LessonWithTopic | null> {
     const clean = normalizeSlug(slug)
     if (!clean) return null
-    const data = await lessonRepository.getWithChapterAndCourse(clean)
+    const data = await lessonRepository.getWithTopicAndDomain(clean)
     if (!data) return null
-    return { ...data, chapter: data.chapterEntity || null } as unknown as LessonWithChapter
+    return {
+      ...toLesson(data),
+      topic: data.topicEntity ? toTopic(data.topicEntity) : null
+    } as LessonWithTopic
   }
 
   async getLessonPage(slug: string): Promise<LessonPage | null> {
     const clean = normalizeSlug(slug)
     if (!clean) return null
 
-    const data = await lessonRepository.getWithChapterAndCourse(clean)
+    const data = await lessonRepository.getWithTopicAndDomain(clean)
     if (!data) return null
 
-    const currentIndex = data.siblingLessons.findIndex(l => l.slug === data.slug)
-    const previousLesson = currentIndex > 0 ? (data.siblingLessons[currentIndex - 1] || null) : null
-    const nextLesson = currentIndex >= 0 && currentIndex < data.siblingLessons.length - 1
-      ? (data.siblingLessons[currentIndex + 1] || null)
-      : null
+    // 使用 getSiblings 工具函数计算前后课时导航
+    const { previous: previousLesson, next: nextLesson } = getSiblings(data.siblingLessons, data.slug)
 
     // 将 Markdown 字段渲染为 HTML，供前端直接展示
     const [bodyHtml, introHtml, summaryHtml] = await Promise.all([
@@ -52,11 +52,12 @@ export class LessonService {
     ])
 
     return {
-      lesson: { ...data, bodyHtml, introHtml, summaryHtml } as unknown as Lesson,
-      chapter: data.chapterEntity || null,
-      course: data.courseEntity || null,
-      previousLesson,
-      nextLesson
+      // 使用 toLesson 显式选取字段，避免仓储内部字段泄漏到 API 响应
+      lesson: toLesson(data, { bodyHtml, introHtml, summaryHtml }),
+      topic: data.topicEntity ? toTopic(data.topicEntity) : null,
+      domain: data.domainEntity ? toDomain(data.domainEntity) : null,
+      previousLesson: previousLesson ? toLesson(previousLesson) : null,
+      nextLesson: nextLesson ? toLesson(nextLesson) : null
     }
   }
 }

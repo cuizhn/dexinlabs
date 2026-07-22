@@ -1,88 +1,84 @@
 <template>
-  <div class="course-index">
-    <section class="course-index__header">
+  <div class="domain-index">
+    <section class="domain-index__header">
       <div class="container">
-        <span class="course-index__tag">课程中心</span>
-        <h1 class="course-index__title">探索数学的旅程</h1>
-        <p class="course-index__subtitle"> 每一个章节都是精心设计的学习单元，从理解到应用，让你真正得心应手 </p>
-        
+        <h1 class="domain-index__title">{{ domain?.title || '知识领域' }}</h1>
+        <p v-if="domain?.description" class="domain-index__subtitle">
+          {{ domain.description }}
+        </p>
       </div>
     </section>
 
-    <section class="course-index__body">
+    <section class="domain-index__body">
       <div class="container">
-        <template v-if="chapters.length">
-          <div class="course-index__grid">
-            <NuxtLink v-for="c in chapters" :key="c.slug" :to="`/course/${c.slug}`" class="chapter-card">
-              <div class="chapter-card__order">
-                {{ String(c.order).padStart(2, '0') }}
+        <template v-if="topics.length">
+          <div class="domain-index__grid">
+            <NuxtLink v-for="t in topics" :key="t.slug" :to="`/${domainSlug}/${t.slug}`" class="topic-card">
+              <div class="topic-card__order">
+                {{ String(t.order).padStart(2, '0') }}
               </div>
 
-              <h2 class="chapter-card__title">{{ c.title }}</h2>
+              <h2 class="topic-card__title">{{ t.title }}</h2>
 
-              <p v-if="c.summary" class="chapter-card__desc">
-                {{ c.summary }}
+              <p v-if="t.summary" class="topic-card__desc">
+                {{ t.summary }}
               </p>
 
-              <div class="chapter-card__footer">
-                <span class="chapter-card__cta">进入学习 →</span>
+              <div class="topic-card__footer">
+                <span class="topic-card__cta">开始探索 →</span>
               </div>
             </NuxtLink>
           </div>
         </template>
       </div>
     </section>
-    
   </div>
 </template>
 
 <script setup lang="ts">
-// 课程中心页面 - 展示所有章节卡片列表
+/**
+ * Domain 知识领域首页
+ *
+ * 知识地图展开后的领域落地页。展示该领域概览及其下所有 Topic 列表。
+ * 用户从 /map 点击某个领域后进入此页。
+ */
+const domainSlug = useRouteParam('domain') ?? ''
 
-useHead({ title: '课程中心' })
+const { domain, topics } = await useDomainPage(domainSlug)
 
-const { chapters } = await useCoursePage()
+useHead({
+  title: computed(() => domain.value?.title || '知识领域')
+})
 </script>
 
 <style scoped>
-.course-index__header {
+.domain-index__header {
   padding: var(--spacing-2xl) 0 var(--spacing-xl);
   text-align: center;
   background: linear-gradient(180deg, var(--color-bg-secondary), transparent);
 }
-.course-index__tag {
-  display: inline-block;
-  padding: 4px 14px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  color: var(--color-primary);
-  background: var(--color-primary-light);
-  border-radius: 100px;
-  margin-bottom: var(--spacing-md);
-}
-.course-index__title {
+.domain-index__title {
   font-size: 2.25rem;
   font-weight: 700;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-sm);
 }
-.course-index__subtitle {
+.domain-index__subtitle {
   font-size: 1rem;
   color: var(--color-text-secondary);
   max-width: 560px;
   margin: 0 auto;
   line-height: 1.6;
 }
-.course-index__body {
+.domain-index__body {
   padding: var(--spacing-xl) 0 var(--spacing-3xl);
 }
-.course-index__grid {
+.domain-index__grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--spacing-lg);
 }
-.chapter-card {
+.topic-card {
   display: block;
   padding: var(--spacing-xl);
   background: var(--color-bg-white);
@@ -95,45 +91,39 @@ const { chapters } = await useCoursePage()
     box-shadow 150ms ease,
     border-color 150ms ease;
 }
-.chapter-card:hover {
+.topic-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
   border-color: var(--color-primary);
 }
-.chapter-card__order {
+.topic-card__order {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--color-primary);
   margin-bottom: var(--spacing-md);
 }
-.chapter-card__title {
+.topic-card__title {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-sm);
   line-height: 1.4;
 }
-.chapter-card__desc {
+.topic-card__desc {
   font-size: 0.875rem;
   color: var(--color-text-secondary);
   line-height: 1.6;
   margin: 0 0 var(--spacing-lg);
   min-height: 3em;
 }
-.chapter-card__footer {
+.topic-card__footer {
   border-top: 1px dashed var(--color-border);
   padding-top: var(--spacing-md);
 }
-.chapter-card__cta {
+.topic-card__cta {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-primary);
-}
-.course-index__empty {
-  padding: var(--spacing-3xl) 0;
-  text-align: center;
-  color: var(--color-text-muted);
-  font-size: 0.95rem;
 }
 </style>

@@ -6,7 +6,7 @@
         <span class="app-header__logo-text">得心实验室</span>
       </NuxtLink>
 
-      <nav class="app-header__nav">
+      <nav class="app-header__nav" aria-label="主导航">
         <NuxtLink
           v-for="item in navItems"
           :key="item.path"
@@ -18,12 +18,12 @@
         </NuxtLink>
       </nav>
 
-      <button class="app-header__menu-btn" @click="toggleMenu" aria-label="切换导航菜单">
+      <button class="app-header__menu-btn" @click="toggleMenu" aria-label="切换导航菜单" :aria-expanded="isMenuOpen">
         <span class="app-header__menu-icon" :class="{ 'app-header__menu-icon--open': isMenuOpen }"></span>
       </button>
     </div>
 
-    <nav class="app-header__mobile-nav" :class="{ 'app-header__mobile-nav--open': isMenuOpen }">
+    <nav class="app-header__mobile-nav" :class="{ 'app-header__mobile-nav--open': isMenuOpen }" aria-label="移动端导航" :aria-hidden="!isMenuOpen">
       <NuxtLink
         v-for="item in navItems"
         :key="item.path"
@@ -47,7 +47,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { path: '/', label: '首页', exact: true },
-  { path: '/course', label: '课程中心' }
+  { path: '/map', label: '知识地图' }
 ]
 
 const isMenuOpen = ref(false)

@@ -1,70 +1,42 @@
 /**
- * 课时仓储 - 课时表的 CRUD 操作，含关联查询（章节、课程、兄弟课时）
+ * 课时仓储 - 课时表的 CRUD 操作，含关联查询（主题、领域、兄弟课时）
+ *
+ * 继承 BaseRepository 获得 list / findBySlug / findById 通用方法，
+ * 自身定义 listByTopic 和 getWithTopicAndDomain 两个业务方法。
  */
 import { eq, asc } from 'drizzle-orm'
-import { getDb, lessons, type DbInstance } from '@database'
-import type { Lesson, Chapter, Course } from '@content/models/index'
+import { lessons } from '@database'
+import type { Lesson, Topic, Domain } from '@content/models/index'
+import { BaseRepository } from './BaseRepository'
 
 export interface LessonWithRelations extends Lesson {
-  chapterEntity: Chapter | null
-  courseEntity: Course | null
+  topicEntity: Topic | null
+  domainEntity: Domain | null
   siblingLessons: Lesson[]
 }
 
-export class LessonRepository {
-  _explicitDb?: DbInstance | null
-  table: typeof lessons
-
-  constructor(db?: DbInstance) {
-    this._explicitDb = db || null
-    this.table = lessons
+export class LessonRepository extends BaseRepository<typeof lessons> {
+  constructor() {
+    super(lessons)
   }
 
-  _getDb(): DbInstance {
-    return (this._explicitDb || getDb()) as DbInstance
+  /** 按知识主题 slug 过滤课时列表 */
+  async listByTopic(topicSlug: string | undefined | null): Promise<Lesson[]> {
+    if (!topicSlug) return []
+    return this.getDb().select().from(this.table)
+      .where(eq(this.table.topic, topicSlug))
+      .orderBy(asc(this.table.order), asc(this.table.id)) as Promise<Lesson[]>
   }
 
-  async list(): Promise<Lesson[]> {
-    return this._getDb().select().from(this.table).orderBy(asc(this.table.order), asc(this.table.id))
-  }
-
-  async listByChapter(chapterSlug: string | undefined | null): Promise<Lesson[]> {
-    if (!chapterSlug) return []
-    return this._getDb()
-      .select()
-      .from(this.table)
-      .where(eq(this.table.chapter, chapterSlug))
-      .orderBy(asc(this.table.order), asc(this.table.id))
-  }
-
-  async getBySlug(slug: string | undefined | null): Promise<Lesson | null> {
+  /** 获取课时及其关联的主题、领域和兄弟课时（关联查询） */
+  async getWithTopicAndDomain(slug: string): Promise<LessonWithRelations | null> {
     if (!slug) return null
-    const rows = await this._getDb()
-      .select()
-      .from(this.table)
-      .where(eq(this.table.slug, slug))
-      .limit(1)
-    return rows[0] || null
-  }
-
-  async getById(id: number | string | undefined | null): Promise<Lesson | null> {
-    if (!id) return null
-    const rows = await this._getDb()
-      .select()
-      .from(this.table)
-      .where(eq(this.table.id, Number(id)))
-      .limit(1)
-    return rows[0] || null
-  }
-
-  async getWithChapterAndCourse(slug: string): Promise<LessonWithRelations | null> {
-    if (!slug) return null
-    const result = await this._getDb().query.lessons.findFirst({
+    const result = await this.getDb().query.lessons.findFirst({
       where: eq(this.table.slug, slug),
       with: {
-        chapterRef: {
+        topicRef: {
           with: {
-            courseRef: true,
+            domainRef: true,
             lessons: {
               orderBy: (lessons, { asc }) => [asc(lessons.order), asc(lessons.id)]
             }
@@ -73,15 +45,28 @@ export class LessonRepository {
       }
     })
     if (!result) return null
-    // Drizzle 关系查询字段名与 LessonWithRelations 接口不一致，需手动映射
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle 关系查询返回类型不含显式字段名
-    const chapterRef = result.chapterRef as any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const topicRef = result.topicRef as any
     return {
       ...result,
-      chapterEntity: result.chapterRef || null,
-      courseEntity: chapterRef?.courseRef || null,
-      siblingLessons: chapterRef?.lessons || []
+      topicEntity: result.topicRef || null,
+      domainEntity: topicRef?.domainRef || null,
+      siblingLessons: topicRef?.lessons || []
     } as unknown as LessonWithRelations
+  }
+
+  // ── 以下为通用方法的类型收窄覆写 ──
+
+  override async list(): Promise<Lesson[]> {
+    return super.list() as Promise<Lesson[]>
+  }
+
+  override async findBySlug(slug: string | undefined | null): Promise<Lesson | null> {
+    return super.findBySlug(slug) as Promise<Lesson | null>
+  }
+
+  override async findById(id: number | string | undefined | null): Promise<Lesson | null> {
+    return super.findById(id) as Promise<Lesson | null>
   }
 }
 

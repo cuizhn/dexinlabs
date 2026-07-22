@@ -7,7 +7,7 @@
 
       <p class="landing__cta-desc">数学的世界等你探索，从第一步开始</p>
 
-      <NuxtLink to="/course" class="landing__btn landing__btn--primary landing__btn--lg">
+      <NuxtLink to="/map" class="landing__btn landing__btn--primary landing__btn--lg">
         立即开始学习
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path

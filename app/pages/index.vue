@@ -25,7 +25,7 @@
         <p class="landing__hero-desc"> 从算术到微积分，系统化的学习路径与交互式练习，让每一个数学概念都变得清晰可触 </p>
 
         <div class="landing__hero-actions">
-          <NuxtLink to="/course" class="landing__btn landing__btn--primary">
+          <NuxtLink to="/map" class="landing__btn landing__btn--primary">
             开始学习
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path
@@ -38,13 +38,13 @@
             </svg>
           </NuxtLink>
 
-          <NuxtLink to="/course" class="landing__btn landing__btn--ghost"> 浏览课程 </NuxtLink>
+          <NuxtLink to="/map" class="landing__btn landing__btn--ghost"> 探索知识地图 </NuxtLink>
         </div>
 
         <div class="landing__hero-stats">
           <div class="landing__hero-stat">
             <span class="landing__hero-stat-num">1</span>
-            <span class="landing__hero-stat-label">核心课程</span>
+            <span class="landing__hero-stat-label">知识领域</span>
           </div>
           <div class="landing__hero-stat-divider"></div>
           <div class="landing__hero-stat">
@@ -146,8 +146,8 @@ const floatingSymbols = computed(() => {
 
 const steps = [
   {
-    title: '选择课程',
-    desc: '根据你的水平和兴趣，选择合适的数学课程开始学习'
+    title: '开始探索',
+    desc: '从数与代数到统计与概率，找到你的学习路径'
   },
   {
     title: '阅读与练习',
@@ -774,7 +774,7 @@ const steps = [
   z-index: 1;
 }
 
-.landing__course-chapters {
+.landing__topics {
   font-size: 0.75rem;
   color: var(--color-text-light);
 }

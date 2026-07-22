@@ -60,16 +60,23 @@ npm run drizzle:migrate
 ```
 dexinlabs/
 ├── app/
-│   ├── assets/css/       # 样式文件
-│   ├── components/       # Vue 组件
-│   ├── composables/      # 数据获取层（use*Page）
-│   ├── content/          # 内容模块（Service + Repository）
-│   ├── database/         # 数据库（Schema + 连接）
+│   ├── assets/css/       # 样式文件（CSS 变量、全局样式）
+│   ├── components/       # Vue 组件（Header、Footer、Content Renderer 等）
+│   ├── composables/      # 数据获取层（useDomainPage、useTopicPage、useLessonPage）
+│   ├── content/          # 内容模块（Domain → Topic → Lesson）
+│   │   ├── models/       # 数据模型定义
+│   │   ├── repositories/ # 数据访问层（BaseRepository + 各实体 Repository）
+│   │   └── services/     # 业务逻辑层（页面数据组装、导航计算）
+│   ├── database/         # 数据库（Schema + 连接 + Seed）
 │   ├── markdown/         # Markdown 引擎（remark + unified）
 │   ├── layouts/          # 布局组件
 │   └── pages/            # 页面路由
+│       ├── index.vue           # 首页
+│       ├── map/                # 知识地图
+│       ├── [domain]/           # 领域页 + 主题页 + 课时页
+│       └── exercise/           # 练习页（?topic=xxx）
 ├── server/
-│   └── api/              # API 路由（参数校验 + 错误处理）
+│   └── api/              # API 路由（/api/domains, /api/topics, /api/lessons, /api/exercises）
 └── standards/            # 项目规范文档
 ```
 
@@ -97,5 +104,8 @@ Page → Composable → API → Service → Repository → Database
 | [项目愿景](standards/PROJECT_VISION.md) | 项目初心与设计理念 |
 | [长期技术原则](standards/Technical_Principles.md) | 十项长期技术原则 |
 | [架构原则 V2](standards/Architecture/ARCHITECTURE.md) | 分层架构与模块职责 |
+| [架构审计](standards/Architecture/ARCHITECTURE_AUDIT.md) | 调用链审计与合规检查 |
+| [页面架构设计 V2](standards/PAGE_ARCHITECTURE.md) | 页面路由、信息架构与交互设计 |
+| [V2 迁移计划](standards/V2_MIGRATION_PLAN.md) | Domain → Topic → Lesson 迁移方案 |
 | [课程设计规范 LDS](standards/LDS.md) | 课程结构与教学设计 |
 | [ADR-0001](standards/adr/ADR-0001-project-philosophy.md) | 项目哲学决策记录 |

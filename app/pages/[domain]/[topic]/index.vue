@@ -1,26 +1,30 @@
 <template>
-  <div class="chapter-detail">
-    <template v-if="chapter">
-      <section class="chapter-detail__header">
+  <div class="topic-detail">
+    <template v-if="topic">
+      <section class="topic-detail__header">
         <div class="container">
-          <nav class="chapter-detail__breadcrumb">
-            <NuxtLink to="/course" class="chapter-detail__bc-link">课程中心</NuxtLink>
-
-            <span class="chapter-detail__bc-sep">/</span>
-
-            <span class="chapter-detail__bc-current">{{ chapter.title }}</span>
+          <nav class="topic-detail__breadcrumb">
+            <NuxtLink to="/map" class="topic-detail__bc-link">知识地图</NuxtLink>
+            <span class="topic-detail__bc-sep">/</span>
+            <NuxtLink
+              v-if="domainSlug"
+              :to="`/${domainSlug}`"
+              class="topic-detail__bc-link"
+            >
+              {{ domain?.title || '' }}
+            </NuxtLink>
+            <span class="topic-detail__bc-sep">/</span>
+            <span class="topic-detail__bc-current">{{ topic.title }}</span>
           </nav>
         </div>
       </section>
 
-      <section class="chapter-detail__body">
-        <div class="container chapter-detail__layout">
-          <div class="chapter-detail__main">
-            <h2 class="chapter-detail__section-title">课时内容</h2>
-
+      <section class="topic-detail__body">
+        <div class="container topic-detail__layout">
+          <div class="topic-detail__main">
             <ol v-if="lessons.length" class="lesson-list">
               <li v-for="(lesson, idx) in lessons" :key="lesson.slug" class="lesson-list__item">
-                <NuxtLink :to="`/course/${chapterSlug}/${lesson.slug}`" class="lesson-list__link">
+                <NuxtLink :to="`/${domainSlug}/${topicSlug}/${lesson.slug}`" class="lesson-list__link">
                   <span class="lesson-list__index">{{ String(idx + 1).padStart(2, '0') }}</span>
 
                   <div class="lesson-list__info">
@@ -35,16 +39,14 @@
                 </NuxtLink>
               </li>
             </ol>
-
-            
           </div>
 
-          <aside class="chapter-detail__side">
-            <NuxtLink :to="`/exercise/${chapterSlug}`" class="exercise-card">
+          <aside class="topic-detail__side">
+            <NuxtLink :to="`/exercise?topic=${topicSlug}`" class="exercise-card">
               <div class="exercise-card__icon">✦</div>
 
               <div class="exercise-card__body">
-                <h3 class="exercise-card__title">章节练习</h3>
+                <h3 class="exercise-card__title">练习</h3>
                 <p class="exercise-card__desc">巩固所学，训练数学思维</p>
               </div>
 
@@ -55,30 +57,30 @@
       </section>
     </template>
 
-    <div v-else class="chapter-detail__empty">暂未找到该章节</div>
+    <div v-else class="topic-detail__empty">暂未找到该主题</div>
   </div>
 </template>
 
 <script setup lang="ts">
-// 章节详情页 - 展示章节下的课时列表与练习入口
-const route = useRoute()
-const chapterSlug = Array.isArray(route.params.chapter)
-  ? route.params.chapter[0]
-  : route.params.chapter
+/**
+ * Topic 知识主题详情页 - 展示主题下的课时列表与练习入口
+ */
+const topicSlug = useRouteParam('topic') ?? ''
+const domainSlug = useRouteParam('domain') ?? ''
 
-const { chapter, lessons, loading: _loading } = await useChapterPage(chapterSlug)
+const { topic, domain, lessons } = await useTopicPage(topicSlug)
 
 useHead({
-  title: computed(() => (chapter.value ? `${chapter.value.title} · 章节` : '章节'))
+  title: computed(() => topic.value?.title || '主题')
 })
 </script>
 
 <style scoped>
-.chapter-detail__header {
+.topic-detail__header {
   padding: var(--spacing-xl) 0 var(--spacing-lg);
   background: linear-gradient(180deg, var(--color-bg-secondary), transparent);
 }
-.chapter-detail__breadcrumb {
+.topic-detail__breadcrumb {
   display: flex;
   gap: var(--spacing-xs);
   align-items: center;
@@ -86,50 +88,31 @@ useHead({
   margin-bottom: var(--spacing-lg);
   flex-wrap: wrap;
 }
-.chapter-detail__bc-link {
+.topic-detail__bc-link {
   color: var(--color-text-secondary);
   text-decoration: none;
 }
-.chapter-detail__bc-link:hover {
+.topic-detail__bc-link:hover {
   color: var(--color-primary);
 }
-.chapter-detail__bc-sep {
+.topic-detail__bc-sep {
   color: var(--color-text-light);
 }
-.chapter-detail__bc-current {
+.topic-detail__bc-current {
   color: var(--color-text-primary);
   font-weight: 500;
 }
-.chapter-detail__title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-sm);
-}
-.chapter-detail__desc {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  max-width: 640px;
-  line-height: 1.6;
-  margin: 0;
-}
-.chapter-detail__body {
+.topic-detail__body {
   padding: var(--spacing-xl) 0 var(--spacing-3xl);
 }
-.chapter-detail__layout {
+.topic-detail__layout {
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: var(--spacing-xl);
   align-items: start;
 }
-.chapter-detail__main {
+.topic-detail__main {
   min-width: 0;
-}
-.chapter-detail__section-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-lg);
 }
 .lesson-list {
   list-style: none;
@@ -219,22 +202,12 @@ useHead({
   font-size: 0.875rem;
   font-weight: 500;
 }
-.chapter-detail__empty {
+.topic-detail__empty {
   padding: var(--spacing-3xl) 0;
   color: var(--color-text-muted);
 }
-.chapter-detail__back {
-  display: inline-block;
-  margin-top: var(--spacing-md);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: var(--color-primary);
-  color: #fff;
-  text-decoration: none;
-  border-radius: var(--border-radius-md);
-  font-weight: 500;
-}
 @media (max-width: 900px) {
-  .chapter-detail__layout {
+  .topic-detail__layout {
     grid-template-columns: 1fr;
   }
   .exercise-card {

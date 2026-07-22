@@ -1,6 +1,6 @@
 # 得心实验室 · 项目架构原则（Architecture V2）
 
-> Last Updated: 2026-07-16
+> Last Updated: 2026-07-22
 > Version: Architecture V2
 > Status: 生效中 — 所有开发遵循本文件
 
@@ -197,7 +197,7 @@ Page 不知道：
 
 ### 当前架构
 
-API Handler 直接调用对应的 Service（如 `chapterService.getChapterPage()`、`lessonService.getLessonPage()`），Service 负责数据组合并返回。不经过额外的门面层。
+API Handler 直接调用对应的 Service（如 `topicService.getTopicPage()`、`lessonService.getLessonPage()`），Service 负责数据组合并返回。不经过额外的门面层。
 
 ### 未来扩展（Content Engine）
 
@@ -211,8 +211,8 @@ API → Content Engine（数据源选择 + 缓存） → Service → Repository
 
 ### 负责
 
-- 获取课程（getCourse / listCourses）
-- 获取章节（getChapter / listChapters）
+- 获取知识领域（getDomain / listDomains）
+- 获取知识主题（getTopic / listTopics）
 - 获取课时（getLesson / listLessons）
 - 获取练习（getExercise / listExercises）
 - 数据组合（Page DTO：上一篇/下一篇、导航等）
@@ -314,7 +314,7 @@ Response
 ```
 Page
   ↓
-useLessonPage() / useChapterPage()
+useDomainPage() / useTopicPage() / useLessonPage()
   ↓
 API
 ```
@@ -395,11 +395,11 @@ API
 ## 获取课时页面数据
 
 ```
-1. 页面访问 /course/[chapter]/[lesson]
+1. 页面访问 /[domain]/[topic]/[lesson]
    ↓
 2. useLessonPage(slug) 调用
    ↓
-3. /api/lesson/[slug] 被请求
+3. /api/lessons/[slug] 被请求
    ↓
 4. API Handler：
    - 校验 slug 参数
@@ -407,7 +407,7 @@ API
    ↓
 5. LessonService：
    - 调用 lessonRepository.getBySlug(slug)
-   - 调用 chapterRepository.getBySlug(chapterSlug)
+   - 调用 topicRepository.getBySlug(topicSlug)
    - 计算 previousLesson / nextLesson
    - 将 body/intro/summaryText 渲染为 HTML
    - 组合 LessonPage 返回

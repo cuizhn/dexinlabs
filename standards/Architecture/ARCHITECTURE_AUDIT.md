@@ -1,8 +1,8 @@
 # Architecture V2 Call Chain Audit
 
-> Audit Date: 2026-07-21
+> Audit Date: 2026-07-22
 > Status: Architecture V2 Stable
-> Last Refactor: Exercise API 越层修复, Content Engine 定位调整, Renderer.vue Vue Adapter 确认
+> Last Refactor: V2 迁移完成（Domain → Topic → Lesson），API 路由统一为复数形式
 
 ---
 
@@ -11,11 +11,11 @@
 ### 完整调用链（课时页面）
 
 ```
-Page /course/[chapter]/[lesson].vue
+Page /[domain]/[topic]/[lesson].vue
     ↓
 Query (useLessonPage)
     ↓
-API (/api/lesson/[slug])
+API (/api/lessons/[slug])
     ↓
 Service (LessonService.getLessonPage())
     ↓
@@ -24,34 +24,66 @@ Repository (LessonRepository.getBySlug())
 Database (Drizzle ORM)
 ```
 
-### 完整调用链（章节页面）
+### 完整调用链（主题页面）
 
 ```
-Page /course/[chapter]/index.vue
+Page /[domain]/[topic]/index.vue
     ↓
-Query (useChapterPage)
+Query (useTopicPage)
     ↓
-API (/api/chapter/[slug])
+API (/api/topics/[slug])
     ↓
-Service (ChapterService.getChapterPage())
+Service (TopicService.getTopicPage())
     ↓
-Repository (ChapterRepository.getBySlug())
+Repository (TopicRepository.getWithLessonsAndDomain())
     ↓
 Database (Drizzle ORM)
 ```
 
-### 完整调用链（课程页面）
+### 完整调用链（领域页面）
 
 ```
-Page /course/index.vue
+Page /[domain]/index.vue
     ↓
-Query (useCoursePage)
+Query (useDomainPage)
     ↓
-API (/api/course)
+API (/api/domains?slug=xxx)
     ↓
-Service (CourseService.getCoursePage())
+Service (DomainService.getDomainPage())
     ↓
-Repository (CourseRepository.getDefault())
+Repository (DomainRepository.getWithTopicsAndLessons())
+    ↓
+Database (Drizzle ORM)
+```
+
+### 完整调用链（知识地图页）
+
+```
+Page /map/index.vue
+    ↓
+Query (useAsyncData + $fetch<DomainPage[]>)
+    ↓
+API (/api/domains)
+    ↓
+Service (DomainService.listAllWithTopics())
+    ↓
+Repository (DomainRepository.listAllWithTopics())
+    ↓
+Database (Drizzle ORM)
+```
+
+### 完整调用链（练习页）
+
+```
+Page /exercise/index.vue?topic=xxx
+    ↓
+Query (useAsyncData + $fetch<ExerciseResponse>)
+    ↓
+API (/api/exercises?topic=xxx)
+    ↓
+Service (ExerciseService.listByTopicWithMeta())
+    ↓
+Repository (ExerciseRepository.listByTopic() + TopicRepository.findBySlug())
     ↓
 Database (Drizzle ORM)
 ```
@@ -80,7 +112,7 @@ Database (Drizzle ORM)
 ### content 模块（Service 层）
 
 **负责**：
-- 获取课程/章节/课时/练习
+- 获取知识领域/知识主题/课时/练习
 - 数据组合（上一课/下一课、导航、面包屑）
 
 **不负责**：
@@ -241,9 +273,9 @@ Database (Drizzle ORM)
 
 ### 下一步工作重心
 
-1. Admin 后台（课程管理、Markdown 编辑、CRUD）
-2. 练习系统（Exercise）
-3. 学习记录与进度
+1. Admin 后台（内容管理、Markdown 编辑、CRUD）
+2. 练习系统交互化（答题、判题、反馈）
+3. 学习记录与进度追踪
 4. 用户系统
 5. 家长陪伴与反馈
 6. 课程内容持续建设

@@ -3,21 +3,15 @@
     <section class="exercise-page__header">
       <div class="container">
         <nav class="exercise-page__breadcrumb">
-          <NuxtLink to="/course" class="exercise-page__bc-link">课程中心</NuxtLink>
+          <NuxtLink to="/map" class="exercise-page__bc-link">知识地图</NuxtLink>
 
           <span class="exercise-page__bc-sep">/</span>
 
-          <NuxtLink v-if="chapterSlug" :to="`/course/${chapterSlug}`" class="exercise-page__bc-link">
-            {{ chapterTitle || '章节' }}
-          </NuxtLink>
-
-          <span class="exercise-page__bc-sep">/</span>
-
-          <span class="exercise-page__bc-current">章节练习</span>
+          <span class="exercise-page__bc-current">练习</span>
         </nav>
 
         <h1 class="exercise-page__title">
-          {{ chapterTitle ? `${chapterTitle} · 练习` : '章节练习' }}
+          {{ topicTitle ? `${topicTitle} · 练习` : '练习' }}
         </h1>
 
         <p class="exercise-page__desc">
@@ -44,9 +38,9 @@
           <div class="placeholder-card">
             <div class="placeholder-card__icon">✎</div>
             <h3 class="placeholder-card__title">练习内容准备中</h3>
-            <p class="placeholder-card__desc"> 本章节的交互练习正在精心设计中。请先完成课时学习，扎实掌握每个概念。 </p>
-            <NuxtLink v-if="chapterSlug" :to="`/course/${chapterSlug}`" class="placeholder-card__back">
-              ← 返回章节页
+            <p class="placeholder-card__desc"> 练习正在精心设计中。请先完成课时学习，扎实掌握每个概念。 </p>
+            <NuxtLink to="/map" class="placeholder-card__back">
+              ← 返回知识地图
             </NuxtLink>
           </div>
         </div>
@@ -56,14 +50,26 @@
 </template>
 
 <script setup lang="ts">
-// 章节练习页 - 展示章节的交互式练习题
+/**
+ * 练习页 - 通过查询参数 ?topic=xxx 获取对应主题的练习题
+ * Exercise 不绑定 Topic URL，保持统一入口
+ */
 import ContentRenderer from '../../components/content/Renderer.vue'
+import type { Exercise } from '@content/models'
 
 const route = useRoute()
-const chapterSlug = Array.isArray(route.params.chapter) ? route.params.chapter[0] : route.params.chapter
+const topicSlug = computed(() => typeof route.query.topic === 'string' ? route.query.topic : '')
 
-const { data: exerciseData, pending: loading } = await useFetch(
-  () => `/api/exercise?chapter=${chapterSlug}`
+/** 练习 API 返回结构 */
+interface ExerciseResponse {
+  exercises: Exercise[]
+  topicTitle: string
+}
+
+const { data: exerciseData, pending: loading } = await useAsyncData(
+  () => `exercises:${topicSlug.value}`,
+  () => $fetch<ExerciseResponse>(`/api/exercises`, { params: { topic: topicSlug.value } }),
+  { default: () => ({ exercises: [], topicTitle: '' }) as ExerciseResponse }
 )
 
 const exercise = computed(() => {
@@ -72,10 +78,10 @@ const exercise = computed(() => {
   return null
 })
 
-const chapterTitle = computed(() => exerciseData.value?.chapterTitle || '')
+const topicTitle = computed(() => exerciseData.value?.topicTitle || '')
 
 useHead({
-  title: computed(() => (chapterTitle.value ? `${chapterTitle.value} · 练习` : '章节练习'))
+  title: computed(() => (topicTitle.value ? `${topicTitle.value} · 练习` : '练习'))
 })
 </script>
 
