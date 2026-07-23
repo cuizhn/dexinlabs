@@ -1,3 +1,4 @@
+@ -1,129 +0,0 @@
 <template>
   <div class="domain-index">
     <section class="domain-index__header">

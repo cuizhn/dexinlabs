@@ -7,7 +7,8 @@
 
     <main class="learning-home__main">
       <div class="container learning-home__container">
-        <template v-if="isFirstVisit">
+        <!-- 状态一：首次进入 - 开始学习 -->
+        <template v-if="!hasProgress">
           <div class="learning-home__first-run">
             <div class="learning-home__logo">
               <span class="learning-home__logo-icon">∑</span>
@@ -16,15 +17,17 @@
 
             <h1 class="learning-home__title">开始你的学习之旅</h1>
 
-            <p class="learning-home__subtitle">从「一元二次方程」开始<br />这是初中数学的核心主题之一</p>
+            <p class="learning-home__subtitle">
+              选择你的学习阶段<br />我们将为你推荐最适合的学习内容
+            </p>
 
             <div class="learning-home__actions">
-              <NuxtLink to="/algebra/quadratic-equation-in-one-unknown" class="learning-home__btn learning-home__btn--primary">
+              <button class="learning-home__btn learning-home__btn--primary" @click="showStageDialog = true">
                 开始学习
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-              </NuxtLink>
+              </button>
             </div>
 
             <NuxtLink to="/map" class="learning-home__explore">
@@ -33,6 +36,7 @@
           </div>
         </template>
 
+        <!-- 状态二：有学习记录 - 继续学习 -->
         <template v-else>
           <div class="learning-home__returning">
             <div class="learning-home__logo">
@@ -40,32 +44,15 @@
               <span class="learning-home__logo-text">Dexin Labs</span>
             </div>
 
-            <div v-if="lastLesson" class="learning-home__continue-card">
-              <h2 class="learning-home__continue-label">继续学习</h2>
+            <!-- 有学习进度：显示继续学习卡片 -->
+            <LearningContinueLearningCard v-if="recentLearning" />
 
-              <div class="learning-home__continue-info">
-                <span class="learning-home__continue-topic">{{ lastLesson.topicTitle }}</span>
-                <span class="learning-home__continue-lesson">第 {{ lastLesson.lessonIndex }} 课 · {{ lastLesson.lessonTitle }}</span>
-              </div>
-
-              <div class="learning-home__continue-progress">
-                <span class="learning-home__progress-text">{{ lastLesson.lessonIndex }} / {{ lastLesson.totalLessons }}</span>
-                <div class="learning-home__progress-bar">
-                  <div class="learning-home__progress-fill" :style="{ width: `${(lastLesson.lessonIndex / lastLesson.totalLessons) * 100}%` }"></div>
-                </div>
-              </div>
-
-              <NuxtLink :to="`/${lastLesson.topicSlug}/${lastLesson.lessonSlug}`" class="learning-home__btn learning-home__btn--primary learning-home__btn--lg">
-                继续学习
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </NuxtLink>
-            </div>
-
+            <!-- 无具体进度但有记录：引导去知识地图 -->
             <div v-else class="learning-home__no-progress">
               <h2 class="learning-home__title">继续学习</h2>
-              <p class="learning-home__subtitle">还没有学习记录<br />选择一个主题开始学习</p>
+              <p class="learning-home__subtitle">
+                选择一个主题开始学习
+              </p>
               <NuxtLink to="/map" class="learning-home__btn learning-home__btn--primary">
                 探索知识地图
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -81,11 +68,46 @@
         </template>
       </div>
     </main>
+
+    <!-- 学习阶段选择弹窗（首次进入时显示） -->
+    <LearningLearningStageDialog
+      v-if="showStageDialog"
+      @close="showStageDialog = false"
+      @select="onStageSelect"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-const { isFirstVisit, lastLesson } = useProgress()
+/**
+ * 首页 - 学习入口
+ *
+ * 根据是否存在学习记录，自动进入「开始学习」或「继续学习」模式。
+ * 学习状态统一由 useLearningState() 提供，不直接读取业务数据。
+ *
+ * 首次进入：显示学习阶段选择 → 诊断问题（占位） → 推荐 Topic
+ * 有学习记录：显示继续学习卡片 → 直接进入当前学习位置
+ */
+import { useLearningState } from '~/composables/useLearningState'
+
+const { hasProgress, recentLearning } = useLearningState()
+
+/** 是否显示学习阶段选择弹窗 */
+const showStageDialog = ref(false)
+
+/**
+ * onStageSelect - 用户选择学习阶段后的处理
+ *
+ * 当前为占位实现：直接跳转到推荐 Topic。
+ * 未来接入诊断系统后，会根据阶段选择展示诊断问题，
+ * 然后根据诊断结果推荐合适的 Topic。
+ */
+function onStageSelect(_stage: string) {
+  showStageDialog.value = false
+  // 占位：跳转到推荐 Topic（当前硬编码为第一个代数主题）
+  // 未来由 Recommendation Engine 根据诊断结果决定
+  navigateTo('/algebra/quadratic-equation-in-one-unknown')
+}
 
 useHead({
   title: 'Dexin Labs · 学习首页'
@@ -196,6 +218,8 @@ useHead({
   font-size: 0.9375rem;
   text-decoration: none;
   transition: all 0.25s ease;
+  border: none;
+  cursor: pointer;
 }
 
 .learning-home__btn--primary {
@@ -209,13 +233,6 @@ useHead({
   box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
 }
 
-.learning-home__btn--lg {
-  width: 100%;
-  justify-content: center;
-  padding: 16px 32px;
-  font-size: 1rem;
-}
-
 .learning-home__explore {
   display: inline-block;
   margin-top: var(--spacing-xl);
@@ -227,67 +244,6 @@ useHead({
 
 .learning-home__explore:hover {
   color: var(--color-primary);
-}
-
-.learning-home__continue-card {
-  background: var(--color-bg-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-xl);
-  padding: var(--spacing-2xl);
-  text-align: left;
-  box-shadow: var(--shadow-sm);
-}
-
-.learning-home__continue-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin: 0 0 var(--spacing-md);
-}
-
-.learning-home__continue-info {
-  margin-bottom: var(--spacing-lg);
-}
-
-.learning-home__continue-topic {
-  display: block;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin-bottom: 4px;
-}
-
-.learning-home__continue-lesson {
-  display: block;
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-}
-
-.learning-home__continue-progress {
-  margin-bottom: var(--spacing-xl);
-}
-
-.learning-home__progress-text {
-  display: block;
-  font-size: 0.8125rem;
-  color: var(--color-text-light);
-  margin-bottom: 8px;
-}
-
-.learning-home__progress-bar {
-  height: 6px;
-  background: var(--color-bg-secondary);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.learning-home__progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
-  border-radius: 3px;
-  transition: width 0.5s ease;
 }
 
 .learning-home__no-progress {
@@ -306,14 +262,6 @@ useHead({
   .learning-home__btn {
     padding: 12px 24px;
     font-size: 0.875rem;
-  }
-
-  .learning-home__continue-card {
-    padding: var(--spacing-xl);
-  }
-
-  .learning-home__continue-topic {
-    font-size: 1.25rem;
   }
 }
 </style>

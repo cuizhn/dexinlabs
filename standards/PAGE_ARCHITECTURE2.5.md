@@ -531,7 +531,7 @@ Progress Engine
 
 ### Knowledge Map
 
-* `/map` 成为唯一知识入口。
+* `/map` 知识入口。
 * 默认展示所有 Topic。
 * Domain 作为过滤器，同时作为路由层级。
 
