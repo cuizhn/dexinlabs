@@ -1,116 +1,97 @@
 <template>
-  <div class="topic-detail">
-    <template v-if="topic">
-      <!-- 顶部：Topic 信息 + 学习目标 + 学习意义 -->
-      <header class="topic-detail__header">
-        <div class="container">
-          <NuxtLink :to="`/map`" class="topic-detail__back">← 返回知识地图</NuxtLink>
+  <div class="topic-page">
+    <LearningHeader
+      :title="topic?.title || '主题'"
+      :back-path="`/${domainSlug}`"
+      :show-menu="true"
+    />
 
-          <div class="topic-detail__title-row">
-            <h1 class="topic-detail__title">{{ topic.title }}</h1>
-            <LearningStateBadge :state="topicState.state" />
-          </div>
+    <main class="topic-page__main">
+      <section class="topic-page__intro">
+        <p class="topic-page__objective">
+          学完这一主题，你将能够{{ topic?.summary || '掌握相关知识与技能。' }}
+        </p>
 
-          <p class="topic-detail__objective">
-            学完这一主题，你将能够{{ topic.summary || '掌握相关知识与技能。' }}
-          </p>
+        <p class="topic-page__significance">
+          这一主题是数学知识体系中的重要环节，帮助你建立从基础到进阶的桥梁。
+        </p>
+      </section>
 
-          <p class="topic-detail__significance">
-            这一主题是数学知识体系中的重要环节，帮助你建立从基础到进阶的桥梁。
-          </p>
-        </div>
-      </header>
+      <section class="topic-page__body">
+        <LearningTopicLessonList
+          v-if="lessons.length"
+          :lessons="lessons"
+          :domain-slug="domainSlug"
+          :topic-slug="topicSlug"
+          title="课时列表"
+        />
 
-      <!-- 中部：Lesson 列表（显示状态） -->
-      <section class="topic-detail__body">
-        <div class="container">
-          <LearningTopicLessonList
-            v-if="lessons.length"
-            :lessons="lessons"
-            :domain-slug="domainSlug"
-            :topic-slug="topicSlug"
-            title="课时列表"
-          />
-
-          <!-- 底部：根据学习状态切换 -->
-          <div class="topic-detail__actions">
-            <!-- 待学习 -->
-            <template v-if="topicState.state === LearningState.NOT_STARTED">
-              <NuxtLink
-                v-if="lessons.length"
-                :to="firstLessonPath"
-                class="topic-detail__btn topic-detail__btn--primary"
-              >
-                开始学习
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </NuxtLink>
-            </template>
-
-            <!-- 学习中 -->
-            <template v-else-if="topicState.state === LearningState.IN_PROGRESS">
-              <NuxtLink
-                v-if="lessons.length"
-                :to="firstLessonPath"
-                class="topic-detail__btn topic-detail__btn--primary"
-              >
-                继续学习
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </NuxtLink>
-            </template>
-
-            <!-- 已掌握 -->
-            <template v-else>
-              <NuxtLink
-                :to="`/exercise?topic=${topicSlug}`"
-                class="topic-detail__btn topic-detail__btn--primary"
-              >
-                练习巩固
-              </NuxtLink>
-              <NuxtLink
-                v-if="lessons.length"
-                :to="firstLessonPath"
-                class="topic-detail__btn topic-detail__btn--secondary"
-              >
-                复习回顾
-              </NuxtLink>
-            </template>
-          </div>
-
-          <!-- 练习入口 -->
-          <div v-if="lessons.length" class="topic-detail__exercise">
-            <NuxtLink :to="`/exercise?topic=${topicSlug}`" class="exercise-card">
-              <div class="exercise-card__icon">✦</div>
-              <div class="exercise-card__body">
-                <h3 class="exercise-card__title">练习</h3>
-                <p class="exercise-card__desc">巩固所学，训练数学思维</p>
-              </div>
-              <span class="exercise-card__cta">开始练习 →</span>
+        <div class="topic-page__actions">
+          <template v-if="topicState.state === LearningState.NOT_STARTED">
+            <NuxtLink
+              v-if="lessons.length"
+              :to="firstLessonPath"
+              class="topic-page__btn topic-page__btn--primary"
+            >
+              开始学习
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
             </NuxtLink>
-          </div>
+          </template>
+
+          <template v-else-if="topicState.state === LearningState.IN_PROGRESS">
+            <NuxtLink
+              v-if="lessons.length"
+              :to="firstLessonPath"
+              class="topic-page__btn topic-page__btn--primary"
+            >
+              继续学习
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </NuxtLink>
+          </template>
+
+          <template v-else>
+            <NuxtLink
+              :to="`/exercise?topic=${topicSlug}`"
+              class="topic-page__btn topic-page__btn--primary"
+            >
+              练习巩固
+            </NuxtLink>
+            <NuxtLink
+              v-if="lessons.length"
+              :to="firstLessonPath"
+              class="topic-page__btn topic-page__btn--secondary"
+            >
+              复习回顾
+            </NuxtLink>
+          </template>
+        </div>
+
+        <div v-if="lessons.length" class="topic-page__exercise">
+          <NuxtLink :to="`/exercise?topic=${topicSlug}`" class="exercise-card">
+            <div class="exercise-card__icon">✦</div>
+            <div class="exercise-card__body">
+              <h3 class="exercise-card__title">练习</h3>
+              <p class="exercise-card__desc">巩固所学，训练数学思维</p>
+            </div>
+            <span class="exercise-card__cta">开始练习 →</span>
+          </NuxtLink>
         </div>
       </section>
-    </template>
+    </main>
 
-    <div v-else class="topic-detail__empty">暂未找到该主题</div>
+    <div class="topic-page__bottom" />
   </div>
 </template>
 
 <script setup lang="ts">
-/**
- * Topic 页面 - 学习控制中心
- *
- * 不是目录页，而是学习控制枢纽。
- * 根据学习状态自动切换显示：
- * - 待学习：介绍 Topic + 开始学习
- * - 学习中：显示 Lesson 列表 + 继续学习
- * - 已掌握：知识概览 + 练习/复习
- *
- * 学习状态统一由 useLearningState 提供。
- */
+definePageMeta({
+  layout: 'learning'
+})
+
 import { LearningState, useLearningState } from '~/composables/useLearningState'
 
 const topicSlug = useRouteParam('topic') ?? ''
@@ -120,10 +101,8 @@ const { topic, lessons } = await useTopicPage(topicSlug)
 
 const { getTopicState } = useLearningState()
 
-/** Topic 的学习状态（当前 Mock 总课时数为 lessons 长度） */
 const topicState = computed(() => getTopicState(topicSlug, lessons.value.length))
 
-/** 第一个课时的路径（用于「开始学习」「继续学习」「复习回顾」按钮） */
 const firstLessonPath = computed(() =>
   lessons.value[0] ? `/${domainSlug}/${topicSlug}/${lessons.value[0].slug}` : ''
 )
@@ -134,39 +113,22 @@ useHead({
 </script>
 
 <style scoped>
-.topic-detail__header {
-  padding: var(--spacing-xl) 0 var(--spacing-2xl);
-  background: linear-gradient(180deg, var(--color-bg-secondary), transparent);
+.topic-page {
+  min-height: 100vh;
+  background: var(--color-bg-primary);
 }
 
-.topic-detail__back {
-  display: inline-block;
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  margin-bottom: var(--spacing-lg);
-  transition: color 150ms ease;
+.topic-page__main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-lg);
 }
 
-.topic-detail__back:hover {
-  color: var(--color-primary);
+.topic-page__intro {
+  margin-bottom: var(--spacing-2xl);
 }
 
-.topic-detail__title-row {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
-}
-
-.topic-detail__title {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0;
-}
-
-.topic-detail__objective {
+.topic-page__objective {
   font-size: 1.125rem;
   color: var(--color-text-secondary);
   line-height: 1.75;
@@ -174,7 +136,7 @@ useHead({
   margin: 0 0 var(--spacing-md);
 }
 
-.topic-detail__significance {
+.topic-page__significance {
   font-size: 0.9375rem;
   color: var(--color-text-light);
   line-height: 1.6;
@@ -182,19 +144,18 @@ useHead({
   margin: 0;
 }
 
-.topic-detail__body {
-  padding: var(--spacing-xl) 0 var(--spacing-3xl);
+.topic-page__body {
+  margin-top: var(--spacing-xl);
 }
 
-/* 底部行动按钮 */
-.topic-detail__actions {
+.topic-page__actions {
   display: flex;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-2xl);
   flex-wrap: wrap;
 }
 
-.topic-detail__btn {
+.topic-page__btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -206,30 +167,29 @@ useHead({
   transition: all 0.25s ease;
 }
 
-.topic-detail__btn--primary {
+.topic-page__btn--primary {
   background: linear-gradient(135deg, var(--color-primary), #6366f1);
   color: #fff;
   box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
 }
 
-.topic-detail__btn--primary:hover {
+.topic-page__btn--primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
 }
 
-.topic-detail__btn--secondary {
+.topic-page__btn--secondary {
   background: var(--color-bg-white);
   color: var(--color-text-primary);
   border: 1px solid var(--color-border);
 }
 
-.topic-detail__btn--secondary:hover {
+.topic-page__btn--secondary:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
 }
 
-/* 练习卡片 */
-.topic-detail__exercise {
+.topic-page__exercise {
   margin-top: var(--spacing-xl);
 }
 
@@ -266,19 +226,26 @@ useHead({
   font-weight: 500;
 }
 
-.topic-detail__empty {
-  padding: var(--spacing-3xl) 0;
-  color: var(--color-text-muted);
-  text-align: center;
+.topic-page__bottom {
+  height: var(--spacing-xl);
 }
 
-@media (max-width: 900px) {
-  .topic-detail__title {
-    font-size: 1.5rem;
+@media (max-width: 768px) {
+  .topic-page__main {
+    padding: var(--spacing-lg);
   }
 
-  .topic-detail__objective {
+  .topic-page__objective {
     font-size: 1rem;
+  }
+
+  .topic-page__actions {
+    flex-direction: column;
+  }
+
+  .topic-page__btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>

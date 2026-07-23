@@ -1,28 +1,21 @@
 <template>
   <div class="lesson-page">
+    <LearningHeader
+      :title="data?.lesson?.title || '学习'"
+      :back-path="`/${domainSlug}/${topicSlug}`"
+      :show-menu="true"
+    />
+
     <div class="lesson-page__container">
-      <!-- 左侧：概念清单（固定） -->
       <aside class="lesson-page__sidebar">
         <LearningLessonChecklist />
       </aside>
 
-      <!-- 中间：Markdown 内容（最大阅读区域） -->
       <main class="lesson-page__main">
         <article class="lesson-page__article">
-          <header class="lesson-page__header">
-            <!-- 仅保留返回 Topic 的链接，不显示面包屑 -->
-            <NuxtLink :to="`/${route.params.domain}/${route.params.topic}`" class="lesson-page__back">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <path d="M10 13l-3-3 3-3M7 10h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              {{ data?.topic?.title }}
-            </NuxtLink>
-            <div class="lesson-page__meta">
-              <span class="lesson-page__order">第 {{ data?.lesson?.order }} 课</span>
-            </div>
-          </header>
-
-          <h1 class="lesson-page__title">{{ data?.lesson?.title }}</h1>
+          <div class="lesson-page__meta">
+            <span class="lesson-page__order">第 {{ data?.lesson?.order }} 课</span>
+          </div>
 
           <div v-if="data?.lesson?.introHtml" class="lesson-page__intro" v-html="data.lesson.introHtml"></div>
 
@@ -30,11 +23,10 @@
 
           <div v-if="data?.lesson?.summaryHtml" class="lesson-page__summary" v-html="data.lesson.summaryHtml"></div>
 
-          <!-- 课时导航（上一课/下一课） -->
           <nav class="lesson-page__nav">
             <NuxtLink
               v-if="data?.previousLesson"
-              :to="`/${route.params.domain}/${route.params.topic}/${data.previousLesson.slug}`"
+              :to="`/${domainSlug}/${topicSlug}/${data.previousLesson.slug}`"
               class="lesson-page__nav-btn lesson-page__nav-btn--prev"
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -45,7 +37,7 @@
 
             <NuxtLink
               v-if="data?.nextLesson"
-              :to="`/${route.params.domain}/${route.params.topic}/${data.nextLesson.slug}`"
+              :to="`/${domainSlug}/${topicSlug}/${data.nextLesson.slug}`"
               class="lesson-page__nav-btn lesson-page__nav-btn--next"
             >
               <span>{{ data.nextLesson.title }}</span>
@@ -57,32 +49,21 @@
         </article>
       </main>
 
-      <!-- 右侧：学习辅助面板（预留） -->
       <aside class="lesson-page__assistant">
         <LearningLessonAssistant />
+        <LearningMyUnderstanding :lesson-slug="lessonSlug" />
       </aside>
     </div>
 
-    <!-- 右下角：我的理解（固定） -->
-    <LearningMyUnderstanding :lesson-slug="lessonSlug" />
+    <div class="lesson-page__bottom" />
   </div>
 </template>
 
 <script setup lang="ts">
-/**
- * Lesson 页面 - 沉浸式学习体验
- *
- * 三栏布局：
- * - 左侧：概念清单（今天需要解决的问题）
- * - 中间：Markdown 正文（最大阅读区域）
- * - 右侧：学习助手（提示、相关知识、诊断提醒）
- * - 右下角：我的理解（反思笔记）
- *
- * 设计原则：
- * - 去除面包屑和顶部导航，保持沉浸
- * - 仅保留返回 Topic 的链接
- * - 进入页面时记录学习进度
- */
+definePageMeta({
+  layout: 'learning'
+})
+
 import { useLearningState } from '~/composables/useLearningState'
 
 const route = useRoute()
@@ -90,10 +71,8 @@ const lessonSlug = route.params.lesson as string
 const topicSlug = route.params.topic as string
 const domainSlug = route.params.domain as string
 
-/** 使用 useLessonPage composable 获取课时数据 */
 const { lesson, topic, previousLesson, nextLesson } = await useLessonPage(lessonSlug)
 
-/** 构造 useLessonPage 返回的数据结构（兼容模板中的 data 引用） */
 const data = computed(() => {
   if (!lesson.value) return null
   return {
@@ -104,7 +83,6 @@ const data = computed(() => {
   }
 })
 
-/** 记录学习进度 */
 const { recordLesson } = useLearningState()
 
 onMounted(() => {
@@ -115,7 +93,7 @@ onMounted(() => {
       lessonSlug: lessonSlug,
       lessonTitle: lesson.value.title,
       lessonIndex: lesson.value.order,
-      totalLessons: 0 // 当前无法获取总数，未来由 Progress Engine 提供
+      totalLessons: 0
     })
   }
 })
@@ -157,30 +135,10 @@ useHead({
   padding: var(--spacing-2xl);
 }
 
-.lesson-page__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-xl);
-}
-
-.lesson-page__back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.9375rem;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: color 150ms ease;
-}
-
-.lesson-page__back:hover {
-  color: var(--color-primary);
-}
-
 .lesson-page__meta {
   display: flex;
   gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
 }
 
 .lesson-page__order {
@@ -189,13 +147,6 @@ useHead({
   padding: 4px 12px;
   background: var(--color-bg-secondary);
   border-radius: var(--border-radius-md);
-}
-
-.lesson-page__title {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-lg);
 }
 
 .lesson-page__intro {
@@ -312,6 +263,10 @@ useHead({
   height: fit-content;
 }
 
+.lesson-page__bottom {
+  height: var(--spacing-xl);
+}
+
 @media (max-width: 1200px) {
   .lesson-page__container {
     grid-template-columns: 240px 1fr;
@@ -334,10 +289,6 @@ useHead({
 
   .lesson-page__article {
     padding: var(--spacing-xl);
-  }
-
-  .lesson-page__title {
-    font-size: 1.375rem;
   }
 
   .lesson-page__nav {
