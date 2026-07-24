@@ -46,8 +46,8 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { path: '/', label: '首页', exact: true },
-  { path: '/map', label: '知识地图' },
+  
+  { path: '/map', label: '探索' },
 { path: '/about', label: '关于我' }
 ]
 
@@ -90,7 +90,7 @@ function closeMenu() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
+  height: 48px;
 }
 
 .app-header__logo {

@@ -2,7 +2,7 @@
   <div class="about-page">
     <header class="about-page__header">
       <div class="container">
-        <NuxtLink to="/" class="about-page__back">←</NuxtLink>
+        <!-- <NuxtLink to="/" class="about-page__back">←</NuxtLink> -->
         <h1 class="about-page__title">关于我们</h1>
       </div>
     </header>
@@ -145,7 +145,6 @@ useHead({
 .about-section {
   margin-bottom: var(--spacing-3xl);
   padding-bottom: var(--spacing-3xl);
-  border-bottom: 1px solid var(--color-border);
 }
 
 .about-section:last-child {
