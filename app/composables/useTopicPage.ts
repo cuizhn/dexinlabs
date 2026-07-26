@@ -6,7 +6,7 @@
  */
 import { computed } from 'vue'
 import { useAsyncData } from 'nuxt/app'
-import type { TopicPage } from '@content/models'
+import type { TopicPage } from '@content'
 
 /**
  * useTopicPage - 获取知识主题页面数据

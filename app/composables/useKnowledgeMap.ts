@@ -6,7 +6,7 @@
  */
 import { computed } from 'vue'
 import { useAsyncData } from 'nuxt/app'
-import type { DomainPage } from '@content/models'
+import type { DomainPage } from '@content'
 
 /**
  * useKnowledgeMap - 获取知识地图页面数据

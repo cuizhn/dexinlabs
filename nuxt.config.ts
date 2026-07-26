@@ -5,6 +5,7 @@
  */
 import { defineNuxtConfig } from 'nuxt/config'
 import path from 'node:path'
+import UnoCSS from '@unocss/vite'
 
 /** 项目根目录的绝对路径（Node 22+ 原生支持 import.meta.dirname） */
 const rootDir: string = import.meta.dirname!
@@ -24,7 +25,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-05-01',
 
   /** 全局 CSS 文件 */
-  css: ['katex/dist/katex.min.css', '~/assets/css/main.css'],
+  css: ['katex/dist/katex.min.css', 'virtual:uno.css', '~/assets/css/main.css'],
 
   /** 应用配置 */
   app: {
@@ -88,6 +89,7 @@ export default defineNuxtConfig({
 
   /** Vite 构建配置 */
   vite: {
+    plugins: [UnoCSS()],
     optimizeDeps: {
       /** KaTeX 包含大量内部模块，预构建可避免开发时页面刷新 */
       include: ['katex']

@@ -6,7 +6,7 @@
  */
 import { computed } from 'vue'
 import { useAsyncData } from 'nuxt/app'
-import type { DomainPage } from '@content/models'
+import type { DomainPage } from '@content'
 
 /**
  * useDomainPage - 获取知识领域页面数据

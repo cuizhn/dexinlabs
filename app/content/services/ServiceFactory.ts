@@ -1,4 +1,3 @@
-import { topicRepository, exerciseRepository } from '@content/repositories'
 import { TopicService } from './TopicService'
 import { ExerciseService } from './ExerciseService'
 

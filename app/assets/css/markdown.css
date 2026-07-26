@@ -11,6 +11,7 @@
   font-weight: 800;
   margin: var(--spacing-2xl) 0 var(--spacing-lg);
   color: var(--color-heading);
+  scroll-margin-top: 1rem;
 }
 
 .markdown-body h2 {
@@ -20,6 +21,7 @@
   padding-bottom: var(--spacing-sm);
   border-bottom: 2px solid var(--color-border-light);
   color: var(--color-heading);
+  scroll-margin-top: 1rem;
 }
 
 .markdown-body h3 {
@@ -27,12 +29,14 @@
   font-weight: 600;
   margin: var(--spacing-lg) 0 var(--spacing-sm);
   color: var(--color-heading);
+  scroll-margin-top: 1rem;
 }
 
 .markdown-body h4 {
   font-size: var(--text-lg);
   font-weight: 600;
   margin: var(--spacing-md) 0 var(--spacing-sm);
+  scroll-margin-top: 1rem;
 }
 
 .markdown-body p {

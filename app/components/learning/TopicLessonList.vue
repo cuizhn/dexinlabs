@@ -1,27 +1,29 @@
 <template>
-  <!-- Topic 课时列表 - 显示每个 Lesson 的状态、标题和预计时间 -->
-  <div class="topic-lesson-list">
-    <h3 class="topic-lesson-list__title">{{ title }}</h3>
+  <div class="mb-8">
+    <h3 class="text-lg font-semibold text-text-primary mb-4">{{ title }}</h3>
 
-    <ol class="topic-lesson-list__items">
+    <ol class="list-none p-0 m-0 flex flex-col gap-2">
       <li
         v-for="(lesson, idx) in lessons"
         :key="lesson.slug"
-        class="topic-lesson-list__item"
-        :class="{ 'topic-lesson-list__item--completed': getLessonState(lesson.slug).isCompleted }"
+        :class="{ 'border-[rgba(34,197,94,0.3)] bg-[rgba(34,197,94,0.02)]': getLessonState(lesson.slug).isCompleted }"
+        class="flex items-center gap-4 p-4 bg-bg-white border border-border rounded-md transition-all duration-150 hover:border-primary hover:shadow-sm"
       >
-        <NuxtLink :to="`/${domainSlug}/${topicSlug}/${lesson.slug}`" class="topic-lesson-list__link">
-          <span class="topic-lesson-list__index">
+        <NuxtLink :to="`/${domainSlug}/${topicSlug}/${lesson.slug}`" class="flex items-center gap-4 w-full no-underline text-inherit">
+          <span
+            class="font-mono font-semibold text-sm text-primary min-w-[2.25rem] text-center"
+            :class="{ 'text-[#16a34a]': getLessonState(lesson.slug).isCompleted }"
+          >
             <template v-if="getLessonState(lesson.slug).isCompleted">✓</template>
             <template v-else>{{ String(idx + 1).padStart(2, '0') }}</template>
           </span>
 
-          <div class="topic-lesson-list__info">
-            <span class="topic-lesson-list__lesson-title">{{ lesson.title }}</span>
-            <span v-if="lesson.summary" class="topic-lesson-list__lesson-desc">{{ lesson.summary }}</span>
+          <div class="flex-1 min-w-0 flex flex-col gap-1">
+            <span class="font-semibold text-text-primary">{{ lesson.title }}</span>
+            <span v-if="lesson.summary" class="text-sm text-text-secondary leading-[1.5]">{{ lesson.summary }}</span>
           </div>
 
-          <span class="topic-lesson-list__arrow">→</span>
+          <span class="text-text-light font-medium transition-transform duration-150 group-hover:translate-x-1 hover:text-primary">→</span>
         </NuxtLink>
       </li>
     </ol>
@@ -29,13 +31,6 @@
 </template>
 
 <script setup lang="ts">
-/**
- * TopicLessonList - Topic 课时列表组件
- *
- * Topic 页面中展示该 Topic 下所有 Lesson 的列表。
- * 每个 Lesson 显示状态（已完成/未完成）、标题和简介。
- * 学习状态由 useLearningState 统一提供。
- */
 import { useLearningState } from '~/composables/useLearningState'
 
 interface LessonItem {
@@ -45,103 +40,11 @@ interface LessonItem {
 }
 
 defineProps<{
-  /** 课时列表数据 */
   lessons: LessonItem[]
-  /** 所属 Domain 的 slug */
   domainSlug: string
-  /** 所属 Topic 的 slug */
   topicSlug: string
-  /** 列表标题（如「课时」） */
   title?: string
 }>()
 
 const { getLessonState } = useLearningState()
 </script>
-
-<style scoped>
-.topic-lesson-list {
-  margin-bottom: var(--spacing-xl);
-}
-
-.topic-lesson-list__title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-lg);
-}
-
-.topic-lesson-list__items {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.topic-lesson-list__link {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-lg);
-  background: var(--color-bg-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  text-decoration: none;
-  color: inherit;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
-}
-
-.topic-lesson-list__link:hover {
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-sm);
-}
-
-.topic-lesson-list__item--completed .topic-lesson-list__link {
-  border-color: rgba(34, 197, 94, 0.3);
-  background: rgba(34, 197, 94, 0.02);
-}
-
-.topic-lesson-list__index {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 600;
-  font-size: 0.875rem;
-  color: var(--color-primary);
-  min-width: 2.25rem;
-  text-align: center;
-}
-
-.topic-lesson-list__item--completed .topic-lesson-list__index {
-  color: #16a34a;
-}
-
-.topic-lesson-list__info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.topic-lesson-list__lesson-title {
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
-.topic-lesson-list__lesson-desc {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
-}
-
-.topic-lesson-list__arrow {
-  color: var(--color-text-light);
-  font-weight: 500;
-  transition: transform 150ms ease;
-}
-
-.topic-lesson-list__link:hover .topic-lesson-list__arrow {
-  color: var(--color-primary);
-  transform: translateX(4px);
-}
-</style>
