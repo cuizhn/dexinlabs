@@ -1,28 +1,28 @@
 <template>
-  <div class="min-h-screen relative flex items-center justify-center">
-    <div class="absolute inset-0 pointer-events-none">
-      <div class="absolute inset-0" style="background-image: linear-gradient(rgba(79, 70, 229, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(79, 70, 229, 0.03) 1px, transparent 1px); background-size: 60px 60px;"></div>
-      <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(79,70,229,0.06)_0%,transparent_70%)] blur-[100px]"></div>
+  <div class="learning-home">
+    <div class="learning-home__bg">
+      <div class="learning-home__grid"></div>
+      <div class="learning-home__glow"></div>
     </div>
 
-    <main class="relative z-2 px-8 py-12 w-full">
-      <div class="max-w-[520px] mx-auto text-center">
+    <main class="learning-home__main">
+      <div class="container learning-home__container">
         <!-- 状态一：首次进入 - 开始学习 -->
         <template v-if="!hasProgress">
-          <div>
-            <div class="inline-flex items-center gap-[10px] mb-8">
-              <span class="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-primary to-secondary rounded-md text-white font-bold text-lg">∑</span>
-              <span class="font-bold text-lg text-text-primary">Dexin Labs</span>
+          <div class="learning-home__first-run">
+            <div class="learning-home__logo">
+              <span class="learning-home__logo-icon">∑</span>
+              <span class="learning-home__logo-text">Dexin Labs</span>
             </div>
 
-            <h1 class="text-[2.5rem] font-extrabold text-text-primary leading-[1.15] mb-4 md:text-[1.875rem]">开始你的学习之旅</h1>
+            <h1 class="learning-home__title">开始你的学习之旅</h1>
 
-            <p class="text-lg text-text-secondary leading-[1.75] mb-8 md:text-base">
+            <p class="learning-home__subtitle">
               选择你的学习阶段<br />我们将为你推荐最适合的学习内容
             </p>
 
-            <div class="flex justify-center">
-              <button class="inline-flex items-center gap-2 px-8 py-[14px] rounded-md font-semibold text-[0.9375rem] bg-gradient-to-br from-primary to-[#6366F1] text-white shadow-[0_4px_14px_rgba(79,70,229,0.3)] transition-all duration-250 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(79,70,229,0.4)] md:px-6 md:py-3 md:text-sm" @click="showStageDialog = true">
+            <div class="learning-home__actions">
+              <button class="learning-home__btn learning-home__btn--primary" @click="showStageDialog = true">
                 开始学习
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -30,7 +30,7 @@
               </button>
             </div>
 
-            <NuxtLink to="/map" class="inline-block mt-8 text-[0.9375rem] text-text-secondary no-underline transition-colors duration-150 hover:text-primary">
+            <NuxtLink to="/map" class="learning-home__explore">
               或者，先探索知识体系 →
             </NuxtLink>
           </div>
@@ -38,22 +38,22 @@
 
         <!-- 状态二：有学习记录 - 继续学习 -->
         <template v-else>
-          <div>
-            <div class="inline-flex items-center gap-[10px] mb-8">
-              <span class="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-primary to-secondary rounded-md text-white font-bold text-lg">∑</span>
-              <span class="font-bold text-lg text-text-primary">Dexin Labs</span>
+          <div class="learning-home__returning">
+            <div class="learning-home__logo">
+              <span class="learning-home__logo-icon">∑</span>
+              <span class="learning-home__logo-text">Dexin Labs</span>
             </div>
 
             <!-- 有学习进度：显示继续学习卡片 -->
             <LearningContinueLearningCard v-if="recentLearning" />
 
             <!-- 无具体进度但有记录：引导去知识地图 -->
-            <div v-else class="py-12">
-              <h2 class="text-[2.5rem] font-extrabold text-text-primary leading-[1.15] mb-4 md:text-[1.875rem]">继续学习</h2>
-              <p class="text-lg text-text-secondary leading-[1.75] mb-8 md:text-base">
+            <div v-else class="learning-home__no-progress">
+              <h2 class="learning-home__title">继续学习</h2>
+              <p class="learning-home__subtitle">
                 选择一个主题开始学习
               </p>
-              <NuxtLink to="/map" class="inline-flex items-center gap-2 px-8 py-[14px] rounded-md font-semibold text-[0.9375rem] bg-gradient-to-br from-primary to-[#6366F1] text-white shadow-[0_4px_14px_rgba(79,70,229,0.3)] transition-all duration-250 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(79,70,229,0.4)] md:px-6 md:py-3 md:text-sm">
+              <NuxtLink to="/map" class="learning-home__btn learning-home__btn--primary">
                 探索知识地图
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -61,7 +61,7 @@
               </NuxtLink>
             </div>
 
-            <NuxtLink to="/map" class="inline-block mt-8 text-[0.9375rem] text-text-secondary no-underline transition-colors duration-150 hover:text-primary">
+            <NuxtLink to="/map" class="learning-home__explore">
               探索知识 →
             </NuxtLink>
           </div>
@@ -113,3 +113,155 @@ useHead({
   title: 'Dexin Labs · 学习首页'
 })
 </script>
+
+<style scoped>
+.learning-home {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.learning-home__bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.learning-home__grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(rgba(79, 70, 229, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79, 70, 229, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.learning-home__glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.06) 0%, transparent 70%);
+  filter: blur(100px);
+}
+
+.learning-home__main {
+  position: relative;
+  z-index: 2;
+  padding: var(--spacing-2xl) var(--spacing-lg);
+  width: 100%;
+}
+
+.learning-home__container {
+  max-width: 520px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.learning-home__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.learning-home__logo-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  border-radius: var(--border-radius-md);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.learning-home__logo-text {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--color-text-primary);
+}
+
+.learning-home__title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  line-height: 1.15;
+  margin: 0 0 var(--spacing-md);
+}
+
+.learning-home__subtitle {
+  font-size: 1.125rem;
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+  margin: 0 0 var(--spacing-xl);
+}
+
+.learning-home__actions {
+  display: flex;
+  justify-content: center;
+}
+
+.learning-home__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.learning-home__btn--primary {
+  background: linear-gradient(135deg, var(--color-primary), #6366f1);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+}
+
+.learning-home__btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
+}
+
+.learning-home__explore {
+  display: inline-block;
+  margin-top: var(--spacing-xl);
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.learning-home__explore:hover {
+  color: var(--color-primary);
+}
+
+.learning-home__no-progress {
+  padding: var(--spacing-2xl) 0;
+}
+
+@media (max-width: 768px) {
+  .learning-home__title {
+    font-size: 1.875rem;
+  }
+
+  .learning-home__subtitle {
+    font-size: 1rem;
+  }
+
+  .learning-home__btn {
+    padding: 12px 24px;
+    font-size: 0.875rem;
+  }
+}
+</style>

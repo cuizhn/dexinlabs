@@ -1,22 +1,19 @@
 <template>
-  <div>
-    <!-- 顶部标题区 -->
-    <section class="py-12 px-6 text-center bg-gradient-to-b from-bg-secondary to-transparent">
+  <div class="knowledge-map">
+    <header class="knowledge-map__header">
       <div class="container">
-        <h1 class="text-[2.25rem] font-bold text-text-primary mb-3">知识地图</h1>
-        <p class="text-base text-text-secondary max-w-[560px] mx-auto leading-[1.6]">
+        <h1 class="knowledge-map__title">知识地图</h1>
+        <p class="knowledge-map__desc">
           浏览完整的知识体系，找到你想学习的主题
         </p>
       </div>
-    </section>
-
-    <!-- Domain 过滤器 -->
-    <section class="py-4 px-6 border-b border-border">
+    </header>
+    <section class="knowledge-map__filter">
       <div class="container">
-        <div class="flex gap-2 flex-wrap">
+        <div class="knowledge-map__filter-tabs">
           <button
-            class="px-4 py-2 border border-border rounded-md bg-bg-white text-text-secondary text-sm font-medium cursor-pointer transition-all duration-150 hover:border-primary hover:text-primary"
-            :class="{ 'bg-primary border-primary text-white hover:text-white': selectedDomain === null }"
+            class="knowledge-map__filter-tab"
+            :class="{ 'knowledge-map__filter-tab--active': selectedDomain === null }"
             @click="selectedDomain = null"
           >
             全部
@@ -24,8 +21,8 @@
           <button
             v-for="dp in domainPages"
             :key="dp.domain.slug"
-            class="px-4 py-2 border border-border rounded-md bg-bg-white text-text-secondary text-sm font-medium cursor-pointer transition-all duration-150 hover:border-primary hover:text-primary"
-            :class="{ 'bg-primary border-primary text-white hover:text-white': selectedDomain === dp.domain.slug }"
+            class="knowledge-map__filter-tab"
+            :class="{ 'knowledge-map__filter-tab--active': selectedDomain === dp.domain.slug }"
             @click="selectedDomain = dp.domain.slug"
           >
             {{ dp.domain.title }}
@@ -34,17 +31,17 @@
       </div>
     </section>
 
-    <!-- Topic 列表主体 -->
-    <section class="py-8 px-6 pb-24">
-      <div class="container">
-        <div v-if="loading" class="text-center py-12 text-text-muted">加载中...</div>
 
-        <div v-else class="grid grid-cols-auto-fill-[300px] gap-6 items-start">
+    <section class="knowledge-map__body">
+      <div class="container">
+        <div v-if="loading" class="knowledge-map__loading">加载中...</div>
+
+        <div v-else class="knowledge-map__grid">
           <template v-for="dp in filteredDomains" :key="dp.domain.slug">
-            <!-- 当选择了「全部」时，显示 Domain 分组标题 -->
+
             <div
               v-if="selectedDomain === null && dp.topics.length > 0"
-              class="col-span-full text-base font-semibold text-text-secondary py-2 border-b border-border mb-1"
+              class="knowledge-map__group-title"
             >
               {{ dp.domain.title }}
             </div>
@@ -59,7 +56,7 @@
           </template>
         </div>
 
-        <div v-if="!loading && allTopics.length === 0" class="text-center py-12 text-text-muted">
+        <div v-if="!loading && allTopics.length === 0" class="knowledge-map__empty">
           暂无学习主题
         </div>
       </div>
@@ -97,3 +94,104 @@ const filteredDomains = computed(() => {
   return domainPages.value.filter(dp => dp.domain.slug === selectedDomain.value)
 })
 </script>
+
+<style scoped>
+.knowledge-map__header {
+  padding: var(--spacing-2xl) 0 var(--spacing-xl);
+  text-align: center;
+  background: linear-gradient(180deg, var(--color-bg-secondary), transparent);
+}
+
+.knowledge-map__title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-sm);
+}
+
+.knowledge-map__desc {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  max-width: 560px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* Domain 过滤器 */
+.knowledge-map__filter {
+  padding: var(--spacing-lg) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.knowledge-map__filter-tabs {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.knowledge-map__filter-tab {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg-white);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.knowledge-map__filter-tab:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.knowledge-map__filter-tab--active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.knowledge-map__filter-tab--active:hover {
+  color: #fff;
+}
+
+/* Topic 网格 */
+.knowledge-map__body {
+  padding: var(--spacing-xl) 0 var(--spacing-3xl);
+}
+
+.knowledge-map__loading {
+  text-align: center;
+  padding: var(--spacing-3xl);
+  color: var(--color-text-muted);
+}
+
+.knowledge-map__empty {
+  text-align: center;
+  padding: var(--spacing-3xl);
+  color: var(--color-text-muted);
+}
+
+.knowledge-map__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-lg);
+  align-content: start;
+}
+
+/* Domain 分组标题（「全部」模式下显示） */
+.knowledge-map__group-title {
+  grid-column: 1 / -1;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  padding: var(--spacing-md) 0 var(--spacing-xs);
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: var(--spacing-xs);
+}
+
+.knowledge-map__group-title:first-child {
+  padding-top: 0;
+}
+</style>

@@ -1,34 +1,34 @@
 ﻿<template>
-  <header class="fixed top-0 left-0 right-0 z-100 bg-bg-primary border-b border-border shadow-sm">
-    <div class="max-w-[1200px] mx-auto px-6 flex items-center justify-between h-12 md:px-4">
-      <NuxtLink to="/" class="flex items-center gap-2 no-underline text-primary">
-        <span class="text-[1.5rem] font-bold">∑</span>
-        <span class="text-xl font-bold xs:text-base">得心实验室</span>
+  <header class="app-header">
+    <div class="app-header__container">
+      <NuxtLink to="/" class="app-header__logo">
+        <span class="app-header__logo-icon">∑</span>
+        <span class="app-header__logo-text">得心实验室</span>
       </NuxtLink>
 
-      <nav class="flex items-center gap-6 md:hidden" aria-label="主导航">
+      <nav class="app-header__nav" aria-label="主导航">
         <NuxtLink
           v-for="item in navItems"
           :key="item.path"
           :to="item.path"
-          class="no-underline text-text-primary font-medium px-3 py-2 rounded-md transition-all duration-200 hover:bg-bg-secondary hover:text-primary"
-          :class="{ 'bg-primary text-white hover:text-white': isActive(item) }"
+          class="app-header__nav-item"
+          :class="{ 'app-header__nav-item--active': isActive(item) }"
         >
           {{ item.label }}
         </NuxtLink>
       </nav>
 
-      <button class="hidden md:flex items-center justify-center bg-none border-none cursor-pointer p-2" @click="toggleMenu" aria-label="切换导航菜单" :aria-expanded="isMenuOpen">
-        <span class="block w-6 h-6 relative before:content-[''] before:absolute before:left-0 before:w-full before:h-0.5 before:bg-text-primary before:transition-all before:duration-300 before:top-[6px] after:content-[''] after:absolute after:left-0 after:w-full after:h-0.5 after:bg-text-primary after:transition-all after:duration-300 after:bottom-[6px]" :class="{ 'before:rotate-45 before:top-[11px] after:rotate-[-45deg] after:bottom-[11px]': isMenuOpen }"></span>
+      <button class="app-header__menu-btn" @click="toggleMenu" aria-label="切换导航菜单" :aria-expanded="isMenuOpen">
+        <span class="app-header__menu-icon" :class="{ 'app-header__menu-icon--open': isMenuOpen }"></span>
       </button>
     </div>
 
-    <nav class="hidden absolute top-16 left-0 right-0 bg-bg-primary border-b border-border py-3" :class="{ 'block': isMenuOpen }" aria-label="移动端导航" :aria-hidden="!isMenuOpen">
+    <nav class="app-header__mobile-nav" :class="{ 'app-header__mobile-nav--open': isMenuOpen }" aria-label="移动端导航" :aria-hidden="!isMenuOpen">
       <NuxtLink
         v-for="item in navItems"
         :key="item.path"
         :to="item.path"
-        class="block px-6 py-3 no-underline text-text-primary font-medium transition-colors duration-200 hover:bg-bg-secondary"
+        class="app-header__mobile-nav-item"
         @click="closeMenu"
       >
         {{ item.label }}
@@ -38,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+// 全局顶部导航栏 - 包含 Logo、桌面端导航链接和移动端汉堡菜单
 interface NavItem {
   path: string
   label: string
@@ -69,3 +70,163 @@ function closeMenu() {
   isMenuOpen.value = false
 }
 </script>
+
+<style scoped>
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.app-header__container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+}
+
+.app-header__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+.app-header__logo-icon {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.app-header__logo-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.app-header__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xl);
+}
+
+.app-header__nav-item {
+  text-decoration: none;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  transition: all 0.2s ease;
+}
+
+.app-header__nav-item:hover {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-primary);
+}
+
+.app-header__nav-item--active {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.app-header__menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--spacing-sm);
+}
+
+.app-header__menu-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  position: relative;
+}
+
+.app-header__menu-icon::before,
+.app-header__menu-icon::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--color-text-primary);
+  transition: all 0.3s ease;
+}
+
+.app-header__menu-icon::before {
+  top: 6px;
+}
+
+.app-header__menu-icon::after {
+  bottom: 6px;
+}
+
+.app-header__menu-icon--open::before {
+  transform: rotate(45deg);
+  top: 11px;
+}
+
+.app-header__menu-icon--open::after {
+  transform: rotate(-45deg);
+  bottom: 11px;
+}
+
+.app-header__mobile-nav {
+  display: none;
+  position: absolute;
+  top: 64px;
+  left: 0;
+  right: 0;
+  background-color: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-md) 0;
+}
+
+.app-header__mobile-nav--open {
+  display: block;
+}
+
+.app-header__mobile-nav-item {
+  display: block;
+  padding: var(--spacing-md) var(--spacing-xl);
+  text-decoration: none;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.app-header__mobile-nav-item:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+@media (max-width: 768px) {
+  .app-header__nav {
+    display: none;
+  }
+
+  .app-header__menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .app-header__container {
+    padding: 0 var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header__logo-text {
+    font-size: 1rem;
+  }
+}
+</style>
