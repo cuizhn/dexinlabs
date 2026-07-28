@@ -79,6 +79,12 @@ export default defineNuxtConfig({
     '@progress': path.resolve(rootDir, 'app/progress')
   },
 
+  /**
+   * 路由规则配置
+   * 
+   * 注意：Nuxt 4 中 routeRules.appLayout 仅支持 false | "default" | undefined
+   * 自定义布局（如 pagelayout）需在页面级别通过 definePageMeta 指定
+   */
   /** 
    * Vercel 预设（注释掉，可根据部署环境启用）
    * nitro: {

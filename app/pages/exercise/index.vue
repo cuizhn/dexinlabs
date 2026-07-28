@@ -31,7 +31,7 @@
             {{ exercise.description }}
           </div>
 
-          <ContentRenderer v-if="exercise" :value="exercise" />
+          <ContentRenderer :html="exerciseHtml" />
         </template>
 
         <div v-else class="exercise-page__placeholder">
@@ -54,31 +54,10 @@
  * 练习页 - 通过查询参数 ?topic=xxx 获取对应主题的练习题
  * Exercise 不绑定 Topic URL，保持统一入口
  */
-import ContentRenderer from '../../components/content/Renderer.vue'
-import type { Exercise } from '@content'
-
 const route = useRoute()
 const topicSlug = computed(() => typeof route.query.topic === 'string' ? route.query.topic : '')
 
-/** 练习 API 返回结构 */
-interface ExerciseResponse {
-  exercises: Exercise[]
-  topicTitle: string
-}
-
-const { data: exerciseData, pending: loading } = await useAsyncData(
-  () => `exercises:${topicSlug.value}`,
-  () => $fetch<ExerciseResponse>(`/api/exercises`, { params: { topic: topicSlug.value } }),
-  { default: () => ({ exercises: [], topicTitle: '' }) as ExerciseResponse }
-)
-
-const exercise = computed(() => {
-  const list = exerciseData.value?.exercises
-  if (Array.isArray(list) && list.length > 0) return list[0]
-  return null
-})
-
-const topicTitle = computed(() => exerciseData.value?.topicTitle || '')
+const { exercise, topicTitle, exerciseHtml, loading } = await useExercisePage(() => topicSlug.value)
 
 useHead({
   title: computed(() => (topicTitle.value ? `${topicTitle.value} · 练习` : '练习'))

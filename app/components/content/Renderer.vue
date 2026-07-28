@@ -4,9 +4,9 @@
 
     <div :class="innerClass" class="ce-content-body">
       <slot name="body-start" />
-      <div v-if="renderedHtml" class="ce-markdown" v-html="renderedHtml" />
+      <div v-if="html" class="ce-markdown" v-html="html" />
       <slot name="body-end" />
-      <slot name="empty" v-if="!renderedHtml && !loading" />
+      <slot name="empty" v-if="!html" />
     </div>
 
     <slot name="footer" :toc="toc" :frontmatter="frontmatter" :readingTime="readingTime" />
@@ -14,100 +14,49 @@
 </template>
 
 <script setup lang="ts">
-// Markdown 内容渲染器 - 支持预渲染 HTML 和运行时 Markdown 转换，提供多个具名插槽
-import { renderToHTML } from '@markdown'
+/**
+ * ContentRenderer - 纯展示型 Markdown 渲染器
+ *
+ * 只负责接收已渲染的 HTML 并展示，不处理 Markdown 解析、异步状态或内容适配。
+ * Markdown → HTML 的转换由 Service 层调用 @markdown 完成，页面层将结果传给本组件。
+ *
+ * 职责边界：
+ * - ✅ 展示 HTML
+ * - ✅ 提供 header / body-start / body-end / footer / empty 插槽
+ * - ✅ 提供 theme CSS class
+ * - ❌ 不 import @markdown
+ * - ❌ 不处理 Markdown 字符串
+ * - ❌ 不管理异步状态
+ */
 
-/** 渲染器接受的内容源：可以是预渲染 HTML 字段或原始 Markdown 字段 */
-interface RenderableContent {
-  /** 预渲染的引言 HTML */
-  introHtml?: string | null
-  /** 预渲染的正文 HTML */
-  bodyHtml?: string | null
-  /** 预渲染的总结 HTML */
-  summaryHtml?: string | null
-  /** 预渲染的完整内容 HTML（兼容旧格式） */
-  contentHtml?: string | null
-  /** 原始 Markdown 正文 */
-  body?: string | null
-  /** 原始 Markdown 内容（兼容旧格式） */
-  content?: string | null
+interface TocItem {
+  level: number
+  text: string
+  id: string
 }
 
-const props = defineProps<{
-  /** 内容对象（预渲染 HTML 或原始 Markdown） */
-  value?: RenderableContent
-  /** 原始 Markdown 字符串（优先级低于 value 中的预渲染字段） */
-  content?: string
+const props = withDefaults(defineProps<{
+  /** 已渲染的 HTML 字符串 */
+  html?: string
+  /** 目录（未来扩展） */
+  toc?: TocItem[]
+  /** 文档元数据（未来扩展） */
+  frontmatter?: Record<string, unknown>
+  /** 预计阅读时间（未来扩展） */
+  readingTime?: number | null
   /** 主题名称，映射到 ce-theme-{name} CSS 类 */
   theme?: string
-}>()
-
-const renderedHtml = ref('')
-const loading = ref(false)
-
-/** 渲染序号计数器：每次新渲染递增，异步完成后对比序号，过期结果丢弃 */
-let renderId = 0
-
-const prerenderedHtml = computed(() => {
-  const source = props.value
-  if (!source) return ''
-  const parts: string[] = []
-  if (source.introHtml?.trim()) parts.push(source.introHtml)
-  if (source.bodyHtml?.trim()) parts.push(source.bodyHtml)
-  if (source.summaryHtml?.trim()) parts.push(source.summaryHtml)
-  if (parts.length) return parts.join('\n')
-  if (source.contentHtml?.trim()) return source.contentHtml
-  return ''
+}>(), {
+  html: '',
+  toc: () => [],
+  frontmatter: () => ({}),
+  readingTime: null,
+  theme: 'default'
 })
-
-const markdownString = computed(() => {
-  if (prerenderedHtml.value) return ''
-  if (props.content?.trim()) return props.content
-  const source = props.value
-  if (source?.body?.trim()) return source.body
-  if (source?.content?.trim()) return source.content
-  return ''
-})
-
-/** 预渲染 HTML 变化时直接赋值（同步，无竞态风险） */
-watch(() => prerenderedHtml.value, (html) => {
-  if (html) renderedHtml.value = html
-}, { immediate: true })
-
-/**
- * 运行时 Markdown 渲染：使用 renderId 防止竞态
- * 每次触发渲染时递增 renderId，异步完成后仅当 ID 匹配时才更新结果
- */
-watch(() => markdownString.value, async (md) => {
-  if (!md) return
-  const currentId = ++renderId
-  loading.value = true
-  try {
-    const html = await renderToHTML(md)
-    // 仅当本次渲染仍是最新时才更新，避免旧渲染覆盖新结果
-    if (renderId === currentId) {
-      renderedHtml.value = html
-    }
-  } catch (error) {
-    if (renderId === currentId) {
-      console.error('[Renderer] Markdown 渲染失败:', error)
-      renderedHtml.value = ''
-    }
-  } finally {
-    if (renderId === currentId) {
-      loading.value = false
-    }
-  }
-}, { immediate: true })
-
-// TODO: 以下三个占位 computed 暴露给 slot，待后续实现真实数据
-const frontmatter = computed(() => ({}))
-const toc = computed(() => [] as string[])
-const readingTime = computed(() => null as number | null)
 
 const wrapperClass = computed(() => [
   'ce-markdown-renderer',
-  `ce-theme-${props.theme || 'default'}`
+  `ce-theme-${props.theme}`
 ])
 
 /** 内容区域 CSS 类（静态值，无需响应式计算） */
@@ -127,6 +76,7 @@ const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert',
   line-height: 1.75;
 }
 
+/* ── Markdown 内容样式 ── */
 .ce-markdown :deep(h1),
 .ce-markdown :deep(h2),
 .ce-markdown :deep(h3),
@@ -136,5 +86,189 @@ const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert',
 
 .ce-markdown :deep(pre) {
   overflow-x: auto;
+}
+
+.ce-markdown {
+  font-family: var(--font-content);
+  line-height: 1.75;
+  font-size: var(--text-base);
+  color: var(--color-text);
+}
+
+.ce-markdown :deep(h1) {
+  font-size: var(--text-4xl);
+  font-weight: 800;
+  margin: var(--spacing-2xl) 0 var(--spacing-lg);
+  color: var(--color-heading);
+}
+
+.ce-markdown :deep(h2) {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  margin: var(--spacing-xl) 0 var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-border-light);
+  color: var(--color-heading);
+}
+
+.ce-markdown :deep(h3) {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  margin: var(--spacing-lg) 0 var(--spacing-sm);
+  color: var(--color-heading);
+}
+
+.ce-markdown :deep(h4) {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin: var(--spacing-md) 0 var(--spacing-sm);
+}
+
+.ce-markdown :deep(p) {
+  margin: var(--spacing-md) 0;
+}
+
+.ce-markdown :deep(ul),
+.ce-markdown :deep(ol) {
+  margin: var(--spacing-md) 0;
+  padding-left: var(--spacing-xl);
+}
+
+.ce-markdown :deep(ul) {
+  list-style: disc;
+}
+
+.ce-markdown :deep(ol) {
+  list-style: decimal;
+}
+
+.ce-markdown :deep(li) {
+  margin: var(--spacing-xs) 0;
+  line-height: 1.8;
+}
+
+.ce-markdown :deep(blockquote) {
+  margin: var(--spacing-lg) 0;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-left: 4px solid var(--color-primary);
+  background-color: var(--color-primary-light);
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+  color: var(--color-text-secondary);
+}
+
+.ce-markdown :deep(blockquote p) {
+  margin: 0;
+}
+
+.ce-markdown :deep(code) {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  padding: 2px 6px;
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-primary-dark);
+}
+
+.ce-markdown :deep(pre) {
+  margin: var(--spacing-lg) 0;
+  padding: var(--spacing-lg);
+  background-color: #1E293B;
+  border-radius: var(--border-radius-lg);
+  overflow-x: auto;
+}
+
+.ce-markdown :deep(pre code) {
+  padding: 0;
+  background: none;
+  color: #E2E8F0;
+  font-size: var(--text-sm);
+  line-height: 1.7;
+}
+
+.ce-markdown :deep(table) {
+  margin: var(--spacing-lg) 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.ce-markdown :deep(th) {
+  background-color: var(--color-bg-secondary);
+  font-weight: 600;
+  text-align: left;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.ce-markdown :deep(td) {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.ce-markdown :deep(tr:last-child td) {
+  border-bottom: none;
+}
+
+.ce-markdown :deep(hr) {
+  margin: var(--spacing-2xl) 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
+}
+
+.ce-markdown :deep(img) {
+  margin: var(--spacing-lg) 0;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.ce-markdown :deep(a) {
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ce-markdown :deep(a:hover) {
+  color: var(--color-primary-dark);
+}
+
+.ce-markdown :deep(strong) {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.ce-markdown :deep(em) {
+  font-style: italic;
+}
+
+/* KaTeX 数学公式 */
+.ce-markdown :deep(.katex-display) {
+  margin: var(--spacing-lg) 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: var(--spacing-md);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-light);
+}
+
+.ce-markdown :deep(.katex) {
+  font-size: 1.05em;
+}
+
+.ce-markdown :deep(.katex-inline) {
+  display: inline;
+}
+
+.ce-markdown :deep(.katex-display::-webkit-scrollbar) {
+  height: 4px;
+}
+
+.ce-markdown :deep(.katex-display::-webkit-scrollbar-track) {
+  background: transparent;
+}
+
+.ce-markdown :deep(.katex-display::-webkit-scrollbar-thumb) {
+  background-color: var(--color-text-muted);
+  border-radius: 2px;
 }
 </style>

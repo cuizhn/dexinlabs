@@ -25,10 +25,19 @@
         </div>
       </header>
       <section class="lesson-page__content">
-        <h1 class="lesson-page__title">这是一个课时section的标题</h1>
-      </section>
-      <section class="lesson-page__body">
-        <ContentRenderer :value="{ body: data?.lesson?.body }" content="" />
+        <h1 class="lesson-page__title">{{ data?.lesson?.title }}</h1>
+
+        <div v-if="data?.lesson?.introHtml" class="lesson-page__intro">
+          <ContentRenderer :html="data.lesson.introHtml" />
+        </div>
+
+        <div v-if="data?.lesson?.bodyHtml" class="lesson-page__body-content">
+          <ContentRenderer :html="data.lesson.bodyHtml" />
+        </div>
+
+        <div v-if="data?.lesson?.summaryHtml" class="lesson-page__summary">
+          <ContentRenderer :html="data.lesson.summaryHtml" />
+        </div>
       </section>
 
       <nav class="lesson-page__nav">
@@ -99,6 +108,8 @@ const domainSlug = route.params.domain as string
 
 /** 使用 useLessonPage composable 获取课时数据 */
 const { lesson, topic, previousLesson, nextLesson } = await useLessonPage(lessonSlug)
+
+
 
 /** 构造 useLessonPage 返回的数据结构（兼容模板中的 data 引用） */
 const data = computed(() => {

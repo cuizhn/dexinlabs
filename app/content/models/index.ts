@@ -75,7 +75,7 @@ export interface Topic extends BaseContentEntity {
  * - body: 课时正文（Markdown）
  * - summaryText: 总结文本（Markdown）
  * - notes: 笔记/提示（Markdown）
- * - bodyHtml/introHtml/summaryHtml: 可选的预渲染 HTML（当前由 Renderer.vue 运行时渲染）
+ * - bodyHtml/introHtml/summaryHtml: 由 Service 层调用 @markdown 渲染的 HTML
  */
 export interface Lesson extends BaseContentEntity {
   topic?: string | null
@@ -85,11 +85,11 @@ export interface Lesson extends BaseContentEntity {
   body?: string | null
   summaryText?: string | null
   notes?: string | null
-  /** 预渲染的正文 HTML（可选，为空时由 Renderer.vue 运行时渲染） */
+  /** Service 层渲染的正文 HTML（由 @markdown renderToHTML 生成） */
   bodyHtml?: string
-  /** 预渲染的引言 HTML */
+  /** Service 层渲染的引言 HTML */
   introHtml?: string
-  /** 预渲染的总结 HTML */
+  /** Service 层渲染的总结 HTML */
   summaryHtml?: string
 }
 

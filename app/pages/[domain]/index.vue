@@ -52,6 +52,7 @@ const domainSlug = useRouteParam('domain') ?? ''
 
 const { domain, topics } = await useDomainPage(domainSlug)
 
+
 useHead({
   title: computed(() => domain.value?.title || '知识领域')
 })
