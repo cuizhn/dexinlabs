@@ -21,6 +21,8 @@
 .layout__content {
   flex: 1;
   padding-top: 48px;
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 48px);
+  display: flex;   
+  margin: 0 auto;
 }
 </style>

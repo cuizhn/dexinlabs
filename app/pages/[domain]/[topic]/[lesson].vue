@@ -1,60 +1,29 @@
 <template>
-  <article class="lesson-page__container">
-
-    <aside class="lesson-page__sidebar">
-      <LearningLessonChecklist />
-    </aside>
-
-    <div class="lesson-page__article">
-      <header class="lesson-page__header">
+    <article >
+      <header >
         <!-- 仅保留返回 Topic 的链接，不显示面包屑 -->
         <NuxtLink :to="`/${route.params.domain}/${route.params.topic}`" class="lesson-page__back">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path
-              d="M10 13l-3-3 3-3M7 10h6"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+          <IconChevron direction="left" :size="20" />
           {{ data?.topic?.title }}
         </NuxtLink>
         <div class="lesson-page__meta">
           <span class="lesson-page__order">第 {{ data?.lesson?.order }} 课</span>
         </div>
       </header>
-      <section class="lesson-page__content">
+      <section class="lesson-page__body">
         <h1 class="lesson-page__title">{{ data?.lesson?.title }}</h1>
-
-        <div v-if="data?.lesson?.introHtml" class="lesson-page__intro">
-          <ContentRenderer :html="data.lesson.introHtml" />
-        </div>
-
         <div v-if="data?.lesson?.bodyHtml" class="lesson-page__body-content">
           <ContentRenderer :html="data.lesson.bodyHtml" />
         </div>
-
-        <div v-if="data?.lesson?.summaryHtml" class="lesson-page__summary">
-          <ContentRenderer :html="data.lesson.summaryHtml" />
-        </div>
       </section>
 
-      <nav class="lesson-page__nav">
+      <footer >
         <NuxtLink
           v-if="data?.previousLesson"
           :to="`/${route.params.domain}/${route.params.topic}/${data.previousLesson.slug}`"
           class="lesson-page__nav-btn lesson-page__nav-btn--prev"
         >
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path
-              d="M10 13l-3-3 3-3M7 10h6"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+          <IconChevron direction="left" :size="20" />
           <span>{{ data.previousLesson.title }}</span>
         </NuxtLink>
 
@@ -64,24 +33,12 @@
           class="lesson-page__nav-btn lesson-page__nav-btn--next"
         >
           <span>{{ data.nextLesson.title }}</span>
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path
-              d="M6 10h8M10 6l4 4-4 4"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            />
-          </svg>
+          <IconChevron direction="right" :size="20" />
         </NuxtLink>
-      </nav>
-    </div>
+      </footer>
 
-    <aside class="lesson-page__assistant">
-      <LearningLessonAssistant />
-      <LearningMyUnderstanding :lesson-slug="lessonSlug" />
-    </aside>
-  </article>
+    </article>
+
 </template>
 
 <script setup lang="ts">
@@ -144,30 +101,17 @@ useHead({
 </script>
 
 <style scoped>
-.lesson-page__container {
-  min-height: 100vh;
-  background: var(--color-bg-primary);
-  display: grid;
-  grid-template-columns: 280px 1fr 280px;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-xl) var(--spacing-lg);
-  max-width: 1600px;
-  margin: 0 auto;
-}
 
-.lesson-page__sidebar {
-  position: sticky;
-  top: calc(var(--spacing-xl) + 48px);
-  height: fit-content;
-}
 
-.lesson-page__article {
+article {
   margin: 0 auto;
   max-width: 760px;
   user-select: text;
+  flex-grow: 1;
+  background: var(--color-bg-white);
 }
 
-.lesson-page__header {
+header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -216,6 +160,8 @@ useHead({
 
 .lesson-page__body {
   line-height: 1.8;
+  padding: var(--spacing-xl);
+  box-sizing: border-box;
   color: var(--color-text-primary);
 }
 
