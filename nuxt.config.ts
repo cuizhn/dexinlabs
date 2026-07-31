@@ -59,7 +59,8 @@ export default defineNuxtConfig({
   /** 组件配置 */
   components: {
     dirs: [
-      { path: '~/components' }
+      '~/components',
+      { path: '~/components/ui', pathPrefix: false }
     ]
   },
 

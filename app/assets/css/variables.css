@@ -65,4 +65,13 @@
 
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
+
+  /* ── 代码块配色 ── */
+  --color-code-bg: #1E293B;
+  --color-code-text: #E2E8F0;
+  --color-code-comment: #94A3B8;
+  --color-code-keyword: #C084FC;
+  --color-code-string: #86EFAC;
+  --color-code-number: #FDE68A;
+
 }

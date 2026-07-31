@@ -1,55 +1,50 @@
 <template>
-    <article >
-      <header >
-        <!-- 仅保留返回 Topic 的链接，不显示面包屑 -->
-        <NuxtLink :to="`/${route.params.domain}/${route.params.topic}`" class="lesson-page__back">
-          <IconChevron direction="left" :size="20" />
-          {{ data?.topic?.title }}
-        </NuxtLink>
-        <div class="lesson-page__meta">
-          <span class="lesson-page__order">第 {{ data?.lesson?.order }} 课</span>
-        </div>
-      </header>
-      <section class="lesson-page__body">
-        <h1 class="lesson-page__title">{{ data?.lesson?.title }}</h1>
-        <div v-if="data?.lesson?.bodyHtml" class="lesson-page__body-content">
-          <ContentRenderer :html="data.lesson.bodyHtml" />
-        </div>
-      </section>
+  <article>
+    <header>
+      <NuxtLink :to="`/${domain}/${topic}`" class="lesson-page__back">
+        <IconChevron direction="left" :size="20" />
+        {{ topicData?.title }}
+      </NuxtLink>
+      <div class="lesson-page__meta">
+        <span class="lesson-page__order">第 {{ lessonData?.order }} 课</span>
+      </div>
+    </header>
 
-      <footer >
-        <NuxtLink
-          v-if="data?.previousLesson"
-          :to="`/${route.params.domain}/${route.params.topic}/${data.previousLesson.slug}`"
-          class="lesson-page__nav-btn lesson-page__nav-btn--prev"
-        >
-          <IconChevron direction="left" :size="20" />
-          <span>{{ data.previousLesson.title }}</span>
-        </NuxtLink>
+    <section class="lesson-page__body">
+      <h1 class="lesson-page__title">{{ lessonData?.title }}</h1>
+      <div v-if="lessonData?.bodyHtml" class="lesson-page__body-content">
+        <ContentRenderer :html="lessonData.bodyHtml" />
+      </div>
+    </section>
 
-        <NuxtLink
-          v-if="data?.nextLesson"
-          :to="`/${route.params.domain}/${route.params.topic}/${data.nextLesson.slug}`"
-          class="lesson-page__nav-btn lesson-page__nav-btn--next"
-        >
-          <span>{{ data.nextLesson.title }}</span>
-          <IconChevron direction="right" :size="20" />
-        </NuxtLink>
-      </footer>
+    <footer>
+      <NuxtLink
+        v-if="previousLesson"
+        :to="`/${domain}/${topic}/${previousLesson.slug}`"
+        class="lesson-page__nav-btn lesson-page__nav-btn--prev"
+      >
+        <IconChevron direction="left" :size="20" />
+        <span>{{ previousLesson.title }}</span>
+      </NuxtLink>
 
-    </article>
-
+      <NuxtLink
+        v-if="nextLesson"
+        :to="`/${domain}/${topic}/${nextLesson.slug}`"
+        class="lesson-page__nav-btn lesson-page__nav-btn--next"
+      >
+        <span>{{ nextLesson.title }}</span>
+        <IconChevron direction="right" :size="20" />
+      </NuxtLink>
+    </footer>
+  </article>
 </template>
 
 <script setup lang="ts">
 /**
- * Lesson 页面 - 沉浸式学习体验
+ * Lesson 页面 - 沉浸式课时学习
  *
- * 三栏布局：
- * - 左侧：概念清单（今天需要解决的问题）
- * - 中间：Markdown 正文（最大阅读区域）
- * - 右侧：学习助手（提示、相关知识、诊断提醒）
- * - 右下角：我的理解（反思笔记）
+ * 单栏布局：返回链接 + 课时正文 + 前后导航。
+ * Markdown 渲染与排版样式由 ContentRenderer 组件负责。
  *
  * 设计原则：
  * - 去除面包屑和顶部导航，保持沉浸
@@ -57,37 +52,26 @@
  * - 进入页面时记录学习进度
  */
 import { useLearningState } from '~/composables/useLearningState'
+import { useRouteParam } from '~/composables/useRouteParam'
 
-const route = useRoute()
-const lessonSlug = route.params.lesson as string
-const topicSlug = route.params.topic as string
-const domainSlug = route.params.domain as string
+const domain = useRouteParam('domain')
+const topic = useRouteParam('topic')
+const lessonSlug = useRouteParam('lesson') as string
 
-/** 使用 useLessonPage composable 获取课时数据 */
-const { lesson, topic, previousLesson, nextLesson } = await useLessonPage(lessonSlug)
+const { lesson, topic: topicData, previousLesson, nextLesson } = await useLessonPage(lessonSlug)
 
-
-
-/** 构造 useLessonPage 返回的数据结构（兼容模板中的 data 引用） */
-const data = computed(() => {
-  if (!lesson.value) return null
-  return {
-    lesson: lesson.value,
-    topic: topic.value,
-    previousLesson: previousLesson.value,
-    nextLesson: nextLesson.value
-  }
-})
+/** 便捷别名，避免模板中频繁 .value 访问 */
+const lessonData = computed(() => lesson.value)
 
 /** 记录学习进度 */
 const { recordLesson } = useLearningState()
 
 onMounted(() => {
-  if (topic.value && lesson.value) {
+  if (topicData.value && lesson.value) {
     recordLesson({
-      topicSlug: domainSlug,
-      topicTitle: topic.value.title,
-      lessonSlug: lessonSlug,
+      topicSlug: topicData.value!.slug,
+      topicTitle: topicData.value.title,
+      lessonSlug: lessonSlug!,
       lessonTitle: lesson.value.title,
       lessonIndex: lesson.value.order,
       totalLessons: 0 // 当前无法获取总数，未来由 Progress Engine 提供
@@ -96,13 +80,11 @@ onMounted(() => {
 })
 
 useHead({
-  title: computed(() => data.value?.lesson.title || '学习课时')
+  title: computed(() => lessonData.value?.title || '学习课时')
 })
 </script>
 
 <style scoped>
-
-
 article {
   margin: 0 auto;
   max-width: 760px;
@@ -138,7 +120,7 @@ header {
 }
 
 .lesson-page__order {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--color-text-light);
   padding: 4px 12px;
   background: var(--color-bg-secondary);
@@ -152,80 +134,11 @@ header {
   margin: 0 0 var(--spacing-lg);
 }
 
-.lesson-page__intro {
-  margin-bottom: var(--spacing-xl);
-  padding-bottom: var(--spacing-xl);
-  border-bottom: 1px solid var(--color-border);
-}
-
 .lesson-page__body {
   line-height: 1.8;
   padding: var(--spacing-xl);
   box-sizing: border-box;
   color: var(--color-text-primary);
-}
-
-.lesson-page__body h2 {
-  font-size: 1.375rem;
-  font-weight: 700;
-  margin: var(--spacing-xl) 0 var(--spacing-lg);
-  color: var(--color-text-primary);
-}
-
-.lesson-page__body h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin: var(--spacing-lg) 0 var(--spacing-md);
-  color: var(--color-text-primary);
-}
-
-.lesson-page__body p {
-  margin: var(--spacing-md) 0;
-}
-
-.lesson-page__body ul,
-.lesson-page__body ol {
-  padding-left: var(--spacing-xl);
-  margin: var(--spacing-md) 0;
-}
-
-.lesson-page__body li {
-  margin: var(--spacing-sm) 0;
-}
-
-.lesson-page__body code {
-  background: var(--color-bg-secondary);
-  padding: 2px 6px;
-  border-radius: var(--border-radius-sm);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.875em;
-}
-
-.lesson-page__body pre {
-  background: var(--color-bg-secondary);
-  padding: var(--spacing-lg);
-  border-radius: var(--border-radius-lg);
-  overflow-x: auto;
-  margin: var(--spacing-lg) 0;
-}
-
-.lesson-page__body pre code {
-  background: none;
-  padding: 0;
-}
-
-.lesson-page__summary {
-  margin-top: var(--spacing-xl);
-  padding-top: var(--spacing-xl);
-  border-top: 1px solid var(--color-border);
-}
-
-.lesson-page__nav {
-  display: flex;
-  justify-content: space-between;
-  margin-top: var(--spacing-2xl);
-  padding-top: var(--spacing-xl);
-  border-top: 1px solid var(--color-border);
 }
 
 .lesson-page__nav-btn {
@@ -252,7 +165,7 @@ header {
 }
 
 .lesson-page__nav-btn--next {
-  color: #fff;
+  color: var(--color-bg-white);
   background: linear-gradient(135deg, var(--color-primary), #6366f1);
   box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
 }
@@ -262,41 +175,13 @@ header {
   box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
 }
 
-.lesson-page__assistant {
-  position: sticky;
-  top: calc(var(--spacing-xl) + 64px);
-  height: fit-content;
-}
-
-@media (max-width: 1200px) {
-  .lesson-page__container {
-    grid-template-columns: 240px 1fr;
-  }
-
-  .lesson-page__assistant {
-    display: none;
-  }
-}
-
 @media (max-width: 768px) {
-  .lesson-page__container {
-    grid-template-columns: 1fr;
-    padding: var(--spacing-lg);
-  }
-
-  .lesson-page__sidebar {
-    display: none;
-  }
-
-  .lesson-page__article {
-    padding: var(--spacing-xl);
-  }
-
   .lesson-page__title {
     font-size: 1.375rem;
   }
 
-  .lesson-page__nav {
+  footer {
+    display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
   }

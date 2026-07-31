@@ -1,4 +1,4 @@
-
+/* ── 盒模型与基础重置 ── */
 *,
 *::before,
 *::after {
@@ -7,58 +7,170 @@
   padding: 0;
 }
 
+/* ── 根元素 ── */
 html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
+/* ── 页面主体 ── */
 body {
   font-family: var(--font-ui);
   font-weight: 400;
   line-height: 1.7;
   font-variant-numeric: tabular-nums;
   font-size: var(--text-base);
-  line-height: 1.7;
   color: var(--color-text-primary);
   background-color: var(--color-bg-primary);
+  min-height: 100vh;
 }
 
+/* ── 排版 ── */
 h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   line-height: 1.3;
   color: var(--color-heading);
 }
 
+p {
+  line-height: inherit;
+}
+
+small {
+  font-size: 0.875em;
+}
+
+sub,
+sup {
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub { bottom: -0.25em; }
+sup { top: -0.5em; }
+
+abbr[title] {
+  text-decoration: underline dotted;
+  cursor: help;
+}
+
+mark {
+  background-color: var(--color-warning);
+  color: var(--color-text-primary);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* ── 链接 ── */
 a {
   color: inherit;
   text-decoration: none;
 }
 
-img {
+/* ── 媒体元素 ── */
+img,
+video,
+canvas {
   max-width: 100%;
   height: auto;
   display: block;
 }
 
+svg {
+  display: inline-block;
+  vertical-align: middle;
+  overflow: visible;
+}
+
+/* ── 列表 ─ */
 ul, ol {
   list-style: none;
 }
 
+/* ── 表单 ── */
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+
 button {
   cursor: pointer;
-  border: none;
-  background: none;
-  font: inherit;
-  color: inherit;
 }
 
-input, textarea, select {
-  font: inherit;
-  color: inherit;
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
 }
 
+legend {
+  display: table;
+  max-width: 100%;
+  white-space: normal;
+}
+
+label {
+  cursor: pointer;
+}
+
+/* 移除搜索框默认样式 */
+input[type="search"] {
+  -webkit-appearance: textfield;
+}
+
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/* 移除数字输入框箭头 */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ── 表格 ─ */
 table {
   border-collapse: collapse;
   width: 100%;
+}
+
+/* ── 其他元素 ── */
+hr {
+  border: 0;
+  height: 0;
+}
+
+iframe {
+  border: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* ── 焦点样式（仅键盘导航时显示） ── */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ─ 文本选中 ── */
+::selection {
+  background-color: var(--color-primary-light);
+  color: var(--color-text-primary);
 }

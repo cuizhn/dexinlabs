@@ -2,7 +2,7 @@
   <div :class="wrapperClass" data-ce-markdown-renderer>
     <slot name="header" :toc="toc" :frontmatter="frontmatter" />
 
-    <div :class="innerClass" class="ce-content-body">
+    <div class="ce-content-body">
       <slot name="body-start" />
       <div v-if="html" class="ce-markdown" v-html="html" />
       <slot name="body-end" />
@@ -21,9 +21,9 @@
  * Markdown → HTML 的转换由 Service 层调用 @markdown 完成，页面层将结果传给本组件。
  *
  * 职责边界：
- * - ✅ 展示 HTML
+ * - ✅ 展示 HTML（通过 v-html）
  * - ✅ 提供 header / body-start / body-end / footer / empty 插槽
- * - ✅ 提供 theme CSS class
+ * - ✅ 提供 theme CSS class 用于主题切换
  * - ❌ 不 import @markdown
  * - ❌ 不处理 Markdown 字符串
  * - ❌ 不管理异步状态
@@ -58,48 +58,39 @@ const wrapperClass = computed(() => [
   'ce-markdown-renderer',
   `ce-theme-${props.theme}`
 ])
-
-/** 内容区域 CSS 类（静态值，无需响应式计算） */
-const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert', 'max-w-none']
 </script>
 
 <style scoped>
+/* ── 容器 ── */
 .ce-markdown-renderer {
-  --ce-heading-anchor-color: var(--ce-accent, #3b82f6);
-}
-
-.ce-theme-default {
   color: inherit;
 }
 
-.ce-content {
+.ce-content-body {
   line-height: 1.75;
 }
 
-/* ── Markdown 内容样式 ── */
+/* ── Markdown 排版 ── */
+.ce-markdown {
+  font-family: var(--font-content);
+  font-size: var(--text-base);
+  line-height: 1.75;
+  color: var(--color-text);
+}
+
+/* 标题 */
 .ce-markdown :deep(h1),
 .ce-markdown :deep(h2),
 .ce-markdown :deep(h3),
 .ce-markdown :deep(h4) {
   scroll-margin-top: 1rem;
-}
-
-.ce-markdown :deep(pre) {
-  overflow-x: auto;
-}
-
-.ce-markdown {
-  font-family: var(--font-content);
-  line-height: 1.75;
-  font-size: var(--text-base);
-  color: var(--color-text);
+  color: var(--color-heading);
 }
 
 .ce-markdown :deep(h1) {
   font-size: var(--text-4xl);
   font-weight: 800;
   margin: var(--spacing-2xl) 0 var(--spacing-lg);
-  color: var(--color-heading);
 }
 
 .ce-markdown :deep(h2) {
@@ -108,14 +99,12 @@ const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert',
   margin: var(--spacing-xl) 0 var(--spacing-md);
   padding-bottom: var(--spacing-sm);
   border-bottom: 2px solid var(--color-border-light);
-  color: var(--color-heading);
 }
 
 .ce-markdown :deep(h3) {
   font-size: var(--text-xl);
   font-weight: 600;
   margin: var(--spacing-lg) 0 var(--spacing-sm);
-  color: var(--color-heading);
 }
 
 .ce-markdown :deep(h4) {
@@ -124,6 +113,7 @@ const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert',
   margin: var(--spacing-md) 0 var(--spacing-sm);
 }
 
+/* 段落与列表 */
 .ce-markdown :deep(p) {
   margin: var(--spacing-md) 0;
 }
@@ -147,6 +137,7 @@ const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert',
   line-height: 1.8;
 }
 
+/* 引用块 */
 .ce-markdown :deep(blockquote) {
   margin: var(--spacing-lg) 0;
   padding: var(--spacing-md) var(--spacing-lg);
@@ -160,6 +151,7 @@ const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert',
   margin: 0;
 }
 
+/* 行内代码 */
 .ce-markdown :deep(code) {
   font-family: var(--font-mono);
   font-size: 0.875em;
@@ -169,10 +161,11 @@ const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert',
   color: var(--color-primary-dark);
 }
 
+/* 代码块 */
 .ce-markdown :deep(pre) {
   margin: var(--spacing-lg) 0;
   padding: var(--spacing-lg);
-  background-color: #1E293B;
+  background-color: var(--color-code-bg);
   border-radius: var(--border-radius-lg);
   overflow-x: auto;
 }
@@ -180,11 +173,12 @@ const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert',
 .ce-markdown :deep(pre code) {
   padding: 0;
   background: none;
-  color: #E2E8F0;
+  color: var(--color-code-text);
   font-size: var(--text-sm);
   line-height: 1.7;
 }
 
+/* 表格 */
 .ce-markdown :deep(table) {
   margin: var(--spacing-lg) 0;
   border: 1px solid var(--color-border);
@@ -209,18 +203,21 @@ const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert',
   border-bottom: none;
 }
 
+/* 分割线 */
 .ce-markdown :deep(hr) {
   margin: var(--spacing-2xl) 0;
   border: none;
   border-top: 1px solid var(--color-border);
 }
 
+/* 图片 */
 .ce-markdown :deep(img) {
   margin: var(--spacing-lg) 0;
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--color-border);
 }
 
+/* 链接 */
 .ce-markdown :deep(a) {
   color: var(--color-primary);
   text-decoration: underline;
@@ -231,6 +228,7 @@ const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert',
   color: var(--color-primary-dark);
 }
 
+/* 文本强调 */
 .ce-markdown :deep(strong) {
   font-weight: 700;
   color: var(--color-text-primary);
@@ -240,7 +238,15 @@ const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert',
   font-style: italic;
 }
 
-/* KaTeX 数学公式 */
+/* ── KaTeX 数学公式 ── */
+.ce-markdown :deep(.katex) {
+  font-size: 1.05em;
+}
+
+.ce-markdown :deep(.katex-inline) {
+  display: inline;
+}
+
 .ce-markdown :deep(.katex-display) {
   margin: var(--spacing-lg) 0;
   overflow-x: auto;
@@ -249,14 +255,6 @@ const innerClass = ['ce-content', 'prose', 'prose-neutral', 'dark:prose-invert',
   background-color: var(--color-bg-secondary);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-border-light);
-}
-
-.ce-markdown :deep(.katex) {
-  font-size: 1.05em;
-}
-
-.ce-markdown :deep(.katex-inline) {
-  display: inline;
 }
 
 .ce-markdown :deep(.katex-display::-webkit-scrollbar) {
