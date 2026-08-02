@@ -10,12 +10,18 @@
       </div>
     </header>
 
-    <section class="lesson-page__body">
-      <h1 class="lesson-page__title">{{ lessonData?.title }}</h1>
-      <div v-if="lessonData?.bodyHtml" class="lesson-page__body-content">
-        <ContentRenderer :html="lessonData.bodyHtml" />
-      </div>
-    </section>
+   <section class="lesson-page__body">
+  <h1 class="lesson-page__title">
+    {{ lessonData?.title }}
+  </h1>
+
+  <div class="lesson-page__content">
+    <ContentRenderer
+      v-if="lessonData?.bodyHtml"
+      :html="lessonData.bodyHtml"
+    />
+  </div>
+</section>
 
     <footer>
       <NuxtLink
