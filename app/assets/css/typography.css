@@ -1,0 +1,211 @@
+/* ===== 内容 ===== */
+
+.content {
+  font-family: var(--font-content);
+  font-size: var(--text-base);
+  line-height: 1.8;
+  color: var(--color-text);
+
+  word-break: break-word;
+}
+
+/* ===== 标题 ===== */
+
+.content :deep(h1),
+.content :deep(h2),
+.content :deep(h3),
+.content :deep(h4) {
+  color: var(--color-heading);
+  line-height: 1.35;
+  scroll-margin-top: 80px;
+}
+
+.content :deep(h1) {
+  font-size: var(--text-4xl);
+  font-weight: 800;
+  margin: 0 0 var(--spacing-xl);
+}
+
+.content :deep(h2) {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  margin: var(--spacing-2xl) 0 var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.content :deep(h3) {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  margin: var(--spacing-xl) 0 var(--spacing-md);
+}
+
+.content :deep(h4) {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin: var(--spacing-lg) 0 var(--spacing-sm);
+}
+
+/* ===== 段落 ===== */
+
+.content :deep(p) {
+  margin: 1.25rem 0;
+}
+
+/* ===== 列表 ===== */
+
+.content :deep(ul),
+.content :deep(ol) {
+  margin: 1.25rem 0;
+  padding-left: 1.75rem;
+}
+
+.content :deep(li) {
+  line-height: 1.8;
+}
+
+.content :deep(li + li) {
+  margin-top: .5rem;
+}
+
+/* ===== 引用 ===== */
+
+.content :deep(blockquote) {
+  margin: var(--spacing-xl) 0;
+  padding: var(--spacing-md) var(--spacing-lg);
+
+  border-left: 4px solid var(--color-primary);
+
+  background: var(--color-primary-light);
+
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+
+  color: var(--color-text-secondary);
+}
+
+.content :deep(blockquote p) {
+  margin: 0;
+}
+
+/* ===== 行内代码 ===== */
+
+.content :deep(code) {
+  font-family: var(--font-mono);
+  font-size: .875em;
+
+  padding: 2px 6px;
+
+  background: var(--color-bg-secondary);
+
+  border-radius: var(--border-radius-sm);
+
+  color: var(--color-primary-dark);
+}
+
+/* ===== 代码块 ===== */
+
+.content :deep(pre) {
+  margin: var(--spacing-xl) 0;
+  padding: var(--spacing-lg);
+
+  overflow-x: auto;
+
+  background: var(--color-code-bg);
+
+  border-radius: var(--border-radius-lg);
+}
+
+.content :deep(pre code) {
+  padding: 0;
+
+  background: transparent;
+
+  color: var(--color-code-text);
+
+  font-size: var(--text-sm);
+
+  line-height: 1.7;
+}
+
+/* ===== 表格 ===== */
+
+.content :deep(table) {
+  width: 100%;
+
+  margin: var(--spacing-xl) 0;
+
+  border-collapse: collapse;
+}
+
+.content :deep(th) {
+  padding: var(--spacing-sm) var(--spacing-md);
+
+  background: var(--color-bg-secondary);
+
+  border-bottom: 2px solid var(--color-border);
+
+  text-align: left;
+  font-weight: 600;
+}
+
+.content :deep(td) {
+  padding: var(--spacing-sm) var(--spacing-md);
+
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+/* ===== 分割线 ===== */
+
+.content :deep(hr) {
+  width: 80px;
+
+  margin: var(--spacing-2xl) auto;
+
+  border: none;
+
+  border-top: 1px solid var(--color-border);
+}
+
+/* ===== 图片 ===== */
+
+.content :deep(img) {
+  display: block;
+
+  max-width: 100%;
+  height: auto;
+
+  margin: var(--spacing-xl) auto;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--border-radius-lg);
+
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== 链接 ===== */
+
+.content :deep(a) {
+  color: var(--color-primary);
+
+  text-decoration: none;
+
+  border-bottom: 1px solid currentColor;
+
+  transition: color .2s;
+}
+
+.content :deep(a:hover) {
+  color: var(--color-primary-dark);
+}
+
+/* ===== 强调 ===== */
+
+.content :deep(strong) {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.content :deep(em) {
+  font-style: italic;
+}
