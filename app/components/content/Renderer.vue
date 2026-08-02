@@ -46,8 +46,8 @@ const wrapperClass = computed(() => [
 </script>
 
 <style scoped>
-@import "./styles/typography.css";
-@import "./styles/math.css";
+@import "~/assets/css/typography.css";
+@import "~/assets/css/math.css";
 
 .renderer {
   color: inherit;
