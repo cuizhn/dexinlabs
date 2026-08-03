@@ -1,0 +1,30 @@
+/* ===== KaTeX ===== */
+
+.content :deep(.katex) {
+  font-family: var(--font-math);
+  font-size: 1.05em;
+}
+
+.content :deep(.katex-display) {
+  margin: var(--spacing-xl) 0;
+
+  padding: .25rem 0;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  text-align: center;
+}
+
+.content :deep(.katex-display::-webkit-scrollbar) {
+  height: 4px;
+}
+
+.content :deep(.katex-display::-webkit-scrollbar-track) {
+  background: transparent;
+}
+
+.content :deep(.katex-display::-webkit-scrollbar-thumb) {
+  background: var(--color-text-muted);
+  border-radius: 999px;
+}
