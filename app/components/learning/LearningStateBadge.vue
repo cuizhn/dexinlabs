@@ -13,7 +13,8 @@
  * 根据传入的 LearningState 枚举值，显示对应的状态标签和颜色。
  * 统一所有页面中「待学习 / 正在学习 / 已掌握」的视觉表现。
  */
-import { LearningState, useLearningState } from '~/composables/useLearningState'
+import type { LearningState } from '~/composables/useLearningState'
+import { useLearningState } from '~/composables/useLearningState'
 
 const props = defineProps<{
   /** 学习状态枚举值 */

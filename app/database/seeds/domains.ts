@@ -4,7 +4,7 @@
  * 定义三大知识领域：数与代数、图形与几何、统计与概率。
  * Domain 是精简的分类节点，仅包含 slug, title, description, order。
  */
-import { domains } from '../schema'
+import type { domains } from '../schema'
 
 export const domainSeeds = [
   { slug: 'algebra', title: '数与代数', description: '数与代数领域的核心内容', order: 1 },

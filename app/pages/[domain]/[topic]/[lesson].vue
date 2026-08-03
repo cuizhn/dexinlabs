@@ -11,31 +11,12 @@
     </header>
 
     <section class="lesson-page__body">
-      <h1 class="lesson-page__title">{{ lessonData?.title }}</h1>
-      <div v-if="lessonData?.bodyHtml" class="lesson-page__body-content">
-        <ContentRenderer :html="lessonData.bodyHtml" />
+      <div v-if="bodyHtml" class="lesson-page__body-content">
+        <ContentRenderer :html="bodyHtml" />
       </div>
     </section>
 
-    <footer>
-      <NuxtLink
-        v-if="previousLesson"
-        :to="`/${domain}/${topic}/${previousLesson.slug}`"
-        class="lesson-page__nav-btn lesson-page__nav-btn--prev"
-      >
-        <IconChevron direction="left" :size="20" />
-        <span>{{ previousLesson.title }}</span>
-      </NuxtLink>
-
-      <NuxtLink
-        v-if="nextLesson"
-        :to="`/${domain}/${topic}/${nextLesson.slug}`"
-        class="lesson-page__nav-btn lesson-page__nav-btn--next"
-      >
-        <span>{{ nextLesson.title }}</span>
-        <IconChevron direction="right" :size="20" />
-      </NuxtLink>
-    </footer>
+    
   </article>
 </template>
 
@@ -58,7 +39,7 @@ const domain = useRouteParam('domain')
 const topic = useRouteParam('topic')
 const lessonSlug = useRouteParam('lesson') as string
 
-const { lesson, topic: topicData, previousLesson, nextLesson } = await useLessonPage(lessonSlug)
+const { lesson, topic: topicData, bodyHtml } = await useLessonPage(lessonSlug)
 
 /** 便捷别名，避免模板中频繁 .value 访问 */
 const lessonData = computed(() => lesson.value)

@@ -1,9 +1,9 @@
 <!-- 默认布局 - 包含全局顶栏、主内容区和页脚 -->
 <template>
-  <div class="page-layout">
+  <div class="app-layout">
     <AppHeader />
 
-    <main class="layout__content">
+    <main >
       <slot />
     </main>
     <AppFooter />
@@ -11,14 +11,14 @@
 </template>
 
 <style scoped>
-.page-layout { 
+.app-layout { 
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: var(--color-bg-primary);
 }
 
-.layout__content {
+main {
   flex: 1;
   padding-top: 48px;
   min-height: calc(100vh - 48px);

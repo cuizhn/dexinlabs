@@ -1,5 +1,5 @@
 /**
- * Content 模块数据模型定义
+ * Content 模块类型定义
  *
  * 定义知识领域、知识主题、课时、练习等核心实体的 TypeScript 接口，
  * 以及页面组合所需的扩展类型（LessonPage、TopicPage、DomainPage）。
@@ -36,7 +36,7 @@ export interface BaseContentEntity {
  * Domain - 知识领域实体（原 Course）
  *
  * 精简为分类节点，仅包含 id, slug, title, description, order。
- * Domain 不是内容实体，不需要 cover、body、edition 等展示字段。
+ * Domain 不是内容实体，不需要 cover、body、edition 等展示型字段。
  * topics: 关联的知识主题列表（可选，按需加载）
  */
 export interface Domain extends BaseContentEntity {
@@ -75,7 +75,9 @@ export interface Topic extends BaseContentEntity {
  * - body: 课时正文（Markdown）
  * - summaryText: 总结文本（Markdown）
  * - notes: 笔记/提示（Markdown）
- * - bodyHtml/introHtml/summaryHtml: 由 Service 层调用 @markdown 渲染的 HTML
+ *
+ * 注意：Markdown 字段的 HTML 渲染由 Composable/Page 层调用 @markdown 完成，
+ * Service 层只返回原始 Markdown。
  */
 export interface Lesson extends BaseContentEntity {
   topic?: string | null
@@ -85,12 +87,6 @@ export interface Lesson extends BaseContentEntity {
   body?: string | null
   summaryText?: string | null
   notes?: string | null
-  /** Service 层渲染的正文 HTML（由 @markdown renderToHTML 生成） */
-  bodyHtml?: string
-  /** Service 层渲染的引言 HTML */
-  introHtml?: string
-  /** Service 层渲染的总结 HTML */
-  summaryHtml?: string
 }
 
 /**
@@ -113,19 +109,6 @@ export interface Exercise extends BaseContentEntity {
   hint?: string | null
   answer?: string | null
   analysis?: string | null
-}
-
-/**
- * TopicListOptions - 主题列表查询选项（原 ChapterListOptions）
- */
-export interface TopicListOptions {
-  domain?: string | null
-  domainSlug?: string | null
-  limit?: number
-  offset?: number
-  orderBy?: 'id' | 'order' | string
-  order?: 'asc' | 'desc'
-  [key: string]: unknown
 }
 
 /**

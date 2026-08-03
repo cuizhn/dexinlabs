@@ -25,8 +25,7 @@ export type {
   Lesson,
   Exercise,
   BaseContentEntity,
-  TopicListOptions,
   LessonPage,
   TopicPage,
   DomainPage
-} from './models/index'
+} from './types/index'

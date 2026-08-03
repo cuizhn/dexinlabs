@@ -7,7 +7,7 @@
 import { eq, and, asc, desc } from 'drizzle-orm'
 import type { SQL } from 'drizzle-orm'
 import { exercises } from '@database'
-import type { Exercise } from '@content/models/index'
+import type { Exercise } from '@content/types/index'
 import { BaseRepository } from './BaseRepository'
 
 export interface ExerciseFilters {
@@ -58,21 +58,7 @@ export class ExerciseRepository extends BaseRepository<typeof exercises> {
       .orderBy(asc(this.table.order), asc(this.table.id)) as Promise<Exercise[]>
   }
 
-  /** 获取主题下的第一条练习（用于主题页面展示） */
-  async getOneByTopic(topicSlug: string | undefined | null): Promise<Exercise | null> {
-    if (!topicSlug) return null
-    const rows = await this.getDb().select().from(this.table)
-      .where(eq(this.table.topic, topicSlug))
-      .orderBy(asc(this.table.order), asc(this.table.id))
-      .limit(1)
-    return (rows[0] as Exercise) || null
-  }
-
   // ── 以下为通用方法的类型收窄覆写 ──
-
-  override async findBySlug(slug: string | undefined | null): Promise<Exercise | null> {
-    return super.findBySlug(slug) as Promise<Exercise | null>
-  }
 
   override async findById(id: number | string | undefined | null): Promise<Exercise | null> {
     return super.findById(id) as Promise<Exercise | null>

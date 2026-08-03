@@ -1,8 +1,12 @@
 /**
  * Markdown 渲染模块的公共入口
  *
- * 提供将 Markdown 转换为 HTML 的核心函数，以及插件的注册/管理能力。
+ * 提供将 Markdown 转换为 HTML 的核心函数。
  * 模块加载时会自动注册内置插件。
+ *
+ * 职责边界：
+ * - 负责：markdown → AST → HTML
+ * - 不负责：Lesson/Topic/Domain 等业务概念
  */
 import { renderToHTML as doRenderToHTML } from './processor'
 import { registerBuiltinPlugins } from './plugins/builtin'
@@ -23,7 +27,7 @@ export async function renderToHTML(content: string): Promise<string> {
   return doRenderToHTML(content)
 }
 
-export { registerPlugin, unregisterPlugin, getPlugins, clearPlugins } from './plugins/registry'
-export { registerBuiltinPlugins } from './plugins/builtin'
+// 插件管理 API 仅内部使用，不对外导出
+// 如需扩展插件系统，可在此处添加 registerPlugin 等函数
 export type { MarkdownPlugin } from './types'
 

@@ -4,7 +4,7 @@
  * 提供主题列表、主题页面数据组装（含前后主题导航、课时列表）等功能。
  */
 import { topicRepository } from '@content/repositories'
-import type { TopicPage } from '../models/index'
+import type { TopicPage } from '../types/index'
 import { normalizeSlug, toTopic, toDomain, toLesson, toExercise, getSiblings } from '../utils'
 
 export class TopicService {
@@ -13,10 +13,6 @@ export class TopicService {
     const clean = normalizeSlug(domainSlug)
     if (!clean) return []
     return topicRepository.listByDomain(clean)
-  }
-
-  async getBySlug(slug: string): Promise<TopicPage | null> {
-    return this.getTopicPage(slug)
   }
 
   async getTopicPage(slug: string): Promise<TopicPage | null> {

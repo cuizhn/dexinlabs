@@ -4,14 +4,10 @@
  * 提供领域查询、默认领域获取、领域页面数据组装等功能。
  */
 import { domainRepository } from '@content/repositories'
-import type { DomainPage } from '../models/index'
+import type { DomainPage } from '../types/index'
 import { normalizeSlug, toDomain, toTopic, toLesson } from '../utils'
 
 export class DomainService {
-  async list() {
-    return domainRepository.list()
-  }
-
   /**
    * 获取所有领域及其主题列表（用于知识地图等场景）
    * 使用 toDomain/toTopic 显式选取字段，避免内部字段泄漏
@@ -24,24 +20,12 @@ export class DomainService {
     }))
   }
 
-  async getDefault(): Promise<DomainPage | null> {
-    const defaultDomain = await domainRepository.getDefault()
-    if (!defaultDomain) return null
-    const domain = await domainRepository.getWithTopicsAndLessons(defaultDomain.slug)
-    if (!domain) return null
-    return this.buildDomainPage(domain)
-  }
-
-  async getBySlug(slug: string): Promise<DomainPage | null> {
+  async getDomainPage(slug: string): Promise<DomainPage | null> {
     const clean = normalizeSlug(slug)
     if (!clean) return null
     const domain = await domainRepository.getWithTopicsAndLessons(clean)
     if (!domain) return null
     return this.buildDomainPage(domain)
-  }
-
-  async getDomainPage(slug: string): Promise<DomainPage | null> {
-    return this.getBySlug(slug)
   }
 
   /**

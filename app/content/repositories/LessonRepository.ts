@@ -6,7 +6,7 @@
  */
 import { eq, asc } from 'drizzle-orm'
 import { lessons } from '@database'
-import type { Lesson, Topic, Domain } from '@content/models/index'
+import type { Lesson, Topic, Domain } from '@content/types/index'
 import { BaseRepository } from './BaseRepository'
 
 export interface LessonWithRelations extends Lesson {

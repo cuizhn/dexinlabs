@@ -12,7 +12,7 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: '理解为先，应用为本。Dexin Labs（得心实验室）— 让数学学习真正得心应手。K12 数学思维学习平台。'
+      content: '理解为先，应用为本。得心实验室 — 让数学学习真正得心应手。K12 数学思维学习平台。'
     }
   ]
 })

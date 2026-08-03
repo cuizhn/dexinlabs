@@ -1,7 +1,7 @@
 /**
  * Content 模块通用工具函数
  */
-import type { Domain, Topic, Lesson, Exercise } from './models/index'
+import type { Domain, Topic, Lesson, Exercise } from './types/index'
 
 /**
  * 标准化 slug 输入，去除首尾空白，空值返回 null
