@@ -75,9 +75,7 @@ export interface Topic extends BaseContentEntity {
  * - body: 课时正文（Markdown）
  * - summaryText: 总结文本（Markdown）
  * - notes: 笔记/提示（Markdown）
- *
- * 注意：Markdown 字段的 HTML 渲染由 Composable/Page 层调用 @markdown 完成，
- * Service 层只返回原始 Markdown。
+ * - bodyHtml/introHtml/summaryHtml: Service 层调用 @markdown 渲染的 HTML
  */
 export interface Lesson extends BaseContentEntity {
   topic?: string | null
@@ -87,6 +85,12 @@ export interface Lesson extends BaseContentEntity {
   body?: string | null
   summaryText?: string | null
   notes?: string | null
+  /** Service 层渲染的正文 HTML */
+  bodyHtml?: string
+  /** Service 层渲染的引言 HTML */
+  introHtml?: string
+  /** Service 层渲染的总结 HTML */
+  summaryHtml?: string
 }
 
 /**

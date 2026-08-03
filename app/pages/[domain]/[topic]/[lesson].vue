@@ -46,7 +46,7 @@ const domain = useRouteParam('domain')
 const topic = useRouteParam('topic')
 const lessonSlug = useRouteParam('lesson') as string
 
-const { lesson, topic: topicData, bodyHtml } = await useLessonPage(lessonSlug)
+const { lesson, topic: topicData } = await useLessonPage(lessonSlug)
 
 /** 便捷别名，避免模板中频繁 .value 访问 */
 const lessonData = computed(() => lesson.value)

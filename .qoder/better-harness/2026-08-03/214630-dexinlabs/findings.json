@@ -1,0 +1,153 @@
+{
+  "summary": {
+    "projectName": "dexinlabs",
+    "locale": "zh-CN",
+    "modelId": "agent-work-loop-v4",
+    "reportContractVersion": 25,
+    "overview": "项目具备清晰的分层架构和规范文档，但缺少自动化测试、CI/CD 管道和 Agent 资产沉淀，变更验证和可靠交付维度主要依赖人工判断。",
+    "aiAgentPractice": {
+      "inspectedSurfaces": [],
+      "coverageRows": [
+        {
+          "surface": "Custom Agents",
+          "scopes": [
+            "Project"
+          ],
+          "count": 0
+        }
+      ]
+    },
+    "assignmentSummaries": [],
+    "dimensions": [
+      {
+        "id": "task-understanding",
+        "label": "任务理解",
+        "score": 70,
+        "summary": "standards/ 目录包含多份架构和规范文档，为任务理解提供了声明式基础，但缺少可机械验证的路由映射。",
+        "findingRefs": []
+      },
+      {
+        "id": "controlled-execution",
+        "label": "可控执行",
+        "score": 38,
+        "summary": "存在 lint 和 format 脚本，但缺少环境诊断、状态重置命令和 Agent 级约束（Rules/Skills），执行控制依赖人工主动运行。",
+        "findingRefs": [
+          "session-evidence-collection-disabled",
+          "memory-metadata-inconsistency",
+          "no-environment-diagnosis-command"
+        ]
+      },
+      {
+        "id": "change-validation",
+        "label": "改动验证",
+        "score": 22,
+        "summary": "项目无任何自动化测试基础设施，代码变更的行为验证完全缺失，回归风险依赖人工审查。",
+        "findingRefs": [
+          "no-automated-test-infrastructure",
+          "no-cicd-pipeline"
+        ]
+      },
+      {
+        "id": "reliable-delivery",
+        "label": "可靠交付",
+        "score": 28,
+        "summary": "无 CI/CD 管道，质量门仅在本地手动执行时生效，合并接受标准缺少机械化保障。",
+        "findingRefs": [
+          "no-cicd-pipeline"
+        ]
+      },
+      {
+        "id": "learning-capture",
+        "label": "经验沉淀",
+        "score": 35,
+        "summary": "会话证据收集未启用，Learning Capture 状态为 N/A，无法评估跨会话的知识沉淀效果。",
+        "findingRefs": [
+          "session-evidence-collection-disabled"
+        ]
+      }
+    ]
+  },
+  "findings": [
+    {
+      "id": "no-automated-test-infrastructure",
+      "title": "项目完全缺失自动化测试基础设施",
+      "severity": "Medium",
+      "reason": "项目拥有成熟的多层架构（内容引擎、进度追踪、Markdown 处理器），但 package.json 中无 test 脚本，无 vitest/jest 等测试框架依赖，项目树中 0 个测试文件。任何代码变更都无法获得行为级反馈，回归风险完全依赖人工审查。",
+      "expectedOutput": [
+        "添加 vitest 或等效测试框架依赖和配置",
+        "为至少一个核心模块（如 content services）创建单元测试",
+        "package.json 中添加 test 脚本"
+      ],
+      "expectedArtifact": "测试配置和初始测试文件",
+      "aiFixPrompt": "/better-harness fix this issue\n\n为项目核心模块添加最小可行的测试基础设施。优先覆盖 content services 和 repositories 的单元测试。\n\n## Validation\n\n- 运行 npm run test 应执行测试并报告结果\n- 确认至少一个核心模块有对应的测试文件",
+      "dimensionRefs": [
+        "change-validation"
+      ]
+    },
+    {
+      "id": "no-cicd-pipeline",
+      "title": "无 CI/CD 配置，质量门仅依赖本地手动执行",
+      "severity": "Medium",
+      "reason": "lint、format、drizzle:check 等脚本存在但无自动化管道在提交或合并时强制执行。无 pre-commit hook 配置（无 husky/lint-staged 依赖）。代码可在不通过 lint 或类型检查的情况下进入主分支。",
+      "expectedOutput": [
+        "创建 CI 配置文件（如 GitHub Actions workflow）",
+        "管道包含 lint 和类型检查步骤",
+        "可选：添加 pre-commit hook 配置"
+      ],
+      "expectedArtifact": "CI 配置文件",
+      "aiFixPrompt": "/better-harness fix this issue\n\n添加最小 CI 管道，在提交时自动执行 lint 和类型检查。\n\n## Validation\n\n- 确认 CI 配置文件存在（如 .github/workflows）\n- 确认管道包含 lint 和 type-check 步骤",
+      "dimensionRefs": [
+        "reliable-delivery",
+        "change-validation"
+      ]
+    },
+    {
+      "id": "session-evidence-collection-disabled",
+      "title": "源根配置导致会话证据完全缺失",
+      "severity": "Low",
+      "reason": "5 个源根中 0 个已启用（disabled-source-root, missing-optional-root），整个 30 天窗口内未收集到任何会话数据。这导致无法进行工作流分析、摩擦识别或资产覆盖评估。可能为收集管道配置缺口，需确认是否为有意配置。",
+      "expectedOutput": [
+        "检查 better-harness 源根配置",
+        "启用必要的会话源根",
+        "验证后续会话可被收集"
+      ],
+      "expectedArtifact": "源根配置更新",
+      "aiFixPrompt": "/better-harness fix this issue\n\n检查并启用 better-harness 的会话源根配置，确保会话证据可被收集。\n\n## Validation\n\n- 确认源根配置已启用\n- 在下一次会话后验证证据收集正常",
+      "dimensionRefs": [
+        "learning-capture",
+        "controlled-execution"
+      ]
+    },
+    {
+      "id": "memory-metadata-inconsistency",
+      "title": "Memory 元数据标题计数与实际数量不一致",
+      "severity": "Low",
+      "reason": "Inventory envelope 报告 1 条 Memory，但 Integrity envelope 报告 titleCount: 0。标题元数据与实际记忆数量不匹配，可能影响检索路由和完整性校验的可靠性。",
+      "expectedOutput": [
+        "确认 Memory 标题索引逻辑正确",
+        "titleCount 与实际 Memory 数量匹配"
+      ],
+      "expectedArtifact": "Memory 索引修复或配置更新",
+      "aiFixPrompt": "/better-harness fix this issue\n\n检查 Memory 存储层的标题索引逻辑，确认 titleCount 是否应在 Memory 创建时自动递增。\n\n## Validation\n\n- 确认 Memory 标题被正确索引\n- Integrity envelope 的 titleCount 与实际 Memory 数量一致",
+      "dimensionRefs": [
+        "controlled-execution"
+      ]
+    },
+    {
+      "id": "no-environment-diagnosis-command",
+      "title": "Environment Readiness 缺少诊断和状态重置命令",
+      "severity": "Low",
+      "reason": "package.json 中无 doctor、diagnose、setup、reset 类命令。存在 seeds 目录但无对应 npm script。新开发者或 Agent 搭建环境时缺少标准化的诊断或重置流程。",
+      "expectedOutput": [
+        "添加 doctor 或 diagnose 脚本",
+        "添加 seed 脚本对应 seeds 目录",
+        "可选：添加 .env.example 模板"
+      ],
+      "expectedArtifact": "package.json 脚本更新",
+      "aiFixPrompt": "/better-harness fix this issue\n\n为项目添加环境诊断和状态重置命令。\n\n## Validation\n\n- 运行 npm run doctor（或类似命令）应报告环境健康状态\n- 确认 seed 脚本可通过 npm script 执行",
+      "dimensionRefs": [
+        "controlled-execution"
+      ]
+    }
+  ]
+}
