@@ -1,5 +1,5 @@
 <template>
-  <div class="topic-detail">
+  <section class="topic-detail">
     <template v-if="topic">
       <!-- 顶部：Topic 信息 + 学习目标 + 学习意义 -->
       <header class="topic-detail__header">
@@ -95,12 +95,14 @@
           <!-- 练习入口 -->
           <div v-if="lessons.length" class="topic-detail__exercise">
             <NuxtLink :to="`/exercise?topic=${topicSlug}`" class="exercise-card">
-              <div class="exercise-card__icon">✦</div>
-              <div class="exercise-card__body">
-                <h3 class="exercise-card__title">练习</h3>
-                <p class="exercise-card__desc">巩固所学，训练数学思维</p>
-              </div>
-              <span class="exercise-card__cta">开始练习 →</span>
+              <article class="exercise-card__inner">
+                <div class="exercise-card__icon">✦</div>
+                <div class="exercise-card__body">
+                  <h3 class="exercise-card__title">练习</h3>
+                  <p class="exercise-card__desc">巩固所学，训练数学思维</p>
+                </div>
+                <span class="exercise-card__cta">开始练习 →</span>
+              </article>
             </NuxtLink>
           </div>
         </div>
@@ -108,7 +110,7 @@
     </template>
 
     <div v-else class="topic-detail__empty">暂未找到该主题</div>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -221,14 +223,14 @@ useHead({
 }
 
 .topic-detail__btn--primary {
-  background: linear-gradient(135deg, var(--color-primary), #6366f1);
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-primary);
 }
 
 .topic-detail__btn--primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
+  box-shadow: var(--shadow-primary-hover);
 }
 
 .topic-detail__btn--secondary {
@@ -251,7 +253,7 @@ useHead({
   display: block;
   padding: var(--spacing-xl);
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  color: #fff;
+  color: var(--color-text-inverse);
   text-decoration: none;
   border-radius: var(--border-radius-lg);
 }
@@ -265,7 +267,7 @@ useHead({
   font-size: 1.125rem;
   font-weight: 600;
   margin: 0 0 4px;
-  color: #fff;
+  color: var(--color-text-inverse);
 }
 
 .exercise-card__desc {

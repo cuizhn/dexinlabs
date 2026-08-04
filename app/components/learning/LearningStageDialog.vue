@@ -135,7 +135,7 @@ const stages = [
 
 .stage-dialog__option:hover {
   border-color: var(--color-primary);
-  background: rgba(79, 70, 229, 0.02);
+  background: var(--color-primary-ghost-light);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }

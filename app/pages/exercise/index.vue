@@ -1,5 +1,5 @@
 <template>
-  <div class="exercise-page">
+  <section class="exercise-page">
     <section class="exercise-page__header">
       <div class="container">
         <nav class="exercise-page__breadcrumb">
@@ -46,7 +46,7 @@
         </div>
       </div>
     </section>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">

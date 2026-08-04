@@ -58,7 +58,7 @@ const label = computed(() => getStateLabel(props.state))
 
 /* 正在学习 - 蓝色 */
 .learning-badge--in_progress {
-  background: rgba(79, 70, 229, 0.08);
+  background: var(--color-primary-ghost-accent);
   color: var(--color-primary);
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="about-page">
+  <article class="about-page">
     <header class="about-page__header">
       <div class="container">
         <!-- <NuxtLink to="/" class="about-page__back">←</NuxtLink> -->
@@ -7,10 +7,10 @@
       </div>
     </header>
 
-    <main class="about-page__body">
+    <div class="about-page__body">
       <div class="container">
         <div class="about-page__content">
-          <div class="about-section">
+          <section class="about-section">
             <h2 class="about-section__title">我们为什么开始？</h2>
             <p>得心实验室并不是因为缺少学习资源而诞生。</p>
             <p>今天的孩子，从来不缺课程、题库、视频和补习班。</p>
@@ -22,9 +22,9 @@
             </blockquote>
             <p>孩子需要学习知识，也需要玩耍、思考、探索世界、陪伴家人、拥有属于自己的美好回忆。</p>
             <p>教育不应该夺走这些。</p>
-          </div>
+          </section>
 
-          <div class="about-section">
+          <section class="about-section">
             <h2 class="about-section__title">我们希望解决什么问题？</h2>
             <p>我们希望解决的，不是"如何让孩子学得更多"。</p>
             <blockquote class="about-quote">
@@ -33,20 +33,20 @@
             <p>当家长因为工作无法一直陪伴时，孩子依然能够在这里获得耐心的引导。</p>
             <p>不是依赖补习班，不是依赖不断刷题，而是逐渐建立起属于自己的学习能力。</p>
             <p>我们的目标不是替代家长。而是在家长无法陪伴的时候，继续完成那份陪伴。</p>
-          </div>
+          </section>
 
-          <div class="about-section">
+          <section class="about-section">
             <h2 class="about-section__title">我们相信什么？</h2>
-            <div class="about-beliefs">
-              <div class="about-belief">理解，比记忆更重要。</div>
-              <div class="about-belief">思考，比答案更重要。</div>
-              <div class="about-belief">兴趣，比压力更重要。</div>
-              <div class="about-belief">成长，比分数更重要。</div>
-            </div>
+            <ul class="about-beliefs">
+              <li class="about-belief">理解，比记忆更重要。</li>
+              <li class="about-belief">思考，比答案更重要。</li>
+              <li class="about-belief">兴趣，比压力更重要。</li>
+              <li class="about-belief">成长，比分数更重要。</li>
+            </ul>
             <p>真正优秀的教育，不是让孩子一直学习，而是让孩子用更少的时间真正学会，把更多时间留给生活。</p>
-          </div>
+          </section>
 
-          <div class="about-section">
+          <section class="about-section">
             <h2 class="about-section__title">我们如何设计课程？</h2>
             <p>每一节课，都应该回答一个真实的问题。</p>
             <p>每一个知识点，都应该帮助孩子理解，而不是死记。</p>
@@ -61,46 +61,46 @@
             <blockquote class="about-quote">
               原来学习是一件有趣、有成就感的事情。
             </blockquote>
-          </div>
+          </section>
 
-          <div class="about-section">
+          <section class="about-section">
             <h2 class="about-section__title">技术只是手段</h2>
             <p>我们尊重技术。但技术从来不是目的。</p>
             <p>所有架构、数据库、AI、渲染引擎、服务器，都只是为了让教育变得更好。</p>
             <p>如果一种技术不能帮助孩子更容易理解，不能帮助家长减少焦虑，不能帮助内容长期积累，那么它就不是我们真正需要的技术。</p>
             <p><strong>教育理念永远高于技术实现。</strong></p>
-          </div>
+          </section>
 
-          <div class="about-section">
+          <section class="about-section">
             <h2 class="about-section__title">我们坚持长期主义</h2>
             <p>我们不会因为新的框架出现，就不断推倒重来。</p>
             <p>我们更愿意花时间，不断完善一节课程、一个例题、一句解释、一次反馈。</p>
             <p>因为真正能够改变孩子的，不是最新的技术，而是每一次认真设计的学习体验。</p>
-          </div>
+          </section>
 
-          <div class="about-section">
+          <section class="about-section">
             <h2 class="about-section__title">我们希望成为怎样的平台？</h2>
             <p>得心实验室不是培训班。不是刷题网站。不是流量平台。更不是制造焦虑的教育产品。</p>
             <p>我们希望它成为一个安静、可信、温暖的学习空间。</p>
             <p>孩子可以在这里独立学习。家长可以放心陪伴。老师可以分享经验。知识能够不断沉淀。</p>
             <p>每一个人，都能在这里找到属于自己的成长节奏。</p>
-          </div>
+          </section>
 
-          <div class="about-section">
+          <section class="about-section">
             <h2 class="about-section__title">我们最终希望看到什么？</h2>
             <p>如果有一天，一个孩子因为理解了知识，少上了一节补习班；因为建立了学习能力，少了一些焦虑；因为学习更高效，多出一点时间去运动、阅读、陪伴家人、仰望星空；那么，得心实验室存在的意义，就已经实现了。</p>
-          </div>
+          </section>
 
-          <div class="about-section about-section--final">
+          <section class="about-section about-section--final">
             <h2 class="about-section__title">我们始终牢记</h2>
             <p>教育的目的，不是让孩子一直学习。而是帮助他们学会学习，学会思考，学会生活。</p>
             <p>愿每一个来到这里的孩子，都能因为真正理解知识而获得自信；都能因为自主学习而获得自由；都能因为热爱探索而拥有终身学习的能力。</p>
             <p><strong>这，就是得心实验室坚持前行的初心。</strong></p>
-          </div>
+          </section>
         </div>
       </div>
-    </main>
-  </div>
+    </div>
+  </article>
 </template>
 
 <script setup lang="ts">
@@ -184,7 +184,7 @@ useHead({
   text-align: center;
   margin: var(--spacing-xl) 0;
   padding: var(--spacing-lg);
-  background: linear-gradient(135deg, rgba(79, 70, 229, 0.06), rgba(99, 102, 241, 0.04));
+  background: linear-gradient(135deg, var(--color-primary-ghost), rgba(99, 102, 241, 0.04));
   border-radius: var(--border-radius-lg);
   border-left: 4px solid var(--color-primary);
 }
@@ -194,6 +194,8 @@ useHead({
   grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-md);
   margin: var(--spacing-lg) 0;
+  list-style: none;
+  padding: 0;
 }
 
 .about-belief {

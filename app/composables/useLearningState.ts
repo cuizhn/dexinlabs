@@ -180,12 +180,11 @@ export function useLearningState() {
   /**
    * getCompletedLessonsForTopic - 获取某 Topic 下已完成的课时 slug 列表
    *
-   * 当前实现从 localStorage 的 completedLessons 中按 slug 前缀匹配。
-   * 这是一个简化的 Mock 实现，未来 Progress Engine 会提供结构化数据。
+   * TODO: Progress Engine MVP
+   * 当前仅提供接口，不计算真实学习状态。
+   * 学习记录暂未启用，返回空数组作为占位。
    */
   function getCompletedLessonsForTopic(_topicSlug: string): string[] {
-    // 当前 completedLessons 只存 slug，无法直接按 topic 过滤
-    // 返回空数组作为占位，未来 Progress Engine 会提供完整数据
     return []
   }
 

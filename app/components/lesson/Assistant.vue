@@ -112,7 +112,7 @@ const relatedTopics = [
   line-height: 1.6;
   margin: 0;
   padding: var(--spacing-md);
-  background: rgba(79, 70, 229, 0.04);
+  background: var(--color-primary-ghost-medium);
   border-radius: var(--border-radius-sm);
   border-left: 3px solid var(--color-primary);
 }

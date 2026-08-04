@@ -11,6 +11,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "test": "vitest run",
     "drizzle:generate": "drizzle-kit generate",
     "drizzle:migrate": "drizzle-kit migrate",
     "drizzle:push": "drizzle-kit push",
@@ -34,7 +35,6 @@
     "remark-rehype": "^11.1.2",
     "remark-slug": "^7.0.1",
     "unified": "^11.0.5",
-
     "vfile": "^6.0.3"
   },
   "devDependencies": {
@@ -43,11 +43,13 @@
     "@types/mdast": "^4.0.4",
     "@types/node": "^26.1.0",
     "@types/unist": "^3.0.3",
+    "@vitest/coverage-v8": "^4.1.10",
     "drizzle-kit": "^0.31.10",
     "eslint": "^10.7.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.9.6",
     "tsx": "^4.23.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
   }
 }

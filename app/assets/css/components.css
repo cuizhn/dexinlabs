@@ -14,14 +14,14 @@
 }
 
 .btn--primary {
-  background: linear-gradient(135deg, var(--color-primary), #6366F1);
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-primary);
 }
 
 .btn--primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
+  box-shadow: var(--shadow-primary-hover);
 }
 
 .btn--ghost {
@@ -76,8 +76,8 @@
 }
 
 .tag--advanced {
-  background-color: #EEF2FF;
-  color: #6366F1;
+  background-color: var(--color-primary-light);
+  color: var(--color-primary-hover);
 }
 
 

@@ -16,6 +16,18 @@ export interface TopicWithRelations extends Topic {
   siblingTopics: Topic[]
 }
 
+/** Drizzle 关联查询返回的领域嵌套结构 */
+interface TopicDomainRef {
+  topics: Topic[]
+}
+
+/** Drizzle 关联查询返回的完整结果（含嵌套关联） */
+interface TopicQueryResult extends Topic {
+  domainRef: Domain & TopicDomainRef | null
+  lessons: Lesson[]
+  exercises: Exercise[]
+}
+
 export class TopicRepository extends BaseRepository<typeof topics> {
   constructor() {
     super(topics)
@@ -32,7 +44,7 @@ export class TopicRepository extends BaseRepository<typeof topics> {
   /** 获取主题及其关联的课时、领域、练习和兄弟主题（关联查询） */
   async getWithLessonsAndDomain(slug: string): Promise<TopicWithRelations | null> {
     if (!slug) return null
-    const result = await this.getDb().query.topics.findFirst({
+    const raw = await this.getDb().query.topics.findFirst({
       where: eq(this.table.slug, slug),
       with: {
         domainRef: {
@@ -50,17 +62,14 @@ export class TopicRepository extends BaseRepository<typeof topics> {
         }
       }
     })
-    if (!result) return null
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const domainRef = result.domainRef as any
+    if (!raw) return null
+    const result = raw as unknown as TopicQueryResult
     return {
       ...result,
       domainEntity: result.domainRef || null,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      lessonList: (result as any).lessons || [],
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      exerciseEntity: (result as any).exercises?.[0] || null,
-      siblingTopics: domainRef?.topics || []
+      lessonList: result.lessons || [],
+      exerciseEntity: result.exercises?.[0] || null,
+      siblingTopics: result.domainRef?.topics || []
     } as unknown as TopicWithRelations
   }
 

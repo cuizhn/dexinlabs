@@ -267,6 +267,7 @@ AI Agent 不应擅自删除已有 ADR。
 | ADR-0006 | Service Layer Boundary |
 | ADR-0007 | Database Schema Strategy |
 | ADR-0008 | Markdown Rendering Pipeline |
+| ADR-0009 | Content Rendering Responsibility |
 
 后续按时间顺序持续增加。
 

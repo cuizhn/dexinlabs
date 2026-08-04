@@ -80,8 +80,10 @@ export function toLesson(row: Record<string, unknown>, extra?: Partial<Lesson>):
 
 /**
  * 从仓储查询结果中提取 Exercise 模型字段
+ *
+ * 可选的 extra 参数用于注入额外字段（如渲染后的 HTML）。
  */
-export function toExercise(row: Record<string, unknown>): Exercise {
+export function toExercise(row: Record<string, unknown>, extra?: Partial<Exercise>): Exercise {
   return {
     id: row.id as number,
     slug: row.slug as string,
@@ -96,7 +98,8 @@ export function toExercise(row: Record<string, unknown>): Exercise {
     answer: (row.answer as string) ?? null,
     analysis: (row.analysis as string) ?? null,
     createdAt: row.createdAt as Date,
-    updatedAt: row.updatedAt as Date
+    updatedAt: row.updatedAt as Date,
+    ...extra
   }
 }
 

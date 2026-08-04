@@ -27,5 +27,6 @@ export type {
   BaseContentEntity,
   LessonPage,
   TopicPage,
-  DomainPage
+  DomainPage,
+  ExercisePage
 } from './types/index'

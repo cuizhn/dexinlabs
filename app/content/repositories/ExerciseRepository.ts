@@ -8,6 +8,7 @@ import { eq, and, asc, desc } from 'drizzle-orm'
 import type { SQL } from 'drizzle-orm'
 import { exercises } from '@database'
 import type { Exercise } from '@content/types/index'
+import type { CommonColumns } from './BaseRepository'
 import { BaseRepository } from './BaseRepository'
 
 export interface ExerciseFilters {
@@ -42,12 +43,12 @@ export class ExerciseRepository extends BaseRepository<typeof exercises> {
    */
   override async list({ topic, topicId, orderBy = 'order', order = 'asc' }: ExerciseListOptions = {}): Promise<Exercise[]> {
     const sortDir = order.toLowerCase() === 'desc' ? desc : asc
-    const sortCol = orderBy === 'id' ? this.table.id : this.table.order
+    const cols = this.table as unknown as CommonColumns
+    const sortCol = orderBy === 'id' ? cols.id : cols.order
     const where = this.buildWhere({ topic, topicId })
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let query = this.getDb().select().from(this.table) as any
-    if (where) query = query.where(where)
-    return query.orderBy(sortDir(sortCol))
+    const baseQuery = this.getDb().select().from(this.table as never)
+    const filteredQuery = where ? baseQuery.where(where) : baseQuery
+    return filteredQuery.orderBy(sortDir(sortCol as never)) as Promise<Exercise[]>
   }
 
   /** 按知识主题 slug 过滤练习列表 */

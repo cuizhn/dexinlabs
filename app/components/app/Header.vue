@@ -133,7 +133,7 @@ function closeMenu() {
 
 .app-header__nav-item--active {
   background-color: var(--color-primary);
-  color: white;
+  color: var(--color-text-inverse);
 }
 
 .app-header__menu-btn {

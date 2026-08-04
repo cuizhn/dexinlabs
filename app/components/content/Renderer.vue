@@ -3,7 +3,7 @@
 
     <slot name="header" />
 
-    <div class="body">
+    <div class="renderer__body">
 
         <slot name="body-start"/>
 
@@ -53,7 +53,7 @@ const wrapperClass = computed(() => [
   color: inherit;
 }
 
-.body {
+.renderer__body {
   line-height: 1.8;
 }
 </style>

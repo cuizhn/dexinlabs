@@ -1,6 +1,5 @@
-@ -1,129 +0,0 @@
 <template>
-  <div class="domain-index">
+  <section class="domain-index">
     <header class="domain-index__header">
       <div class="container">
         <h1 class="domain-index__title">{{ domain?.title || '知识领域' }}</h1>
@@ -38,7 +37,7 @@
         </template>
       </div>
     </section>
-  </div>
+  </section>
 </template>
 
 <script setup lang="ts">

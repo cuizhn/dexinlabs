@@ -3,7 +3,7 @@
   <div class="app-layout">
     <AppHeader />
 
-    <main >
+    <main class="layout__content">
       <slot />
     </main>
     <AppFooter />
@@ -22,7 +22,7 @@ main {
   flex: 1;
   padding-top: 48px;
   min-height: calc(100vh - 48px);
-  display: flex;   
+  display: flex;
   margin: 0 auto;
 }
 </style>

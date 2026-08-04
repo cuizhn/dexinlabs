@@ -33,7 +33,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 4rem var(--spacing-xl);
-  background: linear-gradient(135deg, var(--color-primary) 0%, #6366f1 50%, var(--color-secondary) 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 50%, var(--color-secondary) 100%);
   border-radius: var(--border-radius-xl);
   text-align: center;
   position: relative;
@@ -54,7 +54,7 @@
 .landing__cta-title {
   font-size: 2.25rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--color-text-inverse);
   margin-bottom: var(--spacing-md);
   position: relative;
 }

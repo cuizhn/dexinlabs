@@ -104,6 +104,7 @@ export interface Lesson extends BaseContentEntity {
  * - hint: 提示（Markdown）
  * - answer: 答案（Markdown）
  * - analysis: 解析（Markdown）
+ * - bodyHtml: Service 层调用 @markdown 渲染的 HTML
  */
 export interface Exercise extends BaseContentEntity {
   description?: string | null
@@ -113,6 +114,8 @@ export interface Exercise extends BaseContentEntity {
   hint?: string | null
   answer?: string | null
   analysis?: string | null
+  /** Service 层渲染的正文 HTML */
+  bodyHtml?: string
 }
 
 /**
@@ -144,4 +147,12 @@ export interface TopicPage {
 export interface DomainPage {
   domain: Domain
   topics: Topic[]
+}
+
+/**
+ * ExercisePage - 练习页面数据结构
+ */
+export interface ExercisePage {
+  exercise: Exercise | null
+  topicTitle: string
 }

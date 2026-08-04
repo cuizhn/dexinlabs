@@ -5,7 +5,7 @@
       <div class="learning-home__glow"></div>
     </div>
 
-    <main class="learning-home__main">
+    <div class="learning-home__main">
       <div class="container learning-home__container">
         <!-- 状态一：首次进入 - 开始学习 -->
         <template v-if="!hasProgress">
@@ -67,7 +67,7 @@
           </div>
         </template>
       </div>
-    </main>
+    </div>
 
     <!-- 学习阶段选择弹窗（首次进入时显示） -->
     <LearningLearningStageDialog
@@ -132,8 +132,8 @@ useHead({
 .learning-home__grid {
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(79, 70, 229, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(79, 70, 229, 0.03) 1px, transparent 1px);
+  background-image: linear-gradient(var(--color-primary-ghost-strong) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-primary-ghost-strong) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
@@ -145,7 +145,7 @@ useHead({
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(79, 70, 229, 0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--color-primary-ghost) 0%, transparent 70%);
   filter: blur(100px);
 }
 
@@ -177,7 +177,7 @@ useHead({
   justify-content: center;
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   border-radius: var(--border-radius-md);
-  color: #fff;
+  color: var(--color-text-inverse);
   font-weight: 700;
   font-size: 1.125rem;
 }
@@ -223,14 +223,14 @@ useHead({
 }
 
 .learning-home__btn--primary {
-  background: linear-gradient(135deg, var(--color-primary), #6366f1);
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-primary);
 }
 
 .learning-home__btn--primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
+  box-shadow: var(--shadow-primary-hover);
 }
 
 .learning-home__explore {

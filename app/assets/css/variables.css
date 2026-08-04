@@ -28,6 +28,20 @@
   --color-border-light: #F3F4F6;
 
 
+  /* ── 品牌色衍生 ── */
+  --color-primary-hover: #6366F1;
+  --color-text-inverse: #FFFFFF;
+  --color-primary-ghost: rgba(79, 70, 229, 0.06);
+  --color-primary-ghost-strong: rgba(79, 70, 229, 0.03);
+  --color-primary-ghost-light: rgba(79, 70, 229, 0.02);
+  --color-primary-ghost-medium: rgba(79, 70, 229, 0.04);
+  --color-primary-ghost-accent: rgba(79, 70, 229, 0.08);
+
+  /* ── 品牌色阴影 ── */
+  --shadow-primary: 0 4px 14px rgba(79, 70, 229, 0.3);
+  --shadow-primary-hover: 0 8px 24px rgba(79, 70, 229, 0.4);
+
+
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;

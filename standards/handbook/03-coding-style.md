@@ -388,11 +388,17 @@ color: #333333;
 
 ---
 
-# 9. HTML 规范
+# 9. HTML 语义化边界
 
-优先使用语义标签：
+## 9.1 核心原则
 
-推荐：
+语义化 HTML 优先，但语义化不等于禁止 `div`。
+
+---
+
+## 9.2 页面结构层
+
+页面主要结构应优先使用：
 
 ```html
 <main>
@@ -404,16 +410,67 @@ color: #333333;
 <nav>
 ```
 
----
-
-避免：
+示例：
 
 ```html
-<div class="main">
-<div class="section">
+<main>
+  <article>
+    <header>
+    </header>
+
+    <section>
+    </section>
+  </article>
+
+  <aside>
+  </aside>
+</main>
 ```
 
-替代标准语义。
+---
+
+## 9.3 布局容器层
+
+以下情况允许使用 `div`：
+
+- Flex 布局容器；
+- Grid 布局容器；
+- 样式包裹元素；
+- 无独立语义的结构组合。
+
+示例（合理使用）：
+
+```html
+<div class="lesson-actions">
+  <button />
+  <button />
+</div>
+```
+
+---
+
+## 9.4 禁止情况
+
+避免用 `class` 名模拟已有 HTML 语义：
+
+```html
+<!-- ✗ 禁止 -->
+<div class="main">
+<div class="section">
+<div class="header">
+```
+
+---
+
+## 9.5 判断原则
+
+选择标签时优先考虑：
+
+1. 该元素是否表达独立内容？
+2. 是否具有文档结构意义？
+3. 是否帮助搜索引擎和辅助技术理解？
+
+如果没有语义，仅作为布局容器，可以使用 `div`。
 
 ---
 

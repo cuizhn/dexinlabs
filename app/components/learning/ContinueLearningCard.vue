@@ -137,14 +137,14 @@ const { recentLearning, streakDays } = useLearningState()
   font-weight: 600;
   font-size: 1rem;
   text-decoration: none;
-  background: linear-gradient(135deg, var(--color-primary), #6366f1);
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-primary);
   transition: all 0.25s ease;
 }
 
 .continue-card__btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
+  box-shadow: var(--shadow-primary-hover);
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="knowledge-map">
+  <nav class="knowledge-map">
     <header class="knowledge-map__header">
       <div class="container">
         <h1 class="knowledge-map__title">知识地图</h1>
@@ -39,12 +39,12 @@
         <div v-else class="knowledge-map__grid">
           <template v-for="dp in filteredDomains" :key="dp.domain.slug">
 
-            <div
+            <h2
               v-if="selectedDomain === null && dp.topics.length > 0"
               class="knowledge-map__group-title"
             >
               {{ dp.domain.title }}
-            </div>
+            </h2>
 
             <LearningTopicStatusCard
               v-for="t in dp.topics"
@@ -61,7 +61,7 @@
         </div>
       </div>
     </section>
-  </div>
+  </nav>
 </template>
 
 <script setup lang="ts">
@@ -149,11 +149,11 @@ const filteredDomains = computed(() => {
 .knowledge-map__filter-tab--active {
   background: var(--color-primary);
   border-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-text-inverse);
 }
 
 .knowledge-map__filter-tab--active:hover {
-  color: #fff;
+  color: var(--color-text-inverse);
 }
 
 /* Topic 网格 */

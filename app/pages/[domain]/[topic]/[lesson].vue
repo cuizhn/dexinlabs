@@ -10,20 +10,18 @@
       </div>
     </header>
 
-   <section class="lesson-page__body">
-  <h1 class="lesson-page__title">
-    {{ lessonData?.title }}
-  </h1>
+    <section class="lesson-page__body">
+      <h1 class="lesson-page__title">
+        {{ lessonData?.title }}
+      </h1>
 
-  <div class="lesson-page__content">
-    <ContentRenderer
-      v-if="lessonData?.bodyHtml"
-      :html="lessonData.bodyHtml"
-    />
-  </div>
-</section>
-
-    
+      <div class="lesson-page__content">
+        <ContentRenderer
+          v-if="lessonData?.bodyHtml"
+          :html="lessonData.bodyHtml"
+        />
+      </div>
+    </section>
   </article>
 </template>
 
@@ -129,54 +127,9 @@ header {
   color: var(--color-text-primary);
 }
 
-.lesson-page__nav-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  border-radius: var(--border-radius-md);
-  font-weight: 600;
-  font-size: 0.9375rem;
-  text-decoration: none;
-  transition: all 0.25s ease;
-}
-
-.lesson-page__nav-btn--prev {
-  color: var(--color-text-secondary);
-  background: var(--color-bg-white);
-  border: 1px solid var(--color-border);
-}
-
-.lesson-page__nav-btn--prev:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-}
-
-.lesson-page__nav-btn--next {
-  color: var(--color-bg-white);
-  background: linear-gradient(135deg, var(--color-primary), #6366f1);
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
-}
-
-.lesson-page__nav-btn--next:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
-}
-
 @media (max-width: 768px) {
   .lesson-page__title {
     font-size: 1.375rem;
-  }
-
-  footer {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-  }
-
-  .lesson-page__nav-btn {
-    width: 100%;
-    justify-content: center;
   }
 }
 </style>

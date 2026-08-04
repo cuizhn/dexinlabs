@@ -162,7 +162,7 @@ function saveNote() {
 
 .my-understanding__save-btn:hover {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-text-inverse);
 }
 
 @media (max-width: 1200px) {

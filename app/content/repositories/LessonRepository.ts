@@ -15,6 +15,12 @@ export interface LessonWithRelations extends Lesson {
   siblingLessons: Lesson[]
 }
 
+/** Drizzle 关联查询返回的主题嵌套结构 */
+interface LessonTopicRef {
+  domainRef: Domain | null
+  lessons: Lesson[]
+}
+
 export class LessonRepository extends BaseRepository<typeof lessons> {
   constructor() {
     super(lessons)
@@ -45,8 +51,7 @@ export class LessonRepository extends BaseRepository<typeof lessons> {
       }
     })
     if (!result) return null
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const topicRef = result.topicRef as any
+    const topicRef = (result.topicRef ?? null) as unknown as LessonTopicRef | null
     return {
       ...result,
       topicEntity: result.topicRef || null,

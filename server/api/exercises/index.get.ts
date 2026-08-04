@@ -9,12 +9,12 @@ export default defineEventHandler(async event => {
   const topic = typeof query.topic === 'string' ? query.topic : undefined
 
   if (topic) {
-    const result = await exerciseService.listByTopicWithMeta(topic)
+    const result = await exerciseService.getExercisePage(topic)
     if (!result) {
       throw createError({ statusCode: 404, message: `未找到主题：${topic}` })
     }
     return result
   }
 
-  return { exercises: await exerciseService.listAll(), topicTitle: '' }
+  return { exercise: null, topicTitle: '' }
 })
