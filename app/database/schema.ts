@@ -14,6 +14,7 @@ import {
   varchar,
   text,
   integer,
+  jsonb,
   timestamp,
   uniqueIndex,
   index
@@ -79,11 +80,10 @@ export const lessons = pgTable('lessons', {
   summary: text('summary'),
   order: integer('display_order').default(0).notNull(),
   topic: varchar('topic_slug', { length: 255 }),
-  objectives: text('objectives'),
-  intro: text('intro'),
-  body: text('body'),
-  summaryText: text('summary_text'),
-  notes: text('notes'),
+  /** Lesson AST 结构化内容（JSONB） */
+  content: jsonb('content'),
+  /** AST 版本号：1 = Lesson AST 格式 */
+  astVersion: integer('ast_version').default(1).notNull(),
   topicId: integer('topic_id').references(() => topics.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
     .default(sql`timezone('utc'::text, now())`)
@@ -109,13 +109,12 @@ export const exercises = pgTable('exercises', {
   slug: varchar('slug', { length: 255 }).notNull(),
   title: varchar('title', { length: 255 }).notNull(),
   summary: text('summary'),
-  description: text('description'),
-  body: text('body'),
   order: integer('display_order').default(0).notNull(),
   topic: varchar('topic_slug', { length: 255 }),
-  hint: text('hint'),
-  answer: text('answer'),
-  analysis: text('analysis'),
+  /** Exercise AST 结构化内容（JSONB） */
+  content: jsonb('content'),
+  /** AST 版本号：1 = Exercise AST 格式 */
+  astVersion: integer('ast_version').default(1).notNull(),
   topicId: integer('topic_id').references(() => topics.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
     .default(sql`timezone('utc'::text, now())`)

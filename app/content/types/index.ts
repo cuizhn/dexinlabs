@@ -7,6 +7,8 @@
  * 架构 V2：Domain → Topic → Lesson
  */
 
+import type { LessonContent, ExerciseContent } from './ast'
+
 /**
  * BaseContentEntity - 所有内容实体的基类接口
  *
@@ -70,52 +72,34 @@ export interface Topic extends BaseContentEntity {
  * 字段说明：
  * - topic: 所属知识主题的 slug
  * - topicId: 所属知识主题的数据库 ID
- * - objectives: 学习目标（Markdown）
- * - intro: 引言部分（Markdown）
- * - body: 课时正文（Markdown）
- * - summaryText: 总结文本（Markdown）
- * - notes: 笔记/提示（Markdown）
- * - bodyHtml/introHtml/summaryHtml: Service 层调用 @markdown 渲染的 HTML
+ * - content: Lesson AST 结构化内容
+ * - astVersion: AST 版本号（当前为 1）
  */
 export interface Lesson extends BaseContentEntity {
   topic?: string | null
   topicId?: number | null
-  objectives?: string | null
-  intro?: string | null
-  body?: string | null
-  summaryText?: string | null
-  notes?: string | null
-  /** Service 层渲染的正文 HTML */
-  bodyHtml?: string
-  /** Service 层渲染的引言 HTML */
-  introHtml?: string
-  /** Service 层渲染的总结 HTML */
-  summaryHtml?: string
+  /** Lesson AST 结构化内容 */
+  content?: LessonContent | null
+  /** AST 版本号 */
+  astVersion?: number
 }
 
 /**
  * Exercise - 练习实体
  *
  * 字段说明：
- * - description: 题目描述（Markdown）
- * - body: 题目正文（Markdown）
  * - topic: 所属知识主题的 slug
  * - topicId: 所属知识主题的数据库 ID
- * - hint: 提示（Markdown）
- * - answer: 答案（Markdown）
- * - analysis: 解析（Markdown）
- * - bodyHtml: Service 层调用 @markdown 渲染的 HTML
+ * - content: ExerciseContent AST 结构化内容
+ * - astVersion: AST 版本号（当前为 1）
  */
 export interface Exercise extends BaseContentEntity {
-  description?: string | null
-  body?: string | null
   topic?: string | null
   topicId?: number | null
-  hint?: string | null
-  answer?: string | null
-  analysis?: string | null
-  /** Service 层渲染的正文 HTML */
-  bodyHtml?: string
+  /** Exercise AST 结构化内容 */
+  content?: ExerciseContent | null
+  /** AST 版本号 */
+  astVersion?: number
 }
 
 /**

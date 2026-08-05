@@ -56,9 +56,8 @@ export function toTopic(row: Record<string, unknown>): Topic {
  *
  * 仓储层的 getWithTopicAndDomain 返回 topicEntity、domainEntity、
  * siblingLessons 等内部字段，此函数将其全部排除。
- * 可选的 extra 参数用于注入额外字段（如渲染后的 HTML）。
  */
-export function toLesson(row: Record<string, unknown>, extra?: Partial<Lesson>): Lesson {
+export function toLesson(row: Record<string, unknown>): Lesson {
   return {
     id: row.id as number,
     slug: row.slug as string,
@@ -67,39 +66,29 @@ export function toLesson(row: Record<string, unknown>, extra?: Partial<Lesson>):
     order: row.order as number,
     topic: (row.topic as string) ?? null,
     topicId: (row.topicId as number) ?? null,
-    objectives: (row.objectives as string) ?? null,
-    intro: (row.intro as string) ?? null,
-    body: (row.body as string) ?? null,
-    summaryText: (row.summaryText as string) ?? null,
-    notes: (row.notes as string) ?? null,
+    content: row.content as Lesson['content'],
+    astVersion: (row.astVersion as number) ?? 1,
     createdAt: row.createdAt as Date,
-    updatedAt: row.updatedAt as Date,
-    ...extra
+    updatedAt: row.updatedAt as Date
   }
 }
 
 /**
  * 从仓储查询结果中提取 Exercise 模型字段
- *
- * 可选的 extra 参数用于注入额外字段（如渲染后的 HTML）。
  */
-export function toExercise(row: Record<string, unknown>, extra?: Partial<Exercise>): Exercise {
+export function toExercise(row: Record<string, unknown>): Exercise {
   return {
     id: row.id as number,
     slug: row.slug as string,
     title: row.title as string,
     summary: (row.summary as string) ?? null,
     order: row.order as number,
-    description: (row.description as string) ?? null,
-    body: (row.body as string) ?? null,
     topic: (row.topic as string) ?? null,
     topicId: (row.topicId as number) ?? null,
-    hint: (row.hint as string) ?? null,
-    answer: (row.answer as string) ?? null,
-    analysis: (row.analysis as string) ?? null,
+    content: row.content as Exercise['content'],
+    astVersion: (row.astVersion as number) ?? 1,
     createdAt: row.createdAt as Date,
-    updatedAt: row.updatedAt as Date,
-    ...extra
+    updatedAt: row.updatedAt as Date
   }
 }
 

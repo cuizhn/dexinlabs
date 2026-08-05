@@ -71,8 +71,8 @@ describe('toTopic', () => {
 describe('toLesson', () => {
   const row = {
     id: 1, slug: 'lesson-1', title: '第一课', summary: '摘要', order: 1,
-    topic: 'algebra', topicId: 5, objectives: '目标', intro: '引言',
-    body: '正文', summaryText: '总结', notes: '笔记',
+    topic: 'algebra', topicId: 5,
+    content: { version: 1, blocks: [] }, astVersion: 1,
     createdAt: new Date('2024-01-01'), updatedAt: new Date('2024-06-01'),
     topicEntity: {}, domainEntity: {}, siblingLessons: []
   }
@@ -80,36 +80,24 @@ describe('toLesson', () => {
   it('提取 Lesson 字段，排除内部关联字段', () => {
     const result = toLesson(row)
     expect(result.slug).toBe('lesson-1')
-    expect(result.body).toBe('正文')
+    expect(result.content).toEqual({ version: 1, blocks: [] })
     expect(result).not.toHaveProperty('topicEntity')
     expect(result).not.toHaveProperty('siblingLessons')
-  })
-
-  it('支持 extra 参数注入额外字段', () => {
-    const result = toLesson(row, { bodyHtml: '<p>正文</p>', introHtml: '<p>引言</p>' })
-    expect(result.bodyHtml).toBe('<p>正文</p>')
-    expect(result.introHtml).toBe('<p>引言</p>')
   })
 })
 
 describe('toExercise', () => {
   const row = {
     id: 1, slug: 'ex-1', title: '练习一', summary: null, order: 1,
-    description: '题目描述', body: '题目正文', topic: 'algebra', topicId: 5,
-    hint: '提示', answer: '答案', analysis: '解析',
+    topic: 'algebra', topicId: 5,
+    content: { version: 1, body: { version: 1, blocks: [] } }, astVersion: 1,
     createdAt: new Date('2024-01-01'), updatedAt: new Date('2024-06-01')
   }
 
   it('提取 Exercise 字段', () => {
     const result = toExercise(row)
     expect(result.slug).toBe('ex-1')
-    expect(result.hint).toBe('提示')
-    expect(result.answer).toBe('答案')
-  })
-
-  it('支持 extra 参数注入 bodyHtml', () => {
-    const result = toExercise(row, { bodyHtml: '<p>题目</p>' })
-    expect(result.bodyHtml).toBe('<p>题目</p>')
+    expect(result.content).toEqual({ version: 1, body: { version: 1, blocks: [] } })
   })
 })
 

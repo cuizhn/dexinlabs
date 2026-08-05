@@ -29,9 +29,9 @@ export class LessonRepository extends BaseRepository<typeof lessons> {
   /** 按知识主题 slug 过滤课时列表 */
   async listByTopic(topicSlug: string | undefined | null): Promise<Lesson[]> {
     if (!topicSlug) return []
-    return this.getDb().select().from(this.table)
+    return await this.getDb().select().from(this.table)
       .where(eq(this.table.topic, topicSlug))
-      .orderBy(asc(this.table.order), asc(this.table.id)) as Promise<Lesson[]>
+      .orderBy(asc(this.table.order), asc(this.table.id)) as Lesson[]
   }
 
   /** 获取课时及其关联的主题、领域和兄弟课时（关联查询） */
@@ -53,25 +53,25 @@ export class LessonRepository extends BaseRepository<typeof lessons> {
     if (!result) return null
     const topicRef = (result.topicRef ?? null) as unknown as LessonTopicRef | null
     return {
-      ...result,
+      ...(result as unknown as Lesson),
       topicEntity: result.topicRef || null,
       domainEntity: topicRef?.domainRef || null,
-      siblingLessons: topicRef?.lessons || []
+      siblingLessons: (topicRef?.lessons || []) as Lesson[]
     } as unknown as LessonWithRelations
   }
 
   // ── 以下为通用方法的类型收窄覆写 ──
 
   override async list(): Promise<Lesson[]> {
-    return super.list() as Promise<Lesson[]>
+    return await super.list() as Lesson[]
   }
 
   override async findBySlug(slug: string | undefined | null): Promise<Lesson | null> {
-    return super.findBySlug(slug) as Promise<Lesson | null>
+    return await super.findBySlug(slug) as Lesson | null
   }
 
   override async findById(id: number | string | undefined | null): Promise<Lesson | null> {
-    return super.findById(id) as Promise<Lesson | null>
+    return await super.findById(id) as Lesson | null
   }
 }
 

@@ -48,21 +48,21 @@ export class ExerciseRepository extends BaseRepository<typeof exercises> {
     const where = this.buildWhere({ topic, topicId })
     const baseQuery = this.getDb().select().from(this.table as never)
     const filteredQuery = where ? baseQuery.where(where) : baseQuery
-    return filteredQuery.orderBy(sortDir(sortCol as never)) as Promise<Exercise[]>
+    return await filteredQuery.orderBy(sortDir(sortCol as never)) as Exercise[]
   }
 
   /** 按知识主题 slug 过滤练习列表 */
   async listByTopic(topicSlug: string | undefined | null): Promise<Exercise[]> {
     if (!topicSlug) return []
-    return this.getDb().select().from(this.table)
+    return await this.getDb().select().from(this.table)
       .where(eq(this.table.topic, topicSlug))
-      .orderBy(asc(this.table.order), asc(this.table.id)) as Promise<Exercise[]>
+      .orderBy(asc(this.table.order), asc(this.table.id)) as Exercise[]
   }
 
   // ── 以下为通用方法的类型收窄覆写 ──
 
   override async findById(id: number | string | undefined | null): Promise<Exercise | null> {
-    return super.findById(id) as Promise<Exercise | null>
+    return await super.findById(id) as Exercise | null
   }
 }
 

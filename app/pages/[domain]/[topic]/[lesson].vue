@@ -17,8 +17,8 @@
 
       <div class="lesson-page__content">
         <ContentRenderer
-          v-if="lessonData?.bodyHtml"
-          :html="lessonData.bodyHtml"
+          v-if="lessonData?.content?.blocks?.length"
+          :blocks="lessonData.content.blocks"
         />
       </div>
     </section>
@@ -30,7 +30,7 @@
  * Lesson 页面 - 沉浸式课时学习
  *
  * 单栏布局：返回链接 + 课时正文 + 前后导航。
- * Markdown 渲染与排版样式由 ContentRenderer 组件负责。
+ * 内容渲染由 ContentRenderer 组件基于 Lesson AST 驱动（Block → Vue 组件）。
  *
  * 设计原则：
  * - 去除面包屑和顶部导航，保持沉浸

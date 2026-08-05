@@ -1,12 +1,13 @@
 /**
  * 课时服务 - 封装课时相关的业务逻辑
  *
- * 提供课时列表、课时详情、课时页面数据组装（含前后课时导航和 Markdown 渲染）等功能。
- * Service 负责将 Markdown 渲染为 HTML 字段（introHtml/bodyHtml/summaryHtml），
- * HTML 段落的页面级组合由 Page 层决定。
+ * 提供课时列表、课时详情、课时页面数据组装（含前后课时导航）等功能。
+ * Service 只负责业务数据组装，不做 Markdown 渲染。
+ * 内容渲染由 Renderer 基于 Lesson AST 驱动（Block → Vue Component）。
+ *
+ * @see standards/decisions/ADR-0010-lesson-ast-storage.md
  */
 import { lessonRepository } from '@content/repositories'
-import { renderToHTML } from '@markdown'
 import type { Lesson, LessonPage } from '../types/index'
 import { normalizeSlug, toLesson, toTopic, toDomain, getSiblings } from '../utils'
 
@@ -31,15 +32,8 @@ export class LessonService {
     // 使用 getSiblings 工具函数计算前后课时导航
     const { previous: previousLesson, next: nextLesson } = getSiblings(data.siblingLessons, data.slug)
 
-    // 将 Markdown 字段渲染为 HTML
-    const [bodyHtml, introHtml, summaryHtml] = await Promise.all([
-      data.body ? renderToHTML(data.body) : '',
-      data.intro ? renderToHTML(data.intro) : '',
-      data.summaryText ? renderToHTML(data.summaryText) : ''
-    ])
-
     return {
-      lesson: toLesson(data, { bodyHtml, introHtml, summaryHtml }),
+      lesson: toLesson(data),
       topic: data.topicEntity ? toTopic(data.topicEntity) : null,
       domain: data.domainEntity ? toDomain(data.domainEntity) : null,
       previousLesson: previousLesson ? toLesson(previousLesson) : null,
