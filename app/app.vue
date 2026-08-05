@@ -7,7 +7,7 @@
 <script setup lang="ts">
 // 应用根组件 - 设置全局 SEO 元信息和布局结构
 useHead({
-  titleTemplate: title => (title ? `${title} · Dexin Labs` : '得心实验室'),
+  titleTemplate: title => (title ? `${title} · Dexin Labs` : '得心实验室111'),
 
   meta: [
     {
