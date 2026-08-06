@@ -1,5 +1,5 @@
 import { defineEventHandler, getQuery, createError } from 'h3'
-import { domainService } from '@content'
+import { courseService } from '@content'
 import { assertDatabaseReady } from '@server/utils/error'
 
 export default defineEventHandler(async event => {
@@ -9,12 +9,12 @@ export default defineEventHandler(async event => {
   const slug = typeof query.slug === 'string' ? query.slug : ''
 
   if (slug) {
-    const result = await domainService.getDomainPage(slug)
+    const result = await courseService.getCoursePage(slug)
     if (!result) {
-      throw createError({ statusCode: 404, message: `未找到领域：${slug}` })
+      throw createError({ statusCode: 404, message: `未找到课程：${slug}` })
     }
     return result
   }
 
-  return domainService.listAllWithTopics()
+  return courseService.listAllWithTopics()
 })

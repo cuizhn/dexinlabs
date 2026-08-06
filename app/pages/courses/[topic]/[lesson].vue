@@ -1,7 +1,7 @@
 <template>
   <article>
     <header>
-      <NuxtLink :to="`/${domain}/${topic}`" class="lesson-page__back">
+      <NuxtLink :to="`/courses/${topic}`" class="lesson-page__back">
         <IconChevron direction="left" :size="20" />
         {{ topicData?.title }}
       </NuxtLink>
@@ -29,6 +29,8 @@
 /**
  * Lesson 页面 - 沉浸式课时学习
  *
+ * 路由：/courses/{topic}/{lesson}
+ *
  * 单栏布局：返回链接 + 课时正文 + 前后导航。
  * 内容渲染由 ContentRenderer 组件基于 Lesson AST 驱动（Block → Vue 组件）。
  *
@@ -40,7 +42,6 @@
 import { useLearningState } from '~/composables/useLearningState'
 import { useRouteParam } from '~/composables/useRouteParam'
 
-const domain = useRouteParam('domain')
 const topic = useRouteParam('topic')
 const lessonSlug = useRouteParam('lesson') as string
 

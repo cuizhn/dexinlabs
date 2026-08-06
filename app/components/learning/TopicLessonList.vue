@@ -10,7 +10,7 @@
         class="topic-lesson-list__item"
         :class="{ 'topic-lesson-list__item--completed': getLessonState(lesson.slug).isCompleted }"
       >
-        <NuxtLink :to="`/${domainSlug}/${topicSlug}/${lesson.slug}`" class="topic-lesson-list__link">
+        <NuxtLink :to="`/courses/${topicSlug}/${lesson.slug}`" class="topic-lesson-list__link">
           <span class="topic-lesson-list__index">
             <template v-if="getLessonState(lesson.slug).isCompleted">✓</template>
             <template v-else>{{ String(idx + 1).padStart(2, '0') }}</template>
@@ -47,8 +47,6 @@ interface LessonItem {
 defineProps<{
   /** 课时列表数据 */
   lessons: LessonItem[]
-  /** 所属 Domain 的 slug */
-  domainSlug: string
   /** 所属 Topic 的 slug */
   topicSlug: string
   /** 列表标题（如「课时」） */

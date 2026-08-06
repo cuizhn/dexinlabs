@@ -4,7 +4,7 @@
       <!-- 顶部：Topic 信息 + 学习目标 + 学习意义 -->
       <header class="topic-detail__header">
         <div class="container">
-          <NuxtLink :to="`/map`" class="topic-detail__back">← 返回知识地图</NuxtLink>
+          <NuxtLink to="/courses" class="topic-detail__back">← 返回课程地图</NuxtLink>
 
           <div class="topic-detail__title-row">
             <h1 class="topic-detail__title">{{ topic.title }}</h1>
@@ -27,7 +27,6 @@
           <LearningTopicLessonList
             v-if="lessons.length"
             :lessons="lessons"
-            :domain-slug="domainSlug"
             :topic-slug="topicSlug"
             title="课时列表"
           />
@@ -117,6 +116,8 @@
 /**
  * Topic 页面 - 学习控制中心
  *
+ * 路由：/courses/{topic}
+ *
  * 不是目录页，而是学习控制枢纽。
  * 根据学习状态自动切换显示：
  * - 待学习：介绍 Topic + 开始学习
@@ -128,11 +129,8 @@
 import { LearningState, useLearningState } from '~/composables/useLearningState'
 
 const topicSlug = useRouteParam('topic') ?? ''
-const domainSlug = useRouteParam('domain') ?? ''
 
 const { topic, lessons } = await useTopicPage(topicSlug)
-
-
 
 const { getTopicState } = useLearningState()
 
@@ -141,7 +139,7 @@ const topicState = computed(() => getTopicState(topicSlug, lessons.value.length)
 
 /** 第一个课时的路径（用于「开始学习」「继续学习」「复习回顾」按钮） */
 const firstLessonPath = computed(() =>
-  lessons.value[0] ? `/${domainSlug}/${topicSlug}/${lessons.value[0].slug}` : ''
+  lessons.value[0] ? `/courses/${topicSlug}/${lessons.value[0].slug}` : ''
 )
 
 useHead({

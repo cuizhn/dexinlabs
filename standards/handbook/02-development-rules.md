@@ -134,13 +134,19 @@ Application
 
 核心结构：
 
+```
+Course
+  |
+  Topic
+  |
+  └── Lesson
+```
 
-Domain
-↓
-Topic
-↓
-Lesson
+URL 结构：`/courses/{topic}/{lesson}`
 
+URL 优先表达稳定的知识结构，而不是内部数据库组织结构。
+
+Chapter 作为教学组织概念继续存在，但不作为 URL 层级。
 
 未经设计评审，不得改变。
 

@@ -30,7 +30,7 @@
               </button>
             </div>
 
-            <NuxtLink to="/map" class="learning-home__explore">
+            <NuxtLink to="/courses" class="learning-home__explore">
               或者，先探索知识体系 →
             </NuxtLink>
           </div>
@@ -53,7 +53,7 @@
               <p class="learning-home__subtitle">
                 选择一个主题开始学习
               </p>
-              <NuxtLink to="/map" class="learning-home__btn learning-home__btn--primary">
+              <NuxtLink to="/courses" class="learning-home__btn learning-home__btn--primary">
                 探索知识地图
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -61,7 +61,7 @@
               </NuxtLink>
             </div>
 
-            <NuxtLink to="/map" class="learning-home__explore">
+            <NuxtLink to="/courses" class="learning-home__explore">
               探索知识 →
             </NuxtLink>
           </div>
@@ -104,9 +104,9 @@ const showStageDialog = ref(false)
  */
 function onStageSelect(_stage: string) {
   showStageDialog.value = false
-  // 占位：跳转到推荐 Topic（当前硬编码为第一个代数主题）
+  // 占位：跳转到推荐 Topic（当前硬编码为第一个主题）
   // 未来由 Recommendation Engine 根据诊断结果决定
-  navigateTo('/algebra/quadratic-equation-in-one-unknown')
+  navigateTo('/courses/functions')
 }
 
 useHead({

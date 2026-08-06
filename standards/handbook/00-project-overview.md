@@ -95,50 +95,79 @@ AI 是学习辅助工具，不替代课程体系和教学设计。
 
 # 4. 内容组织模型
 
-项目采用：
+项目采用以下核心内容结构：
 
+```
+Course
+  |
+  Topic
+  |
+  └── Lesson
+```
 
-Domain
-↓
-Topic
-↓
-Lesson
-
-作为核心内容结构。
+URL 优先表达稳定的知识结构，而不是内部数据库组织结构。
 
 ---
 
-## Domain
+## Course（课程）
 
-表示数学领域。
+表示完整课程。
+
+主要职责：
+
+- 课程入口
+- 全局知识地图
+- 课程导航
+
+当前数学课程直接使用 `/courses` 入口，不增加额外课程名称层级。
+
+---
+
+## Topic（知识主题）
+
+表示稳定的知识领域。
 
 例如：
 
-- 数与代数
-- 图形与几何
-- 概率与统计
+- 函数
+- 方程
+- 几何
+- 概率
+
+主要职责：
+
+- 知识分类
+- URL 一级路径
+- 知识检索
+- 内容聚合
+- AI 推荐基础
+
+URL 示例：
+
+```
+/courses/functions
+```
 
 ---
 
-## Topic
+## Chapter（教学单元）
 
-表示一个知识主题。
+表示教学组织单元，不作为 URL 层级。
 
-例如：
+主要职责：
 
-Domain: 数与代数
+- 组织 Lesson
+- 规划学习路线
+- 确定 Lesson 学习顺序
+- 表达阶段性教学结构
 
-Topic:
-
-* 一次函数
-* 二次函数
-* 方程
+Chapter 作为教学组织概念存在，未来调整 Chapter（增加章节、合并章节、调整教学顺序）不应影响 Lesson URL。
 
 ---
 
-## Lesson
+## Lesson（课时）
 
-表示具体学习单元。
+表示最小学习单元。
 
 一个 Lesson 应回答：
 
@@ -146,6 +175,41 @@ Topic:
 - 要解决什么问题？
 - 核心概念是什么？
 - 如何应用？
+
+Lesson URL：
+
+```
+/courses/{topic}/{lesson}
+```
+
+例如：
+
+```
+/courses/functions/linear-function
+```
+
+---
+
+## URL 与教学结构分离原则
+
+URL 表达知识归属，教学结构由 Chapter 管理。
+
+例如：
+
+```
+Topic: 函数
+Chapter: 函数基础
+Lesson: 什么是一次函数
+```
+
+URL：`/courses/functions/linear-function`
+
+数据库模型需要支持：
+
+- Topic 与知识领域对应
+- Chapter 管理教学组织
+- Lesson 关联 Topic 和 Chapter
+- Lesson 在 Chapter 中具有顺序
 
 ---
 

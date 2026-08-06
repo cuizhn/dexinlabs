@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import {
   normalizeSlug,
-  toDomain,
+  toCourse,
   toTopic,
+  toChapter,
   toLesson,
   toExercise,
   getSiblings
@@ -29,32 +30,32 @@ describe('normalizeSlug', () => {
   })
 })
 
-describe('toDomain', () => {
-  it('提取 Domain 字段，忽略多余字段', () => {
+describe('toCourse', () => {
+  it('提取 Course 字段，忽略多余字段', () => {
     const row = { id: 1, slug: 'math', title: '数学', description: '描述', order: 0, extra: 'ignored' }
-    const result = toDomain(row)
+    const result = toCourse(row)
     expect(result).toEqual({ id: 1, slug: 'math', title: '数学', description: '描述', order: 0 })
   })
 
   it('description 缺失时为 null', () => {
     const row = { id: 1, slug: 'math', title: '数学', order: 0 }
-    expect(toDomain(row).description).toBeNull()
+    expect(toCourse(row).description).toBeNull()
   })
 })
 
 describe('toTopic', () => {
   const row = {
     id: 1, slug: 'algebra', title: '代数', summary: '摘要', order: 1,
-    domain: 'math', domainId: 10, cover: '/cover.jpg', body: '# Body',
+    courseId: 10, description: '描述', cover: '/cover.jpg', body: '# Body',
     createdAt: new Date('2024-01-01'), updatedAt: new Date('2024-06-01'),
-    domainEntity: { id: 10 }, lessonList: [], siblingTopics: []
+    courseEntity: { id: 10 }, lessonList: [], siblingTopics: []
   }
 
   it('提取 Topic 字段，排除内部关联字段', () => {
     const result = toTopic(row)
     expect(result.slug).toBe('algebra')
-    expect(result.domain).toBe('math')
-    expect(result).not.toHaveProperty('domainEntity')
+    expect(result.courseId).toBe(10)
+    expect(result).not.toHaveProperty('courseEntity')
     expect(result).not.toHaveProperty('lessonList')
     expect(result).not.toHaveProperty('siblingTopics')
   })
@@ -68,20 +69,46 @@ describe('toTopic', () => {
   })
 })
 
+describe('toChapter', () => {
+  const row = {
+    id: 1, title: '第一章', description: '描述', order: 1,
+    topicId: 10,
+    createdAt: new Date('2024-01-01'), updatedAt: new Date('2024-06-01'),
+    lessons: []
+  }
+
+  it('提取 Chapter 字段，排除内部关联字段', () => {
+    const result = toChapter(row)
+    expect(result.title).toBe('第一章')
+    expect(result.topicId).toBe(10)
+    expect(result).not.toHaveProperty('lessons')
+  })
+
+  it('可选字段缺失时为 null', () => {
+    const minimal = { id: 2, title: '第二章', order: 2 }
+    const result = toChapter(minimal)
+    expect(result.description).toBeNull()
+  })
+})
+
 describe('toLesson', () => {
   const row = {
     id: 1, slug: 'lesson-1', title: '第一课', summary: '摘要', order: 1,
-    topic: 'algebra', topicId: 5,
+    topicId: 5, chapterId: 3,
     content: { version: 1, blocks: [] }, astVersion: 1,
     createdAt: new Date('2024-01-01'), updatedAt: new Date('2024-06-01'),
-    topicEntity: {}, domainEntity: {}, siblingLessons: []
+    topicEntity: {}, courseEntity: {}, chapterEntity: {}, siblingLessons: []
   }
 
   it('提取 Lesson 字段，排除内部关联字段', () => {
     const result = toLesson(row)
     expect(result.slug).toBe('lesson-1')
+    expect(result.topicId).toBe(5)
+    expect(result.chapterId).toBe(3)
     expect(result.content).toEqual({ version: 1, blocks: [] })
     expect(result).not.toHaveProperty('topicEntity')
+    expect(result).not.toHaveProperty('courseEntity')
+    expect(result).not.toHaveProperty('chapterEntity')
     expect(result).not.toHaveProperty('siblingLessons')
   })
 })
@@ -89,7 +116,7 @@ describe('toLesson', () => {
 describe('toExercise', () => {
   const row = {
     id: 1, slug: 'ex-1', title: '练习一', summary: null, order: 1,
-    topic: 'algebra', topicId: 5,
+    topicId: 5,
     content: { version: 1, body: { version: 1, blocks: [] } }, astVersion: 1,
     createdAt: new Date('2024-01-01'), updatedAt: new Date('2024-06-01')
   }
@@ -97,6 +124,7 @@ describe('toExercise', () => {
   it('提取 Exercise 字段', () => {
     const result = toExercise(row)
     expect(result.slug).toBe('ex-1')
+    expect(result.topicId).toBe(5)
     expect(result.content).toEqual({ version: 1, body: { version: 1, blocks: [] } })
   })
 })

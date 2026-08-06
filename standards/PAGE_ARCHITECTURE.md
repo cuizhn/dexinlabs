@@ -1,19 +1,41 @@
-# 得心实验室 · 页面架构设计（V2）
+# 得心实验室 · 页面架构设计（V3）
 
-> 产品架构重构文档 · 2026-07-24
-> 状态：已实施（2026-07-22 完成代码迁移）
-> 变更：整合 PAGE_ARCHITECTURE.md、PAGE_ARCHITECTURE2.5.md、UI.md 三个文档为统一架构规范
+> 产品架构重构文档 · 2026-08-06
+> 状态：V3 架构决策已确认，待实施
+> 变更：V3 采用 Course→Topic→Lesson 模型，URL 统一使用 `/courses` 入口，删除独立 /map 页面
 
-> **实施备注**：实际路由结构与设计略有调整，采用更扁平的嵌套结构：
-> - `/[domain]` 替代 `/map/[domain]`（领域页直接挂在根级）
-> - `/[domain]/[topic]` 替代 `/learn/[topic]`（主题嵌套在领域下）
-> - `/[domain]/[topic]/[lesson]` 替代 `/learn/[topic]/[lesson]`（课时嵌套在主题下）
-> - `/exercise?topic=xxx` 替代 `/exercise/[topic]`（练习使用查询参数，不绑定主题 URL）
-> - API 统一使用复数形式：`/api/domains`、`/api/topics`、`/api/lessons`、`/api/exercises`
+> V2 变更记录（2026-07-24）：整合 PAGE_ARCHITECTURE.md、PAGE_ARCHITECTURE2.5.md、UI.md 三个文档为统一架构规范
+
+> **V3 实施备注**：
+> - 内容组织模型从 Domain→Topic→Lesson 调整为 Course→Topic→Lesson
+> - `/courses` 作为统一课程入口，承担知识地图功能
+> - URL 结构：`/courses` → `/courses/{topic}` → `/courses/{topic}/{lesson}`
+> - Chapter 作为教学组织概念继续存在，不作为 URL 层级
+> - 删除独立 `/map` 页面，知识地图由 `/courses` 承担
+> - Domain 不再作为网站导航结构和 URL 层级
+> - URL 优先表达稳定的知识结构，而不是内部数据库组织结构
+>
+> **V2 实施备注**（已废弃）：实际路由结构与设计略有调整，采用更扁平的嵌套结构：
+> - ~~`/[domain]` 替代 `/map/[domain]`（领域页直接挂在根级）~~
+> - ~~`/[domain]/[topic]` 替代 `/learn/[topic]`（主题嵌套在领域下）~~
+> - ~~`/[domain]/[topic]/[lesson]` 替代 `/learn/[topic]/[lesson]`（课时嵌套在主题下）~~
+> - ~~`/exercise?topic=xxx` 替代 `/exercise/[topic]`（练习使用查询参数，不绑定主题 URL）~~
+> - ~~API 统一使用复数形式：`/api/domains`、`/api/topics`、`/api/lessons`、`/api/exercises`~~
 
 ---
 
-## 〇、V2 变更摘要
+## 〇、V3 变更摘要
+
+| 变更项 | V2 | V3 | 理由 |
+|--------|----|----|------|
+| 内容模型 | Domain → Topic → Lesson | Course → Topic → Lesson | Domain 不再作为网站导航结构和 URL 层级 |
+| 课程入口 | `/map` + `/[domain]` | `/courses` | 统一课程入口，承担知识地图功能 |
+| URL 结构 | `/[domain]/[topic]/[lesson]` | `/courses/{topic}/{lesson}` | URL 表达知识归属，而非内部数据库结构 |
+| /map 页面 | 独立知识地图页 | 删除，由 `/courses` 承担 | 减少页面数量，统一入口 |
+| Domain 角色 | URL 层级 + 过滤器 | 不再作为 URL 层级 | 知识归属由 Topic 表达 |
+| Chapter | 数据模型保留，页面隐藏 | 教学组织单元，不作为 URL 层级 | URL 与教学结构分离 |
+
+> V2 变更摘要（历史参考）：
 
 | 变更项 | V1 | V2 | 理由 |
 |--------|----|----|------|
@@ -44,34 +66,38 @@
 采用长期稳定的数学知识体系组织，而非教材/年级结构：
 
 ```
-数学
-├── 数与代数
-│   ├── 有理数
-│   ├── 实数
-│   ├── 一元二次方程
-│   └── 函数
-├── 图形与几何
-│   ├── 三角形
-│   ├── 四边形
-│   └── 圆
-├── 统计与概率
-│   ├── 数据分析
-│   └── 概率初步
-└── 综合与实践
-    ├── 数学建模
-    └── 探究活动
+函数
+├── 一次函数
+├── 二次函数
+├── 反比例函数
+└── 函数综合应用
+方程
+├── 一元一次方程
+├── 一元二次方程
+└── 方程组
+几何
+├── 三角形
+├── 四边形
+└── 圆
+概率
+├── 数据分析
+└── 概率初步
 ```
 
 ### 1.3 内容层级映射
 
 | 内部层级 | 技术实体 | 说明 | 是否独立页面 |
 |---------|---------|------|------------|
-| L1 领域 | Domain（分组字段） | 数与代数、图形与几何 等 | 是（/map 过滤器） |
-| L2 主题 | Topic（= 现有 Course） | 一元二次方程、函数 等 | 是（/[domain]/[topic]） |
-| L2.5 分组 | Chapter（数据模型保留） | 内容分组，如「概念」「求解方法」「应用」 | **否**（对页面隐藏） |
-| L3 课时 | Lesson | 单次学习最小单位 | 是（/[domain]/[topic]/[lesson]） |
+| L0 课程 | Course | 完整课程（如“初中数学”） | 是（/courses） |
+| L1 主题 | Topic | 函数、方程、几何 等 | 是（/courses/{topic}） |
+| L1.5 教学单元 | Chapter | 内容分组，规划学习顺序 | **否**（不作为 URL 层级） |
+| L2 课时 | Lesson | 单次学习最小单位 | 是（/courses/{topic}/{lesson}） |
 
-> **V2 关键决策**：删除 Chapter 页面，但保留 Chapter 数据模型。Chapter 继续承担内容分组职责，在 Repository 层聚合后对页面隐藏。详见 [附录 A：Topic 与 Chapter 合并分析](#附录-atopic-与-chapter-合并分析)。
+> **V3 关键决策**：
+> - 删除 Domain 作为 URL 层级，知识归属由 Topic 表达
+> - 删除独立 /map 页面，知识地图由 /courses 承担
+> - Chapter 作为教学组织概念继续存在，但不作为 URL 层级
+> - URL 与教学结构分离：URL 表达知识归属，Chapter 管理教学顺序
 
 ### 1.4 概念分离原则
 
@@ -79,10 +105,10 @@
 
 | 内部技术概念 | 学习者看到的 | 说明 |
 |------------|-----------|------|
-| Domain | 领域名称（如「数与代数」） | 不出现「知识领域」标签 |
-| Topic | 主题名称（如「一元二次方程」） | 不出现「知识专题」标签 |
-| Lesson | 课时标题 | 不出现「课时」前缀 |
-| Learning Hub | 直接展示主题名 | 不出现「学习单元」「Learning Hub」 |
+| Course | 课程名称 | 不出现“课程”标签 |
+| Topic | 主题名称（如“函数”） | 不出现“知识主题”标签 |
+| Chapter | 不直接展示 | 仅用于组织学习顺序 |
+| Lesson | 课时标题 | 不出现“课时”前缀 |
 
 ---
 
@@ -92,48 +118,45 @@
 
 ```
 /                          # 学习首页（Learning Home）
-/map                       # 知识地图（领域列表 + Topic 展示）
-/[domain]                  # 领域页（主题列表）
-/[domain]/[topic]          # 学习主题页（Learning Hub）
-/[domain]/[topic]/[lesson] # 课时学习页（Immersive Lesson）
+/courses                   # 课程知识地图（Topic 列表 + 学习状态）
+/courses/{topic}           # 学习主题页（Learning Hub）
+/courses/{topic}/{lesson}  # 课时学习页（Immersive Lesson）
 /exercise?topic=xxx        # 练习页
 /about                     # 关于我们
 ```
 
-> 共 7 个页面。移除了独立的 Topic 列表页和 Chapter 页。
+> 共 6 个页面。删除了独立 /map 页面和 /[domain] 层级。
 
 ### 2.2 页面层级关系
 
 ```
 学习首页 (/)
   ├── 继续学习 → 直接进入上次学习的课时
-  └── 探索知识 → /map
+  └── 探索知识 → /courses
 
-知识地图 (/map)
-  ├── Domain Filter（数与代数、图形与几何、统计与概率）
-  └── Topic 卡片列表（直接展示所有 Topic）
+课程知识地图 (/courses)
+  └── Topic 卡片列表（展示所有 Topic，含学习状态）
 
-领域页 (/[domain])
-  └── 主题列表 → /[domain]/[topic]  ← Learning Hub
+主题页 (/courses/{topic})
+  └── Lesson 列表 → /courses/{topic}/{lesson}  ← 进入课时
         ├── 开始学习 → 进入第一个课时
         └── 练习 → /exercise?topic=[topic]
 
-课时学习页 (/[domain]/[topic]/[lesson])
+课时学习页 (/courses/{topic}/{lesson})
   ├── 上一课 / 下一课
   └── 返回主题
 ```
 
-### 2.3 现有页面迁移映射
+### 2.3 现有页面迁移映射（V3）
 
-| 现有页面 | 新页面 | 路由变化 | 说明 |
+| 现有页面 | V3 页面 | 路由变化 | 说明 |
 |---------|--------|---------|------|
 | `pages/index.vue` | 学习首页 | 路径不变 | 完全重新设计 |
-| `pages/course/index.vue` | 知识地图 | `/course` → `/map` | 重新定位 |
-| `pages/course/[chapter]/index.vue` | 领域页 + 主题页 | `/course/[ch]` → `/[domain]` + `/[domain]/[topic]` | 拆分为两层 |
-| `pages/course/[chapter]/[lesson].vue` | 课时学习页 | `/course/[ch]/[lesson]` → `/[domain]/[topic]/[lesson]` | 沉浸式重构 |
+| `pages/map.vue` | 课程知识地图 | `/map` → `/courses` | 统一课程入口 |
+| `pages/[domain]/index.vue` | 已废弃 | —— | Domain 不再作为 URL 层级 |
+| `pages/[domain]/[topic]/index.vue` | 学习主题页 | `/[domain]/[topic]` → `/courses/{topic}` | 学习控制中心 |
+| `pages/[domain]/[topic]/[lesson].vue` | 课时学习页 | `/[domain]/[topic]/[lesson]` → `/courses/{topic}/{lesson}` | 沉浸式重构 |
 | `pages/exercise/[chapter].vue` | 练习页 | `/exercise/[chapter]` → `/exercise?topic=xxx` | 查询参数解耦 |
-| `pages/study.vue` | 移除 | —— | 内容不再需要 |
-| `pages/methods.vue` | 移除 | —— | 内容不再需要 |
 | `pages/about.vue` | 保留（页脚链接） | —— | 次要页面 |
 
 ---
@@ -172,19 +195,16 @@
 
 ---
 
-### 3.2 知识地图（/map）
+### 3.2 课程知识地图（/courses）
 
-**路由**：`/map`
+**路由**：`/courses`
 
-**核心目标**：浏览数学知识体系
+**核心目标**：浏览数学知识体系，统一课程入口
 
 **页面布局**：
 
-顶部：
-- Domain Filter（全部、数与代数、图形与几何、统计与概率）
-
 主体：
-- 直接展示 Topic 卡片列表（不要进入 Domain 页面）
+- 直接展示 Topic 卡片列表（不需要进入 Domain 页面）
 
 **Topic Card**：
 
@@ -195,40 +215,21 @@
 - 开始学习按钮
 
 **设计原则**：
-- Domain 作为过滤器，同时作为路由层级
+- `/courses` 承担知识地图功能，不再需要独立 /map 页面
 - 默认展示所有 Topic
 - 不展开具体主题详情
 
 ---
 
-### 3.3 领域页（/[domain]）
+### 3.3 ~~领域页（/[domain]）~~（已废弃）
 
-**路由**：`/[domain]`
-
-**核心目标**：展示某个领域下的所有学习主题
-
-**页面内容**：
-
-| 区块 | 内容 | 说明 |
-|------|------|------|
-| 返回 | ← 返回 | 返回知识地图 |
-| 标题 | 「数与代数」 | 直接显示领域名 |
-| 主题列表 | 主题卡片：标题 + 一句话描述 + 学习状态 | L2 层级 |
-| 开始按钮 | 「开始学习」或「继续学习」 | 主要行动 |
-
-**设计原则**：
-- 只展示 L2 层级（学习主题）
-- 每个主题标注状态：未开始 · 学习中 · 已完成
-- 线性列表，体现学习顺序
-- 突出「下一步」
-
-> **评估**：Domain 页存在意义需要评估，因为当前设计中知识地图直接展示 Topic，用户可能不需要进入 Domain 页。
+> **V3 废弃说明**：Domain 不再作为网站导航结构和 URL 层级。原领域页职责由 `/courses` 知识地图承担。
 
 ---
 
-### 3.4 学习主题页（Learning Hub）（/[domain]/[topic]）
+### 3.4 学习主题页（Learning Hub）（/courses/{topic}）
 
-**路由**：`/[domain]/[topic]`
+**路由**：`/courses/{topic}`
 
 **核心目标**：学习准备 — 帮助学习者快速进入学习状态
 
@@ -259,9 +260,9 @@
 
 ---
 
-### 3.5 课时学习页（Immersive Lesson）（/[domain]/[topic]/[lesson]）
+### 3.5 课时学习页（ImmersiveLesson）（/courses/{topic}/{lesson}）
 
-**路由**：`/[domain]/[topic]/[lesson]`
+**路由**：`/courses/{topic}/{lesson}`
 
 **核心目标**：沉浸式学习，零干扰
 
@@ -385,13 +386,13 @@
     │       ├── 生成初步诊断信息（存储用于继续学习）
     │       └── 提示：那么，请继续学习。
     │               │
-    │               └── 进入推荐的第一个主题 (/[domain]/[topic])
+    │               └── 进入推荐的第一个主题 (/courses/{topic})
     │                       │
     │                       └── Learning Hub 展示一句话目标 + 课时列表
     │                               │
     │                               └── 点击「开始学习」→ 进入第一个课时
     │
-    └── 点击「探索知识体系」→ 进入知识地图 (/map)
+    └── 点击「探索知识体系」→ 进入课程知识地图 (/courses)
             │
             └── 逐级浏览 → 选择主题 → 进入学习
 ```
@@ -431,7 +432,7 @@
     │  显示：上次学习的主题名 + 课时标题 + 进度
     │
     ├── 点击「继续学习」→ 直接进入上次学习的课时
-    │       │           (/[domain]/[topic]/[lesson])
+    │       │           (/courses/{topic}/{lesson})
     │       │
     │       ▼
     │    沉浸式学习
@@ -439,10 +440,10 @@
     │       ├── 下一课 → 继续学习
     │       └── 返回 → 回到 Learning Hub
     │
-    └── 点击「探索知识」→ /map
+    └── 点击「探索知识」→ /courses
             │
             ▼
-         知识地图 → 领域 → 主题 → 开始学习
+         课程知识地图 → 主题 → 开始学习
 ```
 
 ### 5.3 Progress 模块设计
@@ -661,16 +662,16 @@ enum LearningState {
 ```
 首次访问
     │
-    ├──[开始学习]──→ 诊断页面（占位）──→ /[domain]/[topic] ──→ /[domain]/[topic]/[lesson]
+    ├──[开始学习]──→ 诊断页面（占位）──→ /courses/{topic} ──→ /courses/{topic}/{lesson}
     │                                                         │
     │                                                  [下一课] [返回]
     │
-    └──[探索知识]──→ /map ──→ /[domain] ──→ /[domain]/[topic]
+    └──[探索知识]──→ /courses ──→ /courses/{topic}
                                                     │
                                               [开始学习]
                                                     │
                                                     ▼
-                                          /[domain]/[topic]/[lesson]
+                                          /courses/{topic}/{lesson}
 ```
 
 ### 6.2 回访学习流程
@@ -678,18 +679,18 @@ enum LearningState {
 ```
 回访学习
     │
-    ├──[继续学习]──→ /[domain]/[topic]/[lesson]  (直接进入上次课时)
+    ├──[继续学习]──→ /courses/{topic}/{lesson}  (直接进入上次课时)
     │                       │
     │                [下一课] [返回]
     │                       │
-    │                  [返回] → /[domain]/[topic]
+    │                  [返回] → /courses/{topic}
     │
-    └──[探索知识]──→ /map → /[domain] → /[domain]/[topic]
+    └──[探索知识]──→ /courses → /courses/{topic}
                                                 │
                                           [开始学习]
                                                 │
                                                 ▼
-                                      /[domain]/[topic]/[lesson]
+                                      /courses/{topic}/{lesson}
 ```
 
 ### 6.3 导航规则
@@ -701,6 +702,7 @@ enum LearningState {
 | **下一课优先** | 「下一课」视觉权重高于「返回」 |
 | **逐级返回** | 从深层页面返回时，逐级返回上一层 |
 | **不跨层跳转** | 课时页不直接跳到知识地图，需逐级返回 |
+| **URL 表达知识归属** | URL 使用 /courses/{topic}/{lesson}，不反映内部数据库结构 |
 
 ### 6.4 全局导航
 
@@ -708,7 +710,7 @@ MVP 阶段不设复杂导航栏：
 
 - **左上角 Logo**：点击返回学习首页
 - **页脚**：关于、隐私政策等次要链接
-- **知识地图入口**：首页「探索知识」链接
+- **课程知识地图入口**：首页「探索知识」链接，指向 /courses
 
 ---
 
@@ -765,10 +767,10 @@ MVP 阶段不设复杂导航栏：
 
 ### 8.2 第一阶段：重构页面职责
 
-重新定义四个页面：
+重新定义页面结构：
 
 ```
-Home → Knowledge Map → Topic → Lesson
+Home → /courses → Topic → Lesson
 ```
 
 除此之外，不新增新的学习页面。所有学习流程围绕这四个页面展开。
@@ -791,13 +793,12 @@ Home → Knowledge Map → Topic → Lesson
 
 **数据接口**：新建 `useLearningState()`，当前全部 Mock，以后由 Progress Engine 接管。
 
-### 8.4 第三阶段：Knowledge Map
+### 8.4 第三阶段：课程知识地图
 
-**页面**：`/map`，作为唯一知识入口。
+**页面**：`/courses`，作为唯一课程知识入口。
 
 **页面布局**：
-- 顶部：Domain Filter（全部、数与代数、图形与几何、统计与概率）
-- 主体：直接展示 Topic 卡片列表（不要进入 Domain 页面）
+- 主体：直接展示 Topic 卡片列表（不需要进入 Domain 页面）
 
 **Topic Card**：标题、简介、学习状态（待学习/正在学习/已掌握）、开始学习按钮。
 
@@ -879,9 +880,9 @@ components/learning/
 - 学习状态来源统一由 `useLearningState()` 提供，不直接读取业务数据
 
 **Knowledge Map**：
-- `/map` 知识入口
+- `/courses` 课程知识入口
 - 默认展示所有 Topic
-- Domain 作为过滤器，同时作为路由层级
+- Domain 不再作为 URL 层级或过滤器
 
 **Topic**：
 - 页面根据学习状态自动切换为"待学习""学习中""已掌握"三种模式
@@ -901,13 +902,13 @@ components/learning/
 
 #### 阶段一：架构准备
 
-1. **调整路由结构**（已完成 2026-07-22）
-   - 新建 `pages/index.vue`（学习首页，含首次/回访两种状态）
-   - 新建 `pages/map/index.vue`（知识地图）
-   - 新建 `pages/[domain]/index.vue`（领域页）
-   - 新建 `pages/[domain]/[topic]/index.vue`（学习主题页 / Learning Hub）
-   - 新建 `pages/[domain]/[topic]/[lesson].vue`（课时学习页）
+1. **调整路由结构**（待实施）
+   - 新建 `pages/courses/index.vue`（课程知识地图）
+   - 新建 `pages/courses/[topic]/index.vue`（学习主题页 / Learning Hub）
+   - 新建 `pages/courses/[topic]/[lesson].vue`（课时学习页）
    - 新建 `pages/exercise/index.vue`（练习页，使用 ?topic=xxx 查询参数）
+   - 废弃 `pages/[domain]/` 层级路由
+   - 废弃 `pages/map.vue` 独立知识地图页
 
 2. **新建 Progress 模块**
    - 创建 `app/progress/` 目录（独立模块，与 Content 解耦）
@@ -917,10 +918,11 @@ components/learning/
 
 3. **数据模型适配**
    - 现有 `Course` 实体对应新的「学习主题（Topic）」
-   - 增加 `domain` 字段用于领域分类
+   - 增加 `domain` 字段用于领域分类（内部使用，不作为 URL 层级）
    - **保持现有 Course → Chapter → Lesson 数据关系不变**
    - Repository 层负责聚合：查询 Topic 时关联 Chapters → Lessons，展平后返回给页面
    - 页面层不感知 Chapter
+   - **URL 结构从 `/[domain]/[topic]/[lesson]` 调整为 `/courses/{topic}/{lesson}`**
 
 #### 阶段二：核心页面实现
 
@@ -988,15 +990,14 @@ buildTopicPage(course) {
 
 > 不新增 `lesson.courseId`，不废弃 `lesson.chapterId`。Repository 层负责聚合，页面层只看到 Topic + 扁平的 Lesson 列表。
 
-### 9.3 API 变更（已完成 2026-07-22）
+### 9.3 API 变更（待实施）
 
 | 现有 API | 新 API | 说明 |
 |---------|--------|------|
-| `GET /api/course` | `GET /api/domains` | 全部领域列表（知识地图） |
-| `GET /api/course?slug=xxx` | `GET /api/domains?slug=xxx` | 指定领域数据 |
-| `GET /api/chapter/[slug]` | `GET /api/topics/[slug]` | 主题详情（含课时列表） |
-| `GET /api/lesson/[slug]` | `GET /api/lessons/[slug]` | 课时内容 |
-| `GET /api/exercise?chapter=xxx` | `GET /api/exercises?topic=xxx` | 练习内容 |
+| `GET /api/domains` | `GET /api/courses` | 课程知识地图（Topic 列表） |
+| `GET /api/topics/[slug]` | `GET /api/courses/[topicSlug]` | 主题详情（含课时列表） |
+| `GET /api/lessons/[slug]` | `GET /api/lessons/[slug]` | 课时内容 |
+| `GET /api/exercises?topic=xxx` | `GET /api/exercises?topic=xxx` | 练习内容（不变） |
 
 ### 9.4 风险与应对
 
@@ -1008,12 +1009,12 @@ buildTopicPage(course) {
 
 ### 9.5 迁移检查清单
 
-- [ ] 新路由结构创建完成
+- [ ] 新路由结构创建完成（/courses/{topic}/{lesson}）
+- [ ] 废弃旧路由（/[domain]/、/map）
 - [ ] `app/progress/` 模块（Service + Storage + LocalStorageAdapter）可用
 - [ ] `useProgress` composable 可用
 - [ ] 学习首页（首次访问 + 回访）实现并测试
-- [ ] 知识地图页实现并测试
-- [ ] 领域页实现并测试
+- [ ] 课程知识地图页（/courses）实现并测试
 - [ ] 学习主题页（Learning Hub）实现并测试
 - [ ] 课时学习页（沉浸式）实现并测试
 - [ ] 练习页适配新路由
@@ -1025,7 +1026,9 @@ buildTopicPage(course) {
 
 ---
 
-## 附录 A：Topic 与 Chapter 合并分析
+## 附录 A：Topic 与 Chapter 合并分析（历史参考）
+
+> **V3 备注**：本附录为 V2 设计时的分析，结论仍然有效。V3 进一步明确了 Chapter 作为教学组织单元的角色，同时删除了 Domain 作为 URL 层级。
 
 ### 问题
 
@@ -1072,16 +1075,17 @@ V2（3 层）：
 **删除 Chapter 页面，保留 Chapter 数据模型**。理由：
 
 1. **减少决策**：学习者少做一次选择（少一级页面）
-2. **减少跳转**：从领域页直接进入主题页，即可开始学习
+2. **减少跳转**：从课程入口直接进入主题页，即可开始学习
 3. **职责不重复**：页面层面一个主题 = 一个 Learning Hub，职责清晰
 4. **数据稳定**：保持现有 Course → Chapter → Lesson 数据关系不变，无需数据库迁移
 
-**实现方式**：
-- `Course` 表 = Topic（学习主题），增加 `domain` 字段用于领域分类
-- `Chapter` 表保留，继续承担内容分组职责（如「概念」「求解方法」「应用」）
+**V3 实现方式**：
+- `Course` 表 = Topic（学习主题），增加 `domain` 字段用于内部领域分类（不作为 URL 层级）
+- `Chapter` 表保留，继续承担教学组织职责（规划学习顺序、表达阶段性教学结构）
 - `Lesson` 表关联关系不变（`chapterId` → `chapters.id`）
 - **Repository 层负责聚合**：查询 Topic 时通过 `Course → Chapters → Lessons` 关联查询，将所有 Chapter 下的 Lessons 聚合为扁平列表返回给页面
 - **页面不感知 Chapter**：Learning Hub 和课时页只看到 Topic 和 Lesson，不看到 Chapter
+- **URL 与教学结构分离**：URL 使用 `/courses/{topic}/{lesson}`，Chapter 调整不影响 URL
 
 ---
 
@@ -1098,6 +1102,6 @@ V2（3 层）：
 
 ---
 
-> 本文档为 V2 设计稿。整合了 PAGE_ARCHITECTURE.md、PAGE_ARCHITECTURE2.5.md、UI.md 三个文档的内容。
-> V2 在 V1 基础上合并了 Topic/Chapter 层级，进一步极简首页，新增首次访问和回访流程，引入 LearningState 抽象层。
+> 本文档为 V3 设计稿。整合了 PAGE_ARCHITECTURE.md、PAGE_ARCHITECTURE2.5.md、UI.md 三个文档的内容。
+> V3 在 V2 基础上调整了内容组织模型（Course→Topic→Lesson）、URL 结构（/courses/{topic}/{lesson}），删除了 Domain 作为 URL 层级和独立 /map 页面。
 > 确认后进入开发。

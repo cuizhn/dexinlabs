@@ -1,31 +1,22 @@
 /**
- * 知识主题仓储 - topics 表的 CRUD 操作，含关联查询（课时、领域、练习）
+ * 知识主题仓储 - topics 表的 CRUD 操作，含关联查询（章节、课时、课程、练习）
  *
  * 继承 BaseRepository 获得 list / findBySlug / findById 通用方法，
- * 自身定义 listByDomain 和 getWithLessonsAndDomain 两个业务方法。
+ * 自身定义 listByCourse 和 getWithChaptersAndLessons 两个业务方法。
+ *
+ * 架构 V4：Course → Topic → Chapter → Lesson
  */
 import { eq, asc } from 'drizzle-orm'
 import { topics } from '@database'
-import type { Topic, Domain, Lesson, Exercise } from '@content/types/index'
+import type { Topic, Course, Chapter, Lesson, Exercise } from '@content/types/index'
 import { BaseRepository } from './BaseRepository'
 
 export interface TopicWithRelations extends Topic {
-  domainEntity: Domain | null
+  courseEntity: Course | null
+  chapterList: Chapter[]
   lessonList: Lesson[]
   exerciseEntity: Exercise | null
   siblingTopics: Topic[]
-}
-
-/** Drizzle 关联查询返回的领域嵌套结构 */
-interface TopicDomainRef {
-  topics: Topic[]
-}
-
-/** Drizzle 关联查询返回的完整结果（含嵌套关联） */
-interface TopicQueryResult extends Topic {
-  domainRef: Domain & TopicDomainRef | null
-  lessons: Lesson[]
-  exercises: Exercise[]
 }
 
 export class TopicRepository extends BaseRepository<typeof topics> {
@@ -33,26 +24,41 @@ export class TopicRepository extends BaseRepository<typeof topics> {
     super(topics)
   }
 
-  /** 按知识领域 slug 过滤主题列表 */
-  async listByDomain(domainSlug: string | undefined | null): Promise<Topic[]> {
-    if (!domainSlug) return []
+  /** 按课程 ID 过滤主题列表 */
+  async listByCourse(courseId: number): Promise<Topic[]> {
     return this.getDb().select().from(this.table)
-      .where(eq(this.table.domain, domainSlug))
+      .where(eq(this.table.courseId, courseId))
       .orderBy(asc(this.table.order), asc(this.table.id)) as Promise<Topic[]>
   }
 
-  /** 获取主题及其关联的课时、领域、练习和兄弟主题（关联查询） */
-  async getWithLessonsAndDomain(slug: string): Promise<TopicWithRelations | null> {
+  /**
+   * 获取主题及其关联的章节（含课时）、课程、练习和兄弟主题
+   *
+   * 通过 Drizzle relations 查询：
+   * - course: 所属课程
+   * - chapters → lessons: 章节及其课时
+   * - exercises: 主题练习
+   * - course → topics: 兄弟主题（用于导航）
+   */
+  async getWithChaptersAndLessons(slug: string): Promise<TopicWithRelations | null> {
     if (!slug) return null
     const raw = await this.getDb().query.topics.findFirst({
       where: eq(this.table.slug, slug),
       with: {
-        domainRef: {
+        course: {
           with: {
             topics: {
               orderBy: (topics, { asc }) => [asc(topics.order), asc(topics.id)]
             }
           }
+        },
+        chapters: {
+          with: {
+            lessons: {
+              orderBy: (lessons, { asc }) => [asc(lessons.order), asc(lessons.id)]
+            }
+          },
+          orderBy: (chapters, { asc }) => [asc(chapters.order), asc(chapters.id)]
         },
         lessons: {
           orderBy: (lessons, { asc }) => [asc(lessons.order), asc(lessons.id)]
@@ -63,13 +69,19 @@ export class TopicRepository extends BaseRepository<typeof topics> {
       }
     })
     if (!raw) return null
-    const result = raw as unknown as TopicQueryResult
+
+    const courseRef = raw.course as unknown as (Course & { topics: Topic[] }) | null
+    const chapters = (raw.chapters || []) as unknown as Chapter[]
+    const lessons = (raw.lessons || []) as unknown as Lesson[]
+    const exercises = (raw.exercises || []) as unknown as Exercise[]
+
     return {
-      ...result,
-      domainEntity: result.domainRef || null,
-      lessonList: result.lessons || [],
-      exerciseEntity: result.exercises?.[0] || null,
-      siblingTopics: result.domainRef?.topics || []
+      ...raw,
+      courseEntity: courseRef || null,
+      chapterList: chapters,
+      lessonList: lessons,
+      exerciseEntity: exercises[0] || null,
+      siblingTopics: (courseRef?.topics || []) as Topic[]
     } as unknown as TopicWithRelations
   }
 

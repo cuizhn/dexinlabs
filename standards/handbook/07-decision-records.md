@@ -260,7 +260,7 @@ AI Agent 不应擅自删除已有 ADR。
 | 编号 | 标题 |
 |------|------|
 | ADR-0001 | Project Structure |
-| ADR-0002 | Domain → Topic → Lesson 内容模型 |
+| ADR-0002 | Course → Topic → Lesson 内容模型（原 Domain → Topic → Lesson，V3 已调整） |
 | ADR-0003 | Content Engine 与 Markdown Engine 分离 |
 | ADR-0004 | Renderer 仅负责展示 |
 | ADR-0005 | HTML 语义化优先 |
@@ -268,6 +268,8 @@ AI Agent 不应擅自删除已有 ADR。
 | ADR-0007 | Database Schema Strategy |
 | ADR-0008 | Markdown Rendering Pipeline |
 | ADR-0009 | Content Rendering Responsibility |
+| ADR-0010 | Lesson AST 作为课程唯一存储格式 |
+| ADR-0011 | 课程 URL 结构与内容组织模型调整（Course→Topic→Lesson） |
 
 后续按时间顺序持续增加。
 

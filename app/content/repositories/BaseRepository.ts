@@ -29,7 +29,7 @@ export interface CommonColumns {
 /**
  * BaseRepository - 仓储层抽象基类
  *
- * 泛型参数 TTable 为 Drizzle 表定义（如 domains、topics 等）。
+ * 泛型参数 TTable 为 Drizzle 表定义（如 courses、topics 等）。
  * 子类通过覆写 list/findBySlug/findById 提供精确的返回类型。
  *
  * 提供的通用方法：

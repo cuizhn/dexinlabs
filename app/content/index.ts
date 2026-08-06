@@ -3,32 +3,35 @@
  *
  * 对外暴露服务、仓储和类型定义，供 API 层和其他模块使用。
  *
- * 架构 V2：Domain（知识领域）→ Topic（知识主题）→ Lesson（课时）
+ * 架构 V4：Course → Topic → Chapter → Lesson
  * 内容存储：Lesson AST（JSONB），由 dexinlabs-content 项目编译
  */
 export {
   topicService,
-  domainService,
+  courseService,
   lessonService,
   exerciseService
 } from './services/index'
 
 export {
   topicRepository,
+  chapterRepository,
   lessonRepository,
-  domainRepository,
+  courseRepository,
   exerciseRepository
 } from './repositories/index'
 
 export type {
-  Domain,
+  Course,
   Topic,
+  Chapter,
   Lesson,
   Exercise,
   BaseContentEntity,
   LessonPage,
   TopicPage,
-  DomainPage,
+  CoursePage,
+  ChapterWithLessons,
   ExercisePage
 } from './types/index'
 

@@ -6,7 +6,7 @@
  *
  * 职责边界：
  * - 负责：markdown → AST → HTML
- * - 不负责：Lesson/Topic/Domain 等业务概念
+ * - 不负责：Lesson/Topic/Course 等业务概念
  */
 import { renderToHTML as doRenderToHTML, renderInline as doRenderInline } from './processor'
 import { registerBuiltinPlugins } from './plugins/builtin'

@@ -6,7 +6,7 @@ export default defineEventHandler(async event => {
   assertDatabaseReady()
 
   const query = getQuery(event)
-  const domainSlug = typeof query.domain === 'string' ? query.domain : undefined
+  const courseId = query.course ? Number(query.course) : undefined
 
-  return topicService.list(domainSlug)
+  return topicService.list(courseId)
 })

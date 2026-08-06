@@ -1,12 +1,14 @@
 /**
  * 数据库表结构定义（Drizzle ORM Schema）
  *
- * 定义了知识领域、知识主题、课时、练习四张表及其关联关系。
- * 表之间通过 slug 字段建立关系查询（Drizzle relations），
- * 同时保留整数外键（domainId、topicId）用于数据库级约束。
+ * 定义了课程、知识主题、教学章节、课时、练习五张表及其关联关系。
+ * 所有表通过整数外键建立 Drizzle relations。
  *
- * 架构 V2：Domain（知识领域）→ Topic（知识主题）→ Lesson（课时）
- * Domain 是精简的分类节点，不是内容实体。
+ * 架构 V4：Course → Topic → Chapter → Lesson
+ * - Course：课程入口
+ * - Topic：知识领域（URL 一级路径）
+ * - Chapter：教学组织单元（不参与 URL）
+ * - Lesson：最小学习单元
  */
 import {
   pgTable,
@@ -23,37 +25,44 @@ import {
 import { relations, sql } from 'drizzle-orm'
 
 /**
- * domains 表 — 知识领域（原 courses 表）
+ * courses 表 — 课程
  *
- * 精简为分类节点，仅保留 id, slug, title, description, order。
- * Domain 不是内容实体，不需要 cover、body、edition 等展示字段。
+ * 课程分组节点，包含 id, slug, title, description, order。
  */
-export const domains = pgTable('domains', {
+export const courses = pgTable('courses', {
   id: serial('id').primaryKey(),
   slug: varchar('slug', { length: 255 }).notNull(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
-  order: integer('display_order').default(0).notNull()
+  order: integer('display_order').default(0).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
+    .default(sql`timezone('utc'::text, now())`)
+    .notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
+    .default(sql`timezone('utc'::text, now())`)
+    .$onUpdateFn(() => new Date())
+    .notNull()
 }, table => [
-  uniqueIndex('idx_domains_slug_unique').on(table.slug),
-  index('idx_domains_order').on(table.order)
+  uniqueIndex('idx_courses_slug_unique').on(table.slug),
+  index('idx_courses_order').on(table.order)
 ])
 
 /**
- * topics 表 — 知识主题（原 chapters 表）
+ * topics 表 — 知识主题
  *
- * 外键从 course/courseId 改为 domain/domainId。
+ * 通过 course_id 关联所属课程。
+ * URL 一级路径来源（/courses/{topic.slug}）。
  */
 export const topics = pgTable('topics', {
   id: serial('id').primaryKey(),
   slug: varchar('slug', { length: 255 }).notNull(),
   title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
   summary: text('summary'),
   order: integer('display_order').default(0).notNull(),
-  domain: varchar('domain_slug', { length: 255 }),
   cover: text('cover'),
   body: text('body'),
-  domainId: integer('domain_id').references(() => domains.id, { onDelete: 'set null' }),
+  courseId: integer('course_id').references(() => courses.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
     .default(sql`timezone('utc'::text, now())`)
     .notNull(),
@@ -63,15 +72,38 @@ export const topics = pgTable('topics', {
     .notNull()
 }, table => [
   uniqueIndex('idx_topics_slug_unique').on(table.slug),
-  index('idx_topics_domain_id').on(table.domainId),
-  index('idx_topics_order').on(table.order),
-  index('idx_topics_domain_slug').on(table.domain)
+  index('idx_topics_course_id').on(table.courseId),
+  index('idx_topics_order').on(table.order)
+])
+
+/**
+ * chapters 表 — 教学章节
+ *
+ * 通过 topic_id 关联所属知识主题。
+ * 组织 Lesson 学习顺序，不参与 URL。
+ */
+export const chapters = pgTable('chapters', {
+  id: serial('id').primaryKey(),
+  title: varchar('title', { length: 255 }).notNull(),
+  description: text('description'),
+  order: integer('display_order').default(0).notNull(),
+  topicId: integer('topic_id').references(() => topics.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
+    .default(sql`timezone('utc'::text, now())`)
+    .notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true, mode: 'date' })
+    .default(sql`timezone('utc'::text, now())`)
+    .$onUpdateFn(() => new Date())
+    .notNull()
+}, table => [
+  index('idx_chapters_topic_id').on(table.topicId),
+  index('idx_chapters_order').on(table.order)
 ])
 
 /**
  * lessons 表 — 课时（最小学习单元）
  *
- * 外键从 chapter/chapterId 改为 topic/topicId。
+ * 同时具有知识归属（topic_id）和教学归属（chapter_id）。
  */
 export const lessons = pgTable('lessons', {
   id: serial('id').primaryKey(),
@@ -79,12 +111,14 @@ export const lessons = pgTable('lessons', {
   title: varchar('title', { length: 255 }).notNull(),
   summary: text('summary'),
   order: integer('display_order').default(0).notNull(),
-  topic: varchar('topic_slug', { length: 255 }),
   /** Lesson AST 结构化内容（JSONB） */
   content: jsonb('content'),
   /** AST 版本号：1 = Lesson AST 格式 */
   astVersion: integer('ast_version').default(1).notNull(),
+  /** 知识归属：所属知识主题 */
   topicId: integer('topic_id').references(() => topics.id, { onDelete: 'set null' }),
+  /** 教学归属：所属教学章节 */
+  chapterId: integer('chapter_id').references(() => chapters.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at', { withTimezone: true, mode: 'date' })
     .default(sql`timezone('utc'::text, now())`)
     .notNull(),
@@ -95,14 +129,14 @@ export const lessons = pgTable('lessons', {
 }, table => [
   uniqueIndex('idx_lessons_slug_unique').on(table.slug),
   index('idx_lessons_topic_id').on(table.topicId),
-  index('idx_lessons_order').on(table.order),
-  index('idx_lessons_topic_slug').on(table.topic)
+  index('idx_lessons_chapter_id').on(table.chapterId),
+  index('idx_lessons_order').on(table.order)
 ])
 
 /**
  * exercises 表 — 练习
  *
- * 外键从 chapter/chapterId 改为 topic/topicId。
+ * 通过 topic_id 关联所属知识主题。
  */
 export const exercises = pgTable('exercises', {
   id: serial('id').primaryKey(),
@@ -110,7 +144,6 @@ export const exercises = pgTable('exercises', {
   title: varchar('title', { length: 255 }).notNull(),
   summary: text('summary'),
   order: integer('display_order').default(0).notNull(),
-  topic: varchar('topic_slug', { length: 255 }),
   /** Exercise AST 结构化内容（JSONB） */
   content: jsonb('content'),
   /** AST 版本号：1 = Exercise AST 格式 */
@@ -126,50 +159,63 @@ export const exercises = pgTable('exercises', {
 }, table => [
   uniqueIndex('idx_exercises_slug_unique').on(table.slug),
   index('idx_exercises_topic_id').on(table.topicId),
-  index('idx_exercises_order').on(table.order),
-  index('idx_exercises_topic_slug').on(table.topic)
+  index('idx_exercises_order').on(table.order)
 ])
 
 /**
- * 关系定义 — 使用 slug 关联（而非整数外键）
+ * 关系定义 — 使用整数外键关联
  *
- * 业务层（Repository/API 路由）主要按 slug 查询，slug 上已有唯一索引。
- * 整数外键（domainId 等）仅用于数据库级约束（级联删除等）。
+ * Course → Topic → Chapter → Lesson
  */
-export const domainsRelations = relations(domains, ({ many }) => ({
+export const coursesRelations = relations(courses, ({ many }) => ({
   topics: many(topics)
 }))
 
 export const topicsRelations = relations(topics, ({ one, many }) => ({
-  domainRef: one(domains, {
-    fields: [topics.domain],
-    references: [domains.slug]
+  course: one(courses, {
+    fields: [topics.courseId],
+    references: [courses.id]
   }),
+  chapters: many(chapters),
   lessons: many(lessons),
   exercises: many(exercises)
 }))
 
+export const chaptersRelations = relations(chapters, ({ one, many }) => ({
+  topic: one(topics, {
+    fields: [chapters.topicId],
+    references: [topics.id]
+  }),
+  lessons: many(lessons)
+}))
+
 export const lessonsRelations = relations(lessons, ({ one }) => ({
-  topicRef: one(topics, {
-    fields: [lessons.topic],
-    references: [topics.slug]
+  topic: one(topics, {
+    fields: [lessons.topicId],
+    references: [topics.id]
+  }),
+  chapter: one(chapters, {
+    fields: [lessons.chapterId],
+    references: [chapters.id]
   })
 }))
 
 export const exercisesRelations = relations(exercises, ({ one }) => ({
-  topicRef: one(topics, {
-    fields: [exercises.topic],
-    references: [topics.slug]
+  topic: one(topics, {
+    fields: [exercises.topicId],
+    references: [topics.id]
   })
 }))
 
 export const schema = {
-  domains,
+  courses,
   topics,
+  chapters,
   lessons,
   exercises,
-  domainsRelations,
+  coursesRelations,
   topicsRelations,
+  chaptersRelations,
   lessonsRelations,
   exercisesRelations
 }

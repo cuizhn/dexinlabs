@@ -1,7 +1,7 @@
 <template>
   <!-- Topic 状态卡片 - 知识地图中展示每个 Topic 的学习状态 -->
   <NuxtLink
-    :to="`/${domainSlug}/${topic.slug}`"
+    :to="`/courses/${topic.slug}`"
     class="topic-status-card"
     :class="`topic-status-card--${topicInfo.state.toLowerCase()}`"
   >
@@ -48,8 +48,6 @@ interface TopicData {
 const props = defineProps<{
   /** Topic 数据 */
   topic: TopicData
-  /** 所属 Domain 的 slug（用于构建路由） */
-  domainSlug: string
   /** 该 Topic 下的总课时数 */
   totalLessons: number
 }>()

@@ -3,7 +3,7 @@
     <section class="exercise-page__header">
       <div class="container">
         <nav class="exercise-page__breadcrumb">
-          <NuxtLink to="/map" class="exercise-page__bc-link">知识地图</NuxtLink>
+          <NuxtLink to="/courses" class="exercise-page__bc-link">课程地图</NuxtLink>
 
           <span class="exercise-page__bc-sep">/</span>
 
@@ -39,8 +39,8 @@
             <div class="placeholder-card__icon">✎</div>
             <h3 class="placeholder-card__title">练习内容准备中</h3>
             <p class="placeholder-card__desc"> 练习正在精心设计中。请先完成课时学习，扎实掌握每个概念。 </p>
-            <NuxtLink to="/map" class="placeholder-card__back">
-              ← 返回知识地图
+            <NuxtLink to="/courses" class="placeholder-card__back">
+              ← 返回课程地图
             </NuxtLink>
           </div>
         </div>

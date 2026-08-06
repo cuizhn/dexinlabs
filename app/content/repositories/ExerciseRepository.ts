@@ -1,8 +1,10 @@
 /**
- * 练习仓储 - 练习表的 CRUD 操作，支持多条件过滤和排序
+ * 练习仓储 - exercises 表的 CRUD 操作
  *
  * 继承 BaseRepository 获得 findBySlug / findById 通用方法，
  * 自身覆写 list() 以支持过滤和排序参数，并定义业务方法。
+ *
+ * 架构 V4：Exercise 通过 topicId 关联 Topic
  */
 import { eq, and, asc, desc } from 'drizzle-orm'
 import type { SQL } from 'drizzle-orm'
@@ -12,8 +14,7 @@ import type { CommonColumns } from './BaseRepository'
 import { BaseRepository } from './BaseRepository'
 
 export interface ExerciseFilters {
-  topic?: string
-  topicId?: number | string
+  topicId?: number
   slug?: string
 }
 
@@ -28,11 +29,10 @@ export class ExerciseRepository extends BaseRepository<typeof exercises> {
   }
 
   /** 构建多条件 WHERE 子句 */
-  private buildWhere({ topic, topicId, slug }: ExerciseFilters = {}): SQL | undefined {
+  private buildWhere({ topicId, slug }: ExerciseFilters = {}): SQL | undefined {
     const clauses: SQL[] = []
     if (slug) clauses.push(eq(this.table.slug, slug))
-    if (topicId) clauses.push(eq(this.table.topicId, Number(topicId)))
-    if (topic) clauses.push(eq(this.table.topic, topic))
+    if (topicId) clauses.push(eq(this.table.topicId, topicId))
     return clauses.length ? and(...clauses) : undefined
   }
 
@@ -41,21 +41,26 @@ export class ExerciseRepository extends BaseRepository<typeof exercises> {
    *
    * 覆写基类的 list()，支持按主题、slug 过滤及自定义排序。
    */
-  override async list({ topic, topicId, orderBy = 'order', order = 'asc' }: ExerciseListOptions = {}): Promise<Exercise[]> {
+  override async list({ topicId, orderBy = 'order', order = 'asc' }: ExerciseListOptions = {}): Promise<Exercise[]> {
     const sortDir = order.toLowerCase() === 'desc' ? desc : asc
     const cols = this.table as unknown as CommonColumns
     const sortCol = orderBy === 'id' ? cols.id : cols.order
-    const where = this.buildWhere({ topic, topicId })
+    const where = this.buildWhere({ topicId })
     const baseQuery = this.getDb().select().from(this.table as never)
     const filteredQuery = where ? baseQuery.where(where) : baseQuery
     return await filteredQuery.orderBy(sortDir(sortCol as never)) as Exercise[]
   }
 
-  /** 按知识主题 slug 过滤练习列表 */
+  /** 按知识主题 slug 过滤练习列表（先查 topicId，再过滤） */
   async listByTopic(topicSlug: string | undefined | null): Promise<Exercise[]> {
     if (!topicSlug) return []
-    return await this.getDb().select().from(this.table)
-      .where(eq(this.table.topic, topicSlug))
+    const db = this.getDb()
+    const topicRow = await db.query.topics.findFirst({
+      where: (topics, { eq }) => eq(topics.slug, topicSlug)
+    })
+    if (!topicRow) return []
+    return db.select().from(this.table)
+      .where(eq(this.table.topicId, topicRow.id))
       .orderBy(asc(this.table.order), asc(this.table.id)) as Exercise[]
   }
 

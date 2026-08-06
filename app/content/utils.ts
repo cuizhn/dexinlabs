@@ -1,7 +1,7 @@
 /**
  * Content 模块通用工具函数
  */
-import type { Domain, Topic, Lesson, Exercise } from './types/index'
+import type { Course, Topic, Chapter, Lesson, Exercise } from './types/index'
 
 /**
  * 标准化 slug 输入，去除首尾空白，空值返回 null
@@ -15,35 +15,32 @@ export function normalizeSlug(input: string | { slug: string } | null | undefine
 }
 
 /**
- * 从仓储查询结果中提取 Domain 模型字段，过滤掉内部关联字段
- *
- * Domain 是精简的分类节点，仅包含 id, slug, title, description, order。
+ * 从仓储查询结果中提取 Course 模型字段，过滤掉内部关联字段
  */
-export function toDomain(row: Record<string, unknown>): Domain {
+export function toCourse(row: Record<string, unknown>): Course {
   return {
     id: row.id as number,
     slug: row.slug as string,
     title: row.title as string,
     description: (row.description as string) ?? null,
-    order: row.order as number
+    order: row.order as number,
+    createdAt: row.createdAt as Date,
+    updatedAt: row.updatedAt as Date
   }
 }
 
 /**
  * 从仓储查询结果中提取 Topic 模型字段，过滤掉内部关联字段
- *
- * 仓储层的 getWithLessonsAndDomain 返回 domainEntity、lessonList、
- * exerciseEntity、siblingTopics 等内部字段，此函数将其全部排除。
  */
 export function toTopic(row: Record<string, unknown>): Topic {
   return {
     id: row.id as number,
     slug: row.slug as string,
     title: row.title as string,
+    description: (row.description as string) ?? null,
     summary: (row.summary as string) ?? null,
     order: row.order as number,
-    domain: (row.domain as string) ?? null,
-    domainId: (row.domainId as number) ?? null,
+    courseId: (row.courseId as number) ?? null,
     cover: (row.cover as string) ?? null,
     body: (row.body as string) ?? null,
     createdAt: row.createdAt as Date,
@@ -52,10 +49,22 @@ export function toTopic(row: Record<string, unknown>): Topic {
 }
 
 /**
+ * 从仓储查询结果中提取 Chapter 模型字段，过滤掉内部关联字段
+ */
+export function toChapter(row: Record<string, unknown>): Chapter {
+  return {
+    id: row.id as number,
+    title: row.title as string,
+    description: (row.description as string) ?? null,
+    order: row.order as number,
+    topicId: (row.topicId as number) ?? null,
+    createdAt: row.createdAt as Date,
+    updatedAt: row.updatedAt as Date
+  }
+}
+
+/**
  * 从仓储查询结果中提取 Lesson 模型字段，过滤掉内部关联字段
- *
- * 仓储层的 getWithTopicAndDomain 返回 topicEntity、domainEntity、
- * siblingLessons 等内部字段，此函数将其全部排除。
  */
 export function toLesson(row: Record<string, unknown>): Lesson {
   return {
@@ -64,8 +73,8 @@ export function toLesson(row: Record<string, unknown>): Lesson {
     title: row.title as string,
     summary: (row.summary as string) ?? null,
     order: row.order as number,
-    topic: (row.topic as string) ?? null,
     topicId: (row.topicId as number) ?? null,
+    chapterId: (row.chapterId as number) ?? null,
     content: row.content as Lesson['content'],
     astVersion: (row.astVersion as number) ?? 1,
     createdAt: row.createdAt as Date,
@@ -83,7 +92,6 @@ export function toExercise(row: Record<string, unknown>): Exercise {
     title: row.title as string,
     summary: (row.summary as string) ?? null,
     order: row.order as number,
-    topic: (row.topic as string) ?? null,
     topicId: (row.topicId as number) ?? null,
     content: row.content as Exercise['content'],
     astVersion: (row.astVersion as number) ?? 1,
