@@ -27,11 +27,14 @@
         <template v-else-if="exercise">
           <h2 class="exercise-page__section-title">{{ exercise.title || '练习题' }}</h2>
 
-          <div v-if="exercise.description" class="exercise-page__intro">
-            {{ exercise.description }}
+          <div v-if="exercise.summary" class="exercise-page__intro">
+            {{ exercise.summary }}
           </div>
 
-          <ContentRenderer :html="exerciseHtml" />
+          <ContentRenderer
+            v-if="exerciseBlocks.length"
+            :blocks="exerciseBlocks"
+          />
         </template>
 
         <div v-else class="exercise-page__placeholder">
@@ -57,7 +60,7 @@
 const route = useRoute()
 const topicSlug = computed(() => typeof route.query.topic === 'string' ? route.query.topic : '')
 
-const { exercise, topicTitle, exerciseHtml, loading } = await useExercisePage(() => topicSlug.value)
+const { exercise, topicTitle, exerciseBlocks, loading } = await useExercisePage(() => topicSlug.value)
 
 useHead({
   title: computed(() => (topicTitle.value ? `${topicTitle.value} · 练习` : '练习'))

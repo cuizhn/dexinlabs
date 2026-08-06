@@ -81,7 +81,7 @@ const topicInfo = computed(() => getTopicState(props.topic.slug, props.totalLess
 
 /* 已掌握状态 - 绿色边框 */
 .topic-status-card--mastered:hover {
-  border-color: #16a34a;
+  border-color: var(--color-success-dark);
 }
 
 /* 正在学习状态 - 蓝色边框 */
@@ -128,7 +128,7 @@ const topicInfo = computed(() => getTopicState(props.topic.slug, props.totalLess
 }
 
 .topic-status-card__cta--done {
-  color: #16a34a;
+  color: var(--color-success-dark);
 }
 
 .topic-status-card__cta--continue {

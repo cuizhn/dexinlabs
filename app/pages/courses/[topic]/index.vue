@@ -21,15 +21,30 @@
         </div>
       </header>
 
-      <!-- 中部：Lesson 列表（显示状态） -->
+      <!-- 中部：Chapter 分组 + Lesson 列表 -->
       <section class="topic-detail__body">
         <div class="container">
-          <LearningTopicLessonList
-            v-if="lessons.length"
-            :lessons="lessons"
-            :topic-slug="topicSlug"
-            title="课时列表"
-          />
+          <!-- 章节分组 -->
+          <div v-for="ch in chapters" :key="ch.chapter.id" class="topic-detail__chapter">
+            <h2 class="topic-detail__chapter-title">{{ ch.chapter.title }}</h2>
+            <p v-if="ch.chapter.description" class="topic-detail__chapter-desc">{{ ch.chapter.description }}</p>
+
+            <LearningTopicLessonList
+              v-if="ch.lessons.length"
+              :lessons="ch.lessons"
+              :topic-slug="topicSlug"
+              title=""
+            />
+          </div>
+
+          <!-- 未归入章节的课时 -->
+          <div v-if="lessons.length" class="topic-detail__flat">
+            <LearningTopicLessonList
+              :lessons="lessons"
+              :topic-slug="topicSlug"
+              title="课时"
+            />
+          </div>
 
           <!-- 底部：根据学习状态切换 -->
           <div class="topic-detail__actions">
@@ -130,17 +145,20 @@ import { LearningState, useLearningState } from '~/composables/useLearningState'
 
 const topicSlug = useRouteParam('topic') ?? ''
 
-const { topic, lessons } = await useTopicPage(topicSlug)
+const { topic, chapters, lessons } = await useTopicPage(topicSlug)
 
 const { getTopicState } = useLearningState()
 
 /** Topic 的学习状态（当前 Mock 总课时数为 lessons 长度） */
 const topicState = computed(() => getTopicState(topicSlug, lessons.value.length))
 
-/** 第一个课时的路径（用于「开始学习」「继续学习」「复习回顾」按钮） */
-const firstLessonPath = computed(() =>
-  lessons.value[0] ? `/courses/${topicSlug}/${lessons.value[0].slug}` : ''
-)
+/** 第一个课时的路径：优先取第一个章节的第一课，否则取 flatLessons 第一课 */
+const firstLessonPath = computed(() => {
+  const firstChapterLesson = chapters.value[0]?.lessons[0]
+  if (firstChapterLesson) return `/courses/${topicSlug}/${firstChapterLesson.slug}`
+  const firstFlat = lessons.value[0]
+  return firstFlat ? `/courses/${topicSlug}/${firstFlat.slug}` : ''
+})
 
 useHead({
   title: computed(() => topic.value?.title || '主题')
@@ -198,6 +216,29 @@ useHead({
 
 .topic-detail__body {
   padding: var(--spacing-xl) 0 var(--spacing-3xl);
+}
+
+/* 章节分组 */
+.topic-detail__chapter {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.topic-detail__chapter-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-xs);
+}
+
+.topic-detail__chapter-desc {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin: 0 0 var(--spacing-md);
+}
+
+.topic-detail__flat {
+  margin-bottom: var(--spacing-xl);
 }
 
 /* 底部行动按钮 */

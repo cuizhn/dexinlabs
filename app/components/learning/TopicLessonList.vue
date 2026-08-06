@@ -96,8 +96,8 @@ const { getLessonState } = useLearningState()
 }
 
 .topic-lesson-list__item--completed .topic-lesson-list__link {
-  border-color: rgba(34, 197, 94, 0.3);
-  background: rgba(34, 197, 94, 0.02);
+  border-color: var(--color-success-border);
+  background: var(--color-success-bg);
 }
 
 .topic-lesson-list__index {
@@ -110,7 +110,7 @@ const { getLessonState } = useLearningState()
 }
 
 .topic-lesson-list__item--completed .topic-lesson-list__index {
-  color: #16a34a;
+  color: var(--color-success-dark);
 }
 
 .topic-lesson-list__info {

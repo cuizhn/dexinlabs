@@ -24,7 +24,7 @@ export class ExerciseService {
   /**
    * 获取练习页面数据：取第一道题
    *
-   * Repository 的 ensureAST 已确保 exercise.content 为 AST 格式。
+   * Exercise.content 为 AST 格式，渲染由前端 Renderer 组件驱动。
    */
   async getExercisePage(topicSlug: string): Promise<ExercisePage> {
     const clean = normalizeSlug(topicSlug)
