@@ -47,7 +47,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   
-  { path: '/map', label: '探索' },
+  { path: '/courses', label: '课程' },
 { path: '/about', label: '关于我' }
 ]
 
