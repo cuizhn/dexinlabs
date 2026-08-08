@@ -10,10 +10,6 @@
       <LearningStateBadge :state="topicInfo.state" />
     </div>
 
-    <p v-if="topic.summary" class="topic-status-card__desc">
-      {{ topic.summary }}
-    </p>
-
     <div class="topic-status-card__footer">
       <span v-if="topicInfo.state === LearningState.MASTERED" class="topic-status-card__cta topic-status-card__cta--done">
         复习巩固 →
@@ -41,7 +37,6 @@ import { LearningState, useLearningState } from '~/composables/useLearningState'
 interface TopicData {
   slug: string
   title: string
-  summary?: string | null
   order: number
 }
 

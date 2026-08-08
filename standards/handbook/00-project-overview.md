@@ -99,10 +99,10 @@ AI 是学习辅助工具，不替代课程体系和教学设计。
 
 ```
 Course
-  |
-  Topic
-  |
-  └── Lesson
+└── Topic
+    ├── Chapter
+    │   └── Lesson
+    └── Lesson
 ```
 
 URL 优先表达稳定的知识结构，而不是内部数据库组织结构。
@@ -112,6 +112,8 @@ URL 优先表达稳定的知识结构，而不是内部数据库组织结构。
 ## Course（课程）
 
 表示完整课程。
+
+数据库字段：`id`, `slug`, `title`
 
 主要职责：
 
@@ -126,6 +128,8 @@ URL 优先表达稳定的知识结构，而不是内部数据库组织结构。
 ## Topic（知识主题）
 
 表示稳定的知识领域。
+
+数据库字段：`id`, `slug`, `title`, `order`
 
 例如：
 
@@ -154,6 +158,8 @@ URL 示例：
 
 表示教学组织单元，不作为 URL 层级。
 
+数据库字段：`id`, `title`, `slug`, `order`, `topic_id`
+
 主要职责：
 
 - 组织 Lesson
@@ -169,6 +175,8 @@ Chapter 作为教学组织概念存在，未来调整 Chapter（增加章节、�
 
 表示最小学习单元。
 
+数据库字段：`id`, `slug`, `title`, `order`, `content`（JSONB）, `topic_id`, `chapter_id`
+
 一个 Lesson 应回答：
 
 - 为什么学习？
@@ -176,17 +184,25 @@ Chapter 作为教学组织概念存在，未来调整 Chapter（增加章节、�
 - 核心概念是什么？
 - 如何应用？
 
+Lesson 同时具有：
+
+- `topic_id`：知识归属（属于哪个知识主题）
+- `chapter_id`：教学归属（属于哪个教学章节）
+- `order`：学习顺序
+
 Lesson URL：
 
 ```
-/courses/{topic}/{lesson}
+/courses/{topic.slug}/{lesson.slug}
 ```
 
 例如：
 
 ```
-/courses/functions/linear-function
+/courses/functions/what-is-function
 ```
+
+唯一约束：`(topic_id, slug)` 组合唯一，允许不同主题下存在相同 slug。
 
 ---
 
@@ -199,17 +215,60 @@ URL 表达知识归属，教学结构由 Chapter 管理。
 ```
 Topic: 函数
 Chapter: 函数基础
-Lesson: 什么是一次函数
+Lesson: 什么是函数
 ```
 
-URL：`/courses/functions/linear-function`
+URL：`/courses/functions/what-is-function`
 
-数据库模型需要支持：
+数据库模型：
 
 - Topic 与知识领域对应
-- Chapter 管理教学组织
-- Lesson 关联 Topic 和 Chapter
-- Lesson 在 Chapter 中具有顺序
+- Chapter 管理教学组织（通过 `topic_id` 关联 Topic）
+- Lesson 同时关联 Topic（`topic_id`）和 Chapter（`chapter_id`）
+- Lesson 在 Chapter 中具有顺序（`order`）
+- Chapter 调整 Lesson 顺序时，不改变 Lesson URL
+
+---
+
+## URL 规范
+
+统一使用以下 URL 结构：
+
+```
+/courses                                    → 知识地图
+/courses/{topic.slug}                       → 主题详情
+/courses/{topic.slug}/{lesson.slug}         → 课时学习
+/exercise?topic={topic.slug}                → 练习
+```
+
+Chapter 不进入 URL。
+
+---
+
+## HTML 语义规范
+
+数据库实体与 HTML 语义元素不存在一一对应关系。
+
+不要根据数据库实体名称机械选择 HTML 标签。
+
+例如：
+
+- Lesson ≠ `<section>`
+- Chapter ≠ `<section>`
+
+Lesson 详情页可以根据实际文档语义使用：
+
+```html
+<article>
+```
+
+Lesson 内部的不同主题内容可以根据实际语义使用：
+
+```html
+<section>
+```
+
+HTML 元素必须根据页面实际语义确定。
 
 ---
 

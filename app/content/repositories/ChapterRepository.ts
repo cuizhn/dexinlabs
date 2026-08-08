@@ -1,10 +1,8 @@
 /**
  * 教学章节仓储 - chapters 表的 CRUD 操作
  *
- * 继承 BaseRepository 获得 list / findById 通用方法。
- * Chapter 没有 slug 字段，因此覆写 list 和 findById。
- *
- * 架构 V4：Chapter 组织 Lesson 学习顺序，不参与 URL。
+ * 架构 V4（定稿）：Chapter 新增 slug 字段。
+ * Chapter 组织 Lesson 学习顺序，不参与 URL。
  */
 import { eq, asc } from 'drizzle-orm'
 import { chapters } from '@database'
@@ -16,7 +14,7 @@ export class ChapterRepository extends BaseRepository<typeof chapters> {
     super(chapters)
   }
 
-  /** 按主题 ID 获取章节列表（含课时） */
+  /** 按主题 ID 获取章节列表 */
   async listByTopic(topicId: number): Promise<Chapter[]> {
     return this.getDb().select().from(this.table)
       .where(eq(this.table.topicId, topicId))
@@ -40,6 +38,10 @@ export class ChapterRepository extends BaseRepository<typeof chapters> {
 
   override async list(): Promise<Chapter[]> {
     return super.list() as Promise<Chapter[]>
+  }
+
+  override async findBySlug(slug: string | undefined | null): Promise<Chapter | null> {
+    return super.findBySlug(slug) as Promise<Chapter | null>
   }
 
   override async findById(id: number | string | undefined | null): Promise<Chapter | null> {

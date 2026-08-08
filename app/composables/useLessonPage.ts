@@ -1,10 +1,9 @@
 /**
  * useLessonPage - 课时页面数据组合式函数
  *
- * 封装课时数据的获取、缓存和响应式状态管理。
- * 调用 /api/lessons/:slug 接口，返回课时详情及导航信息。
+ * 架构 V4（定稿）：Lesson 唯一约束为 (topic_id, slug)，
+ * 需要同时提供 topicSlug 和 lessonSlug。
  *
- * 架构 V4：Course → Topic → Chapter → Lesson
  * 路由：/courses/{topic}/{lesson}
  */
 import { computed } from 'vue'
@@ -14,16 +13,23 @@ import type { LessonPage } from '@content'
 /**
  * useLessonPage - 获取课时页面数据
  *
- * @param slug 课时的唯一标识
+ * @param topicSlug 主题的唯一标识
+ * @param lessonSlug 课时的唯一标识
  * @param options.lazy 是否懒加载（默认 false，服务端预取）
- * @returns 课时、主题、课程、章节、前后课时等响应式数据
+ * @returns 课时、主题、章节、前后课时等响应式数据
  */
-export async function useLessonPage(slug: string, options: { lazy?: boolean } = {}) {
-  const key = `lesson-page:${slug || 'empty'}`
+export async function useLessonPage(
+  topicSlug: string,
+  lessonSlug: string,
+  options: { lazy?: boolean } = {}
+) {
+  const key = `lesson-page:${topicSlug}:${lessonSlug || 'empty'}`
 
   const { data, pending, error, refresh } = await useAsyncData(
     key,
-    () => $fetch<LessonPage>(`/api/lessons/${slug}`),
+    () => $fetch<LessonPage>(`/api/lessons/${lessonSlug}`, {
+      query: { topic: topicSlug }
+    }),
     {
       default: () => ({
         lesson: null,

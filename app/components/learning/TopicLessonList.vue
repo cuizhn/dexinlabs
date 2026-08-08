@@ -18,7 +18,6 @@
 
           <div class="topic-lesson-list__info">
             <span class="topic-lesson-list__lesson-title">{{ lesson.title }}</span>
-            <span v-if="lesson.summary" class="topic-lesson-list__lesson-desc">{{ lesson.summary }}</span>
           </div>
 
           <span class="topic-lesson-list__arrow">→</span>
@@ -41,7 +40,6 @@ import { useLearningState } from '~/composables/useLearningState'
 interface LessonItem {
   slug: string
   title: string
-  summary?: string | null
 }
 
 defineProps<{

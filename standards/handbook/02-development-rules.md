@@ -136,13 +136,13 @@ Application
 
 ```
 Course
-  |
-  Topic
-  |
-  └── Lesson
+└── Topic
+    ├── Chapter
+    │   └── Lesson
+    └── Lesson
 ```
 
-URL 结构：`/courses/{topic}/{lesson}`
+URL 结构：`/courses/{topic.slug}/{lesson.slug}`
 
 URL 优先表达稳定的知识结构，而不是内部数据库组织结构。
 

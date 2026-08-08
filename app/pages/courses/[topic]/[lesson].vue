@@ -42,10 +42,10 @@
 import { useLearningState } from '~/composables/useLearningState'
 import { useRouteParam } from '~/composables/useRouteParam'
 
-const topic = useRouteParam('topic')
-const lessonSlug = useRouteParam('lesson') as string
+const topic = useRouteParam('topic') ?? ''
+const lessonSlug = (useRouteParam('lesson') ?? '') as string
 
-const { lesson, topic: topicData } = await useLessonPage(lessonSlug)
+const { lesson, topic: topicData } = await useLessonPage(topic, lessonSlug)
 
 /** 便捷别名，避免模板中频繁 .value 访问 */
 const lessonData = computed(() => lesson.value)

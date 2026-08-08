@@ -1,22 +1,19 @@
 /**
- * 知识主题仓储 - topics 表的 CRUD 操作，含关联查询（章节、课时、课程、练习）
+ * 知识主题仓储 - topics 表的 CRUD 操作
  *
- * 继承 BaseRepository 获得 list / findBySlug / findById 通用方法，
- * 自身定义 listByCourse 和 getWithChaptersAndLessons 两个业务方法。
- *
- * 架构 V4：Course → Topic → Chapter → Lesson
+ * 架构 V4（定稿）：topics 表已精简为 id/slug/title/order。
+ * 不再有 course_id，因此不再提供 listByCourse 方法。
  */
 import { eq, asc } from 'drizzle-orm'
 import { topics } from '@database'
-import type { Topic, Course, Chapter, Lesson, Exercise } from '@content/types/index'
+import type { Topic, Chapter, Lesson, Exercise } from '@content/types/index'
 import { BaseRepository } from './BaseRepository'
 
 export interface TopicWithRelations extends Topic {
-  courseEntity: Course | null
   chapterList: Chapter[]
   lessonList: Lesson[]
   exerciseEntity: Exercise | null
-  siblingTopics: Topic[]
+  allTopics: Topic[]
 }
 
 export class TopicRepository extends BaseRepository<typeof topics> {
@@ -24,34 +21,19 @@ export class TopicRepository extends BaseRepository<typeof topics> {
     super(topics)
   }
 
-  /** 按课程 ID 过滤主题列表 */
-  async listByCourse(courseId: number): Promise<Topic[]> {
-    return this.getDb().select().from(this.table)
-      .where(eq(this.table.courseId, courseId))
-      .orderBy(asc(this.table.order), asc(this.table.id)) as Promise<Topic[]>
-  }
-
   /**
-   * 获取主题及其关联的章节（含课时）、课程、练习和兄弟主题
+   * 获取主题及其关联的章节（含课时）、练习和所有主题（用于导航）
    *
    * 通过 Drizzle relations 查询：
-   * - course: 所属课程
    * - chapters → lessons: 章节及其课时
+   * - lessons: 主题下所有课时
    * - exercises: 主题练习
-   * - course → topics: 兄弟主题（用于导航）
    */
   async getWithChaptersAndLessons(slug: string): Promise<TopicWithRelations | null> {
     if (!slug) return null
     const raw = await this.getDb().query.topics.findFirst({
       where: eq(this.table.slug, slug),
       with: {
-        course: {
-          with: {
-            topics: {
-              orderBy: (topics, { asc }) => [asc(topics.order), asc(topics.id)]
-            }
-          }
-        },
         chapters: {
           with: {
             lessons: {
@@ -70,18 +52,21 @@ export class TopicRepository extends BaseRepository<typeof topics> {
     })
     if (!raw) return null
 
-    const courseRef = raw.course as unknown as (Course & { topics: Topic[] }) | null
+    // 获取所有主题用于导航
+    const allTopicsRaw = await this.getDb().select().from(this.table)
+      .orderBy(asc(this.table.order), asc(this.table.id))
+
     const chapters = (raw.chapters || []) as unknown as Chapter[]
     const lessons = (raw.lessons || []) as unknown as Lesson[]
     const exercises = (raw.exercises || []) as unknown as Exercise[]
+    const allTopics = allTopicsRaw as unknown as Topic[]
 
     return {
       ...raw,
-      courseEntity: courseRef || null,
       chapterList: chapters,
       lessonList: lessons,
       exerciseEntity: exercises[0] || null,
-      siblingTopics: (courseRef?.topics || []) as Topic[]
+      allTopics
     } as unknown as TopicWithRelations
   }
 

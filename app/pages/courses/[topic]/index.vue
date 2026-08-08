@@ -12,7 +12,7 @@
           </div>
 
           <p class="topic-detail__objective">
-            学完这一主题，你将能够{{ topic.summary || '掌握相关知识与技能。' }}
+            学完这一主题，你将能够掌握相关的知识与技能。
           </p>
 
           <p class="topic-detail__significance">
@@ -25,9 +25,8 @@
       <section class="topic-detail__body">
         <div class="container">
           <!-- 章节分组 -->
-          <div v-for="ch in chapters" :key="ch.chapter.id" class="topic-detail__chapter">
+          <div v-for="ch in chapters" :key="ch.chapter.slug || ch.chapter.id || 0" class="topic-detail__chapter">
             <h2 class="topic-detail__chapter-title">{{ ch.chapter.title }}</h2>
-            <p v-if="ch.chapter.description" class="topic-detail__chapter-desc">{{ ch.chapter.description }}</p>
 
             <LearningTopicLessonList
               v-if="ch.lessons.length"

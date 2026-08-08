@@ -3,16 +3,14 @@
  *
  * 提供主题列表、主题页面数据组装（含章节、课时、前后主题导航）等功能。
  *
- * 架构 V4：Topic → Chapter → Lesson
- * TopicPage 包含 chapters（章节及其课时）和 lessons（未归入章节的课时）。
+ * 架构 V4（定稿）：Topic 不再有 courseId，前后主题导航基于全局主题列表。
  */
 import { topicRepository } from '@content/repositories'
 import type { TopicPage, ChapterWithLessons } from '../types/index'
-import { normalizeSlug, toTopic, toCourse, toChapter, toLesson, toExercise, getSiblings } from '../utils'
+import { normalizeSlug, toTopic, toChapter, toLesson, toExercise, getSiblings } from '../utils'
 
 export class TopicService {
-  async list(courseId?: number) {
-    if (courseId) return topicRepository.listByCourse(courseId)
+  async list() {
     return topicRepository.list()
   }
 
@@ -23,16 +21,15 @@ export class TopicService {
     const data = await topicRepository.getWithChaptersAndLessons(clean)
     if (!data) return null
 
-    // 使用 getSiblings 工具函数计算前后主题导航
-    const { previous: previousTopic, next: nextTopic } = getSiblings(data.siblingTopics, data.slug)
+    // 使用 getSiblings 工具函数计算前后主题导航（基于全局主题列表）
+    const { previous: previousTopic, next: nextTopic } = getSiblings(data.allTopics, data.slug)
 
     // 组装章节及其课时（ChapterWithLessons[]）
     const chaptersWithLessons: ChapterWithLessons[] = (data.chapterList || []).map(ch => {
-      // 从 topic 的 lessonList 中筛选属于该章节的课时
       const chapterLessons = (data.lessonList || []).filter(l => l.chapterId === ch.id)
       return {
-        chapter: toChapter(ch),
-        lessons: chapterLessons.map(l => toLesson(l))
+        chapter: toChapter(ch as Record<string, unknown>),
+        lessons: chapterLessons.map(l => toLesson(l as Record<string, unknown>))
       }
     })
 
@@ -44,16 +41,16 @@ export class TopicService {
     )
     const flatLessons = (data.lessonList || [])
       .filter(l => !chapterLessonIds.has(l.id))
-      .map(l => toLesson(l))
+      .map(l => toLesson(l as Record<string, unknown>))
 
     return {
-      topic: toTopic(data),
-      course: data.courseEntity ? toCourse(data.courseEntity) : null,
+      topic: toTopic(data as Record<string, unknown>),
+      course: null, // Course 不再通过 FK 关联，固定为 null
       chapters: chaptersWithLessons,
       lessons: flatLessons,
-      exercise: data.exerciseEntity ? toExercise(data.exerciseEntity) : null,
-      previousTopic,
-      nextTopic
+      exercise: data.exerciseEntity ? toExercise(data.exerciseEntity as Record<string, unknown>) : null,
+      previousTopic: previousTopic ? toTopic(previousTopic as Record<string, unknown>) : null,
+      nextTopic: nextTopic ? toTopic(nextTopic as Record<string, unknown>) : null
     }
   }
 }

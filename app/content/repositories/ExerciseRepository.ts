@@ -61,7 +61,7 @@ export class ExerciseRepository extends BaseRepository<typeof exercises> {
     if (!topicRow) return []
     return db.select().from(this.table)
       .where(eq(this.table.topicId, topicRow.id))
-      .orderBy(asc(this.table.order), asc(this.table.id)) as Exercise[]
+      .orderBy(asc(this.table.order), asc(this.table.id)) as unknown as Exercise[]
   }
 
   // ── 以下为通用方法的类型收窄覆写 ──

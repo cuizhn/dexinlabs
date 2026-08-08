@@ -21,11 +21,7 @@ export function toCourse(row: Record<string, unknown>): Course {
   return {
     id: row.id as number,
     slug: row.slug as string,
-    title: row.title as string,
-    description: (row.description as string) ?? null,
-    order: row.order as number,
-    createdAt: row.createdAt as Date,
-    updatedAt: row.updatedAt as Date
+    title: row.title as string
   }
 }
 
@@ -37,14 +33,7 @@ export function toTopic(row: Record<string, unknown>): Topic {
     id: row.id as number,
     slug: row.slug as string,
     title: row.title as string,
-    description: (row.description as string) ?? null,
-    summary: (row.summary as string) ?? null,
-    order: row.order as number,
-    courseId: (row.courseId as number) ?? null,
-    cover: (row.cover as string) ?? null,
-    body: (row.body as string) ?? null,
-    createdAt: row.createdAt as Date,
-    updatedAt: row.updatedAt as Date
+    order: row.order as number
   }
 }
 
@@ -55,11 +44,9 @@ export function toChapter(row: Record<string, unknown>): Chapter {
   return {
     id: row.id as number,
     title: row.title as string,
-    description: (row.description as string) ?? null,
+    slug: row.slug as string,
     order: row.order as number,
-    topicId: (row.topicId as number) ?? null,
-    createdAt: row.createdAt as Date,
-    updatedAt: row.updatedAt as Date
+    topicId: (row.topicId as number) ?? null
   }
 }
 
@@ -71,14 +58,10 @@ export function toLesson(row: Record<string, unknown>): Lesson {
     id: row.id as number,
     slug: row.slug as string,
     title: row.title as string,
-    summary: (row.summary as string) ?? null,
     order: row.order as number,
     topicId: (row.topicId as number) ?? null,
     chapterId: (row.chapterId as number) ?? null,
-    content: row.content as Lesson['content'],
-    astVersion: (row.astVersion as number) ?? 1,
-    createdAt: row.createdAt as Date,
-    updatedAt: row.updatedAt as Date
+    content: row.content as Lesson['content']
   }
 }
 
