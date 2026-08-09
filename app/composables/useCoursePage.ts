@@ -8,7 +8,7 @@
  */
 import { computed } from 'vue'
 import { useAsyncData } from 'nuxt/app'
-import type { CoursePage } from '@content'
+import type { CoursePage } from '~/types/pages'
 
 /**
  * useCoursePage - 获取课程知识地图页面数据

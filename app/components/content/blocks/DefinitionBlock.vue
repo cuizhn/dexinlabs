@@ -1,7 +1,7 @@
 <template>
   <div class="block-definition">
     <dt class="block-definition__term">{{ block.term }}</dt>
-    <dd class="block-definition__content" v-html="html" />
+    <dd class="block-definition__content" v-html="block.content" />
   </div>
 </template>
 
@@ -11,11 +11,9 @@
  *
  * 使用 <dl>/<dt>/<dd> 语义化标签渲染数学术语定义。
  */
-import { renderInline } from '@markdown'
-import type { DefinitionBlock } from '@content/types/ast'
+import type { DefinitionBlock } from '~/learning/lesson-ast'
 
-const props = defineProps<{ block: DefinitionBlock }>()
-const html = computed(() => renderInline(props.block.content))
+defineProps<{ block: DefinitionBlock }>()
 </script>
 
 <style scoped>

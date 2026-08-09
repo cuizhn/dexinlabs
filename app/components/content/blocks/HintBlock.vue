@@ -3,7 +3,7 @@
     <div class="block-hint__header">
       {{ label }}
     </div>
-    <div class="block-hint__body" v-html="html" />
+    <div class="block-hint__body" v-html="block.content" />
   </div>
 </template>
 
@@ -13,11 +13,9 @@
  *
  * 根据 level 显示不同样式的提示框。
  */
-import { renderInline } from '@markdown'
-import type { HintBlock } from '@content/types/ast'
+import type { HintBlock } from '~/learning/lesson-ast'
 
 const props = defineProps<{ block: HintBlock }>()
-const html = computed(() => renderInline(props.block.content))
 
 /** 各级别的中文标签 */
 const labelMap: Record<HintBlock['level'], string> = {

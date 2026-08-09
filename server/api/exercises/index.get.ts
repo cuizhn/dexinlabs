@@ -1,5 +1,5 @@
 import { defineEventHandler, getQuery, createError } from 'h3'
-import { exerciseService } from '@content'
+import { exerciseService } from '~/learning/exercise/service'
 import { assertDatabaseReady } from '@server/utils/error'
 
 export default defineEventHandler(async event => {

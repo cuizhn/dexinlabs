@@ -9,7 +9,7 @@
  */
 import { computed } from 'vue'
 import { useAsyncData } from 'nuxt/app'
-import type { TopicPage } from '@content'
+import type { TopicPage } from '~/types/pages'
 
 /**
  * useTopicPage - 获取知识主题页面数据

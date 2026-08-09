@@ -1,5 +1,5 @@
 import { defineEventHandler } from 'h3'
-import { topicService } from '@content'
+import { topicService } from '~/learning/topic/service'
 import { assertDatabaseReady } from '@server/utils/error'
 
 export default defineEventHandler(async event => {

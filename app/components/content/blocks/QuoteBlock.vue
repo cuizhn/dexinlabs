@@ -1,16 +1,14 @@
 <template>
-  <blockquote class="block-quote" v-html="html" />
+  <blockquote class="block-quote" v-html="block.content" />
 </template>
 
 <script setup lang="ts">
 /**
  * QuoteBlock 组件 - 引用
  */
-import { renderInline } from '@markdown'
-import type { QuoteBlock } from '@content/types/ast'
+import type { QuoteBlock } from '~/learning/lesson-ast'
 
-const props = defineProps<{ block: QuoteBlock }>()
-const html = computed(() => renderInline(props.block.content))
+defineProps<{ block: QuoteBlock }>()
 </script>
 
 <style scoped>

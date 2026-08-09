@@ -12,7 +12,7 @@
  * 唯一可嵌套的 Block 类型。渲染标题后递归渲染子 Block 列表。
  * 通过 ContentBlocksRenderer（即 Renderer.vue）实现递归渲染。
  */
-import type { SectionBlock } from '@content/types/ast'
+import type { SectionBlock } from '~/learning/lesson-ast'
 
 defineProps<{ block: SectionBlock }>()
 </script>

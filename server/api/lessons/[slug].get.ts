@@ -5,7 +5,7 @@
  * 因此需要同时提供 topic 和 slug 两个参数。
  */
 import { defineEventHandler, getQuery, getRouterParam, createError } from 'h3'
-import { lessonService } from '@content'
+import { lessonService } from '~/learning/lesson/service'
 import { assertDatabaseReady } from '@server/utils/error'
 
 export default defineEventHandler(async event => {

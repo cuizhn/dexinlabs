@@ -6,20 +6,27 @@
 /**
  * FormulaBlock 组件 - 数学公式
  *
- * 使用 KaTeX 渲染 LaTeX 公式。
+ * 直接使用 KaTeX 渲染 LaTeX 公式。
  * display=true 为块级公式（居中展示），display=false 为行内公式。
  *
- * 渲染流程：将 LaTeX 包装为 $$ 或 $ 格式，通过 renderInline 调用 KaTeX。
+ * 不依赖 Markdown 解析，直接接收 AST 中的 LaTeX 源文本。
  */
-import { renderInline } from '@markdown'
-import type { FormulaBlock } from '@content/types/ast'
+import katex from 'katex'
+import type { FormulaBlock } from '~/learning/lesson-ast'
 
 const props = defineProps<{ block: FormulaBlock }>()
 
-/** 将 LaTeX 源文本转换为 KaTeX 可识别的 Markdown 格式 */
+/** 将 LaTeX 源文本通过 KaTeX 渲染为 HTML */
 const html = computed(() => {
-  const delimiter = props.block.display ? '$$' : '$'
-  return renderInline(`${delimiter}${props.block.latex}${delimiter}`)
+  try {
+    return katex.renderToString(props.block.latex, {
+      displayMode: props.block.display,
+      throwOnError: false,
+      strict: false
+    })
+  } catch {
+    return props.block.latex
+  }
 })
 </script>
 

@@ -1,20 +1,20 @@
 <template>
   <div class="block-question">
-    <div class="block-question__prompt" v-html="promptHtml" />
+    <div class="block-question__prompt" v-html="block.prompt" />
 
     <details v-if="block.hint" class="block-question__section">
       <summary>💡 提示</summary>
-      <div v-html="hintHtml" />
+      <div v-html="block.hint" />
     </details>
 
     <details v-if="block.answer" class="block-question__section">
       <summary>✅ 答案</summary>
-      <div v-html="answerHtml" />
+      <div v-html="block.answer" />
     </details>
 
     <details v-if="block.analysis" class="block-question__section">
       <summary>📖 解析</summary>
-      <div v-html="analysisHtml" />
+      <div v-html="block.analysis" />
     </details>
   </div>
 </template>
@@ -25,15 +25,9 @@
  *
  * 题目始终展示，提示/答案/解析通过 <details> 渐进展示。
  */
-import { renderInline } from '@markdown'
-import type { QuestionBlock } from '@content/types/ast'
+import type { QuestionBlock } from '~/learning/lesson-ast'
 
-const props = defineProps<{ block: QuestionBlock }>()
-
-const promptHtml = computed(() => renderInline(props.block.prompt))
-const hintHtml = computed(() => renderInline(props.block.hint || ''))
-const answerHtml = computed(() => renderInline(props.block.answer || ''))
-const analysisHtml = computed(() => renderInline(props.block.analysis || ''))
+defineProps<{ block: QuestionBlock }>()
 </script>
 
 <style scoped>

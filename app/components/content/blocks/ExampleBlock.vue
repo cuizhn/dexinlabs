@@ -1,7 +1,7 @@
 <template>
   <div class="block-example">
     <div v-if="block.title" class="block-example__title">{{ block.title }}</div>
-    <div class="block-example__body" v-html="html" />
+    <div class="block-example__body" v-html="block.content" />
   </div>
 </template>
 
@@ -11,11 +11,9 @@
  *
  * 展示解题过程、应用场景等教学内容。
  */
-import { renderInline } from '@markdown'
-import type { ExampleBlock } from '@content/types/ast'
+import type { ExampleBlock } from '~/learning/lesson-ast'
 
-const props = defineProps<{ block: ExampleBlock }>()
-const html = computed(() => renderInline(props.block.content))
+defineProps<{ block: ExampleBlock }>()
 </script>
 
 <style scoped>

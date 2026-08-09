@@ -95,13 +95,13 @@ interface BaseBlock {
 
 #### 文本类 Block
 
-文本类 Block 的 `content` 字段为 **Markdown 字符串**，但仅支持行内语法（加粗、斜体、行内公式、链接等），不包含块级语法。
+文本类 Block 的 `content` 字段为 **行内 HTML 字符串**，由 Content Compiler（dexinlabs-content）在编译阶段将 Markdown 行内语法（加粗、斜体、行内公式、链接等）编译为 HTML。主项目通过 `v-html` 直接输出，不做任何 Markdown 解析。
 
 ```typescript
 /** 段落 */
 interface ParagraphBlock extends BaseBlock {
   type: 'paragraph'
-  /** Markdown 行内内容 */
+  /** 行内 HTML（compiler 编译输出） */
   content: string
 }
 
@@ -110,14 +110,14 @@ interface HeadingBlock extends BaseBlock {
   type: 'heading'
   /** 标题层级 1-4 */
   level: 1 | 2 | 3 | 4
-  /** Markdown 行内内容 */
+  /** 行内 HTML（compiler 编译输出） */
   content: string
 }
 
 /** 引用 */
 interface QuoteBlock extends BaseBlock {
   type: 'quote'
-  /** Markdown 内容（可含多段） */
+  /** HTML 内容（compiler 编译输出，可含多段） */
   content: string
 }
 
@@ -126,7 +126,7 @@ interface HintBlock extends BaseBlock {
   type: 'hint'
   /** 提示级别 */
   level: 'info' | 'tip' | 'warning' | 'danger'
-  /** Markdown 内容 */
+  /** HTML 内容（compiler 编译输出） */
   content: string
 }
 ```
@@ -176,14 +176,14 @@ interface ListBlock extends BaseBlock {
   type: 'list'
   /** 是否有序列表 */
   ordered: boolean
-  /** 列表项，每项为 Markdown 行内内容 */
+  /** 列表项，每项为行内 HTML（compiler 编译输出） */
   items: string[]
 }
 
 /** 表格 */
 interface TableBlock extends BaseBlock {
   type: 'table'
-  /** 表头单元格（Markdown 行内内容） */
+  /** 表头单元格（行内 HTML，compiler 编译输出） */
   headers: string[]
   /** 表格数据行，每行为单元格数组 */
   rows: string[][]
@@ -200,7 +200,7 @@ interface DefinitionBlock extends BaseBlock {
   type: 'definition'
   /** 术语名称 */
   term: string
-  /** 定义内容（Markdown） */
+  /** 定义内容（行内 HTML，compiler 编译输出） */
   content: string
 }
 
@@ -209,20 +209,20 @@ interface ExampleBlock extends BaseBlock {
   type: 'example'
   /** 示例标题（可选） */
   title?: string
-  /** 示例内容（Markdown） */
+  /** 示例内容（行内 HTML，compiler 编译输出） */
   content: string
 }
 
 /** 练习题 / 思考题 */
 interface QuestionBlock extends BaseBlock {
   type: 'question'
-  /** 题目内容（Markdown） */
+  /** 题目内容（行内 HTML，compiler 编译输出） */
   prompt: string
-  /** 提示（Markdown，可选） */
+  /** 提示（行内 HTML，可选） */
   hint?: string
-  /** 答案（Markdown，可选） */
+  /** 答案（行内 HTML，可选） */
   answer?: string
-  /** 解析（Markdown，可选） */
+  /** 解析（行内 HTML，可选） */
   analysis?: string
 }
 ```
@@ -249,16 +249,16 @@ interface DividerBlock extends BaseBlock {
 
 ## 4. 设计决策
 
-### 4.1 为什么文本 Block 的 content 仍是 Markdown？
+### 4.1 文本 Block 的 content 为什么是行内 HTML？
 
-Block 的 `content` 字段使用 Markdown 行内语法，而非纯文本或 HTML：
+Block 的 `content` 字段存储 Content Compiler 编译后的行内 HTML，而非 Markdown 或纯文本：
 
-- **编辑友好**：Markdown 是最轻量的富文本表示，人工可读可编辑
-- **编译确定性**：行内 Markdown 语法有限（bold/italic/code/link/math），编译结果确定
-- **职责分离**：Markdown Engine 负责将行内 Markdown 渲染为 HTML，Renderer 不感知 Markdown
-- **渐进迁移**：现有 Markdown 内容可按 Block 粒度迁移，不需要一次性重写
+- **主项目零 Markdown 依赖**：主项目不包含 remark/rehype/unified 等 Markdown 处理库，仅通过 `v-html` 直接输出
+- **职责清晰**：Content Compiler（dexinlabs-content）负责 Markdown → HTML 编译，主项目只负责 AST → Vue 渲染
+- **结构化保留**：块级结构由 Block 类型系统表达（段落、标题、列表、表格等），文本字段仅存储行内 HTML
+- **确定性**：行内 HTML 的语法有限（bold/italic/code/link/math），渲染结果确定
 
-**关键约束**：文本 Block 的 content 只支持行内语法，不支持块级语法（如标题、列表）。块级结构由 Block 类型系统表达。
+**关键约束**：文本 Block 的 content 只包含行内 HTML（加粗、斜体、代码、链接、公式等），不包含块级标签。块级结构由 Block 类型系统表达。
 
 ### 4.2 为什么只有 Section 可以嵌套？
 
@@ -266,12 +266,12 @@ Block 的 `content` 字段使用 Markdown 行内语法，而非纯文本或 HTML
 - Section 是唯一的"分组"语义，其他 Block 都是叶子节点
 - Renderer 只需处理一层遍历 + Section 递归
 
-### 4.3 为什么不用 HTML 存储？
+### 4.3 为什么块级结构用 AST 而非整篇 HTML？
 
-- HTML 是渲染格式，不是结构格式
-- HTML 丢失语义信息（无法区分"定义"和"示例"）
-- HTML 不利于编辑、搜索、分析
-- HTML 不利于多端输出（Web / PDF / 移动端）
+- 纯 HTML 丢失语义信息（无法区分“定义”和“示例”）
+- 纯 HTML 不利于编辑、搜索、分析
+- 纯 HTML 不利于多端输出（Web / PDF / 移动端）
+- AST 保留结构语义，文本字段存储行内 HTML 仅用于最终渲染
 
 ### 4.4 版本号的作用
 
@@ -335,23 +335,11 @@ app/content/compiler/
 
 ## 6. 各层职责变更
 
-### 6.1 Markdown Engine（收窄）
+### 6.1 Markdown Engine（已移除）
 
-**变更前**：整个 Lesson（多字段 Markdown）→ HTML
+主项目（dexinlabs）已完全移除 Markdown Engine（remark/rehype/unified 管线）。
 
-**变更后**：单个 Block 的行内 Markdown → HTML
-
-```
-ParagraphBlock.content（Markdown 行内）
-    │
-    ▼
-Markdown Engine
-    │
-    ▼
-HTML 字符串
-```
-
-Markdown Engine 不再感知 Lesson 结构，只负责文本块级渲染。
+行内 Markdown → HTML 的编译职责已转移至 **dexinlabs-content** 项目的 Content Compiler。主项目只消费编译完成的行内 HTML，通过 `v-html` 直接输出。
 
 ### 6.2 Repository（简化）
 
@@ -422,7 +410,8 @@ Renderer
 
 每个 Block 组件：
 - 接收该类型 Block 的 props
-- 如需渲染行内 Markdown，调用 `renderInline(content)` → HTML → `v-html`
+- 文本类 Block 的 content 为行内 HTML，直接通过 `v-html` 输出
+- FormulaBlock 直接调用 KaTeX API 渲染 LaTeX
 - 纯结构化 Block（Image、Divider）直接渲染
 
 ---
@@ -499,9 +488,11 @@ ALTER TABLE lessons
 
 ### 阶段 3：渲染层
 
-- Markdown Engine 收窄为 Block 级 `renderInline()`
+- 主项目移除 Markdown Engine（remark/rehype/unified 管线）
 - Renderer 改为 AST 驱动
 - 创建各 Block 对应的 Vue 组件
+- 文本类 Block 直接通过 `v-html` 输出 compiler 编译的行内 HTML
+- FormulaBlock 直接调用 KaTeX API 渲染 LaTeX
 
 ### 阶段 4：API + 页面
 
@@ -516,10 +507,10 @@ ALTER TABLE lessons
 本规范**取代** ADR-0009（Content Rendering Responsibility）中关于"Service 层负责 Markdown → HTML"的决策。
 
 新决策：
-- Content Compiler 负责 Markdown → Lesson AST（输入层）
-- Markdown Engine 负责 Block 级 Markdown → HTML（渲染层）
+- Content Compiler（dexinlabs-content）负责 Markdown → Lesson AST，文本字段编译为行内 HTML
+- 主项目（dexinlabs）不包含任何 Markdown 解析/编译能力
 - Service 不再负责 Markdown 渲染
-- Renderer 按 Block 类型分发，每个 Block 组件内部决定是否调用 Markdown Engine
+- Renderer 按 Block 类型分发，文本类 Block 通过 `v-html` 直接输出行内 HTML，FormulaBlock 调用 KaTeX API
 
 ---
 
