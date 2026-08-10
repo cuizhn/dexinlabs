@@ -7,8 +7,8 @@
  */
 import { exerciseRepository } from './repository'
 import { topicRepository } from '../topic/repository'
-import type { ExercisePage } from '../../types/pages'
-import { normalizeSlug } from '../shared'
+import type { ExercisePage } from '~/learning/view-models'
+import { normalizeSlug } from '~/utils/slug'
 import { toExercise } from './types'
 import { toTopic } from '../topic/types'
 

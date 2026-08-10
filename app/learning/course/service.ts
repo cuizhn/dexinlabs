@@ -6,10 +6,12 @@
  */
 import { courseRepository } from './repository'
 import { topicRepository } from '../topic/repository'
-import type { CoursePage } from '../../types/pages'
+import type { CoursePage, CatalogTopic } from '~/learning/view-models'
+import { normalizeSlug } from '~/utils/slug'
 import { toCourse } from './types'
 import { toTopic } from '../topic/types'
-import { normalizeSlug } from '../shared'
+import { toChapter } from '../chapter/types'
+import { toLesson } from '../lesson/types'
 
 export class CourseService {
   /**
@@ -34,6 +36,33 @@ export class CourseService {
       course,
       topics
     }]
+  }
+
+  /**
+   * 获取课程目录数据（所有 Topic 及其 Chapter + Lesson）
+   *
+   * 用于 /courses 课程目录页，返回完整层级结构。
+   */
+  async getCatalog(): Promise<CatalogTopic[]> {
+    const topicList = await topicRepository.list()
+    const catalog: CatalogTopic[] = []
+
+    for (const t of topicList) {
+      const topic = toTopic(t as Record<string, unknown>)
+      const data = await topicRepository.getWithChaptersAndLessons(topic.slug)
+      if (!data) continue
+
+      const chapters = (data.chapterList || []).map(ch => ({
+        chapter: toChapter(ch as Record<string, unknown>),
+        lessons: (data.lessonList || [])
+          .filter(l => l.chapterId === ch.id)
+          .map(l => toLesson(l as Record<string, unknown>))
+      }))
+
+      catalog.push({ topic, chapters })
+    }
+
+    return catalog
   }
 
   async getCoursePage(slug: string): Promise<CoursePage | null> {

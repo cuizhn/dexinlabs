@@ -1,39 +1,60 @@
 <template>
-  <nav class="courses-map">
-    <header class="courses-map__header">
+  <nav class="catalog">
+    <header class="catalog__header">
       <div class="container">
-        <h1 class="courses-map__title">课程知识地图</h1>
-        <p class="courses-map__desc">
-          浏览完整的知识体系，找到你想学习的主题
+        <h1 class="catalog__title">课程目录</h1>
+        <p class="catalog__desc">
+          选择你想学习的课时，直接进入学习
         </p>
       </div>
     </header>
 
-    <section class="courses-map__body">
+    <section class="catalog__body">
       <div class="container">
-        <div v-if="loading" class="courses-map__loading">加载中...</div>
+        <div v-if="loading" class="catalog__loading">加载中...</div>
 
-        <div v-else class="courses-map__grid">
-          <template v-for="cp in courses" :key="cp.course.slug">
-            <h2
-              v-if="cp.topics.length > 0 && courses.length > 1"
-              class="courses-map__group-title"
+        <template v-else>
+          <div
+            v-for="item in catalog"
+            :key="item.topic.slug"
+            class="catalog__topic"
+          >
+            <h2 class="catalog__topic-title">{{ item.topic.title }}</h2>
+
+            <div
+              v-for="ch in item.chapters"
+              :key="ch.chapter.slug || ch.chapter.id"
+              class="catalog__chapter"
             >
-              {{ cp.course.title }}
-            </h2>
+              <h3 class="catalog__chapter-title">{{ ch.chapter.title }}</h3>
 
-            <LearningTopicStatusCard
-              v-for="t in cp.topics"
-              :key="t.slug"
-              :topic="t"
-              :total-lessons="0"
-            />
-          </template>
-        </div>
+              <ol class="catalog__lessons">
+                <li
+                  v-for="(lesson, idx) in ch.lessons"
+                  :key="lesson.slug"
+                  class="catalog__lesson"
+                  :class="{ 'catalog__lesson--completed': getLessonState(lesson.slug).isCompleted }"
+                >
+                  <NuxtLink
+                    :to="`/${item.topic.slug}/${lesson.slug}`"
+                    class="catalog__lesson-link"
+                  >
+                    <span class="catalog__lesson-index">
+                      <template v-if="getLessonState(lesson.slug).isCompleted">✓</template>
+                      <template v-else>{{ String(idx + 1).padStart(2, '0') }}</template>
+                    </span>
+                    <span class="catalog__lesson-title">{{ lesson.title }}</span>
+                    <span class="catalog__lesson-arrow">→</span>
+                  </NuxtLink>
+                </li>
+              </ol>
+            </div>
+          </div>
 
-        <div v-if="!loading && allTopics.length === 0" class="courses-map__empty">
-          暂无学习主题
-        </div>
+          <div v-if="catalog.length === 0" class="catalog__empty">
+            暂无课程内容
+          </div>
+        </template>
       </div>
     </section>
   </nav>
@@ -41,36 +62,38 @@
 
 <script setup lang="ts">
 /**
- * 课程知识地图页 - /courses
+ * 课程目录页 - /courses
  *
- * 统一课程入口，承担知识地图功能。
- * 直接展示 Topic 卡片，每个卡片显示标题、简介、学习状态。
+ * 唯一的课程目录入口，直接展示：
+ * Topic → Chapter → Lesson 完整层级。
  *
- * 架构 V4：Course → Topic → Chapter → Lesson
+ * 用户点击 Lesson 后进入 /{topicSlug}/{lessonSlug} 学习页面。
+ * 无中间页面（无 Topic Index、无 Course Index）。
  */
-useHead({ title: '课程知识地图' })
+import { useLearningState } from '~/composables/useLearningState'
 
-const { courses, loading } = await useCoursePage()
+useHead({ title: '课程目录' })
 
-/** 将 CoursePage[] 展平为 Topic 列表（用于计算总数） */
-const allTopics = computed(() => courses.value.flatMap(cp => cp.topics || []))
+const { catalog, loading } = await useCourseCatalog()
+
+const { getLessonState } = useLearningState()
 </script>
 
 <style scoped>
-.courses-map__header {
+.catalog__header {
   padding: var(--spacing-2xl) 0 var(--spacing-xl);
   text-align: center;
   background: linear-gradient(180deg, var(--color-bg-secondary), transparent);
 }
 
-.courses-map__title {
+.catalog__title {
   font-size: 2.25rem;
   font-weight: 700;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-sm);
 }
 
-.courses-map__desc {
+.catalog__desc {
   font-size: 1rem;
   color: var(--color-text-secondary);
   max-width: 560px;
@@ -78,40 +101,108 @@ const allTopics = computed(() => courses.value.flatMap(cp => cp.topics || []))
   line-height: 1.6;
 }
 
-.courses-map__body {
+.catalog__body {
   padding: var(--spacing-xl) 0 var(--spacing-3xl);
 }
 
-.courses-map__loading {
+.catalog__loading {
   text-align: center;
   padding: var(--spacing-3xl);
   color: var(--color-text-muted);
 }
 
-.courses-map__empty {
+.catalog__empty {
   text-align: center;
   padding: var(--spacing-3xl);
   color: var(--color-text-muted);
 }
 
-.courses-map__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--spacing-lg);
-  align-content: start;
+/* Topic 分组 */
+.catalog__topic {
+  margin-bottom: var(--spacing-3xl);
 }
 
-.courses-map__group-title {
-  grid-column: 1 / -1;
+.catalog__topic-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-primary);
+}
+
+/* Chapter 分组 */
+.catalog__chapter {
+  margin-bottom: var(--spacing-xl);
+}
+
+.catalog__chapter-title {
   font-size: 1rem;
   font-weight: 600;
   color: var(--color-text-secondary);
-  padding: var(--spacing-md) 0 var(--spacing-xs);
-  border-bottom: 1px solid var(--color-border);
-  margin-bottom: var(--spacing-xs);
+  margin: 0 0 var(--spacing-sm);
 }
 
-.courses-map__group-title:first-child {
-  padding-top: 0;
+/* Lesson 列表 */
+.catalog__lessons {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.catalog__lesson-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-bg-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.catalog__lesson-link:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.catalog__lesson--completed .catalog__lesson-link {
+  border-color: var(--color-success-border);
+  background: var(--color-success-bg);
+}
+
+.catalog__lesson-index {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--color-primary);
+  min-width: 2rem;
+  text-align: center;
+}
+
+.catalog__lesson--completed .catalog__lesson-index {
+  color: var(--color-success-dark);
+}
+
+.catalog__lesson-title {
+  flex: 1;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.catalog__lesson-arrow {
+  color: var(--color-text-light);
+  font-weight: 500;
+  transition: transform 150ms ease;
+}
+
+.catalog__lesson-link:hover .catalog__lesson-arrow {
+  color: var(--color-primary);
+  transform: translateX(4px);
 }
 </style>

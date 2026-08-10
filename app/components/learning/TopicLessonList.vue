@@ -10,7 +10,7 @@
         class="topic-lesson-list__item"
         :class="{ 'topic-lesson-list__item--completed': getLessonState(lesson.slug).isCompleted }"
       >
-        <NuxtLink :to="`/courses/${topicSlug}/${lesson.slug}`" class="topic-lesson-list__link">
+        <NuxtLink :to="`/${topicSlug}/${lesson.slug}`" class="topic-lesson-list__link">
           <span class="topic-lesson-list__index">
             <template v-if="getLessonState(lesson.slug).isCompleted">✓</template>
             <template v-else>{{ String(idx + 1).padStart(2, '0') }}</template>

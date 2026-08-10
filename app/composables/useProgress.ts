@@ -1,6 +1,6 @@
-import { ProgressService } from '@progress'
-import { LocalStorageAdapter } from '@progress/storage/LocalStorageAdapter'
-import type { LastLesson } from '@progress/types'
+import { ProgressService } from '~/learning/progress'
+import { LocalStorageAdapter } from '~/learning/progress/storage/LocalStorageAdapter'
+import type { LastLesson } from '~/learning/progress/types'
 
 export function useProgress() {
   const service = new ProgressService(new LocalStorageAdapter())

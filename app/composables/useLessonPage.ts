@@ -4,11 +4,11 @@
  * 架构 V4（定稿）：Lesson 唯一约束为 (topic_id, slug)，
  * 需要同时提供 topicSlug 和 lessonSlug。
  *
- * 路由：/courses/{topic}/{lesson}
+ * 路由：/{topicSlug}/{lessonSlug}
  */
 import { computed } from 'vue'
 import { useAsyncData } from 'nuxt/app'
-import type { LessonPage } from '~/types/pages'
+import type { LessonPage } from '~/learning/view-models'
 
 /**
  * useLessonPage - 获取课时页面数据

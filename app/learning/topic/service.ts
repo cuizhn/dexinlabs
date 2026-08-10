@@ -6,8 +6,9 @@
  * 架构 V4（定稿）：Topic 不再有 courseId，前后主题导航基于全局主题列表。
  */
 import { topicRepository } from './repository'
-import type { TopicPage, ChapterWithLessons } from '../../types/pages'
-import { normalizeSlug, getSiblings } from '../shared'
+import type { TopicPage, ChapterWithLessons } from '~/learning/view-models'
+import { normalizeSlug } from '~/utils/slug'
+import { getSiblings } from '../shared'
 import { toTopic } from './types'
 import { toChapter } from '../chapter/types'
 import { toLesson } from '../lesson/types'

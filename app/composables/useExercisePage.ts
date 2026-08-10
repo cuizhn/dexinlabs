@@ -7,7 +7,7 @@
  */
 import { computed } from 'vue'
 import { useAsyncData } from 'nuxt/app'
-import type { ExercisePage } from '~/types/pages'
+import type { ExercisePage } from '~/learning/view-models'
 
 /**
  * useExercisePage - 获取练习页面数据

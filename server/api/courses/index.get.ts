@@ -6,6 +6,12 @@ export default defineEventHandler(async event => {
   assertDatabaseReady()
 
   const query = getQuery(event)
+
+  // ?catalog=true → 课程目录（所有 Topic + Chapter + Lesson）
+  if (query.catalog === 'true') {
+    return courseService.getCatalog()
+  }
+
   const slug = typeof query.slug === 'string' ? query.slug : ''
 
   if (slug) {

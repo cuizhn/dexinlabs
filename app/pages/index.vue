@@ -106,7 +106,7 @@ function onStageSelect(_stage: string) {
   showStageDialog.value = false
   // 占位：跳转到推荐 Topic（当前硬编码为第一个主题）
   // 未来由 Recommendation Engine 根据诊断结果决定
-  navigateTo('/courses/functions')
+  navigateTo('/courses')
 }
 
 useHead({

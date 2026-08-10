@@ -1,7 +1,5 @@
 /**
  * 通用 slug 处理工具
- *
- * 从 content/utils.ts 迁移而来。
  */
 
 /**

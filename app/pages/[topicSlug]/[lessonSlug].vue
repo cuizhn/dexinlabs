@@ -1,7 +1,7 @@
 <template>
   <article>
     <header>
-      <NuxtLink :to="`/courses/${topic}`" class="lesson-page__back">
+      <NuxtLink to="/courses" class="lesson-page__back">
         <IconChevron direction="left" :size="20" />
         {{ topicData?.title }}
       </NuxtLink>
@@ -29,25 +29,24 @@
 /**
  * Lesson 页面 - 沉浸式课时学习
  *
- * 路由：/courses/{topic}/{lesson}
+ * 路由：/{topicSlug}/{lessonSlug}
  *
  * 单栏布局：返回链接 + 课时正文 + 前后导航。
  * 内容渲染由 ContentRenderer 组件基于 Lesson AST 驱动（Block → Vue 组件）。
  *
  * 设计原则：
  * - 去除面包屑和顶部导航，保持沉浸
- * - 仅保留返回 Topic 的链接
+ * - 仅保留返回课程目录的链接
  * - 进入页面时记录学习进度
  */
 import { useLearningState } from '~/composables/useLearningState'
 import { useRouteParam } from '~/composables/useRouteParam'
 
-const topic = useRouteParam('topic') ?? ''
-const lessonSlug = (useRouteParam('lesson') ?? '') as string
+const topicSlug = useRouteParam('topicSlug') ?? ''
+const lessonSlug = (useRouteParam('lessonSlug') ?? '') as string
 
-const { lesson, topic: topicData } = await useLessonPage(topic, lessonSlug)
+const { lesson, topic: topicData } = await useLessonPage(topicSlug, lessonSlug)
 
-/** 便捷别名，避免模板中频繁 .value 访问 */
 const lessonData = computed(() => lesson.value)
 
 /** 记录学习进度 */
@@ -61,7 +60,7 @@ onMounted(() => {
       lessonSlug: lessonSlug!,
       lessonTitle: lesson.value.title,
       lessonIndex: lesson.value.order,
-      totalLessons: 0 // 当前无法获取总数，未来由 Progress Engine 提供
+      totalLessons: 0
     })
   }
 })
