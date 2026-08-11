@@ -36,7 +36,7 @@
                   :class="{ 'catalog__lesson--completed': getLessonState(lesson.slug).isCompleted }"
                 >
                   <NuxtLink
-                    :to="`/${item.topic.slug}/${lesson.slug}`"
+                    :to="`/courses/${item.topic.slug}/${lesson.slug}`"
                     class="catalog__lesson-link"
                   >
                     <span class="catalog__lesson-index">
@@ -80,6 +80,11 @@ const { getLessonState } = useLearningState()
 </script>
 
 <style scoped>
+.catalog {
+  min-height: 100vh;
+  margin: 0 auto;
+  min-width: 760px;
+}
 .catalog__header {
   padding: var(--spacing-2xl) 0 var(--spacing-xl);
   text-align: center;

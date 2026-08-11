@@ -29,7 +29,7 @@
 /**
  * Lesson 页面 - 沉浸式课时学习
  *
- * 路由：/{topicSlug}/{lessonSlug}
+ * 路由：/courses/:topicSlug/:lessonSlug
  *
  * 单栏布局：返回链接 + 课时正文 + 前后导航。
  * 内容渲染由 ContentRenderer 组件基于 Lesson AST 驱动（Block → Vue 组件）。
@@ -39,6 +39,10 @@
  * - 仅保留返回课程目录的链接
  * - 进入页面时记录学习进度
  */
+definePageMeta({
+  layout: 'lesson-layout'
+})
+
 import { useLearningState } from '~/composables/useLearningState'
 import { useRouteParam } from '~/composables/useRouteParam'
 

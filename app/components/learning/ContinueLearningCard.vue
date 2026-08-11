@@ -28,7 +28,7 @@
     </div>
 
     <NuxtLink
-      :to="`/${recentLearning.topicSlug}/${recentLearning.lessonSlug}`"
+      :to="`/courses/${recentLearning.topicSlug}/${recentLearning.lessonSlug}`"
       class="continue-card__btn"
     >
       继续学习
