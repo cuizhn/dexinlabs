@@ -223,6 +223,7 @@ Agent 应完成自检：
 ## 文档
 
 - 是否需要更新文档？
+Agent may record decisions, but may not create or modify product or architectural decisions without explicit confirmation from the project owner.
 
 ---
 
