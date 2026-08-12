@@ -10,10 +10,7 @@
           <NuxtLink to="/courses" class="home-hero__btn home-hero__btn--primary">
             直接开始
           </NuxtLink>
-          <button class="home-hero__btn home-hero__btn--secondary">
-            注册 / 登录
-          </button>
-          <a href="#why" class="home-hero__btn home-hero__btn--tertiary">
+          <a href="#why" class="home-hero__btn home-hero__btn--secondary">
             深入了解
           </a>
         </div>
@@ -263,43 +260,41 @@ const topics = [
 <style scoped>
 /* ========== Hero ========== */
 .home-hero {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 24px;
+  padding: 48px 24px;
   background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
 }
 
 .home-hero__container {
   max-width: 800px;
+  margin: 0 auto;
   text-align: center;
 }
 
 .home-hero__title {
-  font-size: 4rem;
+  font-size: 3rem;
   font-weight: 800;
   color: var(--color-text-primary);
-  margin: 0 0 16px;
+  margin: 0 0 12px;
   letter-spacing: -0.02em;
 }
 
 .home-hero__subtitle {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   color: var(--color-text-secondary);
-  margin: 0 0 48px;
+  margin: 0 0 32px;
   font-weight: 400;
 }
 
 .home-hero__actions {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
 }
 
 .home-hero__btn {
-  padding: 14px 32px;
+  padding: 12px 28px;
   font-size: 1rem;
   font-weight: 600;
   border-radius: 8px;
@@ -326,23 +321,12 @@ const topics = [
 
 .home-hero__btn--secondary {
   background: transparent;
-  color: var(--color-text-primary);
-  border: 2px solid var(--color-border);
-}
-
-.home-hero__btn--secondary:hover {
-  border-color: var(--color-primary);
-  color: var(--color-primary);
-}
-
-.home-hero__btn--tertiary {
-  background: transparent;
   color: var(--color-text-secondary);
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 
-.home-hero__btn--tertiary:hover {
+.home-hero__btn--secondary:hover {
   color: var(--color-primary);
 }
 
@@ -786,15 +770,16 @@ const topics = [
 /* ========== 响应式 ========== */
 @media (max-width: 768px) {
   .home-hero {
-    padding: 60px 16px;
+    padding: 36px 16px;
   }
 
   .home-hero__title {
-    font-size: 3rem;
+    font-size: 2.25rem;
   }
 
   .home-hero__subtitle {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
+    margin-bottom: 24px;
   }
 
   .home-hero__actions {
