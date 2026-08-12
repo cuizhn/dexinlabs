@@ -1,15 +1,5 @@
 <template>
   <article>
-    <header>
-      <NuxtLink to="/courses" class="lesson-page__back">
-        <IconChevron direction="left" :size="20" />
-        {{ topicData?.title }}
-      </NuxtLink>
-      <div class="lesson-page__meta">
-        <span class="lesson-page__order">第 {{ lessonData?.order }} 课</span>
-      </div>
-    </header>
-
     <section class="lesson-page__body">
       <h1 class="lesson-page__title">
         {{ lessonData?.title }}
@@ -31,16 +21,16 @@
  *
  * 路由：/courses/:topicSlug/:lessonSlug
  *
- * 单栏布局：返回链接 + 课时正文 + 前后导航。
+ * 极简布局：仅显示课时标题和内容。
  * 内容渲染由 ContentRenderer 组件基于 Lesson AST 驱动（Block → Vue 组件）。
  *
  * 设计原则：
- * - 去除面包屑和顶部导航，保持沉浸
- * - 仅保留返回课程目录的链接
+ * - 去除面包屑、返回链接和课程编号，保持专注
+ * - 使用默认布局，显示全局 Header
  * - 进入页面时记录学习进度
  */
 definePageMeta({
-  layout: 'lesson-layout'
+  layout: 'default'
 })
 
 import { useLearningState } from '~/composables/useLearningState'
@@ -81,40 +71,7 @@ article {
   user-select: text;
   flex-grow: 1;
   background: var(--color-bg-white);
-}
-
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-xl);
-}
-
-.lesson-page__back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.9375rem;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: color 150ms ease;
-}
-
-.lesson-page__back:hover {
-  color: var(--color-primary);
-}
-
-.lesson-page__meta {
-  display: flex;
-  gap: var(--spacing-md);
-}
-
-.lesson-page__order {
-  font-size: var(--text-sm);
-  color: var(--color-text-light);
-  padding: 4px 12px;
-  background: var(--color-bg-secondary);
-  border-radius: var(--border-radius-md);
+  padding: var(--spacing-xl) var(--spacing-lg);
 }
 
 .lesson-page__title {
@@ -126,8 +83,6 @@ header {
 
 .lesson-page__body {
   line-height: 1.8;
-  padding: var(--spacing-xl);
-  box-sizing: border-box;
   color: var(--color-text-primary);
 }
 

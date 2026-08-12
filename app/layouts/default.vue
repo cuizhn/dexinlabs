@@ -3,7 +3,7 @@
   <div class="app-layout">
     <AppHeader />
 
-    <main class="layout__content">
+    <main >
       <slot />
     </main>
     <AppFooter />
@@ -15,7 +15,6 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--color-bg-primary);
 }
 
 main {
@@ -23,6 +22,6 @@ main {
   padding-top: 48px;
   min-height: calc(100vh - 48px);
   display: flex;
-  margin: 0 auto;
+  flex-direction: column;
 }
 </style>

@@ -1,73 +1,105 @@
 ﻿<template>
   <header class="app-header">
     <div class="app-header__container">
+      <!-- Logo -->
       <NuxtLink to="/" class="app-header__logo">
         <span class="app-header__logo-icon">∑</span>
-        <span class="app-header__logo-text">得心实验室</span>
+        <span class="app-header__logo-text">心得实验室</span>
       </NuxtLink>
 
-      <nav class="app-header__nav" aria-label="主导航">
-        <NuxtLink
-          v-for="item in navItems"
-          :key="item.path"
-          :to="item.path"
-          class="app-header__nav-item"
-          :class="{ 'app-header__nav-item--active': isActive(item) }"
+      <!-- 搜索框 -->
+      <div class="app-header__search" :class="{ 'app-header__search--expanded': isSearchExpanded }">
+        <button 
+          v-if="!isSearchExpanded && isMobile" 
+          class="app-header__search-toggle" 
+          @click="expandSearch"
+          aria-label="展开搜索"
         >
-          {{ item.label }}
-        </NuxtLink>
-      </nav>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+        </button>
+        <div v-else class="app-header__search-input-wrapper">
+          <svg class="app-header__search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <path d="m21 21-4.35-4.35"></path>
+          </svg>
+          <input 
+            ref="searchInput"
+            type="text" 
+            class="app-header__search-input" 
+            placeholder="搜索知识点、课程..."
+            @blur="handleSearchBlur"
+          />
+          <button 
+            v-if="isMobile" 
+            class="app-header__search-close" 
+            @click="collapseSearch"
+            aria-label="关闭搜索"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18"></path>
+              <path d="m6 6 12 12"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
 
-      <button class="app-header__menu-btn" @click="toggleMenu" aria-label="切换导航菜单" :aria-expanded="isMenuOpen">
-        <span class="app-header__menu-icon" :class="{ 'app-header__menu-icon--open': isMenuOpen }"></span>
-      </button>
+      <!-- 我的 -->
+      <div class="app-header__user">
+        <button class="app-header__user-btn" aria-label="我的">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </button>
+      </div>
     </div>
-
-    <nav class="app-header__mobile-nav" :class="{ 'app-header__mobile-nav--open': isMenuOpen }" aria-label="移动端导航" :aria-hidden="!isMenuOpen">
-      <NuxtLink
-        v-for="item in navItems"
-        :key="item.path"
-        :to="item.path"
-        class="app-header__mobile-nav-item"
-        @click="closeMenu"
-      >
-        {{ item.label }}
-      </NuxtLink>
-    </nav>
   </header>
 </template>
 
 <script setup lang="ts">
-// 全局顶部导航栏 - 包含 Logo、桌面端导航链接和移动端汉堡菜单
-interface NavItem {
-  path: string
-  label: string
-  exact?: boolean
+// 全局顶部导航栏 - Logo + Search + 我的
+const isSearchExpanded = ref(false)
+const isMobile = ref(false)
+const searchInput = ref<HTMLInputElement | null>(null)
+
+// 检测屏幕尺寸
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
+
+function checkMobile() {
+  isMobile.value = window.innerWidth <= 768
 }
 
-const navItems: NavItem[] = [
-  
-  { path: '/courses', label: '课程' },
-{ path: '/about', label: '关于我' }
-]
-
-const isMenuOpen = ref(false)
-
-const route = useRoute()
-
-const currentPath = computed(() => route.path)
-
-function isActive(item: NavItem) {
-  if (item.exact) return currentPath.value === item.path
-  return currentPath.value === item.path || currentPath.value.startsWith(`${item.path}/`)
+function expandSearch() {
+  isSearchExpanded.value = true
+  nextTick(() => {
+    searchInput.value?.focus()
+  })
 }
 
-function toggleMenu() {
-  isMenuOpen.value = !isMenuOpen.value
+function collapseSearch() {
+  isSearchExpanded.value = false
 }
 
-function closeMenu() {
-  isMenuOpen.value = false
+function handleSearchBlur(e: FocusEvent) {
+  // 如果点击的是关闭按钮，不收起搜索框
+  const relatedTarget = e.relatedTarget as HTMLElement
+  if (relatedTarget?.classList.contains('app-header__search-close')) {
+    return
+  }
+  // 移动端失焦时收起搜索框
+  if (isMobile.value) {
+    collapseSearch()
+  }
 }
 </script>
 
@@ -90,15 +122,18 @@ function closeMenu() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 48px;
+  height: 64px;
+  gap: var(--spacing-xl);
 }
 
+/* Logo */
 .app-header__logo {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
   text-decoration: none;
   color: var(--color-primary);
+  flex-shrink: 0;
 }
 
 .app-header__logo-icon {
@@ -111,122 +146,141 @@ function closeMenu() {
   font-weight: 700;
 }
 
-.app-header__nav {
+/* 搜索框 */
+.app-header__search {
+  flex: 1;
+  max-width: 480px;
   display: flex;
   align-items: center;
-  gap: var(--spacing-xl);
 }
 
-.app-header__nav-item {
-  text-decoration: none;
-  color: var(--color-text-primary);
-  font-weight: 500;
-  padding: var(--spacing-sm) var(--spacing-md);
+.app-header__search-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
   border-radius: var(--border-radius-md);
+  cursor: pointer;
+  color: var(--color-text-secondary);
   transition: all 0.2s ease;
 }
 
-.app-header__nav-item:hover {
+.app-header__search-toggle:hover {
   background-color: var(--color-bg-secondary);
   color: var(--color-primary);
 }
 
-.app-header__nav-item--active {
-  background-color: var(--color-primary);
-  color: var(--color-text-inverse);
+.app-header__search-input-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  background-color: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: 0 var(--spacing-md);
+  transition: all 0.2s ease;
 }
 
-.app-header__menu-btn {
-  display: none;
+.app-header__search-input-wrapper:focus-within {
+  border-color: var(--color-primary);
+  background-color: var(--color-bg-white);
+  box-shadow: 0 0 0 3px var(--color-primary-ghost);
+}
+
+.app-header__search-icon {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+  margin-right: var(--spacing-sm);
+}
+
+.app-header__search-input {
+  flex: 1;
   background: none;
   border: none;
-  cursor: pointer;
-  padding: var(--spacing-sm);
-}
-
-.app-header__menu-icon {
-  display: block;
-  width: 24px;
-  height: 24px;
-  position: relative;
-}
-
-.app-header__menu-icon::before,
-.app-header__menu-icon::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: var(--color-text-primary);
-  transition: all 0.3s ease;
-}
-
-.app-header__menu-icon::before {
-  top: 6px;
-}
-
-.app-header__menu-icon::after {
-  bottom: 6px;
-}
-
-.app-header__menu-icon--open::before {
-  transform: rotate(45deg);
-  top: 11px;
-}
-
-.app-header__menu-icon--open::after {
-  transform: rotate(-45deg);
-  bottom: 11px;
-}
-
-.app-header__mobile-nav {
-  display: none;
-  position: absolute;
-  top: 64px;
-  left: 0;
-  right: 0;
-  background-color: var(--color-bg-primary);
-  border-bottom: 1px solid var(--color-border);
-  padding: var(--spacing-md) 0;
-}
-
-.app-header__mobile-nav--open {
-  display: block;
-}
-
-.app-header__mobile-nav-item {
-  display: block;
-  padding: var(--spacing-md) var(--spacing-xl);
-  text-decoration: none;
+  outline: none;
+  font-size: 0.9375rem;
   color: var(--color-text-primary);
-  font-weight: 500;
-  transition: background-color 0.2s ease;
+  padding: var(--spacing-sm) 0;
 }
 
-.app-header__mobile-nav-item:hover {
+.app-header__search-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.app-header__search-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: none;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all 0.2s ease;
+  margin-left: var(--spacing-xs);
+}
+
+.app-header__search-close:hover {
+  background-color: var(--color-border-light);
+  color: var(--color-text-primary);
+}
+
+/* 我的 */
+.app-header__user {
+  flex-shrink: 0;
+}
+
+.app-header__user-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  transition: all 0.2s ease;
+}
+
+.app-header__user-btn:hover {
   background-color: var(--color-bg-secondary);
+  color: var(--color-primary);
 }
 
+/* 移动端适配 */
 @media (max-width: 768px) {
-  .app-header__nav {
+  .app-header__container {
+    padding: 0 var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+
+  .app-header__logo-text {
     display: none;
   }
 
-  .app-header__menu-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .app-header__search {
+    max-width: none;
   }
 
-  .app-header__container {
-    padding: 0 var(--spacing-md);
+  .app-header__search:not(.app-header__search--expanded) {
+    flex: 0;
+  }
+
+  .app-header__search--expanded {
+    flex: 1;
   }
 }
 
 @media (max-width: 480px) {
-  .app-header__logo-text {
-    font-size: 1rem;
+  .app-header__logo-icon {
+    font-size: 1.25rem;
   }
 }
 </style>
