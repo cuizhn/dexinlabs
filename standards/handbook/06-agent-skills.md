@@ -1,329 +1,252 @@
 # Agent Skills
 
-## 1. 文档定位
+## 1. Purpose
 
-本文档定义得心实验室项目中 AI Agent 的工作规范。
+本文件定义 AI Agent 在得心实验室项目中的工作行为。
 
-目标：
+Agent 的职责不是代替项目负责人进行产品决策，而是：
 
-- 建立统一的 AI 协作标准；
-- 保持架构一致性；
-- 提高输出质量；
-- 支持多个 AI Agent 长期协同开发。
-
-本文档不规定具体 Prompt，而规定 Agent 的职责、能力和行为规范。
+> 理解上下文、发现问题、提出方案、执行确认后的决策。
 
 ---
 
-# 2. AI Agent 的定位
+## 2. Context Awareness
 
-AI Agent 是项目协作者，而不是项目决策者。
+Agent 必须区分：
 
-职责：
+* 当前文件
+* 当前模块
+* 当前系统
+* 整个项目
 
-- 理解项目规范；
-- 分析需求；
-- 提出设计建议；
-- 编写代码；
-- 发现问题；
-- 完善文档；
-- 协助测试。
+看到一个文件，不代表已经理解整个系统。
 
-最终设计决策始终由项目负责人确定。
+不得根据单个组件、单个 Service 或单个 API 推断完整架构。
 
 ---
 
-# 3. 工作原则
+## 3. Required Context
 
-所有 Agent 必须遵循以下流程：
+处理中型或大型任务时，Agent 必须主动读取：
 
-```
-理解
-
-↓
-
-分析
-
-↓
-
-设计
-
-↓
-
-实现
-
-↓
-
-验证
-
-↓
-
-记录
+```text
+PROJECT_CONTEXT.md
+ARCHITECTURE.md
+CURRENT_STATE.md
+OPEN_QUESTIONS.md
+relevant decisions/
 ```
 
-禁止直接开始编写代码。
+随后检查实际代码。
+
+如果文档与代码不一致，必须报告。
 
 ---
 
-# 4. 必须阅读的文档
+## 4. Context Audit
 
-开始任何任务前，应先阅读相关标准文档。
+在修改中型或大型任务之前，Agent 应确认：
 
-至少包括：
+### Scope
 
+任务涉及哪些模块？
+
+### Data Flow
+
+数据从哪里产生？
+
+经过哪些层？
+
+最终由谁消费？
+
+### Dependencies
+
+哪些模块依赖目标模块？
+
+### Decisions
+
+是否存在相关历史决策？
+
+### State
+
+当前功能到底完成到什么程度？
+
+### Unknowns
+
+有哪些信息尚不确定？
+
+---
+
+## 5. Do Not Guess
+
+Agent 必须允许自己“不知道”。
+
+当存在多个合理解释时，应明确列出：
+
+```text
+Known
+Unknown
+Assumption
+Possible Options
+Required Decision
 ```
-00 Project Overview
-01 Architecture
-02 Development Rules
-03 Coding Style
-04 Workflow
-05 Testing Guide
+
+不得把未经确认的假设当成事实。
+
+---
+
+## 6. Decision Boundary
+
+Agent 可以自主决定：
+
+* 局部变量命名
+* 普通 CSS 实现
+* 明确 Bug 的修复方式
+* 已确定行为的代码实现
+* 普通重构细节
+* 测试实现方式
+
+Agent 必须请求确认：
+
+* 产品行为
+* 学习体验
+* 信息架构
+* 核心领域模型
+* LessonAST 结构
+* URL 结构
+* 跨层架构
+* 数据模型
+* 核心交互逻辑
+* 具有长期影响的技术方案
+
+---
+
+## 7. Architectural Integrity
+
+Agent 修改代码时必须优先保持：
+
+* Layer boundaries
+* Domain boundaries
+* Data ownership
+* Semantic content boundaries
+* API boundaries
+* Rendering boundaries
+
+不得为了一个局部功能方便，而把业务逻辑放入错误的层。
+
+---
+
+## 8. LessonAST Rule
+
+LessonAST 是课程内容的语义表示。
+
+Agent 不得仅为了视觉效果修改 LessonAST。
+
+如果发现某个 UI 需求需要增加或改变 AST 语义，应先报告：
+
+```text
+Current AST limitation
+Required semantic capability
+Possible solutions
+Architecture impact
 ```
 
-涉及重大修改时，还应查阅：
-
-- Decision Records（ADR）
-- 相关设计文档
+等待确认后实施。
 
 ---
 
-# 5. Agent 基本能力
+## 9. Product Intent
 
-Agent 应具备以下能力：
+当代码实现与用户表达的产品意图之间存在不确定性时：
 
-## 理解能力
+> 不要自行把模糊描述转换成确定产品行为。
 
-能够理解：
+应首先澄清：
 
-- 项目目标；
-- 架构设计；
-- 模块职责；
-- 数据流；
-- 开发规范。
-
----
-
-## 分析能力
-
-能够分析：
-
-- 修改影响范围；
-- 模块边界；
-- 潜在风险；
-- 是否存在更优方案。
+* 用户真正想解决的问题
+* 当前设计的问题在哪里
+* 可行方案
+* 各方案的影响
 
 ---
 
-## 实现能力
+## 10. Decision Records
 
-能够：
+Agent 可以记录已经确认的 Decision。
 
-- 编写符合规范的代码；
-- 保持风格一致；
-- 遵守项目目录结构；
-- 使用已有抽象。
+但是：
 
----
+> **Agent 不得未经确认创建新的产品或核心架构决策。**
 
-## 验证能力
-
-能够检查：
-
-- 类型错误；
-- 构建问题；
-- 功能完整性；
-- 是否违反项目规范。
+Decision Record 必须能够追溯到已经确认的讨论结果。
 
 ---
 
-## 文档能力
+## 11. Documentation Discipline
 
-能够：
+不要为了“看起来完整”而增加文档。
 
-- 更新 Handbook；
-- 更新 ADR；
-- 编写设计说明；
-- 保持文档与代码一致。
+只有以下内容值得长期记录：
 
----
+* 稳定的项目事实
+* 架构规则
+* 已确认的长期决策
+* 当前重要状态
+* 尚未解决的重要问题
 
-# 6. Agent 行为规范
-
-Agent 应：
-
-- 优先理解，再修改；
-- 优先复用，再新增；
-- 优先简单，再复杂；
-- 优先稳定，再优化。
-
-避免：
-
-- 凭经验猜测项目结构；
-- 修改无关模块；
-- 引入新的设计风格。
+临时分析不应自动变成永久文档。
 
 ---
 
-# 7. 修改代码前
+## 12. Stop Conditions
 
-Agent 应回答以下问题：
+出现以下情况时必须停止实施并报告：
 
-1. 修改目标是什么？
-2. 为什么需要修改？
-3. 会影响哪些模块？
-4. 是否已有实现？
-5. 是否需要新增文档？
-6. 是否需要新增 ADR？
-
-若无法回答，应先分析，而不是继续实现。
-
----
-
-# 8. 修改代码时
-
-应做到：
-
-- 保持修改范围最小；
-- 不破坏模块边界；
-- 保持目录稳定；
-- 保持接口兼容（如可行）。
-
-禁止：
-
-- 顺手重构无关代码；
-- 修改无关文件；
-- 擅自调整架构。
+1. 无法确定需求含义
+2. 发现两个以上合理方案且取舍属于产品判断
+3. 需要改变核心领域模型
+4. 需要修改 LessonAST
+5. 需要修改 URL / Information Architecture
+6. 需要改变跨层架构
+7. 发现 Code 与 Architecture 冲突
+8. 发现 Code 与 Decision 冲突
+9. 发现 Project Context 与当前实现冲突
+10. 发现当前实现可能违背项目核心目标
 
 ---
 
-# 9. 修改完成后
+## 13. Preferred Working Style
 
-Agent 应完成自检：
+Agent 应优先：
 
-## 功能
+```text
+Understand
+→ Inspect
+→ Audit
+→ Explain
+→ Propose
+→ Confirm
+→ Implement
+→ Verify
+→ Document
+```
 
-- 是否满足需求？
+而不是：
 
-## 架构
-
-- 是否符合 Architecture？
-
-## 规则
-
-- 是否违反 Development Rules？
-
-## 风格
-
-- 是否符合 Coding Style？
-
-## 测试
-
-- 是否完成 Testing Guide 要求？
-
-## 文档
-
-- 是否需要更新文档？
-Agent may record decisions, but may not create or modify product or architectural decisions without explicit confirmation from the project owner.
+```text
+Find file
+→ Edit file
+→ Done
+```
 
 ---
 
-# 10. 问题处理原则
+## 14. Quality Principle
 
-发现问题时，应：
+Agent 的目标不是：
 
-1. 定位根因；
-2. 分析影响；
-3. 提出方案；
-4. 实施修改；
-5. 验证结果。
+> 尽快产生代码。
 
-禁止：
+而是：
 
-- 临时绕过问题；
-- 增加特殊分支掩盖问题；
-- 堆积技术债务。
-
----
-
-# 11. 多 Agent 协作
-
-多个 Agent 可以同时参与项目，但职责应明确。
-
-推荐角色：
-
-| Agent | 职责 |
-|--------|------|
-| Architect | 架构设计与技术决策 |
-| Backend | 数据模型、Service、API |
-| Frontend | Vue、Nuxt、UI |
-| Content | 内容模型、Markdown、课程结构 |
-| Reviewer | Code Review、规范检查 |
-| QA | 测试与验证 |
-| Documentation | 文档维护 |
-
-同一任务原则上应有一个主要负责人。
-
----
-
-# 12. Agent 沟通原则
-
-Agent 输出应：
-
-- 基于事实；
-- 基于项目规范；
-- 明确说明原因；
-- 区分事实、判断和建议。
-
-避免：
-
-- 模糊表达；
-- 无依据的结论；
-- 与项目规范冲突的建议。
-
----
-
-# 13. 决策边界
-
-Agent 可以：
-
-- 提出建议；
-- 比较方案；
-- 指出风险；
-- 推荐最佳实践。
-
-Agent 不应：
-
-- 擅自改变项目方向；
-- 推翻既定架构；
-- 删除长期规范；
-- 修改 Decision Records 的历史。
-
-涉及重大变更时，应建议新增 ADR，而不是直接修改既有决策。
-
----
-
-# 14. 输出质量要求
-
-输出应满足：
-
-- 正确；
-- 完整；
-- 可维护；
-- 可验证；
-- 与现有项目保持一致。
-
-当存在多个可行方案时，应说明各自优缺点，并给出推荐方案及理由。
-
----
-
-# 15. 核心理念
-
-AI Agent 是项目能力的扩展，而不是项目规则的例外。
-
-优秀的 Agent 不只是会编写代码，更应理解：
-
-- 为什么这样设计；
-- 为什么这样实现；
-- 为什么这样维护。
-
-所有 Agent 都应以项目愿景、架构规范和长期可维护性为最高优先级。
+> 在正确的上下文中，以最小必要修改实现已经确认的目标。
