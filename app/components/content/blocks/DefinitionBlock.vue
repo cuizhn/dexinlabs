@@ -1,7 +1,7 @@
 <template>
-  <div class="block-definition">
-    <dt class="block-definition__term">{{ block.term }}</dt>
-    <dd class="block-definition__content" v-html="block.content" />
+  <div class="definition">
+    <dt class="term">{{ block.term }}</dt>
+    <dd class="content" v-html="block.content" />
   </div>
 </template>
 
@@ -17,19 +17,21 @@ defineProps<{ block: DefinitionBlock }>()
 </script>
 
 <style scoped>
-.block-definition {
-  margin: 1em 0;
-  padding: 0.75em 1em;
-  background: var(--color-bg-secondary, #f8f9fa);
-  border-radius: 6px;
+.definition {
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg-secondary);
+  border-radius: var(--border-radius-sm);
 }
-.block-definition__term {
+
+.term {
   font-weight: 700;
   font-size: 1.05em;
-  color: var(--color-primary, #4a90d9);
-  margin-bottom: 0.25em;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
 }
-.block-definition__content {
+
+.content {
   margin: 0;
 }
 </style>

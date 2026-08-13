@@ -2,7 +2,7 @@
   <div :class="wrapperClass">
     <slot name="header" />
 
-    <div class="renderer__body">
+    <div class="body">
       <slot name="body-start" />
 
       <template v-if="blocks && blocks.length">
@@ -107,7 +107,7 @@ const wrapperClass = computed(() => [
   color: inherit;
 }
 
-.renderer__body {
+.body {
   line-height: 1.8;
 }
 </style>

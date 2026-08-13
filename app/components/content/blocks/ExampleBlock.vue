@@ -1,7 +1,7 @@
 <template>
-  <div class="block-example">
-    <div v-if="block.title" class="block-example__title">{{ block.title }}</div>
-    <div class="block-example__body" v-html="block.content" />
+  <div class="example">
+    <div v-if="block.title" class="title">{{ block.title }}</div>
+    <div class="body" v-html="block.content" />
   </div>
 </template>
 
@@ -17,16 +17,17 @@ defineProps<{ block: ExampleBlock }>()
 </script>
 
 <style scoped>
-.block-example {
-  margin: 1em 0;
-  padding: 0.75em 1em;
-  border: 1px solid var(--color-border, #e0e0e0);
-  border-radius: 6px;
-  border-left: 4px solid #27ae60;
+.example {
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  border-left: 4px solid var(--color-success);
 }
-.block-example__title {
+
+.title {
   font-weight: 600;
-  margin-bottom: 0.5em;
-  color: var(--color-text-primary, #333);
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-primary);
 }
 </style>

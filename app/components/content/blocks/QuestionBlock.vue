@@ -1,18 +1,18 @@
 <template>
-  <div class="block-question">
-    <div class="block-question__prompt" v-html="block.prompt" />
+  <div class="question">
+    <div class="prompt" v-html="block.prompt" />
 
-    <details v-if="block.hint" class="block-question__section">
+    <details v-if="block.hint" class="section">
       <summary>💡 提示</summary>
       <div v-html="block.hint" />
     </details>
 
-    <details v-if="block.answer" class="block-question__section">
+    <details v-if="block.answer" class="section">
       <summary>✅ 答案</summary>
       <div v-html="block.answer" />
     </details>
 
-    <details v-if="block.analysis" class="block-question__section">
+    <details v-if="block.analysis" class="section">
       <summary>📖 解析</summary>
       <div v-html="block.analysis" />
     </details>
@@ -31,29 +31,33 @@ defineProps<{ block: QuestionBlock }>()
 </script>
 
 <style scoped>
-.block-question {
-  margin: 1em 0;
-  padding: 0.75em 1em;
-  border: 1px solid var(--color-border, #e0e0e0);
-  border-radius: 6px;
-  border-left: 4px solid #8e44ad;
+.question {
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  border-left: 4px solid var(--color-secondary);
 }
-.block-question__prompt {
-  margin-bottom: 0.75em;
+
+.prompt {
+  margin-bottom: var(--spacing-sm);
 }
-.block-question__section {
-  margin: 0.5em 0;
-  padding: 0.5em;
-  background: var(--color-bg-secondary, #f8f9fa);
-  border-radius: 4px;
+
+.section {
+  margin: var(--spacing-xs) 0;
+  padding: var(--spacing-xs);
+  background: var(--color-bg-secondary);
+  border-radius: var(--border-radius-sm);
 }
-.block-question__section summary {
+
+.section summary {
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
   user-select: none;
 }
-.block-question__section > div {
-  margin-top: 0.5em;
+
+.section > div {
+  margin-top: var(--spacing-xs);
 }
 </style>

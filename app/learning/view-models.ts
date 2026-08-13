@@ -4,11 +4,7 @@
  * 定义各页面组合所需的完整数据结构，
  * 由 API 层返回、Composable 层消费。
  */
-import type { Course } from './course/types'
-import type { Topic } from './topic/types'
-import type { Chapter } from './chapter/types'
-import type { Lesson } from './lesson/types'
-import type { Exercise } from './exercise/types'
+import type { Course, Topic, Chapter, Lesson, Exercise } from './types'
 
 /**
  * LessonPage - 课时页面数据结构

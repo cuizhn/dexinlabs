@@ -6,10 +6,7 @@
  */
 import { eq, asc } from 'drizzle-orm'
 import { topics } from '@database'
-import type { Topic } from './types'
-import type { Chapter } from '../chapter/types'
-import type { Lesson } from '../lesson/types'
-import type { Exercise } from '../exercise/types'
+import type { Topic, Chapter, Lesson, Exercise } from '../types'
 import { BaseRepository } from '../../database/repository/BaseRepository'
 
 export interface TopicWithRelations extends Topic {

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { CourseService } from './service'
+import { CourseService } from './course'
 
 // Mock repository 模块
-vi.mock('./repository', () => ({
+vi.mock('../repository/course', () => ({
   courseRepository: {
     list: vi.fn(),
     findBySlug: vi.fn()
@@ -13,7 +13,7 @@ vi.mock('./repository', () => ({
   }
 }))
 
-vi.mock('../topic/repository', () => ({
+vi.mock('../repository/topic', () => ({
   topicRepository: {
     list: vi.fn()
   },
@@ -22,8 +22,8 @@ vi.mock('../topic/repository', () => ({
   }
 }))
 
-import { courseRepository } from './repository'
-import { topicRepository } from '../topic/repository'
+import { courseRepository } from '../repository/course'
+import { topicRepository } from '../repository/topic'
 
 const mockCourseRepo = vi.mocked(courseRepository)
 const mockTopicRepo = vi.mocked(topicRepository)

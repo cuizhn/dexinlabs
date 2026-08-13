@@ -1,25 +1,9 @@
 /**
- * Learning 领域共享类型与工具
+ * Learning 领域共享工具函数
  *
- * 包含跨领域共享的基类接口和通用工具函数。
+ * 仅包含跨领域共享的工具函数和通用逻辑。
+ * 共享类型定义在 types.ts 中。
  */
-
-/**
- * BaseContentEntity - 部分内容实体的基类接口
- *
- * Topic、Lesson、Exercise 共用此基类。
- * Course 已精简为 id/slug/title，不使用此基类。
- */
-export interface BaseContentEntity {
-  id: number | null
-  slug: string
-  title: string
-  summary?: string | null
-  order: number
-  createdAt?: Date | string | null
-  updatedAt?: Date | string | null
-  [key: string]: unknown
-}
 
 /**
  * 在有序列表中定位当前项的前后兄弟节点

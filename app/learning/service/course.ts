@@ -4,14 +4,11 @@
  * 架构 V4（定稿）：courses 表精简为 id/slug/title。
  * Course 与 Topic 的业务关系由本 Service 负责组装。
  */
-import { courseRepository } from './repository'
-import { topicRepository } from '../topic/repository'
+import { courseRepository } from '../repository/course'
+import { topicRepository } from '../repository/topic'
 import type { CoursePage, CatalogTopic } from '~/learning/view-models'
 import { normalizeSlug } from '~/utils/slug'
-import { toCourse } from './types'
-import { toTopic } from '../topic/types'
-import { toChapter } from '../chapter/types'
-import { toLesson } from '../lesson/types'
+import { toCourse, toTopic, toChapter, toLesson } from '../types'
 
 export class CourseService {
   /**

@@ -9,7 +9,7 @@
 import { eq, and, asc, desc } from 'drizzle-orm'
 import type { SQL } from 'drizzle-orm'
 import { exercises } from '@database'
-import type { Exercise } from './types'
+import type { Exercise } from '../types'
 import type { CommonColumns } from '../../database/repository/BaseRepository'
 import { BaseRepository } from '../../database/repository/BaseRepository'
 

@@ -5,14 +5,11 @@
  *
  * 架构 V4（定稿）：Topic 不再有 courseId，前后主题导航基于全局主题列表。
  */
-import { topicRepository } from './repository'
+import { topicRepository } from '../repository/topic'
 import type { TopicPage, ChapterWithLessons } from '~/learning/view-models'
 import { normalizeSlug } from '~/utils/slug'
 import { getSiblings } from '../shared'
-import { toTopic } from './types'
-import { toChapter } from '../chapter/types'
-import { toLesson } from '../lesson/types'
-import { toExercise } from '../exercise/types'
+import { toTopic, toChapter, toLesson, toExercise } from '../types'
 
 export class TopicService {
   async list() {

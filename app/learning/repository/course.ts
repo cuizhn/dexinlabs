@@ -6,7 +6,7 @@
  */
 import { eq, asc } from 'drizzle-orm'
 import { courses } from '@database'
-import type { Course } from './types'
+import type { Course } from '../types'
 import { BaseRepository } from '../../database/repository/BaseRepository'
 
 export class CourseRepository extends BaseRepository<typeof courses> {

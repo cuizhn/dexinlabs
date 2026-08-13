@@ -1,5 +1,11 @@
-import type { LearningProgress, LastLesson } from './models'
-import type { ProgressStorage } from './storage/types'
+/**
+ * 学习进度服务 - 封装学习进度相关的业务逻辑
+ *
+ * 通过依赖注入的 Storage Adapter 持久化学习进度。
+ * MVP 使用 LocalStorage，未来可无缝切换云端存储。
+ */
+import type { LearningProgress, LastLesson } from '../types'
+import type { ProgressStorage } from '../repository/progress'
 
 export class ProgressService {
   constructor(private storage: ProgressStorage) {}

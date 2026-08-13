@@ -5,15 +5,13 @@
  *
  * 架构 V4（定稿）：Lesson 通过 (topicId, slug) 组合键查询。
  */
-import { lessonRepository } from './repository'
-import { topicRepository } from '../topic/repository'
-import { chapterRepository } from '../chapter/repository'
+import { lessonRepository } from '../repository/lesson'
+import { topicRepository } from '../repository/topic'
+import { chapterRepository } from '../repository/chapter'
 import type { LessonPage } from '~/learning/view-models'
 import { normalizeSlug } from '~/utils/slug'
 import { getSiblings } from '../shared'
-import { toLesson } from './types'
-import { toTopic } from '../topic/types'
-import { toChapter } from '../chapter/types'
+import { toLesson, toTopic, toChapter } from '../types'
 
 export class LessonService {
   async list() {

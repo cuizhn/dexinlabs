@@ -5,12 +5,11 @@
  *
  * 架构 V4：Exercise 通过 topicId 关联 Topic
  */
-import { exerciseRepository } from './repository'
-import { topicRepository } from '../topic/repository'
+import { exerciseRepository } from '../repository/exercise'
+import { topicRepository } from '../repository/topic'
 import type { ExercisePage } from '~/learning/view-models'
 import { normalizeSlug } from '~/utils/slug'
-import { toExercise } from './types'
-import { toTopic } from '../topic/types'
+import { toExercise, toTopic } from '../types'
 
 export class ExerciseService {
   async list() {
