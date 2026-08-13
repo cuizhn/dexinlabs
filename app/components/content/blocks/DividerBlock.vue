@@ -1,5 +1,5 @@
 <template>
-  <hr class="block-divider" />
+  <hr class="divider" />
 </template>
 
 <script setup lang="ts">
@@ -14,9 +14,9 @@ defineProps<{ block: DividerBlock }>()
 </script>
 
 <style scoped>
-.block-divider {
-  margin: 1.5em 0;
+.divider {
+  margin: var(--spacing-lg) 0;
   border: none;
-  border-top: 1px solid var(--color-border, #eee);
+  border-top: 1px solid var(--color-border);
 }
 </style>

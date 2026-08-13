@@ -1,26 +1,26 @@
 <template>
   <!-- Topic 课时列表 - 显示每个 Lesson 的状态、标题和预计时间 -->
-  <div class="topic-lesson-list">
-    <h3 class="topic-lesson-list__title">{{ title }}</h3>
+  <div class="list">
+    <h3 class="title">{{ title }}</h3>
 
-    <ol class="topic-lesson-list__items">
+    <ol class="items">
       <li
         v-for="(lesson, idx) in lessons"
         :key="lesson.slug"
-        class="topic-lesson-list__item"
-        :class="{ 'topic-lesson-list__item--completed': getLessonState(lesson.slug).isCompleted }"
+        class="item"
+        :class="{ completed: getLessonState(lesson.slug).isCompleted }"
       >
-        <NuxtLink :to="`/courses/${topicSlug}/${lesson.slug}`" class="topic-lesson-list__link">
-          <span class="topic-lesson-list__index">
+        <NuxtLink :to="`/courses/${topicSlug}/${lesson.slug}`" class="link">
+          <span class="index">
             <template v-if="getLessonState(lesson.slug).isCompleted">✓</template>
             <template v-else>{{ String(idx + 1).padStart(2, '0') }}</template>
           </span>
 
-          <div class="topic-lesson-list__info">
-            <span class="topic-lesson-list__lesson-title">{{ lesson.title }}</span>
+          <div class="info">
+            <span class="lesson-title">{{ lesson.title }}</span>
           </div>
 
-          <span class="topic-lesson-list__arrow">→</span>
+          <span class="arrow">→</span>
         </NuxtLink>
       </li>
     </ol>
@@ -55,18 +55,18 @@ const { getLessonState } = useLearningState()
 </script>
 
 <style scoped>
-.topic-lesson-list {
+.list {
   margin-bottom: var(--spacing-xl);
 }
 
-.topic-lesson-list__title {
-  font-size: 1.125rem;
+.title {
+  font-size: var(--text-lg);
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-lg);
 }
 
-.topic-lesson-list__items {
+.items {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -75,7 +75,7 @@ const { getLessonState } = useLearningState()
   gap: var(--spacing-sm);
 }
 
-.topic-lesson-list__link {
+.link {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
@@ -88,55 +88,49 @@ const { getLessonState } = useLearningState()
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 
-.topic-lesson-list__link:hover {
+.link:hover {
   border-color: var(--color-primary);
   box-shadow: var(--shadow-sm);
 }
 
-.topic-lesson-list__item--completed .topic-lesson-list__link {
+.item.completed .link {
   border-color: var(--color-success-border);
   background: var(--color-success-bg);
 }
 
-.topic-lesson-list__index {
-  font-family: 'JetBrains Mono', monospace;
+.index {
+  font-family: var(--font-mono);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--color-primary);
   min-width: 2.25rem;
   text-align: center;
 }
 
-.topic-lesson-list__item--completed .topic-lesson-list__index {
+.item.completed .index {
   color: var(--color-success-dark);
 }
 
-.topic-lesson-list__info {
+.info {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
-.topic-lesson-list__lesson-title {
+.lesson-title {
   font-weight: 600;
   color: var(--color-text-primary);
 }
 
-.topic-lesson-list__lesson-desc {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
-}
-
-.topic-lesson-list__arrow {
+.arrow {
   color: var(--color-text-light);
   font-weight: 500;
   transition: transform 150ms ease;
 }
 
-.topic-lesson-list__link:hover .topic-lesson-list__arrow {
+.link:hover .arrow {
   color: var(--color-primary);
   transform: translateX(4px);
 }

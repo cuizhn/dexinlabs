@@ -1,5 +1,5 @@
 <template>
-  <table class="block-table">
+  <table class="table">
     <thead>
       <tr>
         <th v-for="(header, i) in block.headers" :key="i" v-html="header" />
@@ -25,23 +25,23 @@ defineProps<{ block: TableBlock }>()
 </script>
 
 <style scoped>
-.block-table {
+.table {
   width: 100%;
-  margin: 1em 0;
+  margin: var(--spacing-md) 0;
   border-collapse: collapse;
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
 }
-.block-table th,
-.block-table td {
-  border: 1px solid var(--color-border, #ddd);
-  padding: 0.5em 0.75em;
+th,
+td {
+  border: 1px solid var(--color-border);
+  padding: var(--spacing-sm) var(--spacing-md);
   text-align: left;
 }
-.block-table th {
-  background: var(--color-bg-secondary, #f8f9fa);
+th {
+  background: var(--color-bg-secondary);
   font-weight: 600;
 }
-.block-table tr:nth-child(even) td {
-  background: var(--color-bg-tertiary, #fafafa);
+tr:nth-child(even) td {
+  background: var(--color-bg-primary);
 }
 </style>

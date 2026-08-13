@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" class="block-heading" v-html="block.content" />
+  <component :is="tag" class="heading" v-html="block.content" />
 </template>
 
 <script setup lang="ts">

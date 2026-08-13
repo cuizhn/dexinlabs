@@ -1,5 +1,5 @@
 <template>
-  <figure class="block-image">
+  <figure class="image">
     <img :src="block.src" :alt="block.alt" loading="lazy" />
     <figcaption v-if="block.caption">{{ block.caption }}</figcaption>
   </figure>
@@ -15,18 +15,18 @@ defineProps<{ block: ImageBlock }>()
 </script>
 
 <style scoped>
-.block-image {
-  margin: 1em 0;
+.image {
+  margin: var(--spacing-md) 0;
   text-align: center;
 }
-.block-image img {
+img {
   max-width: 100%;
   height: auto;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
 }
-.block-image figcaption {
-  margin-top: 0.5em;
-  font-size: 0.875rem;
-  color: var(--color-text-secondary, #666);
+figcaption {
+  margin-top: var(--spacing-sm);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
 }
 </style>

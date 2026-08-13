@@ -1,34 +1,34 @@
 <template>
   <!-- Lesson 左侧概念清单 - 显示本课需要解决的问题和概念 -->
-  <div class="lesson-checklist">
-    <h3 class="lesson-checklist__title">
+  <div class="panel">
+    <h3 class="title">
       <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
         <path d="M3 9l4 4 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
       今天需要解决的问题
     </h3>
 
-    <ul class="lesson-checklist__items">
+    <ul class="items">
       <li
         v-for="(item, idx) in checklistItems"
         :key="idx"
-        class="lesson-checklist__item"
-        :class="{ 'lesson-checklist__item--done': item.done }"
+        class="item"
+        :class="{ done: item.done }"
       >
-        <span class="lesson-checklist__checkbox">
+        <span class="checkbox">
           <template v-if="item.done">✓</template>
         </span>
-        <span class="lesson-checklist__text">{{ item.text }}</span>
+        <span class="text">{{ item.text }}</span>
       </li>
     </ul>
 
-    <div class="lesson-checklist__progress">
-      <span class="lesson-checklist__progress-text">
+    <div class="progress">
+      <span class="progress-text">
         学习进度 {{ completedCount }} / {{ checklistItems.length }}
       </span>
-      <div class="lesson-checklist__progress-bar">
+      <div class="progress-bar">
         <div
-          class="lesson-checklist__progress-fill"
+          class="progress-fill"
           :style="{ width: `${(completedCount / checklistItems.length) * 100}%` }"
         ></div>
       </div>
@@ -74,29 +74,29 @@ const completedCount = computed(() => checklistItems.value.filter(item => item.d
 </script>
 
 <style scoped>
-.lesson-checklist {
+.panel {
   background: var(--color-bg-white);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-xl);
 }
 
-.lesson-checklist__title {
+.title {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 0.9375rem;
+  gap: var(--spacing-sm);
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-lg);
 }
 
-.lesson-checklist__title svg {
+.title svg {
   color: var(--color-primary);
   flex-shrink: 0;
 }
 
-.lesson-checklist__items {
+.items {
   list-style: none;
   padding: 0;
   margin: 0 0 var(--spacing-lg);
@@ -105,24 +105,24 @@ const completedCount = computed(() => checklistItems.value.filter(item => item.d
   gap: var(--spacing-sm);
 }
 
-.lesson-checklist__item {
+.item {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius-sm);
   background: var(--color-bg-secondary);
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--color-text-primary);
   transition: all 150ms ease;
 }
 
-.lesson-checklist__item--done {
-  background: rgba(34, 197, 94, 0.08);
+.item.done {
+  background: var(--color-success-bg);
   color: var(--color-text-secondary);
 }
 
-.lesson-checklist__checkbox {
+.checkbox {
   width: 18px;
   height: 18px;
   border: 2px solid var(--color-border);
@@ -130,45 +130,45 @@ const completedCount = computed(() => checklistItems.value.filter(item => item.d
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 700;
-  color: #16a34a;
+  color: var(--color-success-dark);
   flex-shrink: 0;
 }
 
-.lesson-checklist__item--done .lesson-checklist__checkbox {
-  border-color: #16a34a;
-  background: rgba(34, 197, 94, 0.1);
+.item.done .checkbox {
+  border-color: var(--color-success-dark);
+  background: var(--color-success-bg);
 }
 
-.lesson-checklist__text {
+.text {
   flex: 1;
 }
 
-.lesson-checklist__item--done .lesson-checklist__text {
+.item.done .text {
   text-decoration: line-through;
 }
 
-.lesson-checklist__progress {
+.progress {
   border-top: 1px solid var(--color-border);
   padding-top: var(--spacing-md);
 }
 
-.lesson-checklist__progress-text {
+.progress-text {
   display: block;
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   color: var(--color-text-light);
-  margin-bottom: 6px;
+  margin-bottom: var(--spacing-xs);
 }
 
-.lesson-checklist__progress-bar {
+.progress-bar {
   height: 4px;
   background: var(--color-bg-secondary);
   border-radius: 2px;
   overflow: hidden;
 }
 
-.lesson-checklist__progress-fill {
+.progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
   border-radius: 2px;

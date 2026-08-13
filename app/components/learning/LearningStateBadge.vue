@@ -1,8 +1,8 @@
 <template>
   <!-- 学习状态徽章 - 根据 LearningState 显示对应的状态标签和图标 -->
-  <span class="learning-badge" :class="`learning-badge--${state.toLowerCase()}`">
-    <span class="learning-badge__dot"></span>
-    <span class="learning-badge__label">{{ label }}</span>
+  <span class="badge" :class="state.toLowerCase()">
+    <span class="dot"></span>
+    <span class="label">{{ label }}</span>
   </span>
 </template>
 
@@ -28,7 +28,7 @@ const label = computed(() => getStateLabel(props.state))
 </script>
 
 <style scoped>
-.learning-badge {
+.badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -39,7 +39,7 @@ const label = computed(() => getStateLabel(props.state))
   line-height: 1;
 }
 
-.learning-badge__dot {
+.dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
@@ -47,32 +47,32 @@ const label = computed(() => getStateLabel(props.state))
 }
 
 /* 待学习 - 灰色 */
-.learning-badge--not_started {
+.badge.not_started {
   background: var(--color-bg-secondary);
   color: var(--color-text-secondary);
 }
 
-.learning-badge--not_started .learning-badge__dot {
+.badge.not_started .dot {
   background: var(--color-text-light);
 }
 
 /* 正在学习 - 蓝色 */
-.learning-badge--in_progress {
+.badge.in_progress {
   background: var(--color-primary-ghost-accent);
   color: var(--color-primary);
 }
 
-.learning-badge--in_progress .learning-badge__dot {
+.badge.in_progress .dot {
   background: var(--color-primary);
 }
 
 /* 已掌握 - 绿色 */
-.learning-badge--mastered {
+.badge.mastered {
   background: rgba(34, 197, 94, 0.08);
-  color: #16a34a;
+  color: var(--color-success-dark);
 }
 
-.learning-badge--mastered .learning-badge__dot {
-  background: #16a34a;
+.badge.mastered .dot {
+  background: var(--color-success-dark);
 }
 </style>

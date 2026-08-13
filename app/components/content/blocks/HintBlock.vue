@@ -1,9 +1,9 @@
 <template>
-  <div :class="['block-hint', `block-hint--${block.level}`]">
-    <div class="block-hint__header">
+  <div :class="['hint', `hint--${block.level}`]">
+    <div class="header">
       {{ label }}
     </div>
-    <div class="block-hint__body" v-html="block.content" />
+    <div class="body" v-html="block.content" />
   </div>
 </template>
 
@@ -28,31 +28,34 @@ const label = computed(() => labelMap[props.block.level])
 </script>
 
 <style scoped>
-.block-hint {
-  margin: 1em 0;
-  padding: 0.75em 1em;
+.hint {
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-sm) var(--spacing-md);
   border-left: 4px solid;
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
 }
-.block-hint--info {
-  border-color: #4a90d9;
-  background: #eef5fc;
+.hint--info {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
 }
-.block-hint--tip {
-  border-color: #27ae60;
-  background: #eefbf3;
+.hint--tip {
+  border-color: var(--color-success);
+  background: var(--color-success-bg);
 }
-.block-hint--warning {
-  border-color: #f39c12;
-  background: #fef9ee;
+.hint--warning {
+  border-color: var(--color-warning);
+  background: rgba(245, 158, 11, 0.08);
 }
-.block-hint--danger {
-  border-color: #e74c3c;
-  background: #fdeeed;
+.hint--danger {
+  border-color: var(--color-error);
+  background: rgba(239, 68, 68, 0.08);
 }
-.block-hint__header {
+.header {
   font-weight: 600;
-  margin-bottom: 0.5em;
-  font-size: 0.9375rem;
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--text-sm);
+}
+.body {
+  color: var(--color-text);
 }
 </style>

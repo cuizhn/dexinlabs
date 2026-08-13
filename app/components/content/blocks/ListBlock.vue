@@ -1,5 +1,5 @@
 <template>
-  <component :is="block.ordered ? 'ol' : 'ul'" class="block-list">
+  <component :is="block.ordered ? 'ol' : 'ul'" class="list">
     <li v-for="(item, i) in block.items" :key="i" v-html="item" />
   </component>
 </template>
@@ -16,11 +16,11 @@ defineProps<{ block: ListBlock }>()
 </script>
 
 <style scoped>
-.block-list {
-  margin: 0.75em 0;
-  padding-left: 1.5em;
+.list {
+  margin: var(--spacing-sm) 0;
+  padding-left: var(--spacing-lg);
 }
-.block-list li {
-  margin: 0.25em 0;
+li {
+  margin: var(--spacing-xs) 0;
 }
 </style>

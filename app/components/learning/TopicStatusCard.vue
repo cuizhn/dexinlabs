@@ -2,22 +2,22 @@
   <!-- Topic 状态卡片 - 知识地图中展示每个 Topic 的学习状态 -->
   <NuxtLink
     :to="`/courses/${topic.slug}`"
-    class="topic-status-card"
-    :class="`topic-status-card--${topicInfo.state.toLowerCase()}`"
+    class="card"
+    :class="topicInfo.state.toLowerCase()"
   >
-    <div class="topic-status-card__header">
-      <h3 class="topic-status-card__title">{{ topic.title }}</h3>
+    <div class="header">
+      <h3 class="title">{{ topic.title }}</h3>
       <LearningStateBadge :state="topicInfo.state" />
     </div>
 
-    <div class="topic-status-card__footer">
-      <span v-if="topicInfo.state === LearningState.MASTERED" class="topic-status-card__cta topic-status-card__cta--done">
+    <div class="footer">
+      <span v-if="topicInfo.state === LearningState.MASTERED" class="cta mastered">
         复习巩固 →
       </span>
-      <span v-else-if="topicInfo.state === LearningState.IN_PROGRESS" class="topic-status-card__cta topic-status-card__cta--continue">
+      <span v-else-if="topicInfo.state === LearningState.IN_PROGRESS" class="cta in-progress">
         继续学习 →
       </span>
-      <span v-else class="topic-status-card__cta">
+      <span v-else class="cta">
         开始学习 →
       </span>
     </div>
@@ -54,7 +54,7 @@ const topicInfo = computed(() => getTopicState(props.topic.slug, props.totalLess
 </script>
 
 <style scoped>
-.topic-status-card {
+.card {
   display: block;
   padding: var(--spacing-xl);
   background: var(--color-bg-white);
@@ -68,23 +68,21 @@ const topicInfo = computed(() => getTopicState(props.topic.slug, props.totalLess
     border-color 150ms ease;
 }
 
-.topic-status-card:hover {
+.card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
   border-color: var(--color-primary);
 }
 
-/* 已掌握状态 - 绿色边框 */
-.topic-status-card--mastered:hover {
+.card.mastered:hover {
   border-color: var(--color-success-dark);
 }
 
-/* 正在学习状态 - 蓝色边框 */
-.topic-status-card--in_progress:hover {
+.card.in-progress:hover {
   border-color: var(--color-primary);
 }
 
-.topic-status-card__header {
+.header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -92,41 +90,30 @@ const topicInfo = computed(() => getTopicState(props.topic.slug, props.totalLess
   margin-bottom: var(--spacing-sm);
 }
 
-.topic-status-card__title {
-  font-size: 1.125rem;
+.title {
+  font-size: var(--text-lg);
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0;
   line-height: 1.4;
 }
 
-.topic-status-card__desc {
-  font-size: 0.875rem;
-  color: var(--color-text-secondary);
-  line-height: 1.6;
-  margin: 0 0 var(--spacing-md);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.topic-status-card__footer {
+.footer {
   border-top: 1px dashed var(--color-border);
   padding-top: var(--spacing-md);
 }
 
-.topic-status-card__cta {
-  font-size: 0.875rem;
+.cta {
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--color-primary);
 }
 
-.topic-status-card__cta--done {
+.cta.mastered {
   color: var(--color-success-dark);
 }
 
-.topic-status-card__cta--continue {
+.cta.in-progress {
   color: var(--color-primary);
 }
 </style>

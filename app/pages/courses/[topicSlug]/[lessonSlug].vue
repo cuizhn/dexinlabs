@@ -1,11 +1,11 @@
 <template>
   <article>
-    <section class="lesson-page__body">
-      <h1 class="lesson-page__title">
+    <section class="body">
+      <h1 class="title">
         {{ lessonData?.title }}
       </h1>
 
-      <div class="lesson-page__content">
+      <div class="content">
         <ContentRenderer
           v-if="lessonData?.content?.blocks?.length"
           :blocks="lessonData.content.blocks"
@@ -66,29 +66,29 @@ useHead({
 
 <style scoped>
 article {
-  margin: 0 auto;
-  max-width: 760px;
+  justify-items: center;
   user-select: text;
   flex-grow: 1;
   background: var(--color-bg-white);
   padding: var(--spacing-xl) var(--spacing-lg);
 }
 
-.lesson-page__title {
-  font-size: 1.75rem;
+.body {
+  max-width: 760px;
+  line-height: 1.8;
+  color: var(--color-text-primary);
+}
+
+.title {
+  font-size: var(--text-3xl);
   font-weight: 800;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-lg);
 }
 
-.lesson-page__body {
-  line-height: 1.8;
-  color: var(--color-text-primary);
-}
-
 @media (max-width: 768px) {
-  .lesson-page__title {
-    font-size: 1.375rem;
+  .title {
+    font-size: var(--text-xl);
   }
 }
 </style>

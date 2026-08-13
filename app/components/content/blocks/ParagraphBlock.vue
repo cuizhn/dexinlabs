@@ -1,5 +1,5 @@
 <template>
-  <p class="block-paragraph" v-html="block.content" />
+  <p class="paragraph" v-html="block.content" />
 </template>
 
 <script setup lang="ts">

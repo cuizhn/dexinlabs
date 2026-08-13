@@ -1,6 +1,6 @@
 <template>
-  <section class="block-section">
-    <h2 class="block-section__title">{{ block.title }}</h2>
+  <section class="section">
+    <h2 class="title">{{ block.title }}</h2>
     <ContentRenderer :blocks="block.blocks" />
   </section>
 </template>
@@ -18,14 +18,14 @@ defineProps<{ block: SectionBlock }>()
 </script>
 
 <style scoped>
-.block-section {
-  margin: 1.5em 0;
+.section {
+  margin: var(--spacing-lg) 0;
 }
-.block-section__title {
-  font-size: 1.375rem;
+.title {
+  font-size: var(--text-xl);
   font-weight: 700;
-  margin-bottom: 0.75em;
-  padding-bottom: 0.25em;
-  border-bottom: 1px solid var(--color-border, #eee);
+  margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid var(--color-border);
 }
 </style>

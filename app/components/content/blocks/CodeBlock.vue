@@ -1,6 +1,6 @@
 <template>
-  <div class="block-code">
-    <div v-if="block.language && block.language !== 'text'" class="block-code__lang">
+  <div class="code">
+    <div v-if="block.language && block.language !== 'text'" class="lang">
       {{ block.language }}
     </div>
     <pre><code>{{ block.code }}</code></pre>
@@ -20,25 +20,25 @@ defineProps<{ block: CodeBlock }>()
 </script>
 
 <style scoped>
-.block-code {
-  margin: 1em 0;
-  border-radius: 6px;
+.code {
+  margin: var(--spacing-md) 0;
+  border-radius: var(--border-radius-md);
   overflow: hidden;
-  background: #1e1e1e;
-  color: #d4d4d4;
+  background: var(--color-code-bg);
+  color: var(--color-code-text);
 }
-.block-code__lang {
-  padding: 0.25em 1em;
-  font-size: 0.75rem;
-  background: #333;
-  color: #999;
+.lang {
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--text-xs);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-muted);
   text-transform: uppercase;
 }
-.block-code pre {
+pre {
   margin: 0;
-  padding: 1em;
+  padding: var(--spacing-md);
   overflow-x: auto;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   line-height: 1.6;
 }
 </style>

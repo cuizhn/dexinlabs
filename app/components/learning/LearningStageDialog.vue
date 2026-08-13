@@ -1,30 +1,30 @@
 <template>
   <!-- 学习阶段选择弹窗 - 首次进入时让用户选择学习阶段 -->
-  <div class="stage-dialog__overlay" @click.self="$emit('close')">
-    <div class="stage-dialog">
-      <div class="stage-dialog__header">
-        <h2 class="stage-dialog__title">选择你的学习阶段</h2>
-        <p class="stage-dialog__desc">
+  <div class="overlay" @click.self="$emit('close')">
+    <div class="dialog">
+      <div class="header">
+        <h2 class="title">选择你的学习阶段</h2>
+        <p class="desc">
           我们会根据你的阶段推荐合适的学习内容
         </p>
       </div>
 
-      <div class="stage-dialog__options">
+      <div class="options">
         <button
           v-for="stage in stages"
           :key="stage.value"
-          class="stage-dialog__option"
+          class="option"
           @click="$emit('select', stage.value)"
         >
-          <span class="stage-dialog__option-icon">{{ stage.icon }}</span>
-          <div class="stage-dialog__option-text">
-            <span class="stage-dialog__option-label">{{ stage.label }}</span>
-            <span class="stage-dialog__option-desc">{{ stage.desc }}</span>
+          <span class="icon">{{ stage.icon }}</span>
+          <div class="text">
+            <span class="label">{{ stage.label }}</span>
+            <span class="desc">{{ stage.desc }}</span>
           </div>
         </button>
       </div>
 
-      <button class="stage-dialog__cancel" @click="$emit('close')">
+      <button class="cancel" @click="$emit('close')">
         稍后再说
       </button>
     </div>
@@ -75,7 +75,7 @@ const stages = [
 </script>
 
 <style scoped>
-.stage-dialog__overlay {
+.overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
@@ -86,7 +86,7 @@ const stages = [
   padding: var(--spacing-lg);
 }
 
-.stage-dialog {
+.dialog {
   background: var(--color-bg-white);
   border-radius: var(--border-radius-xl);
   padding: var(--spacing-2xl);
@@ -95,32 +95,32 @@ const stages = [
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
 }
 
-.stage-dialog__header {
+.header {
   text-align: center;
   margin-bottom: var(--spacing-xl);
 }
 
-.stage-dialog__title {
-  font-size: 1.5rem;
+.title {
+  font-size: var(--text-2xl);
   font-weight: 700;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-sm);
 }
 
-.stage-dialog__desc {
+.desc {
   font-size: 0.9375rem;
   color: var(--color-text-secondary);
   margin: 0;
 }
 
-.stage-dialog__options {
+.options {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-xl);
 }
 
-.stage-dialog__option {
+.option {
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
@@ -133,48 +133,48 @@ const stages = [
   transition: all 150ms ease;
 }
 
-.stage-dialog__option:hover {
+.option:hover {
   border-color: var(--color-primary);
   background: var(--color-primary-ghost-light);
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
 }
 
-.stage-dialog__option-icon {
+.icon {
   font-size: 1.75rem;
   flex-shrink: 0;
 }
 
-.stage-dialog__option-text {
+.text {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.stage-dialog__option-label {
-  font-size: 1rem;
+.label {
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--color-text-primary);
 }
 
-.stage-dialog__option-desc {
+.option .desc {
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
 }
 
-.stage-dialog__cancel {
+.cancel {
   display: block;
   width: 100%;
   padding: var(--spacing-sm);
   border: none;
   background: none;
   color: var(--color-text-light);
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   cursor: pointer;
   transition: color 150ms ease;
 }
 
-.stage-dialog__cancel:hover {
+.cancel:hover {
   color: var(--color-text-secondary);
 }
 </style>

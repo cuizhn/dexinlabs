@@ -1,5 +1,5 @@
 <template>
-  <blockquote class="block-quote" v-html="block.content" />
+  <blockquote class="quote" v-html="block.content" />
 </template>
 
 <script setup lang="ts">
@@ -12,12 +12,12 @@ defineProps<{ block: QuoteBlock }>()
 </script>
 
 <style scoped>
-.block-quote {
-  border-left: 3px solid var(--color-primary, #4a90d9);
-  margin: 1em 0;
-  padding: 0.5em 1em;
-  color: var(--color-text-secondary, #666);
-  background: var(--color-bg-secondary, #f8f9fa);
-  border-radius: 0 4px 4px 0;
+.quote {
+  border-left: 3px solid var(--color-primary);
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
-  <div class="global-search" :class="{ 'global-search--open': isOpen }">
+  <div class="search" :class="{ 'open': isOpen }">
     <!-- Desktop 搜索框 -->
-    <div class="global-search__desktop">
-      <div class="global-search__input-wrapper">
-        <svg class="global-search__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <div class="desktop">
+      <div class="input-wrapper">
+        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle>
           <path d="m21 21-4.35-4.35"></path>
         </svg>
@@ -11,7 +11,7 @@
           ref="desktopInput"
           v-model="searchQuery"
           type="text" 
-          class="global-search__input" 
+          class="input" 
           placeholder="搜索课程、知识点..."
           @keydown.enter="handleSearch"
         />
@@ -20,7 +20,7 @@
 
     <!-- Mobile 搜索图标 -->
     <button 
-      class="global-search__mobile-toggle"
+      class="mobile-toggle"
       aria-label="打开搜索"
       @click="openSearch"
     >
@@ -31,9 +31,9 @@
     </button>
 
     <!-- Mobile 搜索状态 -->
-    <div class="global-search__mobile" v-if="isOpen">
+    <div class="mobile" v-if="isOpen">
       <button 
-        class="global-search__mobile-close"
+        class="close-btn"
         aria-label="关闭搜索"
         @click="closeSearch"
       >
@@ -42,8 +42,8 @@
           <path d="m6 6 12 12"></path>
         </svg>
       </button>
-      <div class="global-search__mobile-input-wrapper">
-        <svg class="global-search__mobile-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <div class="input-wrapper">
+        <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle>
           <path d="m21 21-4.35-4.35"></path>
         </svg>
@@ -51,7 +51,7 @@
           ref="mobileInput"
           v-model="searchQuery"
           type="text" 
-          class="global-search__mobile-input" 
+          class="input" 
           placeholder="搜索课程、知识点..."
           @keydown.enter="handleSearch"
         />
@@ -115,7 +115,7 @@ defineExpose({
 </script>
 
 <style scoped>
-.global-search {
+.search {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
@@ -124,12 +124,13 @@ defineExpose({
 }
 
 /* Desktop 搜索框 */
-.global-search__desktop {
+.desktop {
   display: flex;
   align-items: center;
 }
 
-.global-search__input-wrapper {
+/* 共享输入框样式 */
+.input-wrapper {
   display: flex;
   align-items: center;
   background-color: var(--color-bg-secondary);
@@ -140,34 +141,34 @@ defineExpose({
   width: 320px;
 }
 
-.global-search__input-wrapper:focus-within {
+.input-wrapper:focus-within {
   border-color: var(--color-primary);
   background-color: var(--color-bg-white);
   box-shadow: 0 0 0 3px var(--color-primary-ghost);
 }
 
-.global-search__icon {
+.icon {
   flex-shrink: 0;
   color: var(--color-text-secondary);
   margin-right: var(--spacing-sm);
 }
 
-.global-search__input {
+.input {
   flex: 1;
   background: none;
   border: none;
   outline: none;
-  font-size: 0.9375rem;
+  font-size: var(--text-sm);
   color: var(--color-text-primary);
   padding: var(--spacing-sm) 0;
 }
 
-.global-search__input::placeholder {
+.input::placeholder {
   color: var(--color-text-muted);
 }
 
 /* Mobile 搜索图标 */
-.global-search__mobile-toggle {
+.mobile-toggle {
   display: none;
   align-items: center;
   justify-content: center;
@@ -181,20 +182,25 @@ defineExpose({
   transition: all 0.2s ease;
 }
 
-.global-search__mobile-toggle:hover {
+.mobile-toggle:hover {
   background-color: var(--color-bg-secondary);
   color: var(--color-primary);
 }
 
 /* Mobile 搜索状态 */
-.global-search__mobile {
+.mobile {
   display: none;
   align-items: center;
   gap: var(--spacing-sm);
   flex: 1;
 }
 
-.global-search__mobile-close {
+.mobile .input-wrapper {
+  width: auto;
+  flex: 1;
+}
+
+.close-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -209,63 +215,26 @@ defineExpose({
   flex-shrink: 0;
 }
 
-.global-search__mobile-close:hover {
+.close-btn:hover {
   background-color: var(--color-bg-secondary);
   color: var(--color-text-primary);
-}
-
-.global-search__mobile-input-wrapper {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  background-color: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  padding: 0 var(--spacing-md);
-  transition: all 0.2s ease;
-}
-
-.global-search__mobile-input-wrapper:focus-within {
-  border-color: var(--color-primary);
-  background-color: var(--color-bg-white);
-  box-shadow: 0 0 0 3px var(--color-primary-ghost);
-}
-
-.global-search__mobile-icon {
-  flex-shrink: 0;
-  color: var(--color-text-secondary);
-  margin-right: var(--spacing-sm);
-}
-
-.global-search__mobile-input {
-  flex: 1;
-  background: none;
-  border: none;
-  outline: none;
-  font-size: 0.9375rem;
-  color: var(--color-text-primary);
-  padding: var(--spacing-sm) 0;
-}
-
-.global-search__mobile-input::placeholder {
-  color: var(--color-text-muted);
 }
 
 /* 移动端适配 */
 @media (max-width: 768px) {
-  .global-search__desktop {
+  .desktop {
     display: none;
   }
 
-  .global-search__mobile-toggle {
+  .mobile-toggle {
     display: flex;
   }
 
-  .global-search--open .global-search__mobile {
+  .open .mobile {
     display: flex;
   }
 
-  .global-search--open .global-search__mobile-toggle {
+  .open .mobile-toggle {
     display: none;
   }
 }

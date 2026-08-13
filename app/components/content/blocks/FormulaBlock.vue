@@ -1,5 +1,5 @@
 <template>
-  <div class="block-formula" :class="{ 'block-formula--inline': !block.display }" v-html="html" />
+  <div class="formula" :class="{ 'formula--inline': !block.display }" v-html="html" />
 </template>
 
 <script setup lang="ts">
@@ -31,12 +31,12 @@ const html = computed(() => {
 </script>
 
 <style scoped>
-.block-formula {
-  margin: 1em 0;
+.formula {
+  margin: var(--spacing-md) 0;
   text-align: center;
   overflow-x: auto;
 }
-.block-formula--inline {
+.formula--inline {
   display: inline;
   margin: 0;
   text-align: inherit;

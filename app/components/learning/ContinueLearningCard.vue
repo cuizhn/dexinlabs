@@ -1,27 +1,27 @@
 <template>
   <!-- 继续学习卡片 - 首页「继续学习」模式下展示当前学习进度 -->
-  <div v-if="recentLearning" class="continue-card">
-    <div class="continue-card__header">
-      <span class="continue-card__label">继续学习</span>
-      <span v-if="streakDays > 0" class="continue-card__streak">
+  <div v-if="recentLearning" class="card">
+    <div class="header">
+      <span class="label">继续学习</span>
+      <span v-if="streakDays > 0" class="streak">
         🔥 连续 {{ streakDays }} 天
       </span>
     </div>
 
-    <div class="continue-card__info">
-      <span class="continue-card__topic">{{ recentLearning.topicTitle }}</span>
-      <span class="continue-card__lesson">
+    <div class="info">
+      <span class="topic">{{ recentLearning.topicTitle }}</span>
+      <span class="lesson">
         第 {{ recentLearning.lessonIndex }} 课 · {{ recentLearning.lessonTitle }}
       </span>
     </div>
 
-    <div class="continue-card__progress">
-      <span class="continue-card__progress-text">
+    <div class="progress">
+      <span class="progress-text">
         {{ recentLearning.lessonIndex }} / {{ recentLearning.totalLessons }}
       </span>
-      <div class="continue-card__progress-bar">
+      <div class="progress-bar">
         <div
-          class="continue-card__progress-fill"
+          class="progress-fill"
           :style="{ width: `${(recentLearning.lessonIndex / recentLearning.totalLessons) * 100}%` }"
         ></div>
       </div>
@@ -29,7 +29,7 @@
 
     <NuxtLink
       :to="`/courses/${recentLearning.topicSlug}/${recentLearning.lessonSlug}`"
-      class="continue-card__btn"
+      class="btn"
     >
       继续学习
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -53,7 +53,7 @@ const { recentLearning, streakDays } = useLearningState()
 </script>
 
 <style scoped>
-.continue-card {
+.card {
   background: var(--color-bg-white);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-xl);
@@ -62,80 +62,80 @@ const { recentLearning, streakDays } = useLearningState()
   box-shadow: var(--shadow-sm);
 }
 
-.continue-card__header {
+.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-lg);
 }
 
-.continue-card__label {
-  font-size: 0.875rem;
+.label {
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-primary);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
-.continue-card__streak {
+.streak {
   font-size: 0.8125rem;
   color: var(--color-text-secondary);
   font-weight: 500;
 }
 
-.continue-card__info {
+.info {
   margin-bottom: var(--spacing-lg);
 }
 
-.continue-card__topic {
+.topic {
   display: block;
-  font-size: 1.5rem;
+  font-size: var(--text-2xl);
   font-weight: 700;
   color: var(--color-text-primary);
-  margin-bottom: 4px;
+  margin-bottom: var(--spacing-xs);
 }
 
-.continue-card__lesson {
+.lesson {
   display: block;
-  font-size: 1rem;
+  font-size: var(--text-base);
   color: var(--color-text-secondary);
 }
 
-.continue-card__progress {
+.progress {
   margin-bottom: var(--spacing-xl);
 }
 
-.continue-card__progress-text {
+.progress-text {
   display: block;
   font-size: 0.8125rem;
   color: var(--color-text-light);
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-sm);
 }
 
-.continue-card__progress-bar {
+.progress-bar {
   height: 6px;
   background: var(--color-bg-secondary);
   border-radius: 3px;
   overflow: hidden;
 }
 
-.continue-card__progress-fill {
+.progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
   border-radius: 3px;
   transition: width 0.5s ease;
 }
 
-.continue-card__btn {
+.btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
   width: 100%;
-  padding: 16px 32px;
+  padding: var(--spacing-md) var(--spacing-xl);
   border-radius: var(--border-radius-md);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--text-base);
   text-decoration: none;
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
   color: var(--color-text-inverse);
@@ -143,7 +143,7 @@ const { recentLearning, streakDays } = useLearningState()
   transition: all 0.25s ease;
 }
 
-.continue-card__btn:hover {
+.btn:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-primary-hover);
 }

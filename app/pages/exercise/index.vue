@@ -1,33 +1,33 @@
 <template>
-  <section class="exercise-page">
-    <section class="exercise-page__header">
+  <section class="page">
+    <section class="header">
       <div class="container">
-        <nav class="exercise-page__breadcrumb">
-          <NuxtLink to="/courses" class="exercise-page__bc-link">课程地图</NuxtLink>
+        <nav class="breadcrumb">
+          <NuxtLink to="/courses" class="bc-link">课程地图</NuxtLink>
 
-          <span class="exercise-page__bc-sep">/</span>
+          <span class="bc-sep">/</span>
 
-          <span class="exercise-page__bc-current">练习</span>
+          <span class="bc-current">练习</span>
         </nav>
 
-        <h1 class="exercise-page__title">
+        <h1 class="title">
           {{ topicTitle ? `${topicTitle} · 练习` : '练习' }}
         </h1>
 
-        <p class="exercise-page__desc">
+        <p class="desc">
           思考 → 尝试 → 提示 → 修正 → 理解 → 总结 → 迁移。让每一次练习都成为思维的生长。
         </p>
       </div>
     </section>
 
-    <section class="exercise-page__body">
-      <div class="container exercise-page__container">
-        <div v-if="loading" class="exercise-page__empty">练习内容加载中...</div>
+    <section class="body">
+      <div class="container body-container">
+        <div v-if="loading" class="empty">练习内容加载中...</div>
 
         <template v-else-if="exercise">
-          <h2 class="exercise-page__section-title">{{ exercise.title || '练习题' }}</h2>
+          <h2 class="section-title">{{ exercise.title || '练习题' }}</h2>
 
-          <div v-if="exercise.summary" class="exercise-page__intro">
+          <div v-if="exercise.summary" class="intro">
             {{ exercise.summary }}
           </div>
 
@@ -37,12 +37,12 @@
           />
         </template>
 
-        <div v-else class="exercise-page__placeholder">
+        <div v-else class="placeholder">
           <div class="placeholder-card">
-            <div class="placeholder-card__icon">✎</div>
-            <h3 class="placeholder-card__title">练习内容准备中</h3>
-            <p class="placeholder-card__desc"> 练习正在精心设计中。请先完成课时学习，扎实掌握每个概念。 </p>
-            <NuxtLink to="/courses" class="placeholder-card__back">
+            <div class="placeholder-icon">✎</div>
+            <h3 class="placeholder-title">练习内容准备中</h3>
+            <p class="placeholder-desc"> 练习正在精心设计中。请先完成课时学习，扎实掌握每个概念。 </p>
+            <NuxtLink to="/courses" class="placeholder-back">
               ← 返回课程地图
             </NuxtLink>
           </div>
@@ -68,58 +68,69 @@ useHead({
 </script>
 
 <style scoped>
-.exercise-page__header {
+.header {
   padding: var(--spacing-xl) 0 var(--spacing-lg);
   background: linear-gradient(135deg, var(--color-bg-secondary), transparent);
 }
-.exercise-page__breadcrumb {
+
+.breadcrumb {
   display: flex;
   gap: var(--spacing-xs);
   align-items: center;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   margin-bottom: var(--spacing-lg);
   flex-wrap: wrap;
 }
-.exercise-page__bc-link {
+
+.bc-link {
   color: var(--color-text-secondary);
   text-decoration: none;
 }
-.exercise-page__bc-link:hover {
+
+.bc-link:hover {
   color: var(--color-primary);
 }
-.exercise-page__bc-sep {
+
+.bc-sep {
   color: var(--color-text-light);
 }
-.exercise-page__bc-current {
+
+.bc-current {
   color: var(--color-text-primary);
   font-weight: 500;
 }
-.exercise-page__title {
-  font-size: 1.875rem;
+
+.title {
+  font-size: var(--text-3xl);
   font-weight: 700;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-sm);
 }
-.exercise-page__desc {
-  font-size: 1rem;
+
+.desc {
+  font-size: var(--text-base);
   color: var(--color-text-secondary);
   max-width: 640px;
   line-height: 1.6;
   margin: 0;
 }
-.exercise-page__body {
+
+.body {
   padding: var(--spacing-xl) 0 var(--spacing-3xl);
 }
-.exercise-page__container {
+
+.body-container {
   max-width: 760px;
 }
-.exercise-page__section-title {
-  font-size: 1.25rem;
+
+.section-title {
+  font-size: var(--text-xl);
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-md);
 }
-.exercise-page__intro {
+
+.intro {
   padding: var(--spacing-md) var(--spacing-lg);
   background: var(--color-bg-secondary);
   border-left: 3px solid var(--color-primary);
@@ -128,10 +139,12 @@ useHead({
   line-height: 1.6;
   margin-bottom: var(--spacing-lg);
 }
-.exercise-page__empty,
-.exercise-page__placeholder {
+
+.empty,
+.placeholder {
   padding: var(--spacing-2xl) 0;
 }
+
 .placeholder-card {
   padding: var(--spacing-3xl) var(--spacing-xl);
   background: var(--color-bg-white);
@@ -139,38 +152,43 @@ useHead({
   border-radius: var(--border-radius-lg);
   text-align: center;
 }
-.placeholder-card__icon {
+
+.placeholder-icon {
   width: 64px;
   height: 64px;
   margin: 0 auto var(--spacing-md);
   border-radius: 50%;
   background: var(--color-primary-light);
   color: var(--color-primary);
-  font-size: 1.75rem;
+  font-size: var(--text-2xl);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.placeholder-card__title {
-  font-size: 1.25rem;
+
+.placeholder-title {
+  font-size: var(--text-xl);
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-sm);
 }
-.placeholder-card__desc {
-  font-size: 0.95rem;
+
+.placeholder-desc {
+  font-size: var(--text-sm);
   color: var(--color-text-secondary);
   line-height: 1.6;
   max-width: 440px;
   margin: 0 auto var(--spacing-lg);
 }
-.placeholder-card__back {
+
+.placeholder-back {
   display: inline-block;
   font-weight: 500;
   color: var(--color-primary);
   text-decoration: none;
 }
-.placeholder-card__back:hover {
+
+.placeholder-back:hover {
   text-decoration: underline;
 }
 </style>

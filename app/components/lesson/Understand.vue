@@ -1,30 +1,30 @@
 <template>
   <!-- 我的理解 - Lesson 页面右下角的笔记区域 -->
-  <div class="my-understanding">
-    <div class="my-understanding__header">
-      <h3 class="my-understanding__title">
+  <div class="panel">
+    <div class="header">
+      <h3 class="title">
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
           <path d="M3 14l4-4 3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         我的理解
       </h3>
-      <span class="my-understanding__hint">用自己的话记录你的理解</span>
+      <span class="hint">用自己的话记录你的理解</span>
     </div>
 
     <textarea
       v-model="note"
-      class="my-understanding__textarea"
+      class="textarea"
       placeholder="写下你对本课内容的理解...&#10;&#10;例如：&#10;- 我认为核心概念是...&#10;- 最容易混淆的地方是...&#10;- 我可以这样记忆..."
       rows="6"
     ></textarea>
 
-    <div class="my-understanding__footer">
-      <span class="my-understanding__status">
+    <div class="footer">
+      <span class="status">
         {{ note ? `已记录 ${note.length} 字` : '尚未记录' }}
       </span>
       <button
         v-if="note"
-        class="my-understanding__save-btn"
+        class="save-btn"
         @click="saveNote"
       >
         保存笔记
@@ -77,7 +77,7 @@ function saveNote() {
 </script>
 
 <style scoped>
-.my-understanding {
+.panel {
   position: fixed;
   bottom: var(--spacing-xl);
   right: var(--spacing-xl);
@@ -90,7 +90,7 @@ function saveNote() {
   overflow: hidden;
 }
 
-.my-understanding__header {
+.header {
   padding: var(--spacing-md) var(--spacing-lg);
   border-bottom: 1px solid var(--color-border);
   display: flex;
@@ -98,26 +98,26 @@ function saveNote() {
   align-items: center;
 }
 
-.my-understanding__title {
+.title {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 0.875rem;
+  gap: var(--spacing-xs);
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0;
 }
 
-.my-understanding__title svg {
+.title svg {
   color: var(--color-primary);
 }
 
-.my-understanding__hint {
-  font-size: 0.75rem;
+.hint {
+  font-size: var(--text-xs);
   color: var(--color-text-light);
 }
 
-.my-understanding__textarea {
+.textarea {
   display: block;
   width: 100%;
   padding: var(--spacing-md) var(--spacing-lg);
@@ -125,17 +125,17 @@ function saveNote() {
   outline: none;
   resize: none;
   font-family: inherit;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   line-height: 1.6;
   color: var(--color-text-primary);
   background: transparent;
 }
 
-.my-understanding__textarea::placeholder {
+.textarea::placeholder {
   color: var(--color-text-light);
 }
 
-.my-understanding__footer {
+.footer {
   padding: var(--spacing-sm) var(--spacing-lg);
   border-top: 1px solid var(--color-border);
   display: flex;
@@ -143,30 +143,30 @@ function saveNote() {
   align-items: center;
 }
 
-.my-understanding__status {
-  font-size: 0.75rem;
+.status {
+  font-size: var(--text-xs);
   color: var(--color-text-light);
 }
 
-.my-understanding__save-btn {
-  padding: 4px 12px;
+.save-btn {
+  padding: var(--spacing-xs) var(--spacing-sm);
   border: 1px solid var(--color-primary);
   border-radius: var(--border-radius-sm);
   background: transparent;
   color: var(--color-primary);
-  font-size: 0.75rem;
+  font-size: var(--text-xs);
   font-weight: 500;
   cursor: pointer;
   transition: all 150ms ease;
 }
 
-.my-understanding__save-btn:hover {
+.save-btn:hover {
   background: var(--color-primary);
   color: var(--color-text-inverse);
 }
 
 @media (max-width: 1200px) {
-  .my-understanding {
+  .panel {
     width: 280px;
     right: var(--spacing-lg);
     bottom: var(--spacing-lg);
@@ -174,7 +174,7 @@ function saveNote() {
 }
 
 @media (max-width: 768px) {
-  .my-understanding {
+  .panel {
     position: static;
     width: 100%;
     margin-top: var(--spacing-xl);

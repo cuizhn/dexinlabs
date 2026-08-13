@@ -1,16 +1,16 @@
 <template>
   <div>
     <!-- Hero 区域 -->
-    <section class="home-hero">
-      <div class="home-hero__container">
-        <h1 class="home-hero__title">得心实验室</h1>
-        <p class="home-hero__subtitle">理解，而不是记住。</p>
+    <section class="hero">
+      <div class="container">
+        <h1>得心实验室</h1>
+        <p class="subtitle">理解，而不是记住。</p>
         
-        <div class="home-hero__actions">
-          <NuxtLink to="/courses" class="home-hero__btn home-hero__btn--primary">
+        <div class="actions">
+          <NuxtLink to="/courses" class="btn btn-primary">
             直接开始
           </NuxtLink>
-          <a href="#why" class="home-hero__btn home-hero__btn--secondary">
+          <a href="#why" class="btn btn-link">
             深入了解
           </a>
         </div>
@@ -18,42 +18,42 @@
     </section>
 
     <!-- 为什么是得心实验室 -->
-    <section id="why" class="why-section">
-      <div class="why-section__container">
-        <h2 class="why-section__title">为什么是得心实验室？</h2>
-        <p class="why-section__subtitle">
+    <section id="why" class="section">
+      <div class="container">
+        <h2 class="section-title">为什么是得心实验室？</h2>
+        <p class="section-subtitle">
           我们相信，学习的本质是理解，而不是记忆。得心实验室致力于帮助学生真正理解数学概念，建立深层的知识连接。
         </p>
         
-        <div class="why-section__grid">
-          <div class="why-section__card">
-            <div class="why-section__icon">🎯</div>
-            <h3 class="why-section__card-title">理解优先</h3>
-            <p class="why-section__card-text">
+        <div class="grid">
+          <div class="card">
+            <div class="icon">🎯</div>
+            <h3>理解优先</h3>
+            <p>
               每个知识点都从"为什么"开始，帮助学生建立直觉理解，而不是死记硬背公式。
             </p>
           </div>
           
-          <div class="why-section__card">
-            <div class="why-section__icon">🔗</div>
-            <h3 class="why-section__card-title">知识连接</h3>
-            <p class="why-section__card-text">
+          <div class="card">
+            <div class="icon">🔗</div>
+            <h3>知识连接</h3>
+            <p>
               展示知识点之间的联系，让学生看到数学是一个整体，而不是零散的概念集合。
             </p>
           </div>
           
-          <div class="why-section__card">
-            <div class="why-section__icon">💡</div>
-            <h3 class="why-section__card-title">启发思考</h3>
-            <p class="why-section__card-text">
+          <div class="card">
+            <div class="icon">💡</div>
+            <h3>启发思考</h3>
+            <p>
               通过问题引导和探索式学习，培养学生的数学思维和解决问题的能力。
             </p>
           </div>
           
-          <div class="why-section__card">
-            <div class="why-section__icon">📈</div>
-            <h3 class="why-section__card-title">循序渐进</h3>
-            <p class="why-section__card-text">
+          <div class="card">
+            <div class="icon">📈</div>
+            <h3>循序渐进</h3>
+            <p>
               精心设计的学习路径，从基础到进阶，每一步都建立在扎实的理解之上。
             </p>
           </div>
@@ -62,49 +62,47 @@
     </section>
 
     <!-- 课程与学习方式 -->
-    <section class="feature-grid">
-      <div class="feature-grid__container">
-        <h2 class="feature-grid__title">课程与学习方式</h2>
-        <p class="feature-grid__subtitle">
+    <section class="section section-alt">
+      <div class="container">
+        <h2 class="section-title">课程与学习方式</h2>
+        <p class="section-subtitle">
           不只是视频和文字，而是真正可交互的学习体验
         </p>
         
-        <div class="feature-grid__items">
-          <div v-for="(feature, index) in features" :key="index" class="feature-grid__item">
-            <div class="feature-grid__item-icon">{{ feature.icon }}</div>
-            <h3 class="feature-grid__item-title">{{ feature.title }}</h3>
-            <p class="feature-grid__item-desc">{{ feature.description }}</p>
+        <div class="grid">
+          <div v-for="(feature, index) in features" :key="index" class="card">
+            <div class="icon">{{ feature.icon }}</div>
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- 数学知识地图 -->
-    <section class="knowledge-map">
-      <div class="knowledge-map__container">
-        <h2 class="knowledge-map__title">数学知识地图</h2>
-        <p class="knowledge-map__subtitle">
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">数学知识地图</h2>
+        <p class="section-subtitle">
           完整覆盖初中数学知识体系，从数与代数到统计与概率，每个知识点都精心设计。
         </p>
         
-        <div class="knowledge-map__topics">
+        <div class="grid grid-topics">
           <NuxtLink 
             v-for="topic in topics" 
             :key="topic.slug" 
             :to="`/courses/${topic.slug}`"
-            class="knowledge-map__topic-card"
+            class="card card-topic"
           >
-            <div class="knowledge-map__topic-icon">{{ topic.icon }}</div>
-            <h3 class="knowledge-map__topic-title">{{ topic.title }}</h3>
-            <p class="knowledge-map__topic-desc">{{ topic.description }}</p>
-            <div class="knowledge-map__topic-meta">
-              <span>{{ topic.lessonCount }} 个课时</span>
-            </div>
+            <div class="icon icon-large">{{ topic.icon }}</div>
+            <h3>{{ topic.title }}</h3>
+            <p>{{ topic.description }}</p>
+            <span class="meta">{{ topic.lessonCount }} 个课时</span>
           </NuxtLink>
         </div>
         
-        <div class="knowledge-map__cta">
-          <NuxtLink to="/courses" class="knowledge-map__btn">
+        <div class="cta">
+          <NuxtLink to="/courses" class="btn btn-primary">
             查看全部课程
           </NuxtLink>
         </div>
@@ -112,75 +110,74 @@
     </section>
 
     <!-- 自由探索课程 -->
-    <section class="explore-courses">
-      <div class="explore-courses__container">
-        <h2 class="explore-courses__title">自由探索课程</h2>
-        <p class="explore-courses__subtitle">
+    <section class="section section-alt">
+      <div class="container text-center">
+        <h2 class="section-title">自由探索课程</h2>
+        <p class="section-subtitle">
           无需注册，立即体验我们的学习课程。选择你感兴趣的主题，开始探索之旅。
         </p>
         
-        <div class="explore-courses__actions">
-          <NuxtLink to="/courses" class="explore-courses__btn explore-courses__btn--primary">
+        <div class="actions">
+          <NuxtLink to="/courses" class="btn btn-primary">
             浏览所有课程
           </NuxtLink>
-          <NuxtLink to="/courses" class="explore-courses__btn explore-courses__btn--secondary">
+          <NuxtLink to="/courses" class="btn btn-outline">
             查看学习路径
           </NuxtLink>
         </div>
         
-        <div class="explore-courses__note">
+        <div class="note">
           <p>💡 提示：注册账号后可以保存学习进度、参与互动练习、获得个性化推荐</p>
         </div>
       </div>
     </section>
 
     <!-- 关于得心实验室 -->
-    <section class="about">
-      <div class="about__container">
-        <h2 class="about__title">关于得心实验室</h2>
-        <div class="about__content">
-          <p class="about__intro">
-            得心实验室是一个致力于数学教育创新的在线学习平台。我们相信，数学不应该只是公式和计算，而应该是理解世界的一种方式。
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">关于得心实验室</h2>
+        
+        <p class="intro">
+          心得实验室是一个致力于数学教育创新的在线学习平台。我们相信，数学不应该只是公式和计算，而应该是理解世界的一种方式。
+        </p>
+        
+        <div class="mission">
+          <h3>我们的使命</h3>
+          <p>
+            帮助学生建立深层的数学理解，培养数学思维能力，让每个学生都能发现数学之美。
           </p>
-          
-          <div class="about__mission">
-            <h3 class="about__mission-title">我们的使命</h3>
-            <p class="about__mission-text">
-              帮助学生建立深层的数学理解，培养数学思维能力，让每个学生都能发现数学之美。
+        </div>
+        
+        <div class="grid">
+          <div class="card">
+            <div class="icon">🎯</div>
+            <h4>理解优先</h4>
+            <p>
+              我们追求真正的理解，而不是表面的记忆。每个知识点都从"为什么"开始。
             </p>
           </div>
           
-          <div class="about__values">
-            <div class="about__value">
-              <div class="about__value-icon">🎯</div>
-              <h4 class="about__value-title">理解优先</h4>
-              <p class="about__value-text">
-                我们追求真正的理解，而不是表面的记忆。每个知识点都从"为什么"开始。
-              </p>
-            </div>
-            
-            <div class="about__value">
-              <div class="about__value-icon">🔗</div>
-              <h4 class="about__value-title">知识连接</h4>
-              <p class="about__value-text">
-                我们展示知识点之间的联系，帮助学生建立完整的知识网络。
-              </p>
-            </div>
-            
-            <div class="about__value">
-              <div class="about__value-icon">💡</div>
-              <h4 class="about__value-title">启发思考</h4>
-              <p class="about__value-text">
-                我们通过问题引导和探索式学习，培养学生的数学思维。
-              </p>
-            </div>
+          <div class="card">
+            <div class="icon">🔗</div>
+            <h4>知识连接</h4>
+            <p>
+              我们展示知识点之间的联系，帮助学生建立完整的知识网络。
+            </p>
           </div>
           
-          <div class="about__cta">
-            <NuxtLink to="/courses" class="about__btn">
-              开始学习之旅
-            </NuxtLink>
+          <div class="card">
+            <div class="icon">💡</div>
+            <h4>启发思考</h4>
+            <p>
+              我们通过问题引导和探索式学习，培养学生的数学思维。
+            </p>
           </div>
+        </div>
+        
+        <div class="cta">
+          <NuxtLink to="/courses" class="btn btn-primary">
+            开始学习之旅
+          </NuxtLink>
         </div>
       </div>
     </section>
@@ -258,636 +255,285 @@ const topics = [
 </script>
 
 <style scoped>
-/* ========== Hero ========== */
-.home-hero {
-  padding: 48px 24px;
-  background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+/* ========== 通用组件 ========== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
 }
 
-.home-hero__container {
-  max-width: 800px;
-  margin: 0 auto;
+.text-center {
   text-align: center;
 }
 
-.home-hero__title {
-  font-size: 3rem;
+.section {
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  background: var(--color-bg-white);
+}
+
+.section-alt {
+  background: var(--color-bg-secondary);
+}
+
+.section-title {
+  font-size: 2.5rem;
   font-weight: 800;
   color: var(--color-text-primary);
-  margin: 0 0 12px;
-  letter-spacing: -0.02em;
+  text-align: center;
+  margin: 0 0 var(--spacing-xl);
 }
 
-.home-hero__subtitle {
-  font-size: 1.25rem;
+.section-subtitle {
+  font-size: 1.125rem;
   color: var(--color-text-secondary);
-  margin: 0 0 32px;
-  font-weight: 400;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto var(--spacing-2xl);
+  line-height: 1.7;
 }
 
-.home-hero__actions {
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.grid-topics {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  margin-bottom: var(--spacing-2xl);
+}
+
+.card {
+  padding: var(--spacing-xl);
+  background: var(--color-bg-white);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--color-border-light);
+  transition: all 0.3s ease;
+}
+
+.section-alt .card {
+  background: var(--color-bg-white);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-primary-light);
+}
+
+.card-topic {
+  text-decoration: none;
+  display: block;
+}
+
+.card-topic:hover {
+  border-color: var(--color-primary);
+}
+
+.icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.icon-large {
+  font-size: 3rem;
+}
+
+.meta {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  font-weight: 500;
+}
+
+.actions {
   display: flex;
-  gap: 16px;
+  gap: var(--spacing-md);
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
 }
 
-.home-hero__btn {
-  padding: 12px 28px;
+.cta {
+  text-align: center;
+  padding-top: var(--spacing-xl);
+}
+
+/* ========== 按钮 ========== */
+.btn {
+  padding: var(--spacing-md) var(--spacing-xl);
   font-size: 1rem;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: var(--border-radius-md);
   text-decoration: none;
   transition: all 0.2s ease;
   cursor: pointer;
   border: none;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
-.home-hero__btn--primary {
+.btn-primary {
   background: var(--color-primary);
   color: var(--color-text-inverse);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+  box-shadow: var(--shadow-sm);
 }
 
-.home-hero__btn--primary:hover {
+.btn-primary:hover {
   background: var(--color-primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
+  box-shadow: var(--shadow-md);
 }
 
-.home-hero__btn--secondary {
-  background: transparent;
-  color: var(--color-text-secondary);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-.home-hero__btn--secondary:hover {
-  color: var(--color-primary);
-}
-
-/* ========== Why Section ========== */
-.why-section {
-  padding: 80px 24px;
-  background: var(--color-bg-white);
-}
-
-.why-section__container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.why-section__title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--color-text-primary);
-  text-align: center;
-  margin: 0 0 24px;
-}
-
-.why-section__subtitle {
-  font-size: 1.125rem;
-  color: var(--color-text-secondary);
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto 48px;
-  line-height: 1.7;
-}
-
-.why-section__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-}
-
-.why-section__card {
-  padding: 32px;
-  background: var(--color-bg-secondary);
-  border-radius: 12px;
-  border: 1px solid var(--color-border-light);
-  transition: all 0.3s ease;
-}
-
-.why-section__card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-  border-color: var(--color-primary-light);
-}
-
-.why-section__icon {
-  font-size: 2.5rem;
-  margin-bottom: 16px;
-}
-
-.why-section__card-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0 0 8px;
-}
-
-.why-section__card-text {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  line-height: 1.7;
-  margin: 0;
-}
-
-/* ========== Feature Grid ========== */
-.feature-grid {
-  padding: 80px 24px;
-  background: var(--color-bg-white);
-}
-
-.feature-grid__container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.feature-grid__title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--color-text-primary);
-  text-align: center;
-  margin: 0 0 24px;
-}
-
-.feature-grid__subtitle {
-  font-size: 1.125rem;
-  color: var(--color-text-secondary);
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto 48px;
-  line-height: 1.7;
-}
-
-.feature-grid__items {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
-}
-
-.feature-grid__item {
-  padding: 32px;
-  background: var(--color-bg-secondary);
-  border-radius: 12px;
-  border: 1px solid var(--color-border-light);
-  transition: all 0.3s ease;
-}
-
-.feature-grid__item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-  border-color: var(--color-primary-light);
-}
-
-.feature-grid__item-icon {
-  font-size: 2.5rem;
-  margin-bottom: 16px;
-}
-
-.feature-grid__item-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0 0 8px;
-}
-
-.feature-grid__item-desc {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  line-height: 1.7;
-  margin: 0;
-}
-
-/* ========== Knowledge Map ========== */
-.knowledge-map {
-  padding: 80px 24px;
-  background: var(--color-bg-white);
-}
-
-.knowledge-map__container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.knowledge-map__title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--color-text-primary);
-  text-align: center;
-  margin: 0 0 24px;
-}
-
-.knowledge-map__subtitle {
-  font-size: 1.125rem;
-  color: var(--color-text-secondary);
-  text-align: center;
-  max-width: 700px;
-  margin: 0 auto 48px;
-  line-height: 1.7;
-}
-
-.knowledge-map__topics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px;
-  margin-bottom: 48px;
-}
-
-.knowledge-map__topic-card {
-  padding: 32px;
-  background: var(--color-bg-secondary);
-  border-radius: 12px;
-  border: 1px solid var(--color-border-light);
-  text-decoration: none;
-  transition: all 0.3s ease;
-  display: block;
-}
-
-.knowledge-map__topic-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-  border-color: var(--color-primary);
-}
-
-.knowledge-map__topic-icon {
-  font-size: 3rem;
-  margin-bottom: 16px;
-}
-
-.knowledge-map__topic-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0 0 8px;
-}
-
-.knowledge-map__topic-desc {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  line-height: 1.7;
-  margin: 0 0 16px;
-}
-
-.knowledge-map__topic-meta {
-  font-size: 0.875rem;
-  color: var(--color-text-light);
-  font-weight: 500;
-}
-
-.knowledge-map__cta {
-  text-align: center;
-}
-
-.knowledge-map__btn {
-  display: inline-block;
-  padding: 14px 32px;
-  background: var(--color-primary);
-  color: var(--color-text-inverse);
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
-}
-
-.knowledge-map__btn:hover {
-  background: var(--color-primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
-}
-
-/* ========== Explore Courses ========== */
-.explore-courses {
-  padding: 80px 24px;
-  background: var(--color-bg-white);
-}
-
-.explore-courses__container {
-  max-width: 1200px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-.explore-courses__title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--color-text-primary);
-  text-align: center;
-  margin: 0 0 24px;
-}
-
-.explore-courses__subtitle {
-  font-size: 1.125rem;
-  color: var(--color-text-secondary);
-  text-align: center;
-  line-height: 1.7;
-  margin: 0 auto 48px;
-  max-width: 700px;
-}
-
-.explore-courses__actions {
-  display: flex;
-  gap: 24px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 48px;
-}
-
-.explore-courses__btn {
-  padding: 14px 32px;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 8px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  display: inline-block;
-}
-
-.explore-courses__btn--primary {
-  background: var(--color-primary);
-  color: var(--color-text-inverse);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
-}
-
-.explore-courses__btn--primary:hover {
-  background: var(--color-primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
-}
-
-.explore-courses__btn--secondary {
+.btn-outline {
   background: transparent;
   color: var(--color-text-primary);
   border: 2px solid var(--color-border);
 }
 
-.explore-courses__btn--secondary:hover {
+.btn-outline:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
 }
 
-.explore-courses__note {
-  padding: 24px;
-  background: var(--color-bg-secondary);
-  border-radius: 12px;
-  border: 1px solid var(--color-border-light);
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.explore-courses__note p {
-  margin: 0;
-  font-size: 1rem;
+.btn-link {
+  background: transparent;
   color: var(--color-text-secondary);
-  line-height: 1.7;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  padding: var(--spacing-md) var(--spacing-lg);
 }
 
-/* ========== About ========== */
-.about {
-  padding: 80px 24px;
-  background: var(--color-bg-white);
+.btn-link:hover {
+  color: var(--color-primary);
 }
 
-.about__container {
-  max-width: 1200px;
-  margin: 0 auto;
+/* ========== Hero ========== */
+.hero {
+  padding: var(--spacing-3xl) var(--spacing-lg);
+  background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
 }
 
-.about__title {
-  font-size: 2.5rem;
+.hero .container {
+  max-width: 800px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3rem;
   font-weight: 800;
   color: var(--color-text-primary);
-  text-align: center;
-  margin: 0 0 48px;
+  margin: 0 0 var(--spacing-md);
+  letter-spacing: -0.02em;
 }
 
-.about__content {
-  display: flex;
-  flex-direction: column;
-  gap: 48px;
+.hero .subtitle {
+  font-size: 1.25rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--spacing-xl);
+  font-weight: 400;
 }
 
-.about__intro {
+/* ========== 特殊区块 ========== */
+.intro {
   font-size: 1.25rem;
   color: var(--color-text-secondary);
   text-align: center;
   line-height: 1.8;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 0 auto var(--spacing-2xl);
 }
 
-.about__mission {
-  padding: 32px;
+.mission {
+  padding: var(--spacing-xl);
   background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
-  border-radius: 12px;
+  border-radius: var(--border-radius-lg);
   text-align: center;
+  margin-bottom: var(--spacing-2xl);
 }
 
-.about__mission-title {
+.mission h3 {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--color-text-primary);
-  margin: 0 0 16px;
+  margin: 0 0 var(--spacing-md);
 }
 
-.about__mission-text {
+.mission p {
   font-size: 1.125rem;
   color: var(--color-text-secondary);
   line-height: 1.7;
   margin: 0;
 }
 
-.about__values {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
-}
-
-.about__value {
-  padding: 32px;
-  background: var(--color-bg-secondary);
-  border-radius: 12px;
+.note {
+  padding: var(--spacing-xl);
+  background: var(--color-bg-white);
+  border-radius: var(--border-radius-lg);
   border: 1px solid var(--color-border-light);
-  transition: all 0.3s ease;
+  max-width: 600px;
+  margin: var(--spacing-2xl) auto 0;
 }
 
-.about__value:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
-  border-color: var(--color-primary-light);
-}
-
-.about__value-icon {
-  font-size: 2.5rem;
-  margin-bottom: 16px;
-}
-
-.about__value-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0 0 12px;
-}
-
-.about__value-text {
+.note p {
+  margin: 0;
   font-size: 1rem;
   color: var(--color-text-secondary);
   line-height: 1.7;
-  margin: 0;
-}
-
-.about__cta {
-  text-align: center;
-  padding-top: 24px;
-}
-
-.about__btn {
-  display: inline-block;
-  padding: 14px 32px;
-  background: var(--color-primary);
-  color: var(--color-text-inverse);
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
-}
-
-.about__btn:hover {
-  background: var(--color-primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.25);
 }
 
 /* ========== 响应式 ========== */
 @media (max-width: 768px) {
-  .home-hero {
-    padding: 36px 16px;
+  .hero {
+    padding: var(--spacing-2xl) var(--spacing-md);
   }
 
-  .home-hero__title {
+  .hero h1 {
     font-size: 2.25rem;
   }
 
-  .home-hero__subtitle {
+  .hero .subtitle {
     font-size: 1.125rem;
-    margin-bottom: 24px;
   }
 
-  .home-hero__actions {
+  .hero .actions {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .home-hero__btn {
+  .hero .btn {
     justify-content: center;
   }
 
-  .why-section {
-    padding: 60px 16px;
+  .section {
+    padding: var(--spacing-2xl) var(--spacing-md);
   }
 
-  .why-section__title {
+  .section-title {
     font-size: 2rem;
   }
 
-  .why-section__subtitle {
+  .section-subtitle {
     font-size: 1rem;
   }
 
-  .why-section__grid {
+  .grid {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: var(--spacing-md);
   }
 
-  .feature-grid {
-    padding: 60px 16px;
-  }
-
-  .feature-grid__title {
-    font-size: 2rem;
-  }
-
-  .feature-grid__subtitle {
-    font-size: 1rem;
-  }
-
-  .feature-grid__items {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .knowledge-map {
-    padding: 60px 16px;
-  }
-
-  .knowledge-map__title {
-    font-size: 2rem;
-  }
-
-  .knowledge-map__subtitle {
-    font-size: 1rem;
-  }
-
-  .knowledge-map__topics {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .explore-courses {
-    padding: 60px 16px;
-  }
-
-  .explore-courses__title {
-    font-size: 2rem;
-  }
-
-  .explore-courses__subtitle {
-    font-size: 1rem;
-  }
-
-  .explore-courses__actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .explore-courses__btn {
-    text-align: center;
-  }
-
-  .about {
-    padding: 60px 16px;
-  }
-
-  .about__title {
-    font-size: 2rem;
-  }
-
-  .about__intro {
+  .intro {
     font-size: 1.125rem;
-  }
-
-  .about__values {
-    grid-template-columns: 1fr;
-    gap: 16px;
   }
 }
 
 @media (max-width: 480px) {
-  .home-hero__title {
-    font-size: 2.5rem;
+  .hero h1 {
+    font-size: 2rem;
   }
 
-  .home-hero__subtitle {
-    font-size: 1.125rem;
+  .hero .subtitle {
+    font-size: 1rem;
   }
 }
 </style>

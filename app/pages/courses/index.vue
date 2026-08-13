@@ -1,57 +1,58 @@
 <template>
-  <nav class="catalog">
-    <header class="catalog__header">
+  <nav class="page">
+    <header class="header">
       <div class="container">
-        <h1 class="catalog__title">课程目录</h1>
-        <p class="catalog__desc">
+        <h1 class="title">课程目录</h1>
+        <p class="desc">
           选择你想学习的课时，直接进入学习
         </p>
       </div>
     </header>
 
-    <section class="catalog__body">
+    <section class="body">
       <div class="container">
-        <div v-if="loading" class="catalog__loading">加载中...</div>
+        <div v-if="loading" class="loading">加载中...</div>
 
         <template v-else>
           <div
             v-for="item in catalog"
             :key="item.topic.slug"
-            class="catalog__topic"
+            class="topic"
           >
-            <h2 class="catalog__topic-title">{{ item.topic.title }}</h2>
+            <h2 class="topic-title">{{ item.topic.title }}</h2>
 
             <div
               v-for="ch in item.chapters"
-              :key="ch.chapter.slug || ch.chapter.id"
-              class="catalog__chapter"
+              :key="ch.chapter.slug"
+              class="chapter"
             >
-              <h3 class="catalog__chapter-title">{{ ch.chapter.title }}</h3>
+              <h3 class="chapter-title">{{ ch.chapter.title }}</h3>
 
-              <ol class="catalog__lessons">
+              <ol class="lessons">
                 <li
                   v-for="(lesson, idx) in ch.lessons"
                   :key="lesson.slug"
-                  class="catalog__lesson"
-                  :class="{ 'catalog__lesson--completed': getLessonState(lesson.slug).isCompleted }"
+                  class="lesson"
+                  :class="{ completed: getLessonState(lesson.slug).isCompleted }"
                 >
                   <NuxtLink
                     :to="`/courses/${item.topic.slug}/${lesson.slug}`"
-                    class="catalog__lesson-link"
+                    class="lesson-link"
                   >
-                    <span class="catalog__lesson-index">
-                      <template v-if="getLessonState(lesson.slug).isCompleted">✓</template>
-                      <template v-else>{{ String(idx + 1).padStart(2, '0') }}</template>
+                    <span class="lesson-index">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg>
+                      
+                      <!-- {{ String(idx + 1).padStart(2, '0') }} -->
                     </span>
-                    <span class="catalog__lesson-title">{{ lesson.title }}</span>
-                    <span class="catalog__lesson-arrow">→</span>
+                    <span class="lesson-title">{{ lesson.title }}</span>
+                    
                   </NuxtLink>
                 </li>
               </ol>
             </div>
           </div>
 
-          <div v-if="catalog.length === 0" class="catalog__empty">
+          <div v-if="catalog.length === 0" class="empty">
             暂无课程内容
           </div>
         </template>
@@ -77,58 +78,55 @@ useHead({ title: '课程目录' })
 const { catalog, loading } = await useCourseCatalog()
 
 const { getLessonState } = useLearningState()
+
+
 </script>
 
 <style scoped>
-.catalog {
+.page {
   min-height: 100vh;
   margin: 0 auto;
   min-width: 760px;
 }
-.catalog__header {
+
+.header {
   padding: var(--spacing-2xl) 0 var(--spacing-xl);
   text-align: center;
   background: linear-gradient(180deg, var(--color-bg-secondary), transparent);
 }
 
-.catalog__title {
-  font-size: 2.25rem;
+.title {
+  font-size: var(--text-4xl);
   font-weight: 700;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-sm);
 }
 
-.catalog__desc {
-  font-size: 1rem;
+.desc {
+  font-size: var(--text-base);
   color: var(--color-text-secondary);
   max-width: 560px;
   margin: 0 auto;
   line-height: 1.6;
 }
 
-.catalog__body {
+.body {
   padding: var(--spacing-xl) 0 var(--spacing-3xl);
 }
 
-.catalog__loading {
+.loading,
+.empty {
   text-align: center;
   padding: var(--spacing-3xl);
   color: var(--color-text-muted);
 }
 
-.catalog__empty {
-  text-align: center;
-  padding: var(--spacing-3xl);
-  color: var(--color-text-muted);
-}
-
-/* Topic 分组 */
-.catalog__topic {
+.topic {
   margin-bottom: var(--spacing-3xl);
 }
 
-.catalog__topic-title {
-  font-size: 1.5rem;
+.topic-title {
+  font-size: var(--text-2xl);
   font-weight: 700;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-lg);
@@ -136,77 +134,75 @@ const { getLessonState } = useLearningState()
   border-bottom: 2px solid var(--color-primary);
 }
 
-/* Chapter 分组 */
-.catalog__chapter {
+.chapter {
   margin-bottom: var(--spacing-xl);
 }
 
-.catalog__chapter-title {
-  font-size: 1rem;
+.chapter-title {
+  font-size: var(--text-base);
   font-weight: 600;
   color: var(--color-text-secondary);
   margin: 0 0 var(--spacing-sm);
 }
 
-/* Lesson 列表 */
-.catalog__lessons {
+.lessons {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--spacing-xs);
 }
 
-.catalog__lesson-link {
+@media (max-width: 768px) {
+  .lessons {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lesson-link {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
   padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--color-bg-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
+  
   text-decoration: none;
   color: inherit;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+  transition: background 150ms ease;
 }
 
-.catalog__lesson-link:hover {
-  border-color: var(--color-primary);
-  box-shadow: var(--shadow-sm);
+.lesson-link:hover {
+  background: var(--color-bg-white);
 }
 
-.catalog__lesson--completed .catalog__lesson-link {
+.lesson.completed .lesson-link {
   border-color: var(--color-success-border);
   background: var(--color-success-bg);
 }
 
-.catalog__lesson-index {
-  font-family: 'JetBrains Mono', monospace;
+.lesson-index {
+  font-family: var(--font-mono);
   font-weight: 600;
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--color-primary);
   min-width: 2rem;
   text-align: center;
 }
 
-.catalog__lesson--completed .catalog__lesson-index {
+.lesson.completed .lesson-index {
   color: var(--color-success-dark);
 }
 
-.catalog__lesson-title {
+
+.lesson-title {
   flex: 1;
   font-weight: 500;
   color: var(--color-text-primary);
 }
 
-.catalog__lesson-arrow {
-  color: var(--color-text-light);
-  font-weight: 500;
-  transition: transform 150ms ease;
-}
 
-.catalog__lesson-link:hover .catalog__lesson-arrow {
+
+.lesson-link:hover  {
   color: var(--color-primary);
   transform: translateX(4px);
 }
