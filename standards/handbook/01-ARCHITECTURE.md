@@ -282,3 +282,5 @@ Response
 基础能力交给成熟生态。
 
 保持职责单一，依赖清晰。
+
+UI 使用 Vue SFC；组件样式默认采用 scoped CSS；全局样式仅负责基础环境和设计 Tokens。
