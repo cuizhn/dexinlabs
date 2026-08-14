@@ -33,7 +33,6 @@
                   v-for="(lesson, idx) in ch.lessons"
                   :key="lesson.slug"
                   class="lesson"
-                  :class="{ completed: getLessonState(lesson.slug).isCompleted }"
                 >
                   <NuxtLink
                     :to="`/courses/${item.topic.slug}/${lesson.slug}`"
@@ -71,15 +70,9 @@
  * 用户点击 Lesson 后进入 /{topicSlug}/{lessonSlug} 学习页面。
  * 无中间页面（无 Topic Index、无 Course Index）。
  */
-import { useLearningState } from '~/composables/useLearningState'
-
 useHead({ title: '课程目录' })
 
 const { catalog, loading } = await useCourseCatalog()
-
-const { getLessonState } = useLearningState()
-
-
 </script>
 
 <style scoped>
@@ -175,11 +168,6 @@ const { getLessonState } = useLearningState()
   background: var(--color-bg-white);
 }
 
-.lesson.completed .lesson-link {
-  border-color: var(--color-success-border);
-  background: var(--color-success-bg);
-}
-
 .lesson-index {
   font-family: var(--font-mono);
   font-weight: 600;
@@ -187,10 +175,6 @@ const { getLessonState } = useLearningState()
   color: var(--color-primary);
   min-width: 2rem;
   text-align: center;
-}
-
-.lesson.completed .lesson-index {
-  color: var(--color-success-dark);
 }
 
 

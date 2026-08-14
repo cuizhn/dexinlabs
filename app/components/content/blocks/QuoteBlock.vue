@@ -1,12 +1,16 @@
 <template>
-  <blockquote class="quote" v-html="block.content" />
+  <blockquote class="quote">
+    <ContentRenderer :blocks="block.children" />
+  </blockquote>
 </template>
 
 <script setup lang="ts">
 /**
  * QuoteBlock 组件 - 引用
+ *
+ * children 为 Block[]，通过 ContentRenderer 递归渲染。
  */
-import type { QuoteBlock } from '~/learning/lesson-ast'
+import type { QuoteBlock } from '@shared/lesson-ast'
 
 defineProps<{ block: QuoteBlock }>()
 </script>

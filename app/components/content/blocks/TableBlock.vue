@@ -2,12 +2,16 @@
   <table class="table">
     <thead>
       <tr>
-        <th v-for="(header, i) in block.headers" :key="i" v-html="header" />
+        <th v-for="(header, i) in block.headers" :key="i">
+          <ContentInlineRenderer :nodes="header" />
+        </th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="(row, ri) in block.rows" :key="ri">
-        <td v-for="(cell, ci) in row" :key="ci" v-html="cell" />
+        <td v-for="(cell, ci) in row" :key="ci">
+          <ContentInlineRenderer :nodes="cell" />
+        </td>
       </tr>
     </tbody>
   </table>
@@ -17,9 +21,9 @@
 /**
  * TableBlock 组件 - 表格
  *
- * 表头和单元格内容均为 compiler 编译后的 HTML。
+ * 表头和单元格内容均为 Inline[]，由 InlineRenderer 统一渲染。
  */
-import type { TableBlock } from '~/learning/lesson-ast'
+import type { TableBlock } from '@shared/lesson-ast'
 
 defineProps<{ block: TableBlock }>()
 </script>

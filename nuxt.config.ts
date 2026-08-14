@@ -74,7 +74,9 @@ export default defineNuxtConfig({
   /** 路径别名配置 */
   alias: {
     '@server': path.resolve(rootDir, 'server'),
-    '@database': path.resolve(rootDir, 'app/database')
+    '@database': path.resolve(rootDir, 'app/database'),
+    '@content': path.resolve(rootDir, 'app/content'),
+    '@shared': path.resolve(rootDir, 'shared')
   },
 
   /**

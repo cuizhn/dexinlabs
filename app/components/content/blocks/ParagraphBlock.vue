@@ -1,14 +1,17 @@
 <template>
-  <p class="paragraph" v-html="block.content" />
+  <p class="paragraph">
+    <ContentInlineRenderer :nodes="block.children" />
+  </p>
 </template>
 
 <script setup lang="ts">
 /**
  * ParagraphBlock 组件 - 段落
  *
- * 渲染 compiler 编译后的段落内容。
+ * 消费 Lesson AST 的 ParagraphBlock，children 为 Inline[] 语义结构，
+ * 由 InlineRenderer 统一渲染为 HTML。
  */
-import type { ParagraphBlock } from '~/learning/lesson-ast'
+import type { ParagraphBlock } from '@shared/lesson-ast'
 
 defineProps<{ block: ParagraphBlock }>()
 </script>

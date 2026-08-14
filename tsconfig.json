@@ -20,8 +20,8 @@
       "@content/*": ["app/content/*"],
       "@database": ["app/database"],
       "@database/*": ["app/database/*"],
-      "@progress": ["app/progress"],
-      "@progress/*": ["app/progress/*"],
+      "@shared": ["shared"],
+      "@shared/*": ["shared/*"],
       "~/*": ["app/*"],
       "~~/*": ["./*"]
     }
@@ -32,6 +32,8 @@
     "app/**/*.js",
     "app/**/*.vue",
     "app/**/*.d.ts",
+    "shared/**/*.ts",
+    "tools/**/*.ts",
     "server/**/*.ts",
     "server/**/*.js",
     "drizzle.config.ts",

@@ -1,7 +1,9 @@
 <template>
   <div class="definition">
     <dt class="term">{{ block.term }}</dt>
-    <dd class="content" v-html="block.content" />
+    <dd class="content">
+      <ContentRenderer :blocks="block.children" />
+    </dd>
   </div>
 </template>
 
@@ -10,8 +12,9 @@
  * DefinitionBlock 组件 - 定义（术语解释）
  *
  * 使用 <dl>/<dt>/<dd> 语义化标签渲染数学术语定义。
+ * children 为 Block[]，通过 ContentRenderer 递归渲染。
  */
-import type { DefinitionBlock } from '~/learning/lesson-ast'
+import type { DefinitionBlock } from '@shared/lesson-ast'
 
 defineProps<{ block: DefinitionBlock }>()
 </script>

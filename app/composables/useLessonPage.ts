@@ -8,7 +8,7 @@
  */
 import { computed } from 'vue'
 import { useAsyncData } from 'nuxt/app'
-import type { LessonPage } from '~/learning/view-models'
+import type { LessonPage } from '~/content/view-models'
 
 /**
  * useLessonPage - 获取课时页面数据

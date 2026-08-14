@@ -1,7 +1,9 @@
 <template>
   <div class="example">
     <div v-if="block.title" class="title">{{ block.title }}</div>
-    <div class="body" v-html="block.content" />
+    <div class="body">
+      <ContentRenderer :blocks="block.children" />
+    </div>
   </div>
 </template>
 
@@ -10,8 +12,9 @@
  * ExampleBlock 组件 - 示例
  *
  * 展示解题过程、应用场景等教学内容。
+ * children 为 Block[]，通过 ContentRenderer 递归渲染。
  */
-import type { ExampleBlock } from '~/learning/lesson-ast'
+import type { ExampleBlock } from '@shared/lesson-ast'
 
 defineProps<{ block: ExampleBlock }>()
 </script>

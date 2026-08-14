@@ -3,7 +3,9 @@
     <div class="header">
       {{ label }}
     </div>
-    <div class="body" v-html="block.content" />
+    <div class="body">
+      <ContentRenderer :blocks="block.children" />
+    </div>
   </div>
 </template>
 
@@ -12,8 +14,9 @@
  * HintBlock 组件 - 提示 / 注意 / 警告
  *
  * 根据 level 显示不同样式的提示框。
+ * children 为 Block[]，通过 ContentRenderer 递归渲染。
  */
-import type { HintBlock } from '~/learning/lesson-ast'
+import type { HintBlock } from '@shared/lesson-ast'
 
 const props = defineProps<{ block: HintBlock }>()
 

@@ -1,6 +1,8 @@
 <template>
   <section class="section">
-    <h2 class="title">{{ block.title }}</h2>
+    <h2 class="title">
+      <ContentInlineRenderer :nodes="block.title" />
+    </h2>
     <ContentRenderer :blocks="block.blocks" />
   </section>
 </template>
@@ -10,9 +12,10 @@
  * SectionBlock 组件 - 分区
  *
  * 唯一可嵌套的 Block 类型。渲染标题后递归渲染子 Block 列表。
- * 通过 ContentBlocksRenderer（即 Renderer.vue）实现递归渲染。
+ * title 为 Inline[] 语义结构，由 InlineRenderer 统一渲染。
+ * 通过 ContentRenderer（即 Renderer.vue）实现递归渲染。
  */
-import type { SectionBlock } from '~/learning/lesson-ast'
+import type { SectionBlock } from '@shared/lesson-ast'
 
 defineProps<{ block: SectionBlock }>()
 </script>

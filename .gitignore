@@ -30,3 +30,7 @@ coverage/
 
 # 文档构建产物
 docs/
+
+# VitePress 构建缓存（内容预览工具）
+.vitepress/cache/
+.vitepress/dist/

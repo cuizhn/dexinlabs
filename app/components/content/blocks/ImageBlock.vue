@@ -9,7 +9,7 @@
 /**
  * ImageBlock 组件 - 图片
  */
-import type { ImageBlock } from '~/learning/lesson-ast'
+import type { ImageBlock } from '@shared/lesson-ast'
 
 defineProps<{ block: ImageBlock }>()
 </script>

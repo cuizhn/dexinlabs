@@ -8,7 +8,7 @@
  *
  * 纯视觉分隔，无内容。
  */
-import type { DividerBlock } from '~/learning/lesson-ast'
+import type { DividerBlock } from '@shared/lesson-ast'
 
 defineProps<{ block: DividerBlock }>()
 </script>

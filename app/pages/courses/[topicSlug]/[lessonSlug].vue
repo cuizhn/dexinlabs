@@ -27,37 +27,19 @@
  * 设计原则：
  * - 去除面包屑、返回链接和课程编号，保持专注
  * - 使用默认布局，显示全局 Header
- * - 进入页面时记录学习进度
  */
 definePageMeta({
   layout: 'default'
 })
 
-import { useLearningState } from '~/composables/useLearningState'
 import { useRouteParam } from '~/composables/useRouteParam'
 
 const topicSlug = useRouteParam('topicSlug') ?? ''
 const lessonSlug = (useRouteParam('lessonSlug') ?? '') as string
 
-const { lesson, topic: topicData } = await useLessonPage(topicSlug, lessonSlug)
+const { lesson } = await useLessonPage(topicSlug, lessonSlug)
 
 const lessonData = computed(() => lesson.value)
-
-/** 记录学习进度 */
-const { recordLesson } = useLearningState()
-
-onMounted(() => {
-  if (topicData.value && lesson.value) {
-    recordLesson({
-      topicSlug: topicData.value!.slug,
-      topicTitle: topicData.value.title,
-      lessonSlug: lessonSlug!,
-      lessonTitle: lesson.value.title,
-      lessonIndex: lesson.value.order,
-      totalLessons: 0
-    })
-  }
-})
 
 useHead({
   title: computed(() => lessonData.value?.title || '学习课时')

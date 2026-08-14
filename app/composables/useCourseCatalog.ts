@@ -6,7 +6,7 @@
  */
 import { computed } from 'vue'
 import { useAsyncData } from 'nuxt/app'
-import type { CatalogTopic } from '~/learning/view-models'
+import type { CatalogTopic } from '~/content/view-models'
 
 export async function useCourseCatalog() {
   const { data, pending, error, refresh } = await useAsyncData(

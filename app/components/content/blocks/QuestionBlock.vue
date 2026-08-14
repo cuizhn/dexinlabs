@@ -1,20 +1,12 @@
 <template>
   <div class="question">
-    <div class="prompt" v-html="block.prompt" />
+    <div class="prompt">
+      <ContentRenderer :blocks="block.prompt" />
+    </div>
 
     <details v-if="block.hint" class="section">
       <summary>💡 提示</summary>
-      <div v-html="block.hint" />
-    </details>
-
-    <details v-if="block.answer" class="section">
-      <summary>✅ 答案</summary>
-      <div v-html="block.answer" />
-    </details>
-
-    <details v-if="block.analysis" class="section">
-      <summary>📖 解析</summary>
-      <div v-html="block.analysis" />
+      <div>{{ block.hint }}</div>
     </details>
   </div>
 </template>
@@ -23,9 +15,10 @@
 /**
  * QuestionBlock 组件 - 练习题 / 思考题
  *
- * 题目始终展示，提示/答案/解析通过 <details> 渐进展示。
+ * prompt 为 Block[]，通过 ContentRenderer 递归渲染。
+ * hint 为字符串（可选），通过 <details> 渐进展示。
  */
-import type { QuestionBlock } from '~/learning/lesson-ast'
+import type { QuestionBlock } from '@shared/lesson-ast'
 
 defineProps<{ block: QuestionBlock }>()
 </script>
