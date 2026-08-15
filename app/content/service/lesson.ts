@@ -8,7 +8,7 @@
 import { lessonRepository } from '@database/repository/lesson'
 import type { LessonPage } from '../view-models'
 import { normalizeSlug } from '~/utils/slug'
-import { getSiblings } from '../shared'
+import { getSiblings } from '../navigation'
 import { toLesson, toTopic, toChapter } from '@database/types'
 
 export class LessonService {

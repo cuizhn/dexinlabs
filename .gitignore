@@ -37,4 +37,11 @@ compile/output/
 lessons/
 .workbuddy/
 
-tools/
+# 工具脚本源码纳入 Git（ADR-014 内容编译管线）：
+# tools/content-compiler/ 等源码应入库，保证全新 clone 可复现内容编译环境。
+# 但工具内部的产物 / 缓存 / 依赖继续忽略，避免误提交编译输出。
+tools/**/output
+tools/**/dist
+tools/**/node_modules
+tools/**/.cache
+tools/**/*.log

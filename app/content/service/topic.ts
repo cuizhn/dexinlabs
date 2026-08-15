@@ -8,7 +8,7 @@
 import { topicRepository } from '@database/repository/topic'
 import type { TopicPage, ChapterWithLessons } from '../view-models'
 import { normalizeSlug } from '~/utils/slug'
-import { getSiblings } from '../shared'
+import { getSiblings } from '../navigation'
 import { toTopic, toChapter, toLesson, toExercise } from '@database/types'
 
 export class TopicService {
