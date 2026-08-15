@@ -55,6 +55,8 @@ const globalSearchRef = ref()
 
 .container {
   width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
   padding: 0 var(--spacing-lg);
   display: flex;
   align-items: center;

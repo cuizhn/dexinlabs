@@ -34,6 +34,7 @@
     "markdown-it-mathjax3": "^4.3.2",
     "nuxt": "^4.4.6",
     "pg": "^8.22.0",
+    "playwright": "^1.62.1",
     "remark-directive": "^4.0.0",
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
