@@ -5,7 +5,7 @@
     </div>
 
     <details v-if="block.hint" class="section">
-      <summary>💡 提示</summary>
+      <summary>提示</summary>
       <div>{{ block.hint }}</div>
     </details>
   </div>
@@ -24,33 +24,48 @@ defineProps<{ block: QuestionBlock }>()
 </script>
 
 <style scoped>
+/* 思考题：教材式上结构线 + 小标签；提示展开保留数字工具的交互感 */
 .question {
-  margin: var(--spacing-md) 0;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-sm);
-  border-left: 4px solid var(--color-secondary);
+  margin: 2.25rem 0;
+  padding: 1.25rem 0 0;
+  border-top: 2px solid var(--color-border-strong);
+}
+
+.question::before {
+  content: '思考';
+  display: block;
+  margin-bottom: 0.75rem;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
 }
 
 .prompt {
   margin-bottom: var(--spacing-sm);
+  font-weight: 500;
 }
 
 .section {
-  margin: var(--spacing-xs) 0;
-  padding: var(--spacing-xs);
-  background: var(--color-bg-secondary);
-  border-radius: var(--border-radius-sm);
+  margin: var(--spacing-sm) 0 0;
 }
 
 .section summary {
   cursor: pointer;
-  font-weight: 600;
   font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-primary);
   user-select: none;
+}
+
+.section summary:hover {
+  color: var(--color-primary-hover);
 }
 
 .section > div {
   margin-top: var(--spacing-xs);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
 }
 </style>

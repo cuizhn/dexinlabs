@@ -16,12 +16,13 @@ defineProps<{ block: QuoteBlock }>()
 </script>
 
 <style scoped>
+/* 书籍式引用：无底色，仅靠左侧细线与缩进成立 */
 .quote {
-  border-left: 3px solid var(--color-primary);
-  margin: var(--spacing-md) 0;
-  padding: var(--spacing-sm) var(--spacing-md);
+  margin: 2rem 0;
+  padding: 0.25rem 0 0.25rem 1.5rem;
+  border-left: 2px solid var(--color-border-strong);
   color: var(--color-text-secondary);
-  background: var(--color-bg-secondary);
-  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+  background: none;
+  border-radius: 0;
 }
 </style>

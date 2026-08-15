@@ -21,13 +21,16 @@ defineProps<{ block: SectionBlock }>()
 </script>
 
 <style scoped>
+/* 章节标题：教材式分节，标题下细线 + 更大呼吸 */
 .section {
-  margin: var(--spacing-lg) 0;
+  margin: 2.75rem 0 1.5rem;
 }
 .title {
-  font-size: var(--text-xl);
-  font-weight: 700;
-  margin-bottom: var(--spacing-sm);
+  font-size: 1.35em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-heading);
+  margin-bottom: var(--spacing-md);
   padding-bottom: var(--spacing-xs);
   border-bottom: 1px solid var(--color-border);
 }

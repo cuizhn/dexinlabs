@@ -2,10 +2,8 @@
   <nav class="page">
     <header class="header">
       <div class="container">
-        <h1 class="title">课程目录</h1>
-        <p class="desc">
-          选择你想学习的课时，直接进入学习
-        </p>
+        <p class="label">课程目录</p>
+        <h1 class="title">选择你想学习的课时，直接进入学习</h1>
       </div>
     </header>
 
@@ -14,7 +12,7 @@
         <div v-if="loading" class="loading">加载中...</div>
 
         <template v-else>
-          <div
+          <section
             v-for="item in catalog"
             :key="item.topic.slug"
             class="topic"
@@ -30,7 +28,7 @@
 
               <ol class="lessons">
                 <li
-                  v-for="lesson in ch.lessons"
+                  v-for="(lesson, idx) in ch.lessons"
                   :key="lesson.slug"
                   class="lesson"
                 >
@@ -38,18 +36,14 @@
                     :to="`/courses/${item.topic.slug}/${lesson.slug}`"
                     class="lesson-link"
                   >
-                    <span class="lesson-index">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" /></svg>
-                      
-                      <!-- {{ String(idx + 1).padStart(2, '0') }} -->
-                    </span>
+                    <span class="lesson-index">{{ String(idx + 1).padStart(2, '0') }}</span>
                     <span class="lesson-title">{{ lesson.title }}</span>
-                    
+                    <span class="lesson-arrow" aria-hidden="true">→</span>
                   </NuxtLink>
                 </li>
               </ol>
             </div>
-          </div>
+          </section>
 
           <div v-if="catalog.length === 0" class="empty">
             暂无课程内容
@@ -67,8 +61,11 @@
  * 唯一的课程目录入口，直接展示：
  * Topic → Chapter → Lesson 完整层级。
  *
- * 用户点击 Lesson 后进入 /{topicSlug}/{lessonSlug} 学习页面。
- * 无中间页面（无 Topic Index、无 Course Index）。
+ * 用户点击 Lesson 后进入 /courses/{topicSlug}/{lessonSlug} 学习页面。
+ *
+ * 视觉：与首页共享同一套设计系统——黑白灰、结构线、大留白、少卡片。
+ * 课程结构本身成为页面设计：Topic 之间用 1px 结构线分隔，
+ * 课时以文本行 + 极细分割线呈现，不使用彩色卡片。
  */
 useHead({ title: '课程目录' })
 
@@ -77,41 +74,38 @@ const { catalog, loading } = await useCourseCatalog()
 
 <style scoped>
 .page {
-  min-height: 100vh;
-  margin: 0 auto;
-  /* 移除原 min-width:760px：该约束会在窄屏（<760px）强制页面最小 760px，
-     从而产生横向滚动。改为：页内边距保证手机端不贴边，最大内容宽度交给 .container 控制。 */
+  width: 100%;
   padding-inline: var(--spacing-lg);
 }
 
 .container {
-  max-width: 960px;
+  max-width: 860px;
   margin-inline: auto;
 }
 
 .header {
-  padding: var(--spacing-2xl) 0 var(--spacing-xl);
-  text-align: center;
-  background: linear-gradient(180deg, var(--color-bg-secondary), transparent);
+  padding: var(--spacing-3xl) 0 var(--spacing-2xl);
+}
+
+.label {
+  margin: 0 0 var(--spacing-sm);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
 }
 
 .title {
-  font-size: var(--text-4xl);
-  font-weight: 700;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-sm);
-}
-
-.desc {
-  font-size: var(--text-base);
-  color: var(--color-text-secondary);
-  max-width: 560px;
-  margin: 0 auto;
-  line-height: 1.6;
+  margin: 0;
+  line-height: 1.3;
 }
 
 .body {
-  padding: var(--spacing-xl) 0 var(--spacing-3xl);
+  padding: 0 0 var(--spacing-3xl);
 }
 
 .loading,
@@ -121,111 +115,119 @@ const { catalog, loading } = await useCourseCatalog()
   color: var(--color-text-muted);
 }
 
+/* ── Topic：以 1px 结构线分界，形成页面骨架 ── */
 .topic {
-  margin-bottom: var(--spacing-3xl);
+  border-top: 1px solid var(--color-border);
+  padding: var(--spacing-xl) 0 var(--spacing-2xl);
 }
 
 .topic-title {
   font-size: var(--text-2xl);
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.015em;
   color: var(--color-text-primary);
-  margin: 0 0 var(--spacing-lg);
-  padding-bottom: var(--spacing-sm);
-  border-bottom: 2px solid var(--color-primary);
+  margin: 0 0 var(--spacing-xl);
 }
 
 .chapter {
   margin-bottom: var(--spacing-xl);
 }
 
+.chapter:last-child {
+  margin-bottom: 0;
+}
+
 .chapter-title {
-  font-size: var(--text-base);
-  font-weight: 600;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.02em;
   color: var(--color-text-secondary);
   margin: 0 0 var(--spacing-sm);
 }
 
+/* ── 课时：文本行 + 极细分割线，无卡片 ── */
 .lessons {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-xs);
 }
 
-/* 平板及以下：课时列表由两列改为单列 */
-@media (max-width: 768px) {
-  .lessons {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* 手机端：缩减字号与留白，避免内容拥挤、滚动条贴边 */
-@media (max-width: 480px) {
-  .page {
-    padding-inline: var(--spacing-md);
-  }
-  .header {
-    padding: var(--spacing-xl) 0 var(--spacing-lg);
-  }
-  .title {
-    font-size: var(--text-3xl);
-  }
-  .desc {
-    font-size: var(--text-sm);
-    padding-inline: var(--spacing-sm);
-  }
-  .body {
-    padding: var(--spacing-lg) 0 var(--spacing-2xl);
-  }
-  .topic {
-    margin-bottom: var(--spacing-2xl);
-  }
-  .topic-title {
-    font-size: var(--text-xl);
-  }
-  .lesson-link {
-    padding: var(--spacing-sm) var(--spacing-md);
-    gap: var(--spacing-sm);
-  }
+.lesson + .lesson {
+  border-top: 1px solid var(--color-border-light);
 }
 
 .lesson-link {
   display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
-  
+  align-items: baseline;
+  gap: var(--spacing-lg);
+  padding: 0.875rem 0.25rem;
   text-decoration: none;
-  color: inherit;
-  transition: background 150ms ease;
+  color: var(--color-text-primary);
+  transition: background-color 0.15s ease, padding-left 0.15s ease;
 }
 
 .lesson-link:hover {
-  background: var(--color-bg-white);
+  background-color: var(--color-bg-secondary);
+  padding-left: 0.75rem;
 }
 
 .lesson-index {
   font-family: var(--font-mono);
-  font-weight: 600;
   font-size: var(--text-sm);
-  color: var(--color-primary);
+  font-weight: 500;
+  color: var(--color-text-muted);
   min-width: 2rem;
-  text-align: center;
+  flex-shrink: 0;
 }
-
 
 .lesson-title {
   flex: 1;
+  font-size: var(--text-base);
   font-weight: 500;
-  color: var(--color-text-primary);
+  line-height: 1.6;
 }
 
+.lesson-arrow {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, color 0.15s ease;
+  align-self: center;
+}
 
-
-.lesson-link:hover  {
+.lesson-link:hover .lesson-arrow {
+  opacity: 1;
+  transform: translateX(0);
   color: var(--color-primary);
-  transform: translateX(4px);
+}
+
+/* ── 响应式 ── */
+@media (max-width: 768px) {
+  .page {
+    padding-inline: var(--spacing-md);
+  }
+
+  .header {
+    padding: var(--spacing-2xl) 0 var(--spacing-xl);
+  }
+
+  .topic {
+    padding: var(--spacing-lg) 0 var(--spacing-xl);
+  }
+
+  .topic-title {
+    font-size: var(--text-xl);
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .lesson-link {
+    gap: var(--spacing-md);
+    padding: 0.75rem 0.125rem;
+  }
+
+  .lesson-link:hover {
+    padding-left: 0.5rem;
+  }
 }
 </style>

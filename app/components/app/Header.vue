@@ -7,6 +7,12 @@
         <span class="logo-text">得心实验室</span>
       </NuxtLink>
 
+      <!-- 极简导航 -->
+      <nav class="nav" aria-label="主导航">
+        <NuxtLink to="/courses" class="nav-link">课程</NuxtLink>
+        <NuxtLink to="/about" class="nav-link">关于</NuxtLink>
+      </nav>
+
       <!-- 全局搜索 -->
       <AppGlobalSearch ref="globalSearchRef" @update:is-open="isSearchOpen = $event" />
 
@@ -26,14 +32,16 @@
 <script setup lang="ts">
 /**
  * 全局顶部导航栏
- * 
+ *
  * 职责：
  * - 只负责全局 Header 布局和三个状态的切换
  * - 不包含搜索逻辑，搜索逻辑在 GlobalSearch 组件中
- * 
+ *
+ * 视觉：1px 结构线分隔，无阴影，中性黑白灰。
+ *
  * 三个状态：
- * - Desktop / Default: Logo + GlobalSearch + 我的
- * - Mobile / Default: Logo + 搜索图标 + 我的
+ * - Desktop / Default: Logo + Nav + GlobalSearch + 我的
+ * - Mobile / Default: Logo + Nav + 搜索图标 + 我的
  * - Mobile / Search: 返回/关闭 + 搜索输入框（Logo 和"我的"隐藏）
  */
 
@@ -50,7 +58,6 @@ const globalSearchRef = ref()
   z-index: 100;
   background-color: var(--color-bg-primary);
   border-bottom: 1px solid var(--color-border);
-  box-shadow: var(--shadow-sm);
 }
 
 .container {
@@ -69,7 +76,7 @@ const globalSearchRef = ref()
   align-items: center;
   gap: var(--spacing-sm);
   text-decoration: none;
-  color: var(--color-primary);
+  color: var(--color-text-primary);
   flex-shrink: 0;
 }
 
@@ -79,31 +86,51 @@ const globalSearchRef = ref()
 }
 
 .logo-text {
-  font-size: var(--text-xl);
-  font-weight: 700;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  flex-shrink: 0;
+}
+
+.nav-link {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.nav-link:hover {
+  color: var(--color-text-primary);
 }
 
 .user {
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .icon-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   background: none;
   border: none;
   border-radius: var(--border-radius-md);
   cursor: pointer;
   color: var(--color-text-secondary);
-  transition: all 0.2s ease;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }
 
 .icon-btn:hover {
   background-color: var(--color-bg-secondary);
-  color: var(--color-primary);
+  color: var(--color-text-primary);
 }
 
 @media (max-width: 768px) {
@@ -116,7 +143,12 @@ const globalSearchRef = ref()
     display: none;
   }
 
+  .nav {
+    gap: var(--spacing-md);
+  }
+
   .search-open .logo,
+  .search-open .nav,
   .search-open .user {
     display: none;
   }
@@ -125,6 +157,10 @@ const globalSearchRef = ref()
 @media (max-width: 480px) {
   .logo-icon {
     font-size: var(--text-xl);
+  }
+
+  .nav {
+    gap: var(--spacing-sm);
   }
 }
 </style>

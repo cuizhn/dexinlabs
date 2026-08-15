@@ -20,17 +20,29 @@ defineProps<{ block: DefinitionBlock }>()
 </script>
 
 <style scoped>
+/* 教材式定义：结构线分节 + 小标签，不用卡片/底色 */
 .definition {
-  margin: var(--spacing-md) 0;
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--color-bg-secondary);
-  border-radius: var(--border-radius-sm);
+  margin: 2.25rem 0;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.definition::before {
+  content: '定义';
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
 }
 
 .term {
-  font-weight: 700;
-  font-size: 1.05em;
-  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 1.15em;
+  letter-spacing: 0.01em;
+  color: var(--color-heading);
   margin-bottom: var(--spacing-xs);
 }
 

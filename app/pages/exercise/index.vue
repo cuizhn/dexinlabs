@@ -27,9 +27,9 @@
         <template v-else-if="exercise">
           <h2 class="section-title">{{ exercise.title || '练习题' }}</h2>
 
-          <div v-if="exercise.summary" class="intro">
+          <p v-if="exercise.summary" class="intro">
             {{ exercise.summary }}
-          </div>
+          </p>
 
           <ContentRenderer
             v-if="exerciseBlocks.length"
@@ -38,14 +38,11 @@
         </template>
 
         <div v-else class="placeholder">
-          <div class="placeholder-card">
-            <div class="placeholder-icon">✎</div>
-            <h3 class="placeholder-title">练习内容准备中</h3>
-            <p class="placeholder-desc"> 练习正在精心设计中。请先完成课时学习，扎实掌握每个概念。 </p>
-            <NuxtLink to="/courses" class="placeholder-back">
-              ← 返回课程地图
-            </NuxtLink>
-          </div>
+          <p class="placeholder-title">练习内容准备中</p>
+          <p class="placeholder-desc">练习正在精心设计中。请先完成课时学习，扎实掌握每个概念。</p>
+          <NuxtLink to="/courses" class="placeholder-back">
+            ← 返回课程地图
+          </NuxtLink>
         </div>
       </div>
     </section>
@@ -56,6 +53,8 @@
 /**
  * 练习页 - 通过查询参数 ?topic=xxx 获取对应主题的练习题
  * Exercise 不绑定 Topic URL，保持统一入口
+ *
+ * 视觉：与首页共享设计系统（黑白灰、结构线、少卡片）。
  */
 const route = useRoute()
 const topicSlug = computed(() => typeof route.query.topic === 'string' ? route.query.topic : '')
@@ -68,9 +67,19 @@ useHead({
 </script>
 
 <style scoped>
+.page {
+  width: 100%;
+  padding-inline: var(--spacing-lg);
+}
+
+.container {
+  max-width: 860px;
+  margin-inline: auto;
+}
+
 .header {
-  padding: var(--spacing-xl) 0 var(--spacing-lg);
-  background: linear-gradient(135deg, var(--color-bg-secondary), transparent);
+  padding: var(--spacing-2xl) 0 var(--spacing-xl);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .breadcrumb {
@@ -88,11 +97,11 @@ useHead({
 }
 
 .bc-link:hover {
-  color: var(--color-primary);
+  color: var(--color-text-primary);
 }
 
 .bc-sep {
-  color: var(--color-text-light);
+  color: var(--color-text-muted);
 }
 
 .bc-current {
@@ -101,8 +110,9 @@ useHead({
 }
 
 .title {
-  font-size: var(--text-3xl);
-  font-weight: 700;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
   color: var(--color-text-primary);
   margin: 0 0 var(--spacing-sm);
 }
@@ -111,7 +121,7 @@ useHead({
   font-size: var(--text-base);
   color: var(--color-text-secondary);
   max-width: 640px;
-  line-height: 1.6;
+  line-height: 1.7;
   margin: 0;
 }
 
@@ -120,7 +130,7 @@ useHead({
 }
 
 .body-container {
-  max-width: 760px;
+  max-width: 720px;
 }
 
 .section-title {
@@ -130,40 +140,21 @@ useHead({
   margin: 0 0 var(--spacing-md);
 }
 
+/* 简介：结构线分节，不做彩色引用条 */
 .intro {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--color-bg-secondary);
-  border-left: 3px solid var(--color-primary);
-  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+  padding: var(--spacing-md) 0;
+  border-top: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--color-border-light);
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: 1.7;
   margin-bottom: var(--spacing-lg);
 }
 
 .empty,
 .placeholder {
-  padding: var(--spacing-2xl) 0;
-}
-
-.placeholder-card {
-  padding: var(--spacing-3xl) var(--spacing-xl);
-  background: var(--color-bg-white);
-  border: 1px dashed var(--color-border);
-  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-3xl) 0;
   text-align: center;
-}
-
-.placeholder-icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto var(--spacing-md);
-  border-radius: 50%;
-  background: var(--color-primary-light);
-  color: var(--color-primary);
-  font-size: var(--text-2xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  color: var(--color-text-muted);
 }
 
 .placeholder-title {
@@ -176,19 +167,30 @@ useHead({
 .placeholder-desc {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
-  line-height: 1.6;
+  line-height: 1.7;
   max-width: 440px;
   margin: 0 auto var(--spacing-lg);
 }
 
 .placeholder-back {
   display: inline-block;
+  font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-primary);
+  color: var(--color-text-primary);
   text-decoration: none;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--color-border);
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
 .placeholder-back:hover {
-  text-decoration: underline;
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding-inline: var(--spacing-md);
+  }
 }
 </style>

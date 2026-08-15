@@ -20,17 +20,26 @@ defineProps<{ block: ExampleBlock }>()
 </script>
 
 <style scoped>
+/* 教材式示例：细左侧结构线 + 标签，无底色无边框卡片 */
 .example {
-  margin: var(--spacing-md) 0;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-sm);
-  border-left: 4px solid var(--color-success);
+  margin: 2rem 0;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  border-left: 2px solid var(--color-border-strong);
+}
+
+.example::before {
+  content: '例';
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.375rem;
 }
 
 .title {
   font-weight: 600;
   margin-bottom: var(--spacing-xs);
-  color: var(--color-text-primary);
+  color: var(--color-heading);
 }
 </style>

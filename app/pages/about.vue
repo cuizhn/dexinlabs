@@ -2,7 +2,7 @@
   <article class="page">
     <header class="header">
       <div class="container">
-        <!-- <NuxtLink to="/" class="back">←</NuxtLink> -->
+        <p class="label">关于</p>
         <h1 class="title">关于我们</h1>
       </div>
     </header>
@@ -104,37 +104,51 @@
 </template>
 
 <script setup lang="ts">
+/**
+ * 关于页 - 产品信息页面
+ *
+ * 视觉：与首页共享设计系统（黑白灰、结构线、大留白）。
+ * 不采用 Lesson 的纸张背景——它是产品信息页，不是学习内容页。
+ */
 useHead({
   title: '关于我们 · Dexin Labs'
 })
 </script>
 
 <style scoped>
+.page {
+  width: 100%;
+  padding-inline: var(--spacing-lg);
+}
+
+.container {
+  max-width: 860px;
+  margin-inline: auto;
+}
+
 .header {
-  padding: var(--spacing-md) 0;
-  border-bottom: 1px solid var(--color-border);
+  padding: var(--spacing-3xl) 0 var(--spacing-2xl);
 }
 
-.back {
-  font-size: var(--text-lg);
-  color: var(--color-text-light);
-  text-decoration: none;
-  transition: color 150ms ease;
-}
-
-.back:hover {
-  color: var(--color-text-secondary);
+.label {
+  margin: 0 0 var(--spacing-sm);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
 }
 
 .title {
-  font-size: var(--text-lg);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
   font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--color-text-primary);
   margin: 0;
+  line-height: 1.3;
 }
 
 .body {
-  padding: var(--spacing-2xl) 0 var(--spacing-3xl);
+  padding: 0 0 var(--spacing-3xl);
 }
 
 .content {
@@ -142,34 +156,33 @@ useHead({
   margin: 0 auto;
 }
 
+/* ── 结构线：像书籍的章节分隔 ── */
 .section {
-  margin-bottom: var(--spacing-3xl);
-  padding-bottom: var(--spacing-3xl);
+  border-top: 1px solid var(--color-border);
+  padding: var(--spacing-2xl) 0;
 }
 
 .section:last-child {
-  margin-bottom: 0;
   padding-bottom: 0;
-  border-bottom: none;
-}
-
-.section.final {
-  text-align: center;
-  padding-top: var(--spacing-xl);
 }
 
 .section-title {
   font-size: var(--text-xl);
-  font-weight: 700;
-  color: var(--color-primary);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
   margin: 0 0 var(--spacing-lg);
 }
 
 .section p {
   font-size: var(--text-base);
   color: var(--color-text-secondary);
-  line-height: 1.8;
+  line-height: 1.85;
   margin: 0 0 var(--spacing-md);
+}
+
+.section p:last-child {
+  margin-bottom: 0;
 }
 
 .section strong {
@@ -177,35 +190,34 @@ useHead({
   font-weight: 600;
 }
 
+/* 引用：居中无底色，靠排版本身成立 */
 .quote {
   font-size: var(--text-lg);
-  font-weight: 600;
+  font-weight: 500;
+  line-height: 1.7;
   color: var(--color-text-primary);
   text-align: center;
-  margin: var(--spacing-xl) 0;
-  padding: var(--spacing-lg);
-  background: linear-gradient(135deg, var(--color-primary-ghost), rgba(99, 102, 241, 0.04));
-  border-radius: var(--border-radius-lg);
-  border-left: 4px solid var(--color-primary);
+  margin: var(--spacing-xl) auto;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  max-width: 520px;
+  border-top: 1px solid var(--color-border-light);
+  border-bottom: 1px solid var(--color-border-light);
 }
 
+/* 信念：文本行 + 分割线，不做卡片 */
 .beliefs {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-md);
   margin: var(--spacing-lg) 0;
-  list-style: none;
   padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border-light);
 }
 
 .belief {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--color-bg-secondary);
-  border-radius: var(--border-radius-md);
-  font-size: var(--text-sm);
+  padding: var(--spacing-md) 0.25rem;
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: var(--text-base);
   font-weight: 500;
   color: var(--color-text-primary);
-  text-align: center;
 }
 
 .list {
@@ -215,8 +227,7 @@ useHead({
 }
 
 .list li {
-  padding: var(--spacing-sm) 0;
-  padding-left: var(--spacing-xl);
+  padding: var(--spacing-sm) 0 var(--spacing-sm) 1.5rem;
   position: relative;
   font-size: var(--text-base);
   color: var(--color-text-secondary);
@@ -224,16 +235,23 @@ useHead({
 }
 
 .list li::before {
-  content: '✓';
+  content: '—';
   position: absolute;
   left: 0;
-  color: var(--color-primary);
-  font-weight: 600;
+  color: var(--color-text-muted);
 }
 
 @media (max-width: 768px) {
-  .beliefs {
-    grid-template-columns: 1fr;
+  .page {
+    padding-inline: var(--spacing-md);
+  }
+
+  .header {
+    padding: var(--spacing-2xl) 0 var(--spacing-xl);
+  }
+
+  .section {
+    padding: var(--spacing-xl) 0;
   }
 
   .quote {

@@ -31,8 +31,9 @@ const html = computed(() => {
 </script>
 
 <style scoped>
+/* 块级公式：教材式宽松上下间距，给公式独立呼吸 */
 .formula {
-  margin: var(--spacing-md) 0;
+  margin: 2.25rem 0;
   text-align: center;
   overflow-x: auto;
 }

@@ -1,10 +1,7 @@
 <template>
   <div class="dexin-home">
-    <!-- 背景结构线：统一坐标系统，位于内容最底层 -->
-    <div class="dexin-home__grid" aria-hidden="true"></div>
-
     <main class="dexin-home__content">
-    <!-- 第一屏：巨大留白 + 一句产品定位 + 真实学习界面作为视觉主体 -->
+    <!-- 第一屏：大量留白 + 一句产品定位 + 真实学习界面作为视觉主体 -->
     <section class="hero">
       <p class="hero__headline">理解，而不只是答案。</p>
       <p class="hero__sub">得心实验室 — 一个正在发生的数学学习过程</p>
@@ -24,7 +21,7 @@
     </section>
 
     <!-- 正在理解：学习结论 -->
-    <section class="section section--alt">
+    <section class="section">
       <div class="section__inner section__inner--narrow">
         <p class="state-chip">正在理解</p>
         <p class="understand">
@@ -45,7 +42,7 @@
     </section>
 
     <!-- 品牌说明 -->
-    <section class="section section--alt">
+    <section class="section">
       <div class="section__inner section__inner--narrow">
         <h2 class="section__label">关于得心实验室</h2>
         <p class="brand">
@@ -56,20 +53,33 @@
         </p>
       </div>
     </section>
+
+    <!-- 继续探索 -->
+    <section class="section section--cta">
+      <div class="section__inner section__inner--narrow">
+        <NuxtLink to="/courses" class="cta">
+          进入课程
+          <span class="cta__arrow" aria-hidden="true">→</span>
+        </NuxtLink>
+      </div>
+    </section>
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
 /**
- * 首页 — Zed 风格视觉实验（独立实验场）
+ * 首页 — 现代学习工具视觉（近黑白 + 单一 Accent + 结构线）
  *
  * 仅修改首页页面 / 首页组件 / 首页样式 / 首页静态展示数据。
  * 不改动：Lesson AST、LessonService、Content Engine、DB Schema、API、Renderer、
  * Course/Topic/Lesson 数据结构、登录系统、学习状态系统。
  *
- * 设计系统完全作用域在 .dexin-home 之下，不影响其他页面（lesson/course/topic）。
- * 真实 Lesson 内容通过现有 ContentRenderer 渲染（见 HomeLessonPreview）。
+ * 视觉规则：
+ * - 不使用背景网格（无 repeating-linear-gradient 棋盘格）；
+ * - 结构线来自 Header / Hero / Section / Footer 边界，1px 低对比度；
+ * - 结构线不自动变成卡片；
+ * - 真实 Lesson 内容通过现有 ContentRenderer 渲染（见 HomeLessonPreview）。
  */
 import { previewLesson, verifyScene, topicMap } from '~/components/home/homeData'
 
@@ -93,14 +103,9 @@ useHead({
 
   /* ── 字体层级 ── */
   --font-display: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-heading: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-body: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-ui: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-math: 'STIX Two Math', 'Times New Roman', serif;
 
   /* ── 字号层级 ── */
   --home-hero: clamp(2.4rem, 6vw, 4rem);
-  --home-h1: 2rem;
   --home-h2: 1.5rem;
   --home-body: 1.0625rem;
   --home-sm: 0.9375rem;
@@ -112,54 +117,16 @@ useHead({
 
   width: 100%;
   position: relative;
-  font-family: var(--font-body);
+  font-family: var(--font-ui);
   color: var(--home-fg);
   background: var(--home-bg);
-
-  /* ── 背景结构线（统一坐标系统，极克制）── */
-  --grid-line: rgba(24, 24, 27, 0.035);        /* 普通结构线：极低对比度 */
-  --grid-line-strong: rgba(24, 24, 27, 0.06);  /* 强结构线：仅框架 / 分界 */
-  --grid-background: transparent;
-  --grid-rhythm: 128px;                        /* 横向参考线节奏 */
 }
 
-/* ── 背景结构线：统一坐标系统，位于内容最底层，不参与布局 ── */
-.dexin-home__grid {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  max-width: 980px;
-  margin: 0 auto;
-  pointer-events: none;
-  border-left: 1px solid var(--grid-line-strong);
-  border-right: 1px solid var(--grid-line-strong);
-  background-color: var(--grid-background);
-  background-image:
-    /* 中线：极低对比度 */
-    linear-gradient(
-      to right,
-      transparent calc(50% - 0.5px),
-      var(--grid-line) calc(50% - 0.5px),
-      var(--grid-line) calc(50% + 0.5px),
-      transparent calc(50% + 0.5px)
-    ),
-    /* 横向参考线节奏 */
-    repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent calc(var(--grid-rhythm) - 1px),
-      var(--grid-line) calc(var(--grid-rhythm) - 1px),
-      var(--grid-line) var(--grid-rhythm)
-    );
-}
-
-/* 内容浮于背景结构线之上 */
 .dexin-home__content {
   position: relative;
-  z-index: 1;
 }
 
-/* ── Hero ── */
+/* ── Hero：页面第一屏，下边界即第一条结构线 ── */
 .hero {
   max-width: 980px;
   margin: 0 auto;
@@ -191,13 +158,15 @@ useHead({
   text-align: left;
 }
 
-/* ── Section 通用 ── */
+/* ── Section：结构线来自区块边界，而非背景网格 ── */
 .section {
   padding: var(--home-gap-section) var(--spacing-lg);
+  border-top: 1px solid var(--home-border);
 }
 
-.section--alt {
-  background: transparent; /* 透明，让统一背景结构线贯穿整页 */
+.section--cta {
+  padding-top: clamp(2.5rem, 6vw, 4rem);
+  padding-bottom: clamp(3.5rem, 8vw, 6rem);
 }
 
 .section__inner {
@@ -214,7 +183,6 @@ useHead({
   font-size: var(--home-caption);
   font-weight: 500;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
   color: var(--home-muted);
 }
 
@@ -272,6 +240,35 @@ useHead({
   color: var(--home-secondary);
 }
 
+/* ── 继续探索：文本链接，不做大按钮 ── */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--home-body);
+  font-weight: 500;
+  color: var(--home-fg);
+  text-decoration: none;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid var(--home-border);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.cta:hover {
+  color: var(--home-accent);
+  border-bottom-color: var(--home-accent);
+}
+
+.cta__arrow {
+  color: var(--home-muted);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.cta:hover .cta__arrow {
+  color: var(--home-accent);
+  transform: translateX(3px);
+}
+
 /* ── 动效：仅 opacity / transform，轻量 ── */
 @keyframes fadeUp {
   from {
@@ -294,29 +291,9 @@ useHead({
     padding: var(--home-gap-section) var(--spacing-md);
   }
 
-  .hero :deep(.preview),
-  .section__label {
-    /* 移动端适当减少留白，但保持节奏 */
-  }
-
   .hero :deep(.preview__surface),
   .section :deep(.verify__surface) {
     border-radius: 6px;
-  }
-
-  /* 移动端：减少纵向线（去中线）+ 横向参考线更稀疏，避免视觉噪声 */
-  .dexin-home__grid {
-    --grid-rhythm: 200px;
-    background-image:
-      repeating-linear-gradient(
-        to bottom,
-        transparent 0,
-        transparent calc(var(--grid-rhythm) - 1px),
-        var(--grid-line) calc(var(--grid-rhythm) - 1px),
-        var(--grid-line) var(--grid-rhythm)
-      );
-    border-left-color: var(--grid-line);
-    border-right-color: var(--grid-line);
   }
 }
 

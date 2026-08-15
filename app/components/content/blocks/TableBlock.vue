@@ -29,23 +29,33 @@ defineProps<{ block: TableBlock }>()
 </script>
 
 <style scoped>
+/* booktabs 风格：仅靠粗细横线分节，无竖线、无底色、无 zebra */
 .table {
   width: 100%;
-  margin: var(--spacing-md) 0;
+  margin: 2rem 0;
   border-collapse: collapse;
   font-size: var(--text-sm);
+  line-height: 1.6;
 }
 th,
 td {
-  border: 1px solid var(--color-border);
-  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  padding: 0.625rem var(--spacing-md);
   text-align: left;
+  background: none;
+}
+thead tr {
+  border-top: 2px solid var(--color-border-strong);
+  border-bottom: 1px solid var(--color-border-strong);
 }
 th {
-  background: var(--color-bg-secondary);
   font-weight: 600;
+  color: var(--color-heading);
 }
-tr:nth-child(even) td {
-  background: var(--color-bg-primary);
+tbody tr {
+  border-bottom: 1px solid var(--color-border);
+}
+tbody tr:last-child {
+  border-bottom: 2px solid var(--color-border-strong);
 }
 </style>

@@ -1,50 +1,62 @@
+/**
+ * 全局 Design Tokens — 得心实验室「现代学习工具」视觉体系
+ *
+ * 原则（Zed 式工具产品语言）：
+ * - 中性黑白灰为主体，绝大部分界面不使用颜色；
+ * - 仅保留一个主 Accent（--color-primary），用于极少量重点状态；
+ * - 结构线 1px、极低对比度；阴影几乎不用；
+ * - 知识分类不依赖颜色。
+ *
+ * 注意：Lesson 页面会在自身作用域内覆盖部分变量（暖米白纸张体系），
+ * 这里维护的是首页及普通页面的默认值。
+ */
 :root {
 
-  --color-primary: #4F46E5;
-  --color-primary-light: #EEF2FF;
-  --color-primary-dark: #4338CA;
-  --color-secondary: #06B6D4;
+  /* ── 唯一强调色 ── */
+  --color-primary: #3b6fe0;
+  --color-primary-hover: #5a85e8;
+  --color-primary-dark: #2f5ac0;
+  --color-primary-light: rgba(59, 111, 224, 0.08);
 
+  /* ── 语义状态色（仅用于极少量状态反馈，不做装饰）── */
+  --color-success: #4d7c5f;
+  --color-success-dark: #3d654d;
+  --color-success-border: rgba(77, 124, 95, 0.3);
+  --color-success-bg: rgba(77, 124, 95, 0.04);
+  --color-warning: #b08327;
+  --color-error: #c2504a;
 
-  --color-success: #10B981;
-  --color-success-dark: #16a34a;
-  --color-success-border: rgba(34, 197, 94, 0.3);
-  --color-success-bg: rgba(34, 197, 94, 0.02);
-  --color-warning: #F59E0B;
-  --color-error: #EF4444;
+  /* ── 中性文本（zinc 阶）── */
+  --color-text-primary: #18181b;
+  --color-text: #3f3f46;
+  --color-text-secondary: #52525b;
+  --color-text-light: #71717a;
+  --color-text-muted: #a1a1aa;
+  --color-heading: #18181b;
 
+  /* ── 中性背景 ── */
+  --color-bg-primary: #fbfbfa;
+  --color-bg-secondary: #f4f4f5;
+  --color-bg-white: #ffffff;
 
-  --color-text-primary: #111827;
-  --color-text: #334155;
-  --color-text-secondary: #6B7280;
-  --color-text-light: #64748B;
-  --color-text-muted: #94A3B8;
-  --color-heading: #1E293B;
+  /* ── 结构线（1px、低对比度）── */
+  --color-border: #e4e4e7;
+  --color-border-light: #ececee;
+  --color-border-strong: #d4d4d8;
 
+  /* ── 主色衍生（克制的交互反馈）── */
+  --color-text-inverse: #ffffff;
+  --color-primary-ghost: rgba(59, 111, 224, 0.06);
+  --color-primary-ghost-strong: rgba(59, 111, 224, 0.03);
+  --color-primary-ghost-light: rgba(59, 111, 224, 0.02);
+  --color-primary-ghost-medium: rgba(59, 111, 224, 0.04);
+  --color-primary-ghost-accent: rgba(59, 111, 224, 0.08);
 
-  --color-bg-primary: #F7FAFC;
-  --color-bg-secondary: #F9FAFB;
-  --color-bg-white: #FFFFFF;
+  /* ── 阴影：几乎不用，仅保留极弱层级 ── */
+  --shadow-primary: 0 2px 8px rgba(59, 111, 224, 0.16);
+  --shadow-primary-hover: 0 3px 12px rgba(59, 111, 224, 0.2);
 
-
-  --color-border: #E5E7EB;
-  --color-border-light: #F3F4F6;
-
-
-  /* ── 品牌色衍生 ── */
-  --color-primary-hover: #6366F1;
-  --color-text-inverse: #FFFFFF;
-  --color-primary-ghost: rgba(79, 70, 229, 0.06);
-  --color-primary-ghost-strong: rgba(79, 70, 229, 0.03);
-  --color-primary-ghost-light: rgba(79, 70, 229, 0.02);
-  --color-primary-ghost-medium: rgba(79, 70, 229, 0.04);
-  --color-primary-ghost-accent: rgba(79, 70, 229, 0.08);
-
-  /* ── 品牌色阴影 ── */
-  --shadow-primary: 0 4px 14px rgba(79, 70, 229, 0.3);
-  --shadow-primary-hover: 0 8px 24px rgba(79, 70, 229, 0.4);
-
-
+  /* ── 字号 ── */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -54,7 +66,7 @@
   --text-3xl: 2rem;
   --text-4xl: 2.25rem;
 
-
+  /* ── 间距 ── */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -63,33 +75,33 @@
   --spacing-2xl: 3rem;
   --spacing-3xl: 4rem;
 
+  /* ── 圆角：克制，工具感 ── */
+  --border-radius-sm: 0.1875rem;
+  --border-radius-md: 0.375rem;
+  --border-radius-lg: 0.5rem;
+  --border-radius-xl: 0.75rem;
 
-  --border-radius-sm: 0.25rem;
-  --border-radius-md: 0.5rem;
-  --border-radius-lg: 0.75rem;
-  --border-radius-xl: 1rem;
+  /* ── 阴影（中性，极弱）── */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 2px 6px -1px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 4px 12px -3px rgba(0, 0, 0, 0.06);
 
+  /* ── 字体 ── */
+  --font-ui: "Inter", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-
-
-  --font-ui: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-
-  --font-content: "Source Serif 4", "Inter", system-ui, sans-serif;
+  /* 内容字体默认与 UI 一致（工具感）；
+     Lesson 页面会在自身作用域覆盖为衬线（教材感） */
+  --font-content: "Inter", "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   --font-math: "STIX Two Math", "Times New Roman", serif;
 
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-
   /* ── 代码块配色 ── */
-  --color-code-bg: #1E293B;
-  --color-code-text: #E2E8F0;
-  --color-code-comment: #94A3B8;
-  --color-code-keyword: #C084FC;
-  --color-code-string: #86EFAC;
-  --color-code-number: #FDE68A;
-
+  --color-code-bg: #1c1c1f;
+  --color-code-text: #e4e4e7;
+  --color-code-comment: #a1a1aa;
+  --color-code-keyword: #c084fc;
+  --color-code-string: #86efac;
+  --color-code-number: #fde68a;
 }

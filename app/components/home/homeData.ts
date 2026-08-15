@@ -94,7 +94,7 @@ export const verifyScene = {
  */
 export const topicMap: { slug: string, title: string, description: string }[] = [
   {
-    slug: 'number-algebra',
+    slug: 'number-and-algebra',
     title: '数与代数',
     description: '有理数、实数、代数式、方程与不等式'
   },
@@ -104,12 +104,12 @@ export const topicMap: { slug: string, title: string, description: string }[] = 
     description: '三角形、四边形、圆、相似与全等'
   },
   {
-    slug: 'statistics-probability',
+    slug: 'statistics-and-probability',
     title: '统计与概率',
     description: '数据分析、统计图表、概率基础'
   },
   {
-    slug: 'comprehensive',
+    slug: 'comprehensive-practice',
     title: '综合与实践',
     description: '数学建模、问题解决、实际应用'
   }
