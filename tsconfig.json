@@ -14,8 +14,6 @@
     "paths": {
       "@server": ["server"],
       "@server/*": ["server/*"],
-      "@markdown": ["app/markdown"],
-      "@markdown/*": ["app/markdown/*"],
       "@content": ["app/content"],
       "@content/*": ["app/content/*"],
       "@database": ["app/database"],

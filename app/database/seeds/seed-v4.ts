@@ -287,6 +287,7 @@ async function seed() {
   // 2. 插入 Course
   console.log('2. 插入 Course...')
   const [courseRow] = await db.insert(courses).values(seedCourse).returning()
+  if (!courseRow) throw new Error('插入 Course 失败')
   console.log(`   ✓ ${courseRow.title} (id=${courseRow.id}, slug=${courseRow.slug})\n`)
 
   // 3. 逐层插入 Topic → Chapter → Lesson
@@ -301,6 +302,7 @@ async function seed() {
       title: topic.title,
       order: topic.order
     }).returning()
+    if (!topicRow) throw new Error('插入 Topic 失败')
     topicCount++
     console.log(`   📂 ${topicRow.title} (id=${topicRow.id}, slug=${topicRow.slug})`)
 
@@ -311,6 +313,7 @@ async function seed() {
         order: chapter.order,
         topicId: topicRow.id
       }).returning()
+      if (!chapterRow) throw new Error('插入 Chapter 失败')
       chapterCount++
       console.log(`      📁 ${chapterRow.title} (id=${chapterRow.id})`)
 

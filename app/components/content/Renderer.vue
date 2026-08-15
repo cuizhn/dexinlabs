@@ -39,7 +39,7 @@
  *
  * 架构决策：standards/LESSON_AST.md §6.5
  */
-import type { Block } from '@shared/lesson-ast'
+import type { Block } from '@shared/lessonAST'
 
 /** Block 组件映射表 — 延迟导入避免循环依赖 */
 import ParagraphBlock from './blocks/ParagraphBlock.vue'

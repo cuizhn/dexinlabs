@@ -15,6 +15,13 @@
       "when": 1786085637510,
       "tag": "0001_simple_anthem",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786779003738,
+      "tag": "0002_lesson_content_jsonb",
+      "breakpoints": true
     }
   ]
 }

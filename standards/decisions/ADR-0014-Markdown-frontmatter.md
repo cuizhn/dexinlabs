@@ -81,7 +81,7 @@ order
 例如数据库：
 
 ```text
-id: abc
+id: 12
 slug: why-function
 title: 为什么需要函数？
 topic: function
@@ -102,7 +102,7 @@ lessons/
 
 ```md
 ---
-id: abc
+id: 12
 slug: why-function
 title: 为什么需要函数？
 topic: function
@@ -231,12 +231,11 @@ Markdown frontmatter 至少保留能够确定 Lesson 身份和基本结构的信
 
 ```yaml
 ---
-id: abc
+id: 12
 slug: why-function
 title: 为什么需要函数？
 topic: function
 chapter: introduction
-order: 1
 ---
 ```
 

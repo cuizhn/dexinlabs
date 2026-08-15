@@ -28,11 +28,11 @@
  * - 去除面包屑、返回链接和课程编号，保持专注
  * - 使用默认布局，显示全局 Header
  */
+import { useRouteParam } from '~/composables/useRouteParam'
+
 definePageMeta({
   layout: 'default'
 })
-
-import { useRouteParam } from '~/composables/useRouteParam'
 
 const topicSlug = useRouteParam('topicSlug') ?? ''
 const lessonSlug = (useRouteParam('lessonSlug') ?? '') as string

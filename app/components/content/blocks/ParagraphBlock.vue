@@ -11,7 +11,7 @@
  * 消费 Lesson AST 的 ParagraphBlock，children 为 Inline[] 语义结构，
  * 由 InlineRenderer 统一渲染为 HTML。
  */
-import type { ParagraphBlock } from '@shared/lesson-ast'
+import type { ParagraphBlock } from '@shared/lessonAST'
 
 defineProps<{ block: ParagraphBlock }>()
 </script>

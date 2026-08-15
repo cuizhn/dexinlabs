@@ -18,7 +18,7 @@
  * prompt 为 Block[]，通过 ContentRenderer 递归渲染。
  * hint 为字符串（可选），通过 <details> 渐进展示。
  */
-import type { QuestionBlock } from '@shared/lesson-ast'
+import type { QuestionBlock } from '@shared/lessonAST'
 
 defineProps<{ block: QuestionBlock }>()
 </script>

@@ -14,7 +14,7 @@
  * 使用 <dl>/<dt>/<dd> 语义化标签渲染数学术语定义。
  * children 为 Block[]，通过 ContentRenderer 递归渲染。
  */
-import type { DefinitionBlock } from '@shared/lesson-ast'
+import type { DefinitionBlock } from '@shared/lessonAST'
 
 defineProps<{ block: DefinitionBlock }>()
 </script>

@@ -4,7 +4,7 @@
  * 架构 V4（定稿）：courses 表精简为 id/slug/title。
  * Course 与 Topic 的业务关系由 Service 层组装，不通过数据库 FK 维护。
  */
-import { eq, asc } from 'drizzle-orm'
+import { asc } from 'drizzle-orm'
 import { courses } from '@database'
 import type { Course } from '../types'
 import { BaseRepository } from './BaseRepository'

@@ -6,8 +6,6 @@
  * 架构 V4（定稿）：Lesson 通过 (topicId, slug) 组合键查询。
  */
 import { lessonRepository } from '@database/repository/lesson'
-import { topicRepository } from '@database/repository/topic'
-import { chapterRepository } from '@database/repository/chapter'
 import type { LessonPage } from '../view-models'
 import { normalizeSlug } from '~/utils/slug'
 import { getSiblings } from '../shared'

@@ -28,9 +28,13 @@ Thumbs.db
 coverage/
 .nyc_output/
 
-# 文档构建产物
-docs/
+# 内容编译产物（ADR-014）
+compile/output/
 
 # VitePress 构建缓存（内容预览工具）
 .vitepress/cache/
 .vitepress/dist/
+lessons/
+.workbuddy/
+
+tools/

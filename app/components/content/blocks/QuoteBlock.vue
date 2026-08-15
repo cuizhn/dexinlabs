@@ -10,7 +10,7 @@
  *
  * children 为 Block[]，通过 ContentRenderer 递归渲染。
  */
-import type { QuoteBlock } from '@shared/lesson-ast'
+import type { QuoteBlock } from '@shared/lessonAST'
 
 defineProps<{ block: QuoteBlock }>()
 </script>

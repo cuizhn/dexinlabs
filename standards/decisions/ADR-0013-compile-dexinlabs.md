@@ -1,4 +1,4 @@
-# 合并 `dexinlabs-content` 到主项目
+\# 合并 `dexinlabs-content` 到主项目
 
 ## 1. 目标
 
@@ -25,14 +25,14 @@
 dexinlabs/
 ├── app/
 │   ├── content/
-│   │   ├── repository/
+│   │   ├── repository/  (实际路径: app/database/repository)
 │   │   └── service/
 │   │
 │   ├── content/
 │   └── ...
 │
 ├── shared/
-│   └── lesson-ast.ts
+│   └── lessonAST.ts
 │
 ├──── lessons/
 │       └── ...
@@ -41,7 +41,7 @@ dexinlabs/
 │   └── content-compiler/
 │       └── ...
 │
-├── vitepress.config.ts
+├── lessons/.vitepress/config.ts
 ├── package.json
 └── ...
 ```
@@ -150,7 +150,7 @@ app/content/
 将 Lesson AST 的最终定义统一放到：
 
 ```text
-shared/lesson-ast.ts
+shared/lessonAST.ts
 ```
 
 它不属于：
@@ -183,7 +183,7 @@ Compiler Content Renderer
 所有消费者必须直接引用：
 
 ```text
-shared/lesson-ast.ts
+shared/lessonAST.ts
 ```
 
 禁止：
@@ -487,7 +487,7 @@ Nuxt
 
 * `lessons/ = 唯一课程源
 * shared/lessonAST.ts = 全系统共享的 Lesson AST 契约
-* tools/compiler/ = 内容编译工具
+* tools/content-compiler/ = 内容编译工具
 * app/content/ = 生产环境 Content System
 * VitePress = 内容作者预览工具
 * Nuxt = 正式产品

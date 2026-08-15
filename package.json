@@ -9,7 +9,9 @@
     "preview": "nuxt preview",
     "content:preview": "vitepress dev lessons",
     "content:build": "vitepress build lessons",
-    "content:compile": "tsx --env-file=.env tools/content-compiler/index.ts",
+    "content:pull": "tsx --env-file=.env tools/content-compiler/index.ts pull",
+    "content:compile": "tsx --env-file=.env tools/content-compiler/index.ts compile",
+    "content:push": "tsx --env-file=.env tools/content-compiler/index.ts push",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
@@ -27,7 +29,8 @@
   "dependencies": {
     "drizzle-orm": "^0.45.2",
     "katex": "^0.17.0",
-    "markdown-it-container": "^4.0.0",
+    "markdown-it-container": "^3.0.0",
+    "markdown-it-mathjax3": "^4.3.2",
     "nuxt": "^4.4.6",
     "pg": "^8.22.0",
     "remark-directive": "^4.0.0",
@@ -39,7 +42,6 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.16.0",
-    "@types/markdown-it-container": "^4.0.0",
     "@types/mdast": "^4.0.4",
     "@types/node": "^26.1.0",
     "@types/pg": "^8.21.0",

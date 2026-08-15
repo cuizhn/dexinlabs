@@ -15,7 +15,7 @@
  * title 为 Inline[] 语义结构，由 InlineRenderer 统一渲染。
  * 通过 ContentRenderer（即 Renderer.vue）实现递归渲染。
  */
-import type { SectionBlock } from '@shared/lesson-ast'
+import type { SectionBlock } from '@shared/lessonAST'
 
 defineProps<{ block: SectionBlock }>()
 </script>

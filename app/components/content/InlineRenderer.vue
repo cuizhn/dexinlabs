@@ -14,7 +14,7 @@
  */
 import { defineComponent, h, type PropType, type VNode } from 'vue'
 import katex from 'katex'
-import type { Inline, TextInline, BoldInline, ItalicInline, CodeInline, LinkInline, MathInline } from '@shared/lesson-ast'
+import type { Inline, TextInline, BoldInline, ItalicInline, CodeInline, LinkInline, MathInline } from '@shared/lessonAST'
 
 /** 将单个 Inline 节点渲染为 VNode */
 function renderInline(node: Inline): VNode | string | null {

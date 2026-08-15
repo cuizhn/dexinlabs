@@ -13,7 +13,7 @@
  * 根据 ordered 渲染为 <ol> 或 <ul>。
  * items 为 Inline[][]，每项是 Inline[]，由 InlineRenderer 统一渲染。
  */
-import type { ListBlock } from '@shared/lesson-ast'
+import type { ListBlock } from '@shared/lessonAST'
 
 defineProps<{ block: ListBlock }>()
 </script>

@@ -14,7 +14,7 @@
  * 展示解题过程、应用场景等教学内容。
  * children 为 Block[]，通过 ContentRenderer 递归渲染。
  */
-import type { ExampleBlock } from '@shared/lesson-ast'
+import type { ExampleBlock } from '@shared/lessonAST'
 
 defineProps<{ block: ExampleBlock }>()
 </script>

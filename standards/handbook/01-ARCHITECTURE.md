@@ -30,7 +30,7 @@
 | ----------------------------- | ------------------------- |
 | Web Framework                 | Nuxt                      |
 | UI                            | Vue                       |
-| Markdown / Content Processing | unified / remark / rehype |
+| Markdown / Content Processing | unified / remark |
 | Math Rendering                | KaTeX                     |
 | ORM                           | Drizzle ORM               |
 | Database                      | PostgreSQL                |

@@ -23,7 +23,7 @@
  *
  * 表头和单元格内容均为 Inline[]，由 InlineRenderer 统一渲染。
  */
-import type { TableBlock } from '@shared/lesson-ast'
+import type { TableBlock } from '@shared/lessonAST'
 
 defineProps<{ block: TableBlock }>()
 </script>

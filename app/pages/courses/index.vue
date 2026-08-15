@@ -30,7 +30,7 @@
 
               <ol class="lessons">
                 <li
-                  v-for="(lesson, idx) in ch.lessons"
+                  v-for="lesson in ch.lessons"
                   :key="lesson.slug"
                   class="lesson"
                 >
@@ -79,7 +79,14 @@ const { catalog, loading } = await useCourseCatalog()
 .page {
   min-height: 100vh;
   margin: 0 auto;
-  min-width: 760px;
+  /* 移除原 min-width:760px：该约束会在窄屏（<760px）强制页面最小 760px，
+     从而产生横向滚动。改为：页内边距保证手机端不贴边，最大内容宽度交给 .container 控制。 */
+  padding-inline: var(--spacing-lg);
+}
+
+.container {
+  max-width: 960px;
+  margin-inline: auto;
 }
 
 .header {
@@ -147,9 +154,40 @@ const { catalog, loading } = await useCourseCatalog()
   gap: var(--spacing-xs);
 }
 
+/* 平板及以下：课时列表由两列改为单列 */
 @media (max-width: 768px) {
   .lessons {
     grid-template-columns: 1fr;
+  }
+}
+
+/* 手机端：缩减字号与留白，避免内容拥挤、滚动条贴边 */
+@media (max-width: 480px) {
+  .page {
+    padding-inline: var(--spacing-md);
+  }
+  .header {
+    padding: var(--spacing-xl) 0 var(--spacing-lg);
+  }
+  .title {
+    font-size: var(--text-3xl);
+  }
+  .desc {
+    font-size: var(--text-sm);
+    padding-inline: var(--spacing-sm);
+  }
+  .body {
+    padding: var(--spacing-lg) 0 var(--spacing-2xl);
+  }
+  .topic {
+    margin-bottom: var(--spacing-2xl);
+  }
+  .topic-title {
+    font-size: var(--text-xl);
+  }
+  .lesson-link {
+    padding: var(--spacing-sm) var(--spacing-md);
+    gap: var(--spacing-sm);
   }
 }
 

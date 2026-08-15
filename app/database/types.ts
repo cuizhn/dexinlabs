@@ -3,7 +3,7 @@
  *
  * 包含所有数据库表的实体接口和转换函数。
  */
-import type { LessonContent, ExerciseContent } from '@shared/lesson-ast'
+import type { LessonContent, ExerciseContent } from '@shared/lessonAST'
 
 // ────────────────────────────────────────────
 // 基类接口

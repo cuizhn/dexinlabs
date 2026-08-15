@@ -14,7 +14,7 @@
  * 展示代码内容，可选显示语言标签。
  * 语法高亮由未来的 Markdown Engine 或独立模块处理。
  */
-import type { CodeBlock } from '@shared/lesson-ast'
+import type { CodeBlock } from '@shared/lessonAST'
 
 defineProps<{ block: CodeBlock }>()
 </script>

@@ -1,19 +1,26 @@
 /**
- * Content Compiler — Markdown → Lesson AST → Database
+ * Content Compiler — Pull / Compile / Push 三阶段工具
  *
- * 读取 lessons/ 中的 Markdown 源文件，使用 remark + unified 生态
- * 解析为 MDAST，再转换为语义化 Lesson AST，最后写入数据库。
+ * 支持三种操作模式：
+ * - pull: 从数据库读取 Lesson 元数据，创建 Markdown skeleton 到 lessons/
+ * - compile: 将 lessons/*.md 编译为 Lesson AST JSON，输出到 compile/output/
+ * - push: 将 compile/output/*.json 推送到数据库
  *
- * 运行方式：npx tsx --env-file=.env tools/content-compiler/index.ts
+ * 运行方式：
+ * - npm run content:pull
+ * - npm run content:compile
+ * - npm run content:push
  *
- * 架构决策（ADR-0013）：
+ * 架构决策（ADR-0013, ADR-014）：
  * - Compiler 是开发/构建工具，不属于 app/content/ 运行时系统
- * - Lesson AST 定义在 shared/lesson-ast.ts，是全项目共享的稳定契约
+ * - Lesson AST 定义在 shared/lessonAST.ts，是全项目共享的稳定契约
  * - Markdown 必须使用 remark + unified 生态，不重新实现 Parser/Lexer
- * - 自定义 directive（::: definition 等）由 remark-directive 解析，Compiler 转换为对应 Block
+ * - Pull 不做 AST → Markdown 反向转换，只创建骨架
+ * - 已存在的 Markdown 文件不得覆盖
  */
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'node:fs'
+import { resolve, join, basename, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkGfm from 'remark-gfm'
@@ -22,27 +29,202 @@ import remarkDirective from 'remark-directive'
 import type { Root } from 'mdast'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import * as schema from '../../app/database/schema'
-import type { Block, Inline, LessonContent } from '../../shared/lesson-ast'
+import type { Block, Inline, LessonContent } from '../../shared/lessonAST'
 
-const { lessons } = schema
+const { lessons, topics, chapters } = schema
 
 // ────────────────────────────────────────────
-// Markdown 预处理
+// 路径常量
+// ────────────────────────────────────────────
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const ROOT_DIR = resolve(__dirname, '../..')
+const LESSONS_DIR = resolve(ROOT_DIR, 'lessons')
+const OUTPUT_DIR = resolve(ROOT_DIR, 'compile/output')
+
+// ────────────────────────────────────────────
+// 数据库连接
+// ────────────────────────────────────────────
+
+function createDb() {
+  const connectionString = process.env.DATABASE_URL
+  if (!connectionString) {
+    throw new Error('DATABASE_URL is required. Use --env-file=.env')
+  }
+  const pool = new Pool({ connectionString, max: 1 })
+  return { pool, db: drizzle(pool, { schema }) }
+}
+
+// ────────────────────────────────────────────
+// Pull: Database → Markdown skeleton
+// ────────────────────────────────────────────
+
+interface LessonMetadata {
+  id: number
+  slug: string
+  title: string
+  order: number
+  topicSlug: string | null
+  topicTitle: string | null
+  chapterSlug: string | null
+  chapterTitle: string | null
+}
+
+/** 从数据库查询所有 Lesson 的元数据 */
+async function fetchLessonMetadata(): Promise<LessonMetadata[]> {
+  const { pool, db } = createDb()
+
+  try {
+    const result = await db
+      .select({
+        id: lessons.id,
+        slug: lessons.slug,
+        title: lessons.title,
+        order: lessons.order,
+        topicId: lessons.topicId,
+        chapterId: lessons.chapterId
+      })
+      .from(lessons)
+      .orderBy(lessons.id)
+
+    const metadata: LessonMetadata[] = []
+
+    for (const lesson of result) {
+      let topicSlug: string | null = null
+      let topicTitle: string | null = null
+      let chapterSlug: string | null = null
+      let chapterTitle: string | null = null
+
+      if (lesson.topicId) {
+        const topic = await db.query.topics.findFirst({
+          where: eq(topics.id, lesson.topicId)
+        })
+        if (topic) {
+          topicSlug = topic.slug
+          topicTitle = topic.title
+        }
+      }
+
+      if (lesson.chapterId) {
+        const chapter = await db.query.chapters.findFirst({
+          where: eq(chapters.id, lesson.chapterId)
+        })
+        if (chapter) {
+          chapterSlug = chapter.slug
+          chapterTitle = chapter.title
+        }
+      }
+
+      metadata.push({
+        id: lesson.id,
+        slug: lesson.slug,
+        title: lesson.title,
+        order: lesson.order,
+        topicSlug,
+        topicTitle,
+        chapterSlug,
+        chapterTitle
+      })
+    }
+
+    return metadata
+  } finally {
+    await pool.end()
+  }
+}
+
+/** 生成 Markdown skeleton 内容（仅元数据骨架，正文留空，由编辑者编写） */
+export function generateSkeleton(metadata: LessonMetadata): string {
+  const lines = [
+    '---',
+    `id: ${metadata.id}`,
+    `slug: ${metadata.slug}`,
+    `title: ${metadata.title}`
+  ]
+
+  if (metadata.topicSlug) {
+    lines.push(`topic: ${metadata.topicSlug}`)
+  }
+  if (metadata.chapterSlug) {
+    lines.push(`chapter: ${metadata.chapterSlug}`)
+  }
+
+  lines.push('---')
+  lines.push('')
+
+  return lines.join('\n')
+}
+
+/** 确定 Markdown 文件路径 */
+function getMarkdownPath(metadata: LessonMetadata): string {
+  const parts: string[] = []
+
+  if (metadata.topicSlug) {
+    parts.push(metadata.topicSlug)
+  } else {
+    parts.push('_unassigned')
+  }
+
+  if (metadata.chapterSlug) {
+    parts.push(metadata.chapterSlug)
+  } else {
+    parts.push('_unassigned')
+  }
+
+  parts.push(`${metadata.slug}.md`)
+
+  return join(LESSONS_DIR, ...parts)
+}
+
+/** Pull 命令：从数据库创建 Markdown skeleton */
+async function pullCommand(): Promise<void> {
+  console.log('=== Pull: Database → Markdown skeleton ===\n')
+
+  const metadata = await fetchLessonMetadata()
+  console.log(`找到 ${metadata.length} 个 Lesson\n`)
+
+  let created = 0
+  let skipped = 0
+
+  for (const meta of metadata) {
+    const filePath = getMarkdownPath(meta)
+
+    if (existsSync(filePath)) {
+      console.log(`⊘ 跳过（已存在）: ${filePath}`)
+      skipped++
+      continue
+    }
+
+    const dir = dirname(filePath)
+    if (!existsSync(dir)) {
+      mkdirSync(dir, { recursive: true })
+    }
+
+    const content = generateSkeleton(meta)
+    writeFileSync(filePath, content, 'utf-8')
+    console.log(`✓ 创建: ${filePath}`)
+    created++
+  }
+
+  console.log(`\n完成: 创建 ${created} 个, 跳过 ${skipped} 个`)
+}
+
+// ────────────────────────────────────────────
+// Compile: Markdown → Lesson AST JSON
 // ────────────────────────────────────────────
 
 /** 去除 YAML frontmatter（--- ... ---） */
 function stripFrontmatter(markdown: string): string {
-  return markdown.replace(/^---\n[\s\S]*?\n---\n/, '')
+  return markdown.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '')
 }
 
 /**
  * 规范化 directive 语法以兼容 remark-directive：
  * 1. 移除 ::: 和 directive name 之间的空格（::: definition → :::definition）
- *    remark-directive 要求 name 紧跟 :::，不能有空格
  * 2. 将非标准属性语法 {key:value} 转换为标准语法 {key="value"}
- *    remark-directive 要求属性使用 key="value" 或 key=value 格式
  */
 function normalizeDirectives(markdown: string): string {
   return markdown
@@ -50,11 +232,7 @@ function normalizeDirectives(markdown: string): string {
     .replace(/\{(\w+):([^}]+)\}/g, '{$1="$2"}')
 }
 
-// ────────────────────────────────────────────
-// MDAST → Lesson AST 转换
-// ────────────────────────────────────────────
-
-/** MDAST 节点的通用类型（兼容 remark-math / remark-directive 扩展节点） */
+/** MDAST 节点的通用类型 */
 type MdastNode = { type: string; [key: string]: unknown }
 
 /** 将 MDAST 行内节点转换为 Lesson AST Inline */
@@ -82,12 +260,11 @@ function transformInlines(nodes: MdastNode[]): Inline[] {
   return nodes.map(transformInline).filter((n): n is Inline => n !== null)
 }
 
-/** 将 MDAST 块级节点转换为 Lesson AST Block（可能返回多个 Block） */
+/** 将 MDAST 块级节点转换为 Lesson AST Block */
 function transformBlock(node: MdastNode): Block | Block[] | null {
   switch (node.type) {
-    case 'paragraph': {
+    case 'paragraph':
       return { type: 'paragraph', children: transformInlines(node.children as MdastNode[]) }
-    }
     case 'heading': {
       const depth = node.depth as number
       const level = Math.max(1, Math.min(4, depth - 1)) as 1 | 2 | 3 | 4
@@ -122,7 +299,6 @@ function transformBlock(node: MdastNode): Block | Block[] | null {
     case 'thematicBreak':
       return { type: 'divider' }
     case 'math':
-      // 块级公式 $$...$$ → FormulaBlock (display: true)
       return { type: 'formula', latex: node.value as string, display: true }
     case 'blockquote': {
       const children = transformBlocks(node.children as MdastNode[])
@@ -150,11 +326,10 @@ function transformBlocks(nodes: MdastNode[]): Block[] {
   return result
 }
 
-/** 转换 directive 节点（::: definition / ::: example / ::: hint / ::: question） */
+/** 转换 directive 节点 */
 function transformDirective(node: MdastNode): Block | null {
   const name = node.name as string
   const rawAttrs = (node.attributes || {}) as Record<string, string>
-  // trim 属性值（remark-directive 可能保留前导空格）
   const attrs: Record<string, string> = {}
   for (const [k, v] of Object.entries(rawAttrs)) {
     attrs[k] = typeof v === 'string' ? v.trim() : v
@@ -175,26 +350,16 @@ function transformDirective(node: MdastNode): Block | null {
     case 'question':
       return { type: 'question', prompt: childBlocks, hint: attrs.hint || undefined }
     default:
-      // 未知 directive，将内容作为普通 Block 处理
       return childBlocks.length > 0 ? childBlocks[0]! : null
   }
 }
 
-/**
- * 将完整的 MDAST Root 转换为 LessonContent
- *
- * 分节规则：
- * - h1（# 标题）作为课时标题，不包含在 blocks 中
- * - h2（## 标题）开启新的 SectionBlock，后续内容归入该 section
- * - h3+（### 标题等）作为 HeadingBlock 归入当前 section
- * - h2 之前的内容作为顶层 Block
- */
+/** 将完整的 MDAST Root 转换为 LessonContent */
 function transformToLessonAst(root: Root): LessonContent {
   const contentNodes = (root.children as unknown as MdastNode[]).filter(node =>
     node.type !== 'yaml' && node.type !== 'toml'
   )
 
-  // 跳过 h1（课时标题）
   let startIndex = 0
   if (contentNodes[0]?.type === 'heading' && contentNodes[0].depth === 1) {
     startIndex = 1
@@ -205,13 +370,10 @@ function transformToLessonAst(root: Root): LessonContent {
   let currentSection: { type: 'section'; title: Inline[]; blocks: Block[] } | null = null
 
   for (const node of nodes) {
-    // h2 开启新 section
     if (node.type === 'heading' && node.depth === 2) {
-      // 关闭当前 section
       if (currentSection) {
         blocks.push(currentSection)
       }
-      // 开启新 section
       currentSection = {
         type: 'section',
         title: transformInlines(node.children as MdastNode[]),
@@ -230,7 +392,6 @@ function transformToLessonAst(root: Root): LessonContent {
     }
   }
 
-  // 关闭最后一个 section
   if (currentSection) {
     blocks.push(currentSection)
   }
@@ -238,11 +399,7 @@ function transformToLessonAst(root: Root): LessonContent {
   return { version: 1, blocks }
 }
 
-// ────────────────────────────────────────────
-// 编译 & 发布
-// ────────────────────────────────────────────
-
-/** 编译 Markdown 为 Lesson AST（不写数据库，用于测试） */
+/** 编译 Markdown 为 Lesson AST */
 export function compileMarkdown(markdown: string): LessonContent {
   const cleaned = normalizeDirectives(stripFrontmatter(markdown))
 
@@ -256,50 +413,151 @@ export function compileMarkdown(markdown: string): LessonContent {
   return transformToLessonAst(mdast)
 }
 
-/** 读取 Markdown 文件并编译 */
-function compileFile(filePath: string): LessonContent {
-  const rawMarkdown = readFileSync(filePath, 'utf-8')
-  return compileMarkdown(rawMarkdown)
+/** 递归查找所有 Markdown 文件（排除根目录的 index.md） */
+function findMarkdownFiles(dir: string, isRoot: boolean = true): string[] {
+  const files: string[] = []
+
+  if (!existsSync(dir)) {
+    return files
+  }
+
+  const entries = readdirSync(dir, { withFileTypes: true })
+  for (const entry of entries) {
+    const fullPath = join(dir, entry.name)
+    if (entry.isDirectory()) {
+      files.push(...findMarkdownFiles(fullPath, false))
+    } else if (entry.name.endsWith('.md')) {
+      // 排除根目录的 index.md（VitePress 首页）
+      if (isRoot && entry.name === 'index.md') {
+        continue
+      }
+      files.push(fullPath)
+    }
+  }
+
+  return files
 }
 
-/** 打印 Block 类型分布统计 */
-function printStats(ast: LessonContent): void {
-  console.log(`✓ 编译完成：${ast.blocks.length} 个顶层 Block`)
-  const typeCounts: Record<string, number> = {}
-  for (const block of ast.blocks) {
-    typeCounts[block.type] = (typeCounts[block.type] || 0) + 1
-  }
-  console.log('  顶层 Block 分布：')
-  for (const [type, count] of Object.entries(typeCounts)) {
-    console.log(`    ${type}: ${count}`)
-  }
+/** 从 Markdown frontmatter 提取 id */
+function extractIdFromFrontmatter(markdown: string): number | null {
+  const match = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---/)
+  if (!match) return null
+
+  const frontmatter = match[1]
+  if (!frontmatter) return null
+  const idMatch = frontmatter.match(/^id:\s*(\d+)/m)
+  if (!idMatch) return null
+
+  const idStr = idMatch[1]
+  if (!idStr) return null
+  return parseInt(idStr, 10)
 }
 
-/** 发布 Lesson AST 到数据库 */
-async function publishToDatabase(lessonSlug: string, ast: LessonContent): Promise<void> {
-  const connectionString = process.env.DATABASE_URL
-  if (!connectionString) {
-    throw new Error('DATABASE_URL is required. Use --env-file=.env')
+/** Compile 命令：Markdown → compile/output/*.json */
+function compileCommand(): void {
+  console.log('=== Compile: Markdown → Lesson AST JSON ===\n')
+
+  const markdownFiles = findMarkdownFiles(LESSONS_DIR)
+  console.log(`找到 ${markdownFiles.length} 个 Markdown 文件\n`)
+
+  if (!existsSync(OUTPUT_DIR)) {
+    mkdirSync(OUTPUT_DIR, { recursive: true })
   }
 
-  const pool = new Pool({ connectionString, max: 1 })
-  const db = drizzle(pool, { schema })
+  let compiled = 0
+  let errors = 0
 
-  console.log(`\n写入数据库 (slug=${lessonSlug})...`)
-  const result = await db.update(lessons)
-    .set({ content: ast })
-    .where(eq(lessons.slug, lessonSlug))
-    .returning({ id: lessons.id, slug: lessons.slug, title: lessons.title })
+  for (const filePath of markdownFiles) {
+    const relativePath = filePath.replace(LESSONS_DIR + '/', '')
+    console.log(`编译: ${relativePath}`)
 
-  if (result.length === 0) {
-    console.error(`✗ 未找到 slug=${lessonSlug} 的课时记录`)
-    await pool.end()
+    try {
+      const markdown = readFileSync(filePath, 'utf-8')
+      const id = extractIdFromFrontmatter(markdown)
+
+      if (!id) {
+        console.error(`  ✗ 缺少 id 字段`)
+        errors++
+        continue
+      }
+
+      const ast = compileMarkdown(markdown)
+      const outputPath = join(OUTPUT_DIR, `${id}.json`)
+      writeFileSync(outputPath, JSON.stringify(ast, null, 2), 'utf-8')
+
+      console.log(`  ✓ 输出: ${id}.json (${ast.blocks.length} blocks)`)
+      compiled++
+    } catch (err) {
+      console.error(`  ✗ 编译失败: ${(err as Error).message}`)
+      errors++
+    }
+  }
+
+  console.log(`\n完成: 编译 ${compiled} 个, 错误 ${errors} 个`)
+}
+
+// ────────────────────────────────────────────
+// Push: compile/output/*.json → Database
+// ────────────────────────────────────────────
+
+/** Push 命令：compile/output/*.json → Database */
+async function pushCommand(): Promise<void> {
+  console.log('=== Push: compile/output/*.json → Database ===\n')
+
+  if (!existsSync(OUTPUT_DIR)) {
+    console.error(`✗ 输出目录不存在: ${OUTPUT_DIR}`)
+    console.error('请先运行 compile 命令')
     process.exit(1)
   }
 
-  const row = result[0]
-  console.log(`✓ 已更新：${row!.title} (id=${row!.id})`)
-  await pool.end()
+  const jsonFiles = readdirSync(OUTPUT_DIR).filter(f => f.endsWith('.json'))
+  console.log(`找到 ${jsonFiles.length} 个 JSON 文件\n`)
+
+  if (jsonFiles.length === 0) {
+    console.log('没有需要推送的文件')
+    return
+  }
+
+  const { pool, db } = createDb()
+
+  try {
+    let pushed = 0
+    let errors = 0
+
+    for (const jsonFile of jsonFiles) {
+      const filePath = join(OUTPUT_DIR, jsonFile)
+      const id = parseInt(basename(jsonFile, '.json'), 10)
+
+      console.log(`推送: ${jsonFile} (id=${id})`)
+
+      try {
+        const json = readFileSync(filePath, 'utf-8')
+        const ast = JSON.parse(json) as LessonContent
+
+        const result = await db.update(lessons)
+          .set({ content: ast })
+          .where(eq(lessons.id, id))
+          .returning({ id: lessons.id, slug: lessons.slug, title: lessons.title })
+
+        if (result.length === 0) {
+          console.error(`  ✗ 未找到 id=${id} 的课时记录`)
+          errors++
+          continue
+        }
+
+        const row = result[0]
+        console.log(`  ✓ 已更新: ${row!.title} (slug=${row!.slug})`)
+        pushed++
+      } catch (err) {
+        console.error(`  ✗ 推送失败: ${(err as Error).message}`)
+        errors++
+      }
+    }
+
+    console.log(`\n完成: 推送 ${pushed} 个, 错误 ${errors} 个`)
+  } finally {
+    await pool.end()
+  }
 }
 
 // ────────────────────────────────────────────
@@ -307,27 +565,35 @@ async function publishToDatabase(lessonSlug: string, ast: LessonContent): Promis
 // ────────────────────────────────────────────
 
 async function main() {
-  const markdownPath = resolve(
-    process.cwd(),
-    'lessons/linear-equations/01-basics/01-intro/index.md'
-  )
-  const lessonSlug = 'intro-to-linear-equations'
+  const command = process.argv[2]
 
-  console.log('=== 课程发布脚本 ===')
-  console.log(`Markdown: ${markdownPath}`)
-  console.log(`Lesson:   ${lessonSlug}\n`)
-
-  // 1. 编译
-  const ast = compileFile(markdownPath)
-  printStats(ast)
-
-  // 2. 发布到数据库
-  await publishToDatabase(lessonSlug, ast)
-
-  console.log('\n发布完成。')
+  switch (command) {
+    case 'pull':
+      await pullCommand()
+      break
+    case 'compile':
+      compileCommand()
+      break
+    case 'push':
+      await pushCommand()
+      break
+    default:
+      console.error('用法: tsx tools/content-compiler/index.ts <pull|compile|push>')
+      console.error('')
+      console.error('命令:')
+      console.error('  pull     从数据库创建 Markdown skeleton 到 lessons/')
+      console.error('  compile  将 lessons/*.md 编译为 compile/output/*.json')
+      console.error('  push     将 compile/output/*.json 推送到数据库')
+      process.exit(1)
+  }
 }
 
-main().catch(err => {
-  console.error('发布失败:', err)
-  process.exit(1)
-})
+// 仅当作为 CLI 直接执行时运行 main()，使模块可被测试安全 import
+import { pathToFileURL } from 'node:url'
+const invokedUrl = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : ''
+if (import.meta.url === invokedUrl) {
+  main().catch(err => {
+    console.error('执行失败:', err)
+    process.exit(1)
+  })
+}

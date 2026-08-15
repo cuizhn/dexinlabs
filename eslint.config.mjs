@@ -8,5 +8,14 @@ import withNuxt from './.nuxt/eslint.config.mjs'
 import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default withNuxt(
-  eslintConfigPrettier
+  eslintConfigPrettier,
+  {
+    // 忽略工具生成/缓存目录，避免对脚手架产物做无意义的 lint。
+    // 与 .vitepress/cache 同类：属于外部工具产物，非项目源码。
+    ignores: [
+      '.qoder/**',
+      '**/.vitepress/cache/**',
+      'lessons/.vitepress/cache/**'
+    ]
+  }
 )

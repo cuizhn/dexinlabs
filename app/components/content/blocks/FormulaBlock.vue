@@ -12,7 +12,7 @@
  * 不依赖 Markdown 解析，直接接收 AST 中的 LaTeX 源文本。
  */
 import katex from 'katex'
-import type { FormulaBlock } from '@shared/lesson-ast'
+import type { FormulaBlock } from '@shared/lessonAST'
 
 const props = defineProps<{ block: FormulaBlock }>()
 

@@ -16,7 +16,7 @@
  * 根据 level 显示不同样式的提示框。
  * children 为 Block[]，通过 ContentRenderer 递归渲染。
  */
-import type { HintBlock } from '@shared/lesson-ast'
+import type { HintBlock } from '@shared/lessonAST'
 
 const props = defineProps<{ block: HintBlock }>()
 

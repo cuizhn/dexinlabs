@@ -2,7 +2,12 @@
 
 ## Status
 
-Accepted
+Superseded（被 standards/LESSON_AST.md 与 ADR-0013 取代，2026-08-15）
+
+> 本 ADR 关于"Service 层负责 Markdown → HTML"的决策已被 **LESSON_AST.md** 取代。
+> 当前架构：**Content Compiler（`tools/content-compiler/`）在编译期将内容转为 Lesson AST（Inline[] 语义）**，
+> 运行时不再做 Markdown 渲染，Service 只组装 Lesson AST，Renderer 按 Block 类型分发到 Vue 组件。
+> 详见 ADR-0013（编译/存储/预览）与 ADR-0010（AST 存储）。
 
 ---
 
