@@ -9,8 +9,19 @@
  *
  * 注意：Lesson 页面会在自身作用域内覆盖部分变量（暖米白纸张体系），
  * 这里维护的是首页及普通页面的默认值。
+ *
+ * ── 主题机制 ──
+ * :root                    → 浅色（默认值，也是 SSR 首屏值）
+ * :root[data-theme='dark'] → 深色覆盖层，仅覆盖颜色类 token
+ *
+ * data-theme 由 nuxt.config 注入的 head 内联脚本在首屏绘制前写入，
+ * 运行期由 composables/useTheme.ts 维护，因此不会出现主题闪烁。
+ * 组件不应硬编码色值，只消费这里的 token，即可自动获得双主题能力。
  */
 :root {
+
+  /* 让原生控件（滚动条 / 表单 / 输入光标）跟随主题 */
+  color-scheme: light;
 
   /* ── 唯一强调色 ── */
   --color-primary: #3b6fe0;
@@ -25,6 +36,10 @@
   --color-success-bg: rgba(77, 124, 95, 0.04);
   --color-warning: #b08327;
   --color-error: #c2504a;
+
+  /* 高亮标记（mark）：底色 + 文字分离，保证两种主题下都可读 */
+  --color-mark-bg: rgba(176, 131, 39, 0.24);
+  --color-mark-text: #18181b;
 
   /* ── 中性文本（zinc 阶）── */
   --color-text-primary: #18181b;
@@ -104,4 +119,73 @@
   --color-code-keyword: #c084fc;
   --color-code-string: #86efac;
   --color-code-number: #fde68a;
+}
+
+/**
+ * ── 深色主题覆盖层 ──
+ *
+ * 只覆盖颜色类 token，字号 / 间距 / 圆角 / 字体保持同一套，
+ * 因此深色不是"另一套设计"，而是同一体系的另一种亮度。
+ *
+ * 基调：与浅色同源的 zinc 中性阶（不用纯黑），
+ * 结构线继续维持 1px 低对比度的克制观感；
+ * 强调色由 #3b6fe0 提亮一档至 #6b93ea，保证深底上的可读对比。
+ */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* ── 唯一强调色（提亮一档）── */
+  --color-primary: #6b93ea;
+  --color-primary-hover: #89a9f0;
+  /* 浅色下 -dark 表示"更深"，深色下语义反转为"更亮"，用途一致：强调态文字 */
+  --color-primary-dark: #a4bff5;
+  --color-primary-light: rgba(107, 147, 234, 0.18);
+
+  /* ── 语义状态色（深底上略提亮、降饱和）── */
+  --color-success: #7fae90;
+  --color-success-dark: #96c0a5;
+  --color-success-border: rgba(127, 174, 144, 0.34);
+  --color-success-bg: rgba(127, 174, 144, 0.08);
+  --color-warning: #d0a24a;
+  --color-error: #e0736c;
+
+  --color-mark-bg: rgba(208, 162, 74, 0.28);
+  --color-mark-text: #f4f4f5;
+
+  /* ── 中性文本（zinc 阶反转）── */
+  --color-text-primary: #f4f4f5;
+  --color-text: #d4d4d8;
+  --color-text-secondary: #a1a1aa;
+  --color-text-light: #8b8b94;
+  --color-text-muted: #7c7c85;
+  --color-heading: #fafafa;
+
+  /* ── 中性背景 ── */
+  --color-bg-primary: #18181b;
+  --color-bg-secondary: #232327;
+  /* 语义为"最上层表面"，深色下不再是白色 */
+  --color-bg-white: #1f1f23;
+
+  /* ── 结构线 ── */
+  --color-border: #2e2e33;
+  --color-border-light: #27272b;
+  --color-border-strong: #3f3f46;
+
+  /* ── 主色衍生 ── */
+  --color-text-inverse: #18181b;
+  --color-primary-ghost: rgba(107, 147, 234, 0.12);
+  --color-primary-ghost-strong: rgba(107, 147, 234, 0.08);
+  --color-primary-ghost-light: rgba(107, 147, 234, 0.05);
+  --color-primary-ghost-medium: rgba(107, 147, 234, 0.09);
+  --color-primary-ghost-accent: rgba(107, 147, 234, 0.16);
+
+  /* ── 阴影：深底上改用更深的黑，弱亮色投影无意义 ── */
+  --shadow-primary: 0 2px 8px rgba(0, 0, 0, 0.5);
+  --shadow-primary-hover: 0 3px 12px rgba(0, 0, 0, 0.55);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 2px 6px -1px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 4px 12px -3px rgba(0, 0, 0, 0.5);
+
+  /* ── 代码块：比页面底色更暗，避免与背景糊在一起 ── */
+  --color-code-bg: #101013;
 }

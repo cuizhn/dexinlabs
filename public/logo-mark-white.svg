@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1024 1024"
+     fill="none">
+
+  <path
+    d="M300 300 L442 442"
+    stroke="#FFFFFF"
+    stroke-width="72"
+    stroke-linecap="round"/>
+
+  <path
+    d="M582 442 L724 300"
+    stroke="#FFFFFF"
+    stroke-width="72"
+    stroke-linecap="round"/>
+
+  <path
+    d="M300 724 L442 582"
+    stroke="#FFFFFF"
+    stroke-width="72"
+    stroke-linecap="round"/>
+
+  <path
+    d="M582 582 L724 724"
+    stroke="#FFFFFF"
+    stroke-width="72"
+    stroke-linecap="round"/>
+
+</svg>

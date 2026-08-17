@@ -1,129 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-     viewBox="0 0 1200 400"
-     width="1200"
-     height="400"
-     fill="none"
-     preserveAspectRatio="xMidYMid meet">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 240" fill="none">
+  <style>
+    /* 默认浅色模式样式 */
+    .theme-color {
+      stroke: #0b2742;
+      fill: #0b2742;
+    }
+    
+    /* 自动探测并切换至夜间/深色模式 */
+    @media (prefers-color-scheme: dark) {
+      .theme-color {
+        stroke: #e2e8f0; /* 夜间模式下的线条颜色（浅灰蓝） */
+        fill: #e2e8f0;   /* 夜间模式下的文字颜色（浅灰蓝） */
+      }
+    }
+  </style>
 
-  <!-- ================================================== -->
-  <!-- Background                                          -->
-  <!-- ================================================== -->
-
-  <rect
-    width="1200"
-    height="400"
-    rx="0"
-    fill="#0B2742"/>
-
-
-  <!-- ================================================== -->
-  <!-- Double Pencil X                                    -->
-  <!-- ================================================== -->
-
-  <g transform="translate(200 200)">
-
-    <!-- ================================================ -->
-    <!-- Pencil 1: upper-left → lower-right               -->
-    <!-- ================================================ -->
-
-    <g transform="rotate(48)">
-
-      <!-- Pencil body -->
-      <rect
-        x="-135"
-        y="-24"
-        width="270"
-        height="48"
-        fill="white"/>
-
-      <!-- Pencil cap -->
-      <rect
-        x="-180"
-        y="-24"
-        width="48"
-        height="48"
-        rx="18"
-        fill="white"/>
-
-      <!-- Pencil tip -->
-      <polygon
-        points="135,-24 135,24 177,0"
-        fill="white"/>
-
-      <!-- Pencil core -->
-      <polygon
-        points="135,-12 135,12 156,0"
-        fill="#0B2742"/>
-
-    </g>
-
-
-    <!-- ================================================ -->
-    <!-- Pencil 2: upper-right → lower-left               -->
-    <!-- ================================================ -->
-
-    <g transform="rotate(-48)">
-
-      <!-- Pencil body -->
-      <rect
-        x="-135"
-        y="-24"
-        width="270"
-        height="48"
-        fill="white"/>
-
-      <!-- Pencil cap -->
-      <rect
-        x="132"
-        y="-24"
-        width="48"
-        height="48"
-        rx="18"
-        fill="white"/>
-
-      <!-- Pencil tip -->
-      <polygon
-        points="-135,-24 -135,24 -177,0"
-        fill="white"/>
-
-      <!-- Pencil core -->
-      <polygon
-        points="-135,-12 -135,12 -156,0"
-        fill="#0B2742"/>
-
-    </g>
-
-  </g>
-
-
-  <!-- ================================================== -->
-  <!-- Brand Typography                                   -->
-  <!-- ================================================== -->
-
-  <g
-    fill="white"
-    font-family="Noto Sans SC, Noto Sans, Arial, sans-serif">
-
-    <!-- Chinese -->
-    <text
-      x="410"
-      y="190"
-      font-size="64"
-      font-weight="500"
-      letter-spacing="3">
-      得心实验室
-    </text>
-
-    <!-- English -->
-    <text
-      x="413"
-      y="240"
-      font-size="24"
-      font-weight="400"
-      letter-spacing="6">
-      DEXIN LABS
-    </text>
-
-  </g>
-
+  <!-- 给 path 和 text 加上统一的 class，并移除原本写死的 stroke 和 fill 属性 -->
+  <path class="theme-color" d="m70.314 70.314 33.282 33.282m32.813 0 33.282-33.282m-99.377 99.377 33.282-33.282m32.813 0 33.282 33.282" stroke-width="16.875" stroke-linecap="round"/>
+  
+  <text class="theme-color" x="240" y="166" font-family="Noto Sans SC, Noto Sans, Microsoft YaHei, sans-serif" font-size="120" font-weight="500" letter-spacing="4">
+    得心实验室
+  </text>
 </svg>

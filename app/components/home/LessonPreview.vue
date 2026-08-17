@@ -35,8 +35,8 @@ defineProps<{
 .preview__surface {
   max-width: 720px;
   margin: 0 auto;
-  background: var(--home-surface, #ffffff);
-  border: 1px solid var(--home-border, #e4e4e7);
+  background: var(--home-surface, var(--color-bg-white));
+  border: 1px solid var(--home-border, var(--color-border));
   border-radius: 8px;
   padding: clamp(1.5rem, 3.5vw, 2.5rem);
   overflow-x: auto;
@@ -50,7 +50,7 @@ defineProps<{
   font-size: var(--home-caption, 0.8125rem);
   font-weight: 500;
   letter-spacing: 0.04em;
-  color: var(--home-secondary, #52525b);
+  color: var(--home-secondary, var(--color-text-secondary));
 }
 
 .preview__eyebrow::before {
@@ -58,7 +58,7 @@ defineProps<{
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--home-accent, #3b6fe0);
+  background: var(--home-accent, var(--color-primary));
 }
 
 .preview__title {
@@ -66,14 +66,14 @@ defineProps<{
   font-size: var(--home-h2, 1.5rem);
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--home-fg, #18181b);
+  color: var(--home-fg, var(--color-text-primary));
 }
 
 /* 让真实 Lesson 内容在首页近黑白体系下保持克制 */
 .lesson-content {
   font-size: var(--home-body, 1.0625rem);
   line-height: 1.8;
-  color: var(--home-fg, #18181b);
+  color: var(--home-fg, var(--color-text-primary));
 }
 
 .lesson-content :deep(h2) {
@@ -81,7 +81,7 @@ defineProps<{
   font-weight: 600;
   margin: 1.75rem 0 0.75rem;
   padding-bottom: 0.4rem;
-  border-bottom: 1px solid var(--home-border, #e4e4e7);
+  border-bottom: 1px solid var(--home-border, var(--color-border));
 }
 
 .lesson-content :deep(h3) {

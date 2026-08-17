@@ -61,8 +61,8 @@ abbr[title] {
 }
 
 mark {
-  background-color: var(--color-warning);
-  color: var(--color-text-primary);
+  background-color: var(--color-mark-bg);
+  color: var(--color-mark-text);
   padding: 0 2px;
   border-radius: 2px;
 }

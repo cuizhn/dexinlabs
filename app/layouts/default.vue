@@ -22,7 +22,7 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-top: var(--spacing-3xl);
-  min-height: calc(100vh - var(--spacing-3xl));
+  padding-top: var(--spacing-2xl);
+  min-height: calc(100vh - var(--spacing-2xl));
 }
 </style>

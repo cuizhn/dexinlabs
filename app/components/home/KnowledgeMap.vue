@@ -35,11 +35,11 @@ defineProps<{
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--home-border, #e4e4e7);
+  border-top: 1px solid var(--home-border, var(--color-border));
 }
 
 .map__item {
-  border-bottom: 1px solid var(--home-border, #e4e4e7);
+  border-bottom: 1px solid var(--home-border, var(--color-border));
 }
 
 .map__link {
@@ -49,12 +49,12 @@ defineProps<{
   gap: 1rem;
   padding: 1.25rem 0.25rem;
   text-decoration: none;
-  color: var(--home-fg, #18181b);
+  color: var(--home-fg, var(--color-text-primary));
   transition: background-color 0.2s ease, padding-left 0.2s ease;
 }
 
 .map__link:hover {
-  background: var(--home-surface-2, #f4f4f5);
+  background: var(--home-surface-2, var(--color-bg-secondary));
   padding-left: 0.75rem;
 }
 
@@ -66,18 +66,18 @@ defineProps<{
 
 .map__desc {
   font-size: var(--home-sm, 0.9375rem);
-  color: var(--home-secondary, #52525b);
+  color: var(--home-secondary, var(--color-text-secondary));
   line-height: 1.5;
 }
 
 .map__arrow {
   text-align: right;
-  color: var(--home-muted, #a1a1aa);
+  color: var(--home-muted, var(--color-text-muted));
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .map__link:hover .map__arrow {
-  color: var(--home-accent, #3b6fe0);
+  color: var(--home-accent, var(--color-primary));
   transform: translateX(3px);
 }
 

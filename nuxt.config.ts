@@ -52,6 +52,27 @@ export default defineNuxtConfig({
           rel: 'stylesheet',
           href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Serif+SC:wght@400;500;600;700&display=swap'
         }
+      ],
+
+      /**
+       * 主题初始化脚本（必须内联、必须同步、必须在 head）
+       *
+       * SSR 无法得知用户主题，若等到 Vue 水合后再设置 data-theme，
+       * 深色用户会先看到一帧浅色闪屏。这段脚本在首屏绘制前同步执行：
+       * 优先用户主动保存的选择（localStorage），否则跟随系统 prefers-color-scheme。
+       *
+       * 与 composables/useTheme.ts 中的键名和判定规则保持一致。
+       */
+      script: [
+        {
+          key: 'theme-init',
+          tagPosition: 'head',
+          innerHTML:
+            '(function(){try{var s=localStorage.getItem("dexin-theme");'
+            + 'var d=s==="dark"||(s!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);'
+            + 'document.documentElement.dataset.theme=d?"dark":"light";}'
+            + 'catch(e){document.documentElement.dataset.theme="light";}})();'
+        }
       ]
     }
   },

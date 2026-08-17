@@ -91,6 +91,28 @@ useHead({
   font-family: var(--font-content);
 }
 
+/**
+ * ── 深色下的"暖色暗纸" ──
+ *
+ * 只需重新定义 --paper-* 与两处硬编码色值，
+ * 上面 .lesson 中 --color-* → var(--paper-*) 的映射会自动取到新值，
+ * 因此嵌套的 Renderer / Block 组件无需任何改动。
+ *
+ * 取值思路：不用中性灰，保留暖色偏移（墨黑略偏棕、文字暖白），
+ * 让 Lesson 在深色下依然是"纸"，而不是变成普通深色页面。
+ */
+:root[data-theme='dark'] .lesson {
+  --paper-bg: #1c1a17;
+  --paper-ink: #e9e3d7;
+  --paper-ink-secondary: #c4bcac;
+  --paper-ink-muted: #8d8474;
+  --paper-border: #332f28;
+  --paper-border-strong: #464137;
+
+  --color-bg-secondary: #262320;
+  --color-border-light: #2b2823;
+}
+
 .lesson__body {
   max-width: 46rem; /* 约 736px：较窄阅读宽度，长时间阅读舒适 */
   margin: 0 auto;

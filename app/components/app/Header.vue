@@ -1,6 +1,6 @@
 ﻿<template>
   <header class="header" :class="{ 'search-open': isSearchOpen }">
-    <div class="container">
+
       <!-- Logo -->
       <NuxtLink to="/" class="logo">
         <img src="/logo.svg" alt="得心实验室" class="logo-image" />
@@ -10,8 +10,12 @@
       <!-- 全局搜索 -->
       <AppGlobalSearch ref="globalSearchRef" @update:is-open="isSearchOpen = $event" />
 
-      <!-- 我的 -->
-      <div class="user">
+      <!-- 右侧操作区：主题切换 + 我的 -->
+      <div class="actions">
+        <!-- 日夜主题切换 -->
+        <AppThemeToggle />
+
+        <!-- 我的 -->
         <button class="icon-btn" aria-label="我的">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -19,7 +23,7 @@
           </svg>
         </button>
       </div>
-    </div>
+
   </header>
 </template>
 
@@ -34,9 +38,9 @@
  * 视觉：1px 结构线分隔，无阴影，中性黑白灰。
  *
  * 三个状态：
- * - Desktop / Default: Logo + Nav + GlobalSearch + 我的
- * - Mobile / Default: Logo + Nav + 搜索图标 + 我的
- * - Mobile / Search: 返回/关闭 + 搜索输入框（Logo 和"我的"隐藏）
+ * - Desktop / Default: Logo + Nav + GlobalSearch + 主题切换 + 我的
+ * - Mobile / Default: Logo + Nav + 搜索图标 + 主题切换 + 我的
+ * - Mobile / Search: 返回/关闭 + 搜索输入框（Logo 和右侧操作区隐藏）
  */
 
 const isSearchOpen = ref(false)
@@ -50,20 +54,19 @@ const globalSearchRef = ref()
   left: 0;
   right: 0;
   z-index: 100;
-  background-color: var(--color-bg-primary);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.container {
-  width: 100%;
+    width: 100%;
   max-width: 980px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
   display: flex;
   align-items: center;
-  height: 64px;
+  height: 48px;
   gap: var(--spacing-xl);
+  background-color: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border);
 }
+
+
 
 .logo {
   display: flex;
@@ -98,7 +101,11 @@ const globalSearchRef = ref()
   color: var(--color-text-primary);
 }
 
-.user {
+/* 主题切换与「我的」同属图标操作区，彼此靠近成一组 */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
   flex-shrink: 0;
   margin-left: auto;
 }
@@ -138,7 +145,7 @@ const globalSearchRef = ref()
 
   .search-open .logo,
   .search-open .nav,
-  .search-open .user {
+  .search-open .actions {
     display: none;
   }
 }

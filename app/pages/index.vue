@@ -90,16 +90,18 @@ useHead({
 
 <style scoped>
 .dexin-home {
-  /* ── 近黑白体系（得心实验室自有，非 Zed 色值）── */
-  --home-bg: #fbfbfa;
-  --home-fg: #18181b; /* 近黑 */
-  --home-secondary: #52525b;
-  --home-muted: #a1a1aa;
-  --home-border: #e4e4e7;
-  --home-surface: #ffffff;
-  --home-surface-2: #f4f4f5;
-  --home-accent: #3b6fe0; /* 唯一克制强调色 */
-  --home-accent-soft: rgba(59, 111, 224, 0.08);
+  /* ── 近黑白体系（得心实验室自有，非 Zed 色值）──
+     指向全局 token，从而自动获得日夜主题能力；
+     浅色下取值与原先的硬编码完全一致，首页视觉不变。 */
+  --home-bg: var(--color-bg-primary);
+  --home-fg: var(--color-text-primary); /* 近黑 */
+  --home-secondary: var(--color-text-secondary);
+  --home-muted: var(--color-text-muted);
+  --home-border: var(--color-border);
+  --home-surface: var(--color-bg-white);
+  --home-surface-2: var(--color-bg-secondary);
+  --home-accent: var(--color-primary); /* 唯一克制强调色 */
+  --home-accent-soft: var(--color-primary-light);
 
   /* ── 字体层级 ── */
   --font-display: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;

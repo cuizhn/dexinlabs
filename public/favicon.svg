@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 256 256"
+     fill="none">
+
+  <path
+    d="M55 55 L104 104"
+    stroke="#0B2742"
+    stroke-width="32"
+    stroke-linecap="round"/>
+
+  <path
+    d="M152 104 L201 55"
+    stroke="#0B2742"
+    stroke-width="32"
+    stroke-linecap="round"/>
+
+  <path
+    d="M55 201 L104 152"
+    stroke="#0B2742"
+    stroke-width="32"
+    stroke-linecap="round"/>
+
+  <path
+    d="M152 152 L201 201"
+    stroke="#0B2742"
+    stroke-width="32"
+    stroke-linecap="round"/>
+
+</svg>
