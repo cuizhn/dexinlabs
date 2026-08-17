@@ -1,1 +1,129 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="512" height="512" fill="none"><path fill="#0b2742" d="M0 0h1024v1024H0z"/><g transform="rotate(48 -318.985 830.985)"><path fill="#fff" d="M-377.8-36h755.6v72h-755.6z"/><rect x="-441.8" y="-36" width="72" height="72" rx="28" fill="#fff"/><path fill="#fff" d="M377.8-36v72l63-36z"/><path fill="#0b2742" d="M377.8-18v36l32-18z"/></g><g transform="rotate(-48 830.985 -318.985)"><path fill="#fff" d="M-377.8-36h747.6v72h-747.6z"/><rect x="369.8" y="-36" width="72" height="72" rx="28" fill="#fff"/><path fill="#fff" d="M-377.8-36v72l-63-36z"/><path fill="#0b2742" d="M-377.8-18v36l-32-18z"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1200 400"
+     width="1200"
+     height="400"
+     fill="none"
+     preserveAspectRatio="xMidYMid meet">
+
+  <!-- ================================================== -->
+  <!-- Background                                          -->
+  <!-- ================================================== -->
+
+  <rect
+    width="1200"
+    height="400"
+    rx="0"
+    fill="#0B2742"/>
+
+
+  <!-- ================================================== -->
+  <!-- Double Pencil X                                    -->
+  <!-- ================================================== -->
+
+  <g transform="translate(200 200)">
+
+    <!-- ================================================ -->
+    <!-- Pencil 1: upper-left → lower-right               -->
+    <!-- ================================================ -->
+
+    <g transform="rotate(48)">
+
+      <!-- Pencil body -->
+      <rect
+        x="-135"
+        y="-24"
+        width="270"
+        height="48"
+        fill="white"/>
+
+      <!-- Pencil cap -->
+      <rect
+        x="-180"
+        y="-24"
+        width="48"
+        height="48"
+        rx="18"
+        fill="white"/>
+
+      <!-- Pencil tip -->
+      <polygon
+        points="135,-24 135,24 177,0"
+        fill="white"/>
+
+      <!-- Pencil core -->
+      <polygon
+        points="135,-12 135,12 156,0"
+        fill="#0B2742"/>
+
+    </g>
+
+
+    <!-- ================================================ -->
+    <!-- Pencil 2: upper-right → lower-left               -->
+    <!-- ================================================ -->
+
+    <g transform="rotate(-48)">
+
+      <!-- Pencil body -->
+      <rect
+        x="-135"
+        y="-24"
+        width="270"
+        height="48"
+        fill="white"/>
+
+      <!-- Pencil cap -->
+      <rect
+        x="132"
+        y="-24"
+        width="48"
+        height="48"
+        rx="18"
+        fill="white"/>
+
+      <!-- Pencil tip -->
+      <polygon
+        points="-135,-24 -135,24 -177,0"
+        fill="white"/>
+
+      <!-- Pencil core -->
+      <polygon
+        points="-135,-12 -135,12 -156,0"
+        fill="#0B2742"/>
+
+    </g>
+
+  </g>
+
+
+  <!-- ================================================== -->
+  <!-- Brand Typography                                   -->
+  <!-- ================================================== -->
+
+  <g
+    fill="white"
+    font-family="Noto Sans SC, Noto Sans, Arial, sans-serif">
+
+    <!-- Chinese -->
+    <text
+      x="410"
+      y="190"
+      font-size="64"
+      font-weight="500"
+      letter-spacing="3">
+      得心实验室
+    </text>
+
+    <!-- English -->
+    <text
+      x="413"
+      y="240"
+      font-size="24"
+      font-weight="400"
+      letter-spacing="6">
+      DEXIN LABS
+    </text>
+
+  </g>
+
+</svg>
