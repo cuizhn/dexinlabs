@@ -1,18 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="512" height="512" fill="none" preserveAspectRatio="xMidYMid meet">
-<!--X 第一笔-->
-  <g transform="translate(512 512) rotate(48)">
-    <rect x="-441.8" y="-36" width="883.6" height="72" rx="20" fill="#0B2742"/>
-  </g>
-<!--X 第二笔-->
-  <g transform="translate(512 512) rotate(-48)">
-<!--笔帽-->
-    <rect x="369.8" y="-36" width="72" height="72" rx="28" fill="#0B2742"/>
-<!--笔杆-->
-    <rect x="-377.8" y="-36" width="747.6" height="72" fill="#0B2742"/>
-<!--笔杆内部白色-->
-<!--笔尖-->
-    <polygon points="-377.8,-36 -377.8,36 -440.8,0" fill="#0B2742"/>
-<!--笔尖内部-->
-    <polygon points="-377.8,-18 -377.8,18 -409.8,0" fill="white"/>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="512" height="512" fill="none"><path fill="#0b2742" d="M0 0h1024v1024H0z"/><g transform="rotate(48 -318.985 830.985)"><path fill="#fff" d="M-377.8-36h755.6v72h-755.6z"/><rect x="-441.8" y="-36" width="72" height="72" rx="28" fill="#fff"/><path fill="#fff" d="M377.8-36v72l63-36z"/><path fill="#0b2742" d="M377.8-18v36l32-18z"/></g><g transform="rotate(-48 830.985 -318.985)"><path fill="#fff" d="M-377.8-36h747.6v72h-747.6z"/><rect x="369.8" y="-36" width="72" height="72" rx="28" fill="#fff"/><path fill="#fff" d="M-377.8-36v72l-63-36z"/><path fill="#0b2742" d="M-377.8-18v36l-32-18z"/></g></svg>
