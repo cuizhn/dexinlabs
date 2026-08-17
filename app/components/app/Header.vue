@@ -3,45 +3,9 @@
     <div class="container">
       <!-- Logo -->
       <NuxtLink to="/" class="logo">
-        <span class="logo-icon">
-          <!-- 2. 浏览器标签图标 / Favicon 微型规格 (32px) -->
-<svg
-  xmlns="http://w3.org"
-  viewBox="0 0 1024 1024"
-  width="32"
-  height="32"
-  fill="none"
-  preserveAspectRatio="xMidYMid meet"
->
-  <!-- X — 第一笔基础斜线（圆角空心双线轨道结构） -->
-  <path d="M 220 180 L 804 844" stroke="#0B2742" stroke-width="96" stroke-linecap="round" />
-  <path d="M 220 180 L 804 844" stroke="white" stroke-width="42" stroke-linecap="round" />
-
-  <!-- X — 第二笔：空心铅笔笔杆主体 -->
-  <path d="M 252 795 L 772 231" stroke="#0B2742" stroke-width="96" stroke-linecap="butt" />
-  <path d="M 252 795 L 772 231" stroke="white" stroke-width="42" stroke-linecap="butt" />
-
-  <!-- 纯线框笔尖组件（无石墨笔芯） -->
-  <path d="M 216 763 L 288 827 L 202 851 Z" fill="#0B2742" />
-  <path d="M 226 772 L 274 815 L 212 833 Z" fill="white" />
-
-  <!-- 右上方旋转空心橡皮擦 -->
-  <g transform="translate(772 231) rotate(-48)">
-    <rect x="0" y="-48" width="112" height="96" rx="28" fill="#0B2742" />
-    <rect x="20" y="-27" width="72" height="54" rx="16" fill="white" />
-  </g>
-</svg>
-
-
-</span>
-        <span class="logo-text">得心实验室</span>
+        <img src="/logo.svg" alt="得心实验室" class="logo-image" />
       </NuxtLink>
 
-      <!-- 极简导航 -->
-      <nav class="nav" aria-label="主导航">
-        <NuxtLink to="/courses" class="nav-link">课程</NuxtLink>
-        <NuxtLink to="/about" class="nav-link">关于</NuxtLink>
-      </nav>
 
       <!-- 全局搜索 -->
       <AppGlobalSearch ref="globalSearchRef" @update:is-open="isSearchOpen = $event" />
@@ -110,15 +74,10 @@ const globalSearchRef = ref()
   flex-shrink: 0;
 }
 
-.logo-icon {
-  font-size: var(--text-2xl);
-  font-weight: 700;
-}
-
-.logo-text {
-  font-size: var(--text-lg);
-  font-weight: 600;
-  letter-spacing: 0.01em;
+.logo-image {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
 }
 
 .nav {
