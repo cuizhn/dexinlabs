@@ -21,6 +21,8 @@
 export interface LessonContent {
   /** AST 版本号，当前为 1 */
   version: 1
+  /** 预留元数据字段（MVP 可空），供 Compiler 注入调试信息 / 校验标识等 */
+  meta?: { [key: string]: unknown }
   /** 有序的 Block 列表 */
   blocks: Block[]
 }

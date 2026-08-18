@@ -68,6 +68,7 @@ export const chapters = pgTable('chapters', {
   order: integer('order').default(0).notNull(),
   topicId: integer('topic_id').references(() => topics.id, { onDelete: 'cascade' })
 }, table => [
+  uniqueIndex('idx_chapters_topic_slug_unique').on(table.topicId, table.slug),
   index('idx_chapters_topic_id').on(table.topicId),
   index('idx_chapters_order').on(table.order)
 ])
@@ -85,6 +86,8 @@ export const lessons = pgTable('lessons', {
   order: integer('order').default(0).notNull(),
   /** Lesson AST 结构化内容（JSONB） */
   content: jsonb('content'),
+  /** AST 版本号：1 = LessonContent 格式（与 shared/lessonAST.ts 对齐） */
+  astVersion: integer('ast_version').default(1).notNull(),
   /** 知识归属：所属知识主题 */
   topicId: integer('topic_id').references(() => topics.id, { onDelete: 'set null' }),
   /** 教学归属：所属教学章节 */

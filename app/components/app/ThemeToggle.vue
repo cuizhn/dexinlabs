@@ -59,6 +59,7 @@
  * 图标形态由 CSS 依据 <html data-theme> 决定，而不是依赖组件状态：
  * SSR 无法得知用户主题，若用 v-if 会在水合瞬间出现图标跳变。
  */
+import { useTheme } from '~/composables/useTheme'
 const { toggle } = useTheme()
 </script>
 

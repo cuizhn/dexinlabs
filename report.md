@@ -2,6 +2,13 @@
 
 > 基于实际代码/数据库核查 · 2026-08-15 16:00 · branch: main
 > 所有结论以当前代码、数据库与门禁实际结果为准。
+>
+> **架构更新 (2026-08-18)**：本报告中描述的 `tools/content-compiler/`、`content:pull/compile/push` 脚本、`lessons/` 目录、frontmatter `id/slug/topic/chapter` 等均已**不复存在**。项目已迁移至「双仓库 + Content Contract」架构：
+> - Compiler 逻辑迁至 `dexinlabs-content/compiler/`，输出 `content-package.json`
+> - 主仓通过 `POST /api/content-package` Publish API 接收并 UPSERT 到 DB
+> - `tools/content-compiler/` 和 `dexinlabs/lessons/` 已删除
+> - frontmatter 仅保留 `title` + `order`，Identity 从路径推导
+> - 详见 Phase 1 + Phase 2 完成报告
 
 ---
 

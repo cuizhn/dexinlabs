@@ -1,3 +1,20 @@
+> **Status: Superseded (2026-08-18)**
+>
+> 本 ADR 提出将 `dexinlabs-content` 合并回主项目。该决策**已被逆转**：项目最终采用「双仓库 + Content Contract」架构，`dexinlabs-content` 作为独立 Source of Truth 仓库保留，不合并到 `dexinlabs`。
+>
+> **新架构概要**（替代本 ADR 全部内容）：
+>
+> - `dexinlabs-content` 仓库：课程内容唯一源（Source of Truth），含 `lessons/**/*.md`、`content-manifest.json`、`compiler/`（scanner + compiler），输出单一 `output/content-package.json`
+> - `dexinlabs` 仓库：Runtime 消费方（Nuxt app + DB），通过 `POST /api/content-package` 接收 Content Package 并 UPSERT 到 DB
+> - `shared/lessonAST.ts` 仍为主仓 AST 唯一契约；`shared/contentPackage.ts` 为 Package 消费端类型镜像
+> - `tools/content-compiler/` 已删除；`dexinlabs/lessons/` 已删除
+> - frontmatter 仅保留 `title` + `order`，Lesson Identity 从路径 `lessons/<topic>/<chapter>/<slug>.md` 推导
+> - 发布流程：`npm run compile`（content 仓）→ `npm run publish:content`（主仓 CLI → Publish API → DB 事务 UPSERT）
+>
+> 以下为原始 ADR 文本，仅作历史记录保留。
+
+---
+
 \# 合并 `dexinlabs-content` 到主项目
 
 ## 1. 目标

@@ -96,6 +96,8 @@ export function toChapter(row: Record<string, unknown>): Chapter {
 export interface Lesson extends BaseContentEntity {
   topicId?: number | null
   chapterId?: number | null
+  /** AST 版本号（Contract 冻结 = 1） */
+  astVersion?: number | null
   content?: LessonContent | null
 }
 
@@ -107,6 +109,7 @@ export function toLesson(row: Record<string, unknown>): Lesson {
     order: row.order as number,
     topicId: (row.topicId as number) ?? null,
     chapterId: (row.chapterId as number) ?? null,
+    astVersion: (row.astVersion as number) ?? null,
     content: row.content as Lesson['content']
   }
 }

@@ -1,9 +1,11 @@
 # Lesson AST 设计规范
 
-> Version: 1.1
+> Version: 1.2
 > Status: Active
-> Date: 2026-08-15
-> 对齐说明：本规范已于 2026-08-15 与代码实现对齐。所有类型以 `shared/lessonAST.ts` 为**唯一事实来源（single source of truth）**，本文档仅作说明，不得与代码冲突。
+> Date: 2026-08-18
+> 对齐说明：本规范已于 2026-08-18 与代码实现对齐。所有类型以 `shared/lessonAST.ts` 为**唯一事实来源（single source of truth）**，本文档仅作说明，不得与代码冲突。
+>
+> **架构更新 (2026-08-18)**：Content Compiler 已从 `tools/content-compiler/` 迁移至独立仓库 `dexinlabs-content/compiler/`。主仓不再包含 Compiler 代码，改为通过 `POST /api/content-package` 接收编译后的 Content Package。本文档中 `tools/content-compiler/` 的引用仅反映历史状态，实际位置为 `dexinlabs-content/compiler/`。
 
 ---
 
@@ -261,14 +263,14 @@ interface DividerBlock extends BaseBlock {
 
 ### 5.1 职责
 
-Content Compiler（`tools/content-compiler/`）是**唯一**允许将外部内容转换为 Lesson AST 的模块：
+Content Compiler（`dexinlabs-content/compiler/`）是**唯一**允许将外部内容转换为 Lesson AST 的模块：
 
 - Markdown → Lesson AST
 - 可视化编辑器 → Lesson AST（未来）
 - AI 输出 → Lesson AST（未来）
 - Word / PDF 导入 → Lesson AST（未来）
 
-> 模块结构：`tools/content-compiler/index.ts`，核心入口 `compileMarkdown(markdown: string): LessonContent`。Markdown 必须使用 remark + unified 生态（remark-parse / remark-gfm / remark-math / remark-directive），不重新实现 Parser / Lexer。
+> 模块结构：`dexinlabs-content/compiler/index.ts`（scanner + compiler），核心入口扫描 `lessons/` 目录并将 Markdown 编译为 `LessonContent` AST，输出 `output/content-package.json`。Markdown 必须使用 remark + unified 生态（remark-parse / remark-gfm / remark-math / remark-directive），不重新实现 Parser / Lexer。
 
 ### 5.2 不得负责
 
@@ -285,7 +287,7 @@ Content Compiler（`tools/content-compiler/`）是**唯一**允许将外部内�
 
 主项目（dexinlabs）已完全移除 Markdown Engine（旧的 `app/markdown` remark/rehype/unified 管线）。
 
-Markdown → Lesson AST 的编译职责由 **`tools/content-compiler/`** 承担（开发/构建工具）。主项目只消费 AST，按 Block 类型渲染。
+Markdown → Lesson AST 的编译职责由 **`dexinlabs-content/compiler/`** 承担（独立内容仓库中的开发/构建工具）。主项目只消费 AST（通过 Publish API 写入 DB 后读取），按 Block 类型渲染。
 
 ### 6.2 Repository（简化）
 
@@ -436,8 +438,8 @@ ALTER TABLE lessons
 本规范**取代** ADR-0009（Content Rendering Responsibility）中关于“Service 层负责 Markdown → HTML”的决策。
 
 新决策：
-- Content Compiler（`tools/content-compiler/`）负责 Markdown → Lesson AST，文本字段编译为 `Inline[]` 语义节点；
-- 主项目（dexinlabs）不包含任何 Markdown 渲染能力；
+- Content Compiler（`dexinlabs-content/compiler/`）负责 Markdown → Lesson AST，文本字段编译为 `Inline[]` 语义节点；
+- 主项目（dexinlabs）不包含任何 Markdown 渲染能力，也不包含 Compiler 代码；
 - Service 不再负责 Markdown 渲染；
 - Renderer 按 Block 类型分发，文本类 Block 通过 `InlineRenderer` 渲染 `Inline[]`，FormulaBlock 调用 KaTeX API。
 

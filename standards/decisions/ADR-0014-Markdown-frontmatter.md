@@ -1,3 +1,19 @@
+> **Status: Superseded (2026-08-18)**
+>
+> 本 ADR 描述的 Pull / Compile / Push 三阶段机制（基于 `tools/content-compiler/`、frontmatter `id/slug/topic/chapter`、DB 直连）**已被取代**。
+>
+> **新机制概要**（替代本 ADR 全部内容）：
+>
+> - **Frontmatter 仅保留 `title` + `order`**：不再包含 `id` / `slug` / `topic` / `chapter`。Lesson Identity 从文件路径 `lessons/<topic_slug>/<chapter_slug>/<slug>.md` 推导。
+> - **无 Pull 阶段**：不再从 DB 反向生成 Markdown skeleton。课程源文件由编辑者直接在 `dexinlabs-content/lessons/` 中创建。
+> - **Compile 阶段**：`dexinlabs-content` 仓库的 `compiler/` 扫描 lessons 目录 → 解析 Markdown → AST → 输出单一 `output/content-package.json`（5 顶层字段，lessons 严格 6 字段）。
+> - **Push 阶段被 Publish API 取代**：主仓 `POST /api/content-package` 接收 Package，事务 UPSERT 到 DB（按 slug 而非 id 匹配），不再直连 DB。
+> - **不再使用 frontmatter `id` 关联数据库行**：Lesson 身份由 `(topic_slug, lesson_slug)` 组合唯一标识，与 DB `lessons.(topic_id, slug)` 唯一约束对齐。
+>
+> 以下为原始 ADR 文本，仅作历史记录保留。
+
+---
+
 请执行以下方案，作为当前项目 **Lesson 内容同步机制** 的确定设计。
 
 # Lesson 内容 Pull / Compile / Push 机制
