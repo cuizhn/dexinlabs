@@ -166,26 +166,9 @@ useHead({
   background: var(--home-bg);
 }
 
-/* ── 内容区外围两条贯穿竖线（zed.dev 面板外框风格）──
-   竖线把所有 section "框住"，与 AppDivider 的满屏宽横线交汇成网格。
-   宽度 1200px，居中，两侧各 1px 竖线。 */
+/* ── 内容区：全宽，竖线由 layouts/default.vue 的 .layout__rails 全局贯穿 ── */
 .dexin-home__content {
   position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
-  border-left: 1px solid var(--color-border);
-  border-right: 1px solid var(--color-border);
-  min-height: 100vh;
-  background: var(--home-bg);
-}
-
-@media (max-width: 768px) {
-  /* 移动端窄屏：移除外围竖线，避免内容被压窄 */
-  .dexin-home__content {
-    max-width: 100%;
-    border-left: none;
-    border-right: none;
-  }
 }
 
 /* ── Hero ── */
