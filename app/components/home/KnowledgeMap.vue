@@ -1,14 +1,19 @@
 <template>
   <nav class="map" aria-label="知识地图">
-    <ul class="map__list">
-      <li v-for="topic in topics" :key="topic.slug" class="map__item">
-        <NuxtLink :to="`/courses/${topic.slug}`" class="map__link">
-          <span class="map__title">{{ topic.title }}</span>
-          <span class="map__desc">{{ topic.description }}</span>
-          <span class="map__arrow" aria-hidden="true">→</span>
-        </NuxtLink>
-      </li>
-    </ul>
+    <div class="map__grid">
+      <NuxtLink
+        v-for="(topic, i) in topics"
+        :key="topic.slug"
+        :to="`/courses/${topic.slug}`"
+        class="map__cell"
+        :class="`map__cell--${i + 1}`"
+      >
+        <span class="map__index">{{ String(i + 1).padStart(2, '0') }}</span>
+        <span class="map__title">{{ topic.title }}</span>
+        <span class="map__desc">{{ topic.description }}</span>
+        <span class="map__arrow" aria-hidden="true">→</span>
+      </NuxtLink>
+    </div>
   </nav>
 </template>
 
@@ -16,8 +21,9 @@
 /**
  * KnowledgeMap - 知识地图（首页）
  *
- * 以近黑白文本列呈现真实 4 个主题，不使用彩色卡片 / emoji 图标。
- * 链接指向真实课程页。不修改 Course/Topic 数据结构。
+ * zed.dev 多列面板风格：2×2 网格，每个 cell 自成面板。
+ * 竖线由 cell 的 border-left 承担，横线由 border-top 承担。
+ * 通过 :first-child / :nth-child 精准控制边线，避免堆叠双线。
  */
 defineProps<{
   topics: { slug: string, title: string, description: string }[]
@@ -27,77 +33,70 @@ defineProps<{
 <style scoped>
 .map {
   width: 100%;
-  max-width: 860px;
-  margin: 0 auto;
 }
 
-.map__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border-top: 1px solid var(--home-border, var(--color-border));
-}
-
-.map__item {
-  border-bottom: 1px solid var(--home-border, var(--color-border));
-}
-
-.map__link {
+.map__grid {
   display: grid;
-  grid-template-columns: minmax(0, 8rem) minmax(0, 1fr) 1.5rem;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 1.25rem 0.25rem;
+  grid-template-columns: repeat(2, 1fr);
+  /* 负边距让 cell 的 border 共享，不出现双线 */
+  border-top: 0.8px solid var(--color-border);
+  border-left: 0.8px solid var(--color-border);
+}
+
+.map__cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.5rem 1.25rem;
+  border-right: 0.8px solid var(--color-border);
+  border-bottom: 0.8px solid var(--color-border);
   text-decoration: none;
-  color: var(--home-fg, var(--color-text-primary));
-  transition: background-color 0.2s ease, padding-left 0.2s ease;
+  color: var(--color-text-primary);
+  transition: background-color 0.2s ease;
 }
 
-.map__link:hover {
-  background: var(--home-surface-2, var(--color-bg-secondary));
-  padding-left: 0.75rem;
+.map__cell:hover {
+  background: var(--color-bg-secondary);
 }
 
-.map__title {
-  font-size: var(--home-body, 1.0625rem);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-.map__desc {
-  font-size: var(--home-sm, 0.9375rem);
-  color: var(--home-secondary, var(--color-text-secondary));
-  line-height: 1.5;
-}
-
-.map__arrow {
-  text-align: right;
-  color: var(--home-muted, var(--color-text-muted));
-  transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.map__link:hover .map__arrow {
-  color: var(--home-accent, var(--color-primary));
+.map__cell:hover .map__arrow {
+  color: var(--color-primary);
   transform: translateX(3px);
 }
 
+.map__index {
+  font-family: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  letter-spacing: 0.08em;
+}
+
+.map__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+}
+
+.map__desc {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+
+.map__arrow {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.25rem;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
 @media (max-width: 640px) {
-  .map__link {
-    grid-template-columns: 1fr 1.5rem;
-    grid-template-areas:
-      'title arrow'
-      'desc arrow';
-    gap: 0.25rem 1rem;
-  }
-  .map__title {
-    grid-area: title;
-  }
-  .map__desc {
-    grid-area: desc;
-  }
-  .map__arrow {
-    grid-area: arrow;
-    align-self: center;
+  .map__grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

@@ -28,11 +28,14 @@ import { features } from './homeData'
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
+  /* 满宽撑开，让竖线延伸到 section 内部两侧 */
+  width: 100%;
 }
 
 .features__item {
   padding: 0 1.5rem;
-  border-left: 1px solid var(--color-border);
+  /* 0.8px 亚像素发丝线（zed 风格），左右双竖线让每个特性自成面板 */
+  border-left: 0.8px solid var(--color-border-strong, var(--color-border));
 }
 
 .features__item:first-child {
