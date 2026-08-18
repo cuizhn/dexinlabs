@@ -1,36 +1,50 @@
 <template>
+  <!--
+    AppDivider — 满屏宽横向分隔线 + 三明治交汇节点（zed.dev 原版骨架复用）
+
+    新版三明治骨架：
+      [rail span: flex-1]     ← 弹性空白，border 画左竖线，内置 NodeMark 交汇点
+      [center span: 980px]   ← 与 header/section 的内容容器同宽，承载中央签名节点
+      [rail span: flex-1]     ← 弹性空白，border 画右竖线，内置 NodeMark 交汇点
+
+    满屏宽横线继续使用 ::before/::after 伪元素 + -100vw/200vw 画线，
+    与 rail span 的 border 竖线在 NodeMark 位置自然相交——节点无需绝对定位计算。
+  -->
   <div class="app-divider" :class="{ 'app-divider--with-mark': withMark }" aria-hidden="true">
-    <!-- 左侧交汇点：横线与贯穿竖线的交点 -->
-    <div class="app-divider__mark app-divider__mark--left">
-      <AppNodeMark />
-    </div>
+    <!-- 左竖线 + 交汇节点 -->
+    <span class="app-divider__rail app-divider__rail--left">
+      <span class="app-divider__node"><AppNodeMark /></span>
+    </span>
     <!-- 中央签名节点（仅首条分隔用） -->
-    <div v-if="withMark" class="app-divider__mark app-divider__mark--center">
-      <AppNodeMark />
-    </div>
-    <!-- 右侧交汇点：横线与贯穿竖线的交点 -->
-    <div class="app-divider__mark app-divider__mark--right">
-      <AppNodeMark />
-    </div>
+    <span v-if="withMark" class="app-divider__center">
+      <span class="app-divider__node"><AppNodeMark /></span>
+    </span>
+    <!-- 中间透明占位，保证 rail 的宽度与 section 的内容容器严格一致 -->
+    <span v-else class="app-divider__spacer"></span>
+    <!-- 右竖线 + 交汇节点 -->
+    <span class="app-divider__rail app-divider__rail--right">
+      <span class="app-divider__node"><AppNodeMark /></span>
+    </span>
   </div>
 </template>
 
 <script setup lang="ts">
 /**
- * AppDivider — 满屏宽横向分隔线 + 交汇节点
+ * AppDivider — 满屏宽横线 + 三明治交汇节点
  *
- * 设计语言来源：zed.dev
- * - 通过 ::before/::after 伪元素 + left:-100vw + width:200vw，
- *   让 1px 横线突破父容器宽度，延伸至浏览器左右边缘。
- * - 横线两端（与 layouts/default.vue 的贯穿竖线交汇处）各放一个 NodeMark，
- *   形成 zed.dev 风格的"网格节点"签名细节。
- * - with-mark 时中央额外放一个节点，用于首条签名分隔。
- *
- * 父容器必须 overflow-x: hidden（见 layouts/default.vue）。
+ * 原理（与 zed.dev 完全一致）：
+ * 1. 父容器 .app-divider 是 display:flex，三栏：
+ *    - 左 rail（flex:1 border-right）→ 画左竖线 + 交汇节点
+ *    - 中栏（max-width 980px，与 header/section 同宽）→ 承载中央签名
+ *    - 右 rail（flex:1 border-left） → 画右竖线 + 交汇节点
+ * 2. 横线用 ::before/::after 伪元素满屏宽画线，高度 14px 的 spacer
+ *    上下各一条线，与上下 section 相邻
+ * 3. NodeMark 在 rail span 内部 top:50% 居中，正好就是"横线穿过竖线"的交汇处
+ *    —— 零 calc、零断点、零脆弱定位
  *
  * 用法：
  *   <AppDivider />             横线 + 两端交汇节点
- *   <AppDivider with-mark />   横线 + 两端交汇节点 + 中央签名节点
+ *   <AppDivider with-mark />   横线 + 两端交汇节点 + 中央签名节点（首条签名分隔）
  */
 withDefaults(defineProps<{ withMark?: boolean }>(), { withMark: false })
 </script>
@@ -40,8 +54,11 @@ withDefaults(defineProps<{ withMark?: boolean }>(), { withMark: false })
   position: relative;
   height: 0.875rem; /* 14px = Tailwind h-3.5，仅承载横线 */
   width: 100%;
+  display: flex;
+  align-items: stretch;
 }
 
+/* ── 满屏宽横线 ── */
 .app-divider::before,
 .app-divider::after {
   content: '';
@@ -50,60 +67,82 @@ withDefaults(defineProps<{ withMark?: boolean }>(), { withMark: false })
   width: 200vw;
   height: 1px;
   background-color: var(--color-divider);
+  pointer-events: none;
 }
 
 .app-divider::before { top: 0; }
 .app-divider::after { bottom: 0; }
 
-/* ── 交汇节点：对齐贯穿竖线位置 ──
-   竖线由 layouts/default.vue 的 .layout__rails-inner 定位：
-   - 视口 >= 980px：竖线在 calc(50% - 490px + padding) 处
-   - 视口 < 980px：竖线在 padding 处（容器宽度=视口宽）
-   - 移动端（<=768px）：padding 从 spacing-lg 变为 spacing-md */
-.app-divider__mark {
+/* ── 弹性竖线 span ──
+   flex:1 在 flex 容器中弹性分配两侧空白；
+   border-right (左 span) / border-left (右 span) 画内容边缘的竖线；
+   竖线位置完全由 flex 布局决定，与 Header / section 的 rail span 对齐。 */
+.app-divider__rail {
+  display: none;
+  flex: 1 1 0%;
+  position: relative;
+}
+
+.app-divider__rail--left {
+  border-right: 1px solid var(--color-border);
+}
+
+.app-divider__rail--right {
+  border-left: 1px solid var(--color-border);
+}
+
+@media (min-width: 1024px) {
+  .app-divider__rail {
+    display: block;
+  }
+}
+
+/* ── 交汇节点：在 rail span 内部，正好是横竖线的自然交点 ──
+   横向：rail span 的竖线通过 border 画，NodeMark 在 rail 的 50% 宽处，
+   即正好贴在竖线的 x 坐标上。
+   纵向：rail span 高 14px，AppDivider 的横线在 top:0 / bottom:0，
+   NodeMark 在 top:50%，正好位于上下两条横线的中间。
+   NodeMark 的背景（--color-bg-primary）遮盖节点背后的横线，
+   避免 logo 与横线重叠混乱。*/
+.app-divider__node {
   position: absolute;
   top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 1;
-  /* 节点周围用页面背景色遮盖线条中心，避免 logo 与线条重叠混乱 */
   padding: 3px;
   background-color: var(--color-bg-primary);
   line-height: 0;
+  z-index: 1;
 }
 
-.app-divider__mark--left {
-  left: var(--spacing-lg);
+/* ── 中央签名节点 / 占位跨 ──
+   宽度严格等于 Header/section 内容容器的 max-width 980px，
+   使左右 rail 的 border 正好落在内容容器边缘。 */
+.app-divider__center,
+.app-divider__spacer {
+  flex: 0 1 auto;
+  width: 100%;
+  max-width: 980px;
+  padding: 0 var(--spacing-lg);
+  position: relative;
 }
 
-.app-divider__mark--right {
-  left: auto;
-  right: var(--spacing-lg);
-  transform: translate(50%, -50%);
+.app-divider__center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.app-divider__mark--center {
-  left: 50%;
+/* 中央签名节点：同理位于横线中心 */
+.app-divider--with-mark .app-divider__center .app-divider__node {
+  /* 已经居中，无需额外样式 */
 }
 
-/* 视口 >= 980px：竖线移到 980 容器的 padding 内侧 */
-@media (min-width: 980px) {
-  .app-divider__mark--left {
-    left: calc(50% - 490px + var(--spacing-lg));
-  }
-
-  .app-divider__mark--right {
-    right: calc(50% - 490px + var(--spacing-lg));
-  }
-}
-
-/* 移动端：padding 变小 */
+/* 移动端：padding 变小，与 Header/section 同步 */
 @media (max-width: 768px) {
-  .app-divider__mark--left {
-    left: var(--spacing-md);
-  }
-
-  .app-divider__mark--right {
-    right: var(--spacing-md);
+  .app-divider__center,
+  .app-divider__spacer {
+    padding: 0 var(--spacing-md);
   }
 }
 </style>

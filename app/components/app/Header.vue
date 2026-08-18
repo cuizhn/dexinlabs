@@ -1,5 +1,15 @@
 <template>
   <header class="header" :class="{ 'search-open': isSearchOpen }">
+    <!--
+      zed.dev 三明治布局：
+      [flex-1 span 画左边线] ← 弹性空白，落在内容区左侧边缘
+      [header__inner 居中限宽 980px + 实际内容]
+      [flex-1 span 画右边线] ← 弹性空白，落在内容区右侧边缘
+
+      span 的 border-x 画出左右两条竖线，与下方 section 的同名竖线连续。
+      小屏隐藏（hidden），大屏显示（lg:block），仿 zed.dev 的响应式策略。
+    -->
+    <span class="header__rail" aria-hidden="true"></span>
     <div class="header__inner">
       <!-- Logo -->
       <NuxtLink to="/" class="logo">
@@ -23,21 +33,25 @@
         </button>
       </div>
     </div>
+    <span class="header__rail" aria-hidden="true"></span>
   </header>
 </template>
 
 <script setup lang="ts">
 /**
- * 全局顶部导航栏
+ * 全局顶部导航栏 — zed.dev 三明治布局
  *
  * 职责：
  * - 只负责全局 Header 布局和三个状态的切换
  * - 不包含搜索逻辑，搜索逻辑在 GlobalSearch 组件中
  *
- * 视觉（zed.dev 风格）：
- * - sticky 全宽，下边线 1px var(--color-border)；
- * - 内部 .header__inner 居中限宽 980px；
- * - 无阴影，中性黑白灰。
+ * 视觉（zed.dev 三明治模式）：
+ * - Header 自身是 flex 容器（display: flex），
+ * - 左右各一个 <span class="header__rail"> 作为弹性空白（flex:1），
+ *   并通过 border-left / border-right 画出与下方 section 连续的两条竖线；
+ * - 中间 .header__inner 限宽 980px 居中，承载实际内容；
+ * - Header 下边线（border-bottom）与内容区无关；
+ * - 竖线在大屏（lg >= 1024px）显示，小屏隐藏。
  */
 
 const isSearchOpen = ref(false)
@@ -45,25 +59,55 @@ const globalSearchRef = ref()
 </script>
 
 <style scoped>
-/* ── 全宽外壳：sticky + 下边线 ── */
+/* ── Header 外层：flex 三明治容器 ── */
 .header {
   position: sticky;
   top: 0;
   z-index: 100;
   width: 100%;
+  display: flex;
+  align-items: stretch;
   background-color: var(--color-bg-primary);
   border-bottom: 1px solid var(--color-border);
 }
 
-/* ── 内容容器：限宽居中 ── */
+/* ── 弹性空白 span：flex-1 自动占两侧空间，并画内容边缘的单边竖线 ──
+   与 index.vue / Divider.vue 的 rail span 保持完全同构：
+   - flex:1 在 flex 容器中弹性分配两侧空白
+   - 左 rail 只画 border-right（内容区左边缘的竖线）
+   - 右 rail 只画 border-left（内容区右边缘的竖线）
+   - 整条竖线从 Header 顶部开始，与下方 section 的 rail border 视觉连续
+   - 默认 display:none，大屏 (>=1024px) block 显示 */
+.header__rail {
+  display: none;
+  flex: 1 1 0%;
+  position: relative;
+}
+
+.header__rail:first-child {
+  border-right: 1px solid var(--color-border);
+}
+
+.header__rail:last-child {
+  border-left: 1px solid var(--color-border);
+}
+
+@media (min-width: 1024px) {
+  .header__rail {
+    display: block;
+  }
+}
+
+/* ── 内容容器：限宽 980px + padding 与旧版保持一致 ── */
 .header__inner {
+  width: 100%;
   max-width: 980px;
-  margin: 0 auto;
   padding: 0 var(--spacing-lg);
   display: flex;
   align-items: center;
   height: 48px;
   gap: var(--spacing-xl);
+  flex: 0 1 auto;
 }
 
 .logo {

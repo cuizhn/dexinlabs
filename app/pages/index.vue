@@ -1,63 +1,74 @@
 <template>
   <div class="dexin-home">
     <main class="dexin-home__content">
-      <!-- ── Hero：定位 + 双 CTA + 真实学习界面 ── -->
-      <section class="hero">
-        <p class="hero__kicker">得心实验室</p>
-        <h1 class="hero__headline">理解，而不只是答案。</h1>
-        <p class="hero__sub">一个正在发生的数学学习过程</p>
+      <!-- ── Hero：三明治结构 + 双 CTA + 真实学习界面 ── -->
+      <section class="hero section--flex">
+        <span class="section__rail section__rail--left" aria-hidden="true"></span>
+        <div class="hero__inner">
+          <p class="hero__kicker">得心实验室</p>
+          <h1 class="hero__headline">理解，而不只是答案。</h1>
+          <p class="hero__sub">一个正在发生的数学学习过程</p>
 
-        <div class="hero__cta">
-          <NuxtLink to="/courses" class="cta-primary">
-            开始学习
-            <span class="cta-primary__arrow" aria-hidden="true">→</span>
-          </NuxtLink>
-          <NuxtLink to="/about" class="cta-secondary">
-            了解我们
-          </NuxtLink>
+          <div class="hero__cta">
+            <NuxtLink to="/courses" class="cta-primary">
+              开始学习
+              <span class="cta-primary__arrow" aria-hidden="true">→</span>
+            </NuxtLink>
+            <NuxtLink to="/about" class="cta-secondary">
+              了解我们
+            </NuxtLink>
+          </div>
+
+          <HomeLessonPreview
+            :title="previewLesson.title"
+            :blocks="previewLesson.blocks"
+          />
         </div>
-
-        <HomeLessonPreview
-          :title="previewLesson.title"
-          :blocks="previewLesson.blocks"
-        />
+        <span class="section__rail section__rail--right" aria-hidden="true"></span>
       </section>
 
       <!-- 横线 + 中央 logo 节点：页面签名分隔 -->
       <AppDivider with-mark />
 
       <!-- 学习理念：三联多列网格 -->
-      <section class="section">
+      <section class="section section--flex">
+        <span class="section__rail section__rail--left" aria-hidden="true"></span>
         <div class="section__inner section__inner--wide">
           <h2 class="section__label">三个学习理念</h2>
           <HomeFeatures />
         </div>
+        <span class="section__rail section__rail--right" aria-hidden="true"></span>
       </section>
 
       <AppDivider />
 
       <!-- 验证猜想：交互 -->
-      <section class="section">
+      <section class="section section--flex">
+        <span class="section__rail section__rail--left" aria-hidden="true"></span>
         <div class="section__inner">
           <h2 class="section__label">验证你的猜想</h2>
           <HomeVerifyPanel :scene="verifyScene" />
         </div>
+        <span class="section__rail section__rail--right" aria-hidden="true"></span>
       </section>
 
       <AppDivider />
 
       <!-- 学习路径：认知顺序时间线 -->
-      <section class="section">
+      <section class="section section--flex">
+        <span class="section__rail section__rail--left" aria-hidden="true"></span>
         <div class="section__inner section__inner--narrow">
           <h2 class="section__label">学习路径</h2>
           <HomeLearningPath />
         </div>
+        <span class="section__rail section__rail--right" aria-hidden="true"></span>
       </section>
 
       <AppDivider />
 
       <!-- 正在理解：学习结论 -->
-      <section class="section">
+      <section class="section section--flex">
+        <span class="section__rail section__rail--left" aria-hidden="true"></span>
         <div class="section__inner section__inner--narrow">
           <p class="state-chip">正在理解</p>
           <p class="understand">
@@ -67,22 +78,26 @@
             我们把它叫做——<span class="accent">函数</span>。
           </p>
         </div>
+        <span class="section__rail section__rail--right" aria-hidden="true"></span>
       </section>
 
       <AppDivider />
 
       <!-- 知识地图：真实主题 -->
-      <section class="section">
+      <section class="section section--flex">
+        <span class="section__rail section__rail--left" aria-hidden="true"></span>
         <div class="section__inner">
           <h2 class="section__label">知识地图</h2>
           <HomeKnowledgeMap :topics="topicMap" />
         </div>
+        <span class="section__rail section__rail--right" aria-hidden="true"></span>
       </section>
 
       <AppDivider />
 
       <!-- 品牌说明 -->
-      <section class="section">
+      <section class="section section--flex">
+        <span class="section__rail section__rail--left" aria-hidden="true"></span>
         <div class="section__inner section__inner--narrow">
           <h2 class="section__label">关于得心实验室</h2>
           <p class="brand">
@@ -92,12 +107,14 @@
             让每一个概念，都从"为什么"开始。
           </p>
         </div>
+        <span class="section__rail section__rail--right" aria-hidden="true"></span>
       </section>
 
       <AppDivider />
 
       <!-- 结尾大号 CTA：入口选择 -->
-      <section class="section section--final-cta">
+      <section class="section section--flex section--final-cta">
+        <span class="section__rail section__rail--left" aria-hidden="true"></span>
         <div class="section__inner section__inner--narrow">
           <h2 class="final-cta__title">准备好开始了吗？</h2>
           <p class="final-cta__sub">从一个"为什么"出发，找到你自己的答案。</p>
@@ -111,6 +128,7 @@
             </NuxtLink>
           </div>
         </div>
+        <span class="section__rail section__rail--right" aria-hidden="true"></span>
       </section>
     </main>
   </div>
@@ -118,13 +136,20 @@
 
 <script setup lang="ts">
 /**
- * 首页 — zed.dev 风格内容区重构
+ * 首页 — zed.dev 风格内容区重构 + 三明治竖线骨架
  *
  * 内容区按 zed.dev 布局语言重新组织：
  * - Hero 双 CTA（主链接 + 次链接，仿 zed 文本按钮风格）
  * - 三联特性区（WHY/WHAT/HOW 多列网格）
  * - 学习路径时间线（认知顺序，仿 zed agent 任务流）
  * - 结尾大号 CTA 区（带入口选择）
+ *
+ * 三明治竖线骨架（与 AppDivider / Header 统一）：
+ * - 每个 section / hero / 结尾 CTA 都是 display:flex 三栏：
+ *   [section__rail: flex-1] → 画左竖线（border-right）
+ *   [内容容器: max-width Xpx + padding]
+ *   [section__rail: flex-1] → 画右竖线（border-left）
+ * - 竖线与满屏宽横线的交汇由 AppDivider 内的 NodeMark 负责，零绝对定位。
  *
  * 不改动：Lesson AST、LessonService、Content Engine、DB Schema、API、Renderer。
  */
@@ -166,17 +191,57 @@ useHead({
   background: var(--home-bg);
 }
 
-/* ── 内容区：全宽，竖线由 layouts/default.vue 的 .layout__rails 全局贯穿 ── */
 .dexin-home__content {
   position: relative;
 }
 
+/* ── 三明治布局：section / hero 共用 ──
+   display:flex 三栏结构，中间栏承载实际内容，
+   左右 section__rail span 通过 flex:1 + border 画竖线。 */
+.section--flex {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+/* 弹性竖线 span：与 Header / AppDivider 的 rail span 同构
+   - flex:1 在 flex 容器中弹性分配两侧空白
+   - border-right (左) / border-left (右) 画内容容器边缘的竖线
+   - 大屏 (>= 1024px) 显示，小屏隐藏 */
+.section__rail {
+  display: none;
+  flex: 1 1 0%;
+  position: relative;
+}
+
+.section__rail--left {
+  border-right: 1px solid var(--color-border);
+}
+
+.section__rail--right {
+  border-left: 1px solid var(--color-border);
+}
+
+@media (min-width: 1024px) {
+  .section__rail {
+    display: block;
+  }
+}
+
 /* ── Hero ── */
 .hero {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+
+.hero__inner {
+  flex: 0 1 auto;
+  width: 100%;
   max-width: 980px;
-  margin: 0 auto;
   padding: clamp(3.5rem, 9vw, 7rem) var(--spacing-lg) var(--home-gap-section);
   text-align: center;
+  margin: 0 auto; /* 小屏 rail 隐藏时，依然能居中 */
   animation: fadeUp 0.45s ease both;
 }
 
@@ -271,12 +336,17 @@ useHead({
 
 /* ── Section ── */
 .section {
-  padding: var(--home-gap-section) var(--spacing-lg);
+  /* 纵向 padding 保留在 section 层，横向 padding 移到 inner（与 AppDivider 一致）*/
+  padding-top: var(--home-gap-section);
+  padding-bottom: var(--home-gap-section);
 }
 
 .section__inner {
+  flex: 0 1 auto;
+  width: 100%;
   max-width: 860px;
-  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  margin: 0 auto; /* 小屏 rail 隐藏时，依然能居中 */
 }
 
 .section__inner--narrow {
@@ -393,12 +463,12 @@ useHead({
 
 /* ── 响应式 ── */
 @media (max-width: 768px) {
-  .hero {
+  .hero__inner {
     padding: clamp(2.5rem, 8vw, 4rem) var(--spacing-md) var(--home-gap-section);
   }
 
-  .section {
-    padding: var(--home-gap-section) var(--spacing-md);
+  .section__inner {
+    padding: 0 var(--spacing-md);
   }
 
   .hero :deep(.preview__surface),
@@ -423,7 +493,7 @@ useHead({
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero {
+  .hero__inner {
     animation: none;
   }
 }
