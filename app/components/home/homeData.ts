@@ -114,3 +114,81 @@ export const topicMap: { slug: string, title: string, description: string }[] = 
     description: '数学建模、问题解决、实际应用'
   }
 ]
+
+/**
+ * Features 三联——得心实验室的三个学习理念。
+ * 用于 Hero 之下的多列网格区，仿 zed.dev 的 "Fast / Agentic / Collaborative" 结构。
+ * 内容为自有产品语言，非 Zed 文案。
+ */
+export const features: { label: string, title: string, description: string }[] = [
+  {
+    label: 'WHY',
+    title: '理解为先',
+    description: '每一个概念，都从"为什么"开始。不是公式堆砌，而是发现问题的过程。'
+  },
+  {
+    label: 'WHAT',
+    title: '应用为本',
+    description: '从打车计费、储蓄利率到地图测距，数学是理解世界的工具，不是考题。'
+  },
+  {
+    label: 'HOW',
+    title: '得心应手',
+    description: '猜想 → 验证 → 建立概念 → 迁移反思，让学习像呼吸一样自然发生。'
+  }
+]
+
+/**
+ * 学习路径时间线——展示得心实验室的认知顺序。
+ * 仿 zed.dev 的 agent 任务流时间线列表（密集信息 + 时间标签 + 状态点）。
+ * 内容为 LDS 认知顺序：发现问题 → 产生需求 → 猜想 → 建立概念 → 定义 → 迁移 → 反思。
+ */
+export const learningPath: {
+  step: string,
+  title: string,
+  detail: string,
+  state: 'done' | 'active' | 'todo'
+}[] = [
+  {
+    step: '01',
+    title: '发现问题',
+    detail: '打车时车费怎么算？为什么路程越远越贵？',
+    state: 'done'
+  },
+  {
+    step: '02',
+    title: '产生需求',
+    detail: '需要一个工具，描述"一个量随另一个量变化"的关系。',
+    state: 'done'
+  },
+  {
+    step: '03',
+    title: '猜想',
+    detail: '车费 = 起步价 + 单价 × 距离 + 等待费 × 时间',
+    state: 'active'
+  },
+  {
+    step: '04',
+    title: '建立概念',
+    detail: '当一个量随另一个量按规则变化，它们之间就建立了一种关系。',
+    state: 'todo'
+  },
+  {
+    step: '05',
+    title: '定义',
+    detail: '函数：y = f(x)，从集合 A 到集合 B 的对应关系。',
+    state: 'todo'
+  },
+  {
+    step: '06',
+    title: '迁移',
+    detail: '气温随时间变化、身高随年龄增长、价格随供求波动——都是函数。',
+    state: 'todo'
+  },
+  {
+    step: '07',
+    title: '反思',
+    detail: '函数是一种"对应"而非"计算"，它描述关系，不一定要求连续或可导。',
+    state: 'todo'
+  }
+]
