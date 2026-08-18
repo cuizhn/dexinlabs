@@ -39,7 +39,10 @@ withDefaults(defineProps<{ withMark?: boolean }>(), { withMark: false })
   width: 200vw;
   height: 1px;
   background-color: var(--color-divider);
-  z-index: -1; /* 沉到内容下方 */
+  /* 不用 z-index:-1：
+     AppDivider 是独立 spacer（14px 高），不与内容重叠，
+     无需把横线压到祖先背景之下；否则在窄屏下会被 .layout 的不透明
+     背景遮盖，只剩中间 logo 节点可见。 */
 }
 
 .app-divider::before { top: 0; }
