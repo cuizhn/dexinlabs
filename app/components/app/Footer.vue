@@ -27,7 +27,7 @@
 <style scoped>
 .footer {
   background-color: var(--color-bg-primary);
-  border-top: 1px solid var(--color-border);
+  border: 1px solid var(--color-border);
   margin-top: auto;
 }
 

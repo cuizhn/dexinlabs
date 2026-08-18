@@ -12,6 +12,9 @@
       />
     </section>
 
+    <!-- 横线 + 中央 logo 节点：页面「签名分隔」 -->
+    <AppDivider with-mark />
+
     <!-- 正在验证：学习状态交互 -->
     <section class="section">
       <div class="section__inner">
@@ -19,6 +22,8 @@
         <HomeVerifyPanel :scene="verifyScene" />
       </div>
     </section>
+
+    <AppDivider />
 
     <!-- 正在理解：学习结论 -->
     <section class="section">
@@ -33,6 +38,8 @@
       </div>
     </section>
 
+    <AppDivider />
+
     <!-- 知识地图：真实主题，近黑白文本列 -->
     <section class="section">
       <div class="section__inner">
@@ -40,6 +47,8 @@
         <HomeKnowledgeMap :topics="topicMap" />
       </div>
     </section>
+
+    <AppDivider />
 
     <!-- 品牌说明 -->
     <section class="section">
@@ -49,10 +58,12 @@
           我们相信，数学不是公式的堆砌，而是理解世界的一种方式。
         </p>
         <p class="brand brand--muted">
-          让每一个概念，都从“为什么”开始。
+          让每一个概念，都从"为什么"开始。
         </p>
       </div>
     </section>
+
+    <AppDivider />
 
     <!-- 继续探索 -->
     <section class="section section--cta">
@@ -69,15 +80,15 @@
 
 <script setup lang="ts">
 /**
- * 首页 — 现代学习工具视觉（近黑白 + 单一 Accent + 结构线）
+ * 首页 — 现代学习工具视觉（近黑白 + 单一 Accent + 满屏宽结构线）
  *
  * 仅修改首页页面 / 首页组件 / 首页样式 / 首页静态展示数据。
  * 不改动：Lesson AST、LessonService、Content Engine、DB Schema、API、Renderer、
  * Course/Topic/Lesson 数据结构、登录系统、学习状态系统。
  *
- * 视觉规则：
+ * 视觉规则（zed.dev 风格）：
  * - 不使用背景网格（无 repeating-linear-gradient 棋盘格）；
- * - 结构线来自 Header / Hero / Section / Footer 边界，1px 低对比度；
+ * - 横向分隔线由 AppDivider 承担（满屏宽 1px 伪元素），section 自身零 border；
  * - 结构线不自动变成卡片；
  * - 真实 Lesson 内容通过现有 ContentRenderer 渲染（见 HomeLessonPreview）。
  */
@@ -160,10 +171,9 @@ useHead({
   text-align: left;
 }
 
-/* ── Section：结构线来自区块边界，而非背景网格 ── */
+/* ── Section：自身零 border，横向分隔由 AppDivider 承担 ── */
 .section {
   padding: var(--home-gap-section) var(--spacing-lg);
-  border-top: 1px solid var(--home-border);
 }
 
 .section--cta {

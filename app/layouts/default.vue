@@ -6,7 +6,6 @@
     <main>
       <slot />
     </main>
-
     <AppFooter />
   </div>
 </template>
@@ -16,13 +15,17 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  /* 满屏宽横线（AppDivider 的 -100vw/200vw 伪元素）依赖此层剪裁；
+     用 clip 而非 hidden：clip 不会创建滚动容器，避免破坏 Header 的 sticky 行为 */
+  overflow-x: clip;
 }
 
 main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-top: var(--spacing-2xl);
-  min-height: calc(100vh - var(--spacing-2xl));
+  /* Header 改 sticky 后已占文档流，这里只保留 Header 与内容的呼吸距离 */
+  padding-top: var(--spacing-lg);
+  min-height: calc(100vh - var(--spacing-lg));
 }
 </style>

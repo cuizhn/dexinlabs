@@ -109,6 +109,7 @@ useHead({ title: '未成年人保护政策 · Dexin Labs' })
 .section {
   border-top: 1px solid var(--color-border);
   padding: var(--spacing-xl) 0;
+  border: 1px solid var(--color-border);
 }
 
 .section:last-child {

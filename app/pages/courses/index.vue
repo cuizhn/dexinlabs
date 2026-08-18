@@ -81,6 +81,7 @@ const { catalog, loading } = await useCourseCatalog()
 .container {
   max-width: 860px;
   margin-inline: auto;
+  border: 1px solid var(--color-border);
 }
 
 .header {

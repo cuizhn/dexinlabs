@@ -160,10 +160,12 @@ useHead({
 .section {
   border-top: 1px solid var(--color-border);
   padding: var(--spacing-2xl) 0;
+  border: 1px solid var(--color-border);
 }
 
 .section:last-child {
   padding-bottom: 0;
+  
 }
 
 .section-title {

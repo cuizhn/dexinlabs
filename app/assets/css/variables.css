@@ -59,6 +59,9 @@
   --color-border-light: #ececee;
   --color-border-strong: #d4d4d8;
 
+  /* ── 满屏宽分隔线（AppDivider 组件用，跟 --color-border 同源）── */
+  --color-divider: var(--color-border);
+
   /* ── 主色衍生（克制的交互反馈）── */
   --color-text-inverse: #ffffff;
   --color-primary-ghost: rgba(59, 111, 224, 0.06);

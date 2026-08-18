@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-12 -12 124 124" fill="none">
+  <!--
+    从 logo.svg 抽出的 X 几何标记。
+    由四条对角短线段组成 X 形，中心区域留白。
+    颜色由外层 CSS 通过 currentColor 控制，便于跟随项目 data-theme 主题。
+  -->
+  <path d="M0 0 L33.282 33.282 M66.095 33.282 L99.377 0 M0 99.377 L33.282 66.095 M66.095 66.095 L99.377 99.377"
+        stroke="currentColor"
+        stroke-width="16.875"
+        stroke-linecap="round"/>
+</svg>
