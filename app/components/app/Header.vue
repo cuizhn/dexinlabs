@@ -77,7 +77,8 @@ const globalSearchRef = ref()
    - 左 rail 只画 border-right（内容区左边缘的竖线）
    - 右 rail 只画 border-left（内容区右边缘的竖线）
    - 整条竖线从 Header 顶部开始，与下方 section 的 rail border 视觉连续
-   - 默认 display:none，大屏 (>=1024px) block 显示 */
+   - 默认 display:none，大屏 (>=1152px，确保大于所有内容容器 max-width + padding) block 显示，
+     这样 rail 一旦显示必然有剩余空间，不会出现"display:block 但 rail 0 宽"的死区 */
 .header__rail {
   display: none;
   flex: 1 1 0%;
@@ -92,22 +93,28 @@ const globalSearchRef = ref()
   border-left: 1px solid var(--color-border);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1152px) {
   .header__rail {
     display: block;
   }
 }
 
-/* ── 内容容器：限宽 980px + padding 与旧版保持一致 ── */
+/* ── 内容容器：限宽 980px + padding 与旧版保持一致 ──
+   关键点：不要 width:100%（会占满 flex 容器，挤压 rail span 为 0 宽）。
+   正确方案：width 等于 max-width 值；再用 max-width:100% 保证小屏不溢出。
+   flex: 0 1 auto：在大屏时不抢空间（grow=0），小屏 rail 隐藏时由 flex-shrink:1 压缩到视口宽。 */
 .header__inner {
-  width: 100%;
-  max-width: 980px;
+  width: 980px;
+  max-width: 100%;
   padding: 0 var(--spacing-lg);
   display: flex;
   align-items: center;
   height: 48px;
   gap: var(--spacing-xl);
   flex: 0 1 auto;
+  margin: 0 auto;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .logo {

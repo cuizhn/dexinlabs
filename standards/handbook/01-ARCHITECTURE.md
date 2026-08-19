@@ -30,7 +30,7 @@
 | ----------------------------- | ------------------------- |
 | Web Framework                 | Nuxt                      |
 | UI                            | Vue                       |
-| Markdown / Content Processing | unified / remark |
+| Markdown / Content Processing | unified / remark（属外部仓库 dexinlabs-content/compiler/，主仓不含）|
 | Math Rendering                | KaTeX                     |
 | ORM                           | Drizzle ORM               |
 | Database                      | PostgreSQL                |

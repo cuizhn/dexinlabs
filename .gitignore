@@ -37,11 +37,14 @@ compile/output/
 lessons/
 .workbuddy/
 
-# 工具脚本源码纳入 Git（ADR-014 内容编译管线）：
-# tools/content-compiler/ 等源码应入库，保证全新 clone 可复现内容编译环境。
-# 但工具内部的产物 / 缓存 / 依赖继续忽略，避免误提交编译输出。
+# 工具脚本产物 / 缓存 / 依赖忽略
+# 注：Content Compiler 已迁移至独立仓库 dexinlabs-content/compiler/，主仓不再随附其源码；
+#     以下仅忽略工具运行产生的产物 / 缓存 / 依赖，避免误提交。
 tools/**/output
 tools/**/dist
 tools/**/node_modules
 tools/**/.cache
 tools/**/*.log
+
+# 截图产物（playwright 截图脚本生成，不入库、不部署）
+public/shot-*.png

@@ -207,11 +207,14 @@ useHead({
 /* 弹性竖线 span：与 Header / AppDivider 的 rail span 同构
    - flex:1 在 flex 容器中弹性分配两侧空白
    - border-right (左) / border-left (右) 画内容容器边缘的竖线
-   - 大屏 (>= 1024px) 显示，小屏隐藏 */
+   - 断点 1152px：确保大于所有 inner 容器 max-width + 2*padding，
+     这样 rail 一旦显示必然有剩余空间，不会出现"display:block 但 rail 0 宽"的死区。
+   （1080px(最宽inner) + 48px(padding*2) = 1128px < 1152px ✓）*/
 .section__rail {
   display: none;
   flex: 1 1 0%;
   position: relative;
+  min-width: 0;
 }
 
 .section__rail--left {
@@ -222,7 +225,7 @@ useHead({
   border-left: 1px solid var(--color-border);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1152px) {
   .section__rail {
     display: block;
   }
@@ -237,11 +240,19 @@ useHead({
 
 .hero__inner {
   flex: 0 1 auto;
-  width: 100%;
-  max-width: 980px;
+  /* 关键：不要 width:100%，否则占满 flex 容器挤压 rail span 为 0 宽。
+     width 等于目标大屏最大宽度，max-width:100% 保证小屏不溢出。
+     在大屏 (>= 1152px) 时 width=980px 精确固定，rail span 平分剩余 (视口宽 - 980) / 2，
+     所以 rail 必然有宽度，竖线能正常显示。
+     在小屏 (<1152px) 时 rail display:none，只有 inner 一个 flex 项，
+     max-width:100% + flex-shrink:1 让它完美收缩到视口宽 - padding。 */
+  width: 980px;
+  max-width: 100%;
   padding: clamp(3.5rem, 9vw, 7rem) var(--spacing-lg) var(--home-gap-section);
   text-align: center;
-  margin: 0 auto; /* 小屏 rail 隐藏时，依然能居中 */
+  margin: 0 auto;
+  box-sizing: border-box;
+  min-width: 0;
   animation: fadeUp 0.45s ease both;
 }
 
@@ -343,18 +354,22 @@ useHead({
 
 .section__inner {
   flex: 0 1 auto;
-  width: 100%;
-  max-width: 860px;
+  width: 860px;
+  max-width: 100%;
   padding: 0 var(--spacing-lg);
-  margin: 0 auto; /* 小屏 rail 隐藏时，依然能居中 */
+  margin: 0 auto;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
+/* 窄版：覆盖基础 width，适用于纯文案区（品牌说明 / 正在理解 等）*/
 .section__inner--narrow {
-  max-width: 680px;
+  width: 680px;
 }
 
+/* 宽版：覆盖基础 width，适用于 Features 卡片栅格 */
 .section__inner--wide {
-  max-width: 1080px;
+  width: 1080px;
 }
 
 .section__label {

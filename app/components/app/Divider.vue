@@ -76,11 +76,14 @@ withDefaults(defineProps<{ withMark?: boolean }>(), { withMark: false })
 /* ── 弹性竖线 span ──
    flex:1 在 flex 容器中弹性分配两侧空白；
    border-right (左 span) / border-left (右 span) 画内容边缘的竖线；
-   竖线位置完全由 flex 布局决定，与 Header / section 的 rail span 对齐。 */
+   竖线位置完全由 flex 布局决定，与 Header / section 的 rail span 对齐。
+   断点 1152px：确保大于所有内容容器的 max-width + padding*2，
+   保证 rail 一旦显示就有剩余空间，不会出现"display:block 但 rail 0 宽"的死区。 */
 .app-divider__rail {
   display: none;
   flex: 1 1 0%;
   position: relative;
+  min-width: 0;
 }
 
 .app-divider__rail--left {
@@ -91,7 +94,7 @@ withDefaults(defineProps<{ withMark?: boolean }>(), { withMark: false })
   border-left: 1px solid var(--color-border);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1152px) {
   .app-divider__rail {
     display: block;
   }
@@ -116,15 +119,19 @@ withDefaults(defineProps<{ withMark?: boolean }>(), { withMark: false })
 }
 
 /* ── 中央签名节点 / 占位跨 ──
-   宽度严格等于 Header/section 内容容器的 max-width 980px，
-   使左右 rail 的 border 正好落在内容容器边缘。 */
+   width 等于内容层最大通用宽度（980px），max-width:100% 小屏不溢出。
+   与 Header / Hero / section 的内容容器 width 完全一致 → 左右 rail 的 border-x
+   坐标完全对齐。不要 width:100%，否则占满 flex 容器挤压 rail span 为 0 宽。 */
 .app-divider__center,
 .app-divider__spacer {
   flex: 0 1 auto;
-  width: 100%;
-  max-width: 980px;
+  width: 980px;
+  max-width: 100%;
   padding: 0 var(--spacing-lg);
   position: relative;
+  margin: 0 auto;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
 .app-divider__center {
