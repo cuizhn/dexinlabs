@@ -1,10 +1,10 @@
 /**
  * useLessonPage - 课时页面数据组合式函数
  *
- * 架构 V4（定稿）：Lesson 唯一约束为 (topic_id, slug)，
- * 需要同时提供 topicSlug 和 lessonSlug。
+ * 架构 V5（三层 identity）：Lesson 唯一约束为 (topic_slug, chapter_slug, lesson_slug)，
+ * 需要同时提供 topicSlug、chapterSlug 和 lessonSlug。
  *
- * 路由：/{topicSlug}/{lessonSlug}
+ * 路由：/courses/{topicSlug}/{chapterSlug}/{lessonSlug}
  */
 import { computed } from 'vue'
 import { useAsyncData } from 'nuxt/app'
@@ -14,21 +14,23 @@ import type { LessonPage } from '~/content/view-models'
  * useLessonPage - 获取课时页面数据
  *
  * @param topicSlug 主题的唯一标识
+ * @param chapterSlug 章节的唯一标识
  * @param lessonSlug 课时的唯一标识
  * @param options.lazy 是否懒加载（默认 false，服务端预取）
  * @returns 课时、主题、章节、前后课时等响应式数据
  */
 export async function useLessonPage(
   topicSlug: string,
+  chapterSlug: string,
   lessonSlug: string,
   options: { lazy?: boolean } = {}
 ) {
-  const key = `lesson-page:${topicSlug}:${lessonSlug || 'empty'}`
+  const key = `lesson-page:${topicSlug}:${chapterSlug}:${lessonSlug || 'empty'}`
 
   const { data, pending, error, refresh } = await useAsyncData(
     key,
     () => $fetch<LessonPage>(`/api/lessons/${lessonSlug}`, {
-      query: { topic: topicSlug }
+      query: { topic: topicSlug, chapter: chapterSlug }
     }),
     {
       default: () => ({

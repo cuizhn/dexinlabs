@@ -5,7 +5,7 @@
  * - 仅用于首页视觉实验，不影响业务架构；
  * - lesson 预览内容以真实 Lesson AST（@shared/lessonAST）的 Block[] 形态书写，
  *   交由现有 ContentRenderer 渲染，不重新发明内容格式；
- * - 主题地图沿用真实 4 个主题 slug，链接指向真实课程页；
+ * - 主题地图沿用真实 6 个主题 slug，链接指向真实课程页；
  * - 内容为得心实验室自有产品语言，非 Zed 文案/素材。
  */
 import type { Block, Inline } from '@shared/lessonAST'
@@ -89,14 +89,24 @@ export const verifyScene = {
 }
 
 /**
- * 知识地图——沿用真实 4 个主题的 slug，链接指向真实课程页。
+ * 知识地图——沿用真实 6 个主题的 slug，链接指向真实课程页。
  * 以近黑白文本列呈现，不使用彩色卡片或 emoji 图标。
  */
 export const topicMap: { slug: string, title: string, description: string }[] = [
   {
-    slug: 'number-and-algebra',
-    title: '数与代数',
-    description: '有理数、实数、代数式、方程与不等式'
+    slug: 'number',
+    title: '数与代数（数）',
+    description: '有理数、实数、集合'
+  },
+  {
+    slug: 'algebra',
+    title: '代数',
+    description: '代数式、方程与不等式'
+  },
+  {
+    slug: 'function',
+    title: '函数',
+    description: '函数概念、一次函数、反比例函数'
   },
   {
     slug: 'geometry',
@@ -104,14 +114,14 @@ export const topicMap: { slug: string, title: string, description: string }[] = 
     description: '三角形、四边形、圆、相似与全等'
   },
   {
-    slug: 'statistics-and-probability',
-    title: '统计与概率',
-    description: '数据分析、统计图表、概率基础'
+    slug: 'statistics',
+    title: '统计',
+    description: '数据收集、数据分析'
   },
   {
-    slug: 'comprehensive-practice',
-    title: '综合与实践',
-    description: '数学建模、问题解决、实际应用'
+    slug: 'probability',
+    title: '概率',
+    description: '随机事件与概率'
   }
 ]
 

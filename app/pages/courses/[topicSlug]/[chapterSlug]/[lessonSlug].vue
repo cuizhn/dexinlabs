@@ -20,7 +20,7 @@
 /**
  * Lesson 页面 - 沉浸式课时学习
  *
- * 路由：/courses/:topicSlug/:lessonSlug
+ * 路由：/courses/:topicSlug/:chapterSlug/:lessonSlug
  *
  * 视觉独立设计：现代电子书 × 纸质教材 × 数字学习工具。
  * - 暖米白纸张背景（非纯白，非明显黄色）；
@@ -39,9 +39,10 @@ definePageMeta({
 })
 
 const topicSlug = useRouteParam('topicSlug') ?? ''
+const chapterSlug = useRouteParam('chapterSlug') ?? ''
 const lessonSlug = (useRouteParam('lessonSlug') ?? '') as string
 
-const { lesson, topic, chapter } = await useLessonPage(topicSlug, lessonSlug)
+const { lesson, topic, chapter } = await useLessonPage(topicSlug, chapterSlug, lessonSlug)
 
 const lessonData = computed(() => lesson.value)
 

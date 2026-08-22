@@ -1,11 +1,11 @@
 /**
  * 课时仓储 - lessons 表的 CRUD 操作
  *
- * 架构 V4（定稿）：Lesson 唯一约束改为 (topic_id, slug) 组合。
- * 查询课时需要同时提供 topicSlug 和 lessonSlug。
+ * 架构 V5（三层 identity）：Lesson 通过 (topic_slug, chapter_slug, lesson_slug) 三元组查询。
+ * 查询课时需要同时提供 topicSlug、chapterSlug 和 lessonSlug。
  */
 import { eq, and, asc } from 'drizzle-orm'
-import { lessons, topics } from '@database'
+import { lessons, topics, chapters } from '@database'
 import type { Lesson, Topic, Chapter } from '../types'
 import { BaseRepository } from './BaseRepository'
 
@@ -36,10 +36,15 @@ export class LessonRepository extends BaseRepository<typeof lessons> {
   /**
    * 获取课时及其关联的主题、章节和兄弟课时
    *
-   * 通过 (topicSlug, lessonSlug) 组合键查询。
+   * 架构 V5（三层 identity）：通过 (topicSlug, chapterSlug, lessonSlug) 三元组查询。
+   * siblingLessons 按 chapter 维度计算（同 topic + 同 chapter），不跨章。
    */
-  async getWithTopicAndChapter(topicSlug: string, lessonSlug: string): Promise<LessonWithRelations | null> {
-    if (!topicSlug || !lessonSlug) return null
+  async getWithTopicAndChapter(
+    topicSlug: string,
+    chapterSlug: string,
+    lessonSlug: string
+  ): Promise<LessonWithRelations | null> {
+    if (!topicSlug || !chapterSlug || !lessonSlug) return null
 
     const db = this.getDb()
 
@@ -49,10 +54,20 @@ export class LessonRepository extends BaseRepository<typeof lessons> {
     })
     if (!topicRow) return null
 
-    // 再查 lesson（组合键）
+    // 再查 chapter（同 topic + chapter slug），用于精确定位 + 同章 sibling 计算
+    const chapterRow = await db.query.chapters.findFirst({
+      where: and(
+        eq(chapters.slug, chapterSlug),
+        eq(chapters.topicId, topicRow.id)
+      )
+    })
+    if (!chapterRow) return null
+
+    // 查 lesson（topicId + chapterId + slug 三元组精确匹配，缺一即 404）
     const result = await db.query.lessons.findFirst({
       where: and(
         eq(this.table.topicId, topicRow.id),
+        eq(this.table.chapterId, chapterRow.id),
         eq(this.table.slug, lessonSlug)
       ),
       with: {
@@ -62,14 +77,14 @@ export class LessonRepository extends BaseRepository<typeof lessons> {
     })
     if (!result) return null
 
-    // 获取同主题下所有课时用于导航
-    const topicLessons = await db.select().from(this.table)
-      .where(eq(this.table.topicId, topicRow.id))
+    // 获取同章节下所有课时用于导航（sibling = same topic + same chapter）
+    const chapterLessons = await db.select().from(this.table)
+      .where(eq(this.table.chapterId, chapterRow.id))
       .orderBy(asc(this.table.order), asc(this.table.id))
 
     const topicRef = result.topic as unknown as Topic | null
     const chapterRef = result.chapter as unknown as Chapter | null
-    const siblingLessons = topicLessons as unknown as Lesson[]
+    const siblingLessons = chapterLessons as unknown as Lesson[]
 
     return {
       ...(result as unknown as Lesson),

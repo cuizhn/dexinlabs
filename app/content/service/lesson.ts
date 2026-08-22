@@ -3,7 +3,7 @@
  *
  * 提供课时列表、课时页面数据组装（含主题、章节、前后课时导航）等功能。
  *
- * 架构 V4（定稿）：Lesson 通过 (topicId, slug) 组合键查询。
+ * 架构 V5（三层 identity）：Lesson 通过 (topic_slug, chapter_slug, lesson_slug) 三元组查询。
  */
 import { lessonRepository } from '@database/repository/lesson'
 import type { LessonPage } from '../view-models'
@@ -25,12 +25,17 @@ export class LessonService {
     return lessonRepository.listByTopic(topicSlug)
   }
 
-  async getLessonPage(topicSlug: string, lessonSlug: string): Promise<LessonPage | null> {
+  async getLessonPage(
+    topicSlug: string,
+    chapterSlug: string,
+    lessonSlug: string
+  ): Promise<LessonPage | null> {
     const cleanTopic = normalizeSlug(topicSlug)
+    const cleanChapter = normalizeSlug(chapterSlug)
     const cleanLesson = normalizeSlug(lessonSlug)
-    if (!cleanTopic || !cleanLesson) return null
+    if (!cleanTopic || !cleanChapter || !cleanLesson) return null
 
-    const data = await lessonRepository.getWithTopicAndChapter(cleanTopic, cleanLesson)
+    const data = await lessonRepository.getWithTopicAndChapter(cleanTopic, cleanChapter, cleanLesson)
     if (!data) return null
 
     const lesson = toLesson(data as Record<string, unknown>)

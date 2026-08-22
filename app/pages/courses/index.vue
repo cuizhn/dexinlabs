@@ -33,7 +33,7 @@
                   class="lesson"
                 >
                   <NuxtLink
-                    :to="`/courses/${item.topic.slug}/${lesson.slug}`"
+                    :to="`/courses/${item.topic.slug}/${ch.chapter.slug}/${lesson.slug}`"
                     class="lesson-link"
                   >
                     <span class="lesson-index">{{ String(idx + 1).padStart(2, '0') }}</span>
@@ -61,7 +61,7 @@
  * 唯一的课程目录入口，直接展示：
  * Topic → Chapter → Lesson 完整层级。
  *
- * 用户点击 Lesson 后进入 /courses/{topicSlug}/{lessonSlug} 学习页面。
+ * 用户点击 Lesson 后进入 /courses/{topicSlug}/{chapterSlug}/{lessonSlug} 学习页面。
  *
  * 视觉：与首页共享同一套设计系统——黑白灰、结构线、大留白、少卡片。
  * 课程结构本身成为页面设计：Topic 之间用 1px 结构线分隔，
